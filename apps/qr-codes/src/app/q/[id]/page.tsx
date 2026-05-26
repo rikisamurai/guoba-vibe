@@ -10,6 +10,16 @@ import { CopyButton } from "@/components/copy-button";
 import { DownloadButtons } from "@/components/download-buttons";
 import { Button } from "@/components/ui/button";
 
+function isSafeOpenScheme(url: string): boolean {
+  // Allow http(s) and any custom app scheme (xhsdiscover://, etc.) but block
+  // schemes that execute code in the current origin.
+  const SCHEME_BLOCKLIST = new Set(["javascript", "data", "vbscript", "file"]);
+  const colon = url.indexOf(":");
+  if (colon === -1) return false;
+  const scheme = url.slice(0, colon).toLowerCase();
+  return !SCHEME_BLOCKLIST.has(scheme);
+}
+
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
@@ -75,9 +85,13 @@ export default async function QrDetailPage({
         <code className="block break-all rounded-md bg-muted p-3 text-sm">{row.url}</code>
         <div className="flex gap-2 flex-wrap">
           <CopyButton value={row.url} label="Copy URL" />
-          <Button asChild size="sm">
-            <a href={row.url}>Open link</a>
-          </Button>
+          {isSafeOpenScheme(row.url) && (
+            <Button asChild size="sm">
+              <a href={row.url} target="_blank" rel="noopener noreferrer">
+                Open link
+              </a>
+            </Button>
+          )}
           <DownloadButtons id={row.id} title={row.title} />
         </div>
       </section>
