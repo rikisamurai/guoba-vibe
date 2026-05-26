@@ -42,6 +42,9 @@ export const getAdminSession = cache(async () => {
 
 export async function requireAdmin() {
   const session = await getAdminSession();
-  if (!session) redirect("/login");
-  return session;
+  if (session) return session;
+
+  // Distinguish: no cookie at all (→ sign in) vs signed in as non-admin (→ forbidden message).
+  const rawSession = await auth.api.getSession({ headers: await headers() });
+  redirect(rawSession ? "/login?reason=forbidden" : "/login");
 }

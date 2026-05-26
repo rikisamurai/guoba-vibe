@@ -14,7 +14,7 @@ export default async function HomePage() {
         Personal vault for mobile-app deep-link QR codes. Sign in to manage; share /q/&lt;id&gt; links to anyone with a phone.
       </p>
       <Button asChild>
-        <Link href="/login">Sign in with GitHub</Link>
+        <Link href="/login">Continue with GitHub</Link>
       </Button>
     </main>
   );
