@@ -1,0 +1,24 @@
+apps/qr-codes/drizzle/0001_safe_nitro.sql
+  s_ab777ee29d6597::t_6830d48d335c56 1-4
+apps/qr-codes/package.json
+  s_ab777ee29d6597::t_579009de464aaf 43
+  s_ab777ee29d6597::t_9fe3e5934cafc2 12-14
+apps/qr-codes/src/db/schema.ts
+  s_ab777ee29d6597::t_4da698b2ea9125 1,10-13,22-25,38-41,52-55,58-74,76-97,99-113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "35f876d935dd0fe6ff4dde6e06d90cd7b84a68e3",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
