@@ -19,6 +19,10 @@ describe("renderSvg", () => {
   it("throws for empty input", async () => {
     await expect(renderSvg("")).rejects.toThrow();
   });
+
+  it("throws for whitespace-only input", async () => {
+    await expect(renderSvg("   ")).rejects.toThrow();
+  });
 });
 
 describe("renderPng", () => {
@@ -29,5 +33,13 @@ describe("renderPng", () => {
     expect(buf[1]).toBe(0x50);
     expect(buf[2]).toBe(0x4e);
     expect(buf[3]).toBe(0x47);
+  });
+
+  it("throws for empty input", async () => {
+    await expect(renderPng("")).rejects.toThrow();
+  });
+
+  it("throws for whitespace-only input", async () => {
+    await expect(renderPng("   ")).rejects.toThrow();
   });
 });
