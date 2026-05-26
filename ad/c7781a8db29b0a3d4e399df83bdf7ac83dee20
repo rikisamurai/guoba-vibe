@@ -1,0 +1,27 @@
+apps/qr-codes/src/app/(admin)/admin/page.tsx
+  s_ab777ee29d6597::t_c43e4c132b8aa5 1-67
+apps/qr-codes/src/components/sidebar.tsx
+  s_ab777ee29d6597::t_3ba9f962522234 1-59
+apps/qr-codes/src/components/search-bar.tsx
+  s_ab777ee29d6597::t_9fd1f24f18a5b0 1-40
+apps/qr-codes/src/app/(admin)/layout.tsx
+  s_ab777ee29d6597::t_7c69b0f821f913 1-24
+apps/qr-codes/src/components/qr-card.tsx
+  s_ab777ee29d6597::t_c105899b638fdd 1-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "adc7781a8db29b0a3d4e399df83bdf7ac83dee20",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
