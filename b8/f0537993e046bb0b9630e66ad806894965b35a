@@ -1,0 +1,27 @@
+apps/qr-codes/src/auth/client.ts
+  s_ab777ee29d6597::t_2a0cee22c3ff1e 1-8
+apps/qr-codes/src/auth/admin.ts
+  s_ab777ee29d6597::t_8f9e80b014a182 1-32
+apps/qr-codes/src/app/api/auth/[...all]/route.ts
+  s_ab777ee29d6597::t_b853f9b3dac1ac 1-4
+apps/qr-codes/package.json
+  s_ab777ee29d6597::t_cb2e3dca7926c6 17
+apps/qr-codes/src/auth/server.ts
+  s_ab777ee29d6597::t_4f32f948771a15 1-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "b8f0537993e046bb0b9630e66ad806894965b35a",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
