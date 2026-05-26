@@ -48,4 +48,21 @@ describe("parseUrl", () => {
     expect(r.isValid).toBe(true);
     expect(r.path).toBe("a.com/p");
   });
+
+  it("drops fragment when no query is present", () => {
+    const r = parseUrl("https://a.com/p#frag");
+    expect(r.path).toBe("a.com/p");
+    expect(r.query).toEqual({});
+  });
+
+  it("drops fragment for custom-scheme url", () => {
+    const r = parseUrl("xhsdiscover://rn/x#frag");
+    expect(r.path).toBe("rn/x");
+  });
+
+  it("drops fragment when query is also present", () => {
+    const r = parseUrl("https://a.com/p?x=1#frag");
+    expect(r.path).toBe("a.com/p");
+    expect(r.query).toEqual({ x: "1" });
+  });
 });
