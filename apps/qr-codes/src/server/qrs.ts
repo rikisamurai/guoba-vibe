@@ -22,6 +22,7 @@ const inputSchema = z.object({
 export async function createQr(input: z.infer<typeof inputSchema>) {
   await requireAdmin();
   const data = inputSchema.parse(input);
+  const collectionIds = Array.from(new Set(data.collectionIds));
 
   const id = await db.transaction(async (tx) => {
     const [row] = await tx
@@ -35,19 +36,20 @@ export async function createQr(input: z.infer<typeof inputSchema>) {
 
     await tx
       .insert(qrCollections)
-      .values(data.collectionIds.map((cid) => ({ qrId: row.id, collectionId: cid })));
+      .values(collectionIds.map((cid) => ({ qrId: row.id, collectionId: cid })));
 
     return row.id;
   });
 
   revalidatePath("/admin");
-  for (const cid of data.collectionIds) revalidatePath(`/c/${cid}`);
+  for (const cid of collectionIds) revalidatePath(`/c/${cid}`);
   redirect(`/q/${id}`);
 }
 
 export async function updateQr(id: string, input: z.infer<typeof inputSchema>) {
   await requireAdmin();
   const data = inputSchema.parse(input);
+  const collectionIds = Array.from(new Set(data.collectionIds));
 
   // Get old collection ids so we can revalidate them too (in case the QR is moved).
   const oldLinks = await db
@@ -68,14 +70,14 @@ export async function updateQr(id: string, input: z.infer<typeof inputSchema>) {
     await tx.delete(qrCollections).where(eq(qrCollections.qrId, id));
     await tx
       .insert(qrCollections)
-      .values(data.collectionIds.map((cid) => ({ qrId: id, collectionId: cid })));
+      .values(collectionIds.map((cid) => ({ qrId: id, collectionId: cid })));
   });
 
   revalidatePath("/admin");
   revalidatePath(`/q/${id}`);
   const allCollections = new Set([
     ...oldLinks.map((l) => l.collectionId),
-    ...data.collectionIds,
+    ...collectionIds,
   ]);
   for (const cid of allCollections) revalidatePath(`/c/${cid}`);
   redirect(`/q/${id}`);
