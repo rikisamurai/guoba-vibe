@@ -8,6 +8,7 @@ peerDependencyRules:
 
 allowBuilds:
   esbuild: true
+  msgpackr-extract: true
   msw: false
   sharp: false
   unrs-resolver: false

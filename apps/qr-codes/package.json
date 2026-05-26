@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "db:generate": "dotenv -e .env.local -- drizzle-kit generate",
     "db:push": "dotenv -e .env.local -- drizzle-kit push",
-    "db:studio": "dotenv -e .env.local -- drizzle-kit studio"
+    "db:studio": "dotenv -e .env.local -- drizzle-kit studio",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
     "better-auth": "^1.6.11",
