@@ -1,0 +1,18 @@
+{
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash",
+      "WebFetch",
+      "Skill"
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "claude-hud@claude-hud": true,
+    "context7@claude-plugins-official": true
+  }
+}
