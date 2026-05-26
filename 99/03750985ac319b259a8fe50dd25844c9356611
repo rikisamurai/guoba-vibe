@@ -1,0 +1,67 @@
+apps/qr-codes/src/app/layout.tsx
+  s_ab777ee29d6597::t_b8fba19f47c690 1-33
+apps/qr-codes/src/app/page.tsx
+  s_ab777ee29d6597::t_b8fba19f47c690 1-65
+.npmrc
+  s_ab777ee29d6597::t_5d7a40ee7f2e4f 1-2
+.gitignore
+  s_ab777ee29d6597::t_0356d35252ee8c 60-70
+apps/qr-codes/AGENTS.md
+  s_ab777ee29d6597::t_b8fba19f47c690 1-5
+pnpm-workspace.yaml
+  s_ab777ee29d6597::t_960483c24bcf81 4-7
+  s_ab777ee29d6597::t_5ff0d97176ca6a 1-3
+apps/qr-codes/tsconfig.json
+  s_ab777ee29d6597::t_b8fba19f47c690 1-34
+apps/qr-codes/public/window.svg
+  s_ab777ee29d6597::t_b8fba19f47c690 1
+apps/qr-codes/.gitignore
+  s_ab777ee29d6597::t_b8fba19f47c690 1-41
+package.json
+  s_ab777ee29d6597::t_5102ce0030eb5e 1-16
+apps/qr-codes/public/file.svg
+  s_ab777ee29d6597::t_b8fba19f47c690 1
+apps/qr-codes/postcss.config.mjs
+  s_ab777ee29d6597::t_b8fba19f47c690 1-7
+docs/superpowers/plans/2026-05-26-qr-codes-app.md
+  s_ab777ee29d6597::t_27bc3045115c7a 1444
+  s_ab777ee29d6597::t_18d93fb3841786 1-1294,1296-1298,1301,1303-1307,1311-1323,1325-1333,1335-1443,1445-2283,2291-2428
+  s_ab777ee29d6597::t_15b6e47b2a5d53 2284-2290
+  s_ab777ee29d6597::t_f4c160e0dd0ba3 1295,1299-1300,1302,1308-1310,1324,1334
+apps/qr-codes/CLAUDE.md
+  s_ab777ee29d6597::t_b8fba19f47c690 1
+.nvmrc
+  s_ab777ee29d6597::t_452991e3e6d825 1
+apps/qr-codes/eslint.config.mjs
+  s_ab777ee29d6597::t_b8fba19f47c690 1-18
+apps/qr-codes/package.json
+  s_ab777ee29d6597::t_b8fba19f47c690 1-26
+apps/qr-codes/public/globe.svg
+  s_ab777ee29d6597::t_b8fba19f47c690 1
+apps/qr-codes/public/next.svg
+  s_ab777ee29d6597::t_b8fba19f47c690 1
+apps/qr-codes/public/vercel.svg
+  s_ab777ee29d6597::t_b8fba19f47c690 1
+apps/qr-codes/next.config.ts
+  s_ab777ee29d6597::t_b8fba19f47c690 1-7
+apps/qr-codes/README.md
+  s_ab777ee29d6597::t_b8fba19f47c690 1-36
+apps/qr-codes/src/app/globals.css
+  s_ab777ee29d6597::t_b8fba19f47c690 1-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "9903750985ac319b259a8fe50dd25844c9356611",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
