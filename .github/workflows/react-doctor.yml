@@ -19,3 +19,4 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           diff: main
+          directory: apps/qr-codes
