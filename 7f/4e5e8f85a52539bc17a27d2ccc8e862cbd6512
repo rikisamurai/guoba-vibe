@@ -1,0 +1,30 @@
+apps/qr-codes/.env.example
+  s_ab777ee29d6597::t_e9a7d303c35493 1-7
+apps/qr-codes/tests/smoke.test.ts
+  s_ab777ee29d6597::t_3d3ad5916ce097 1-7
+apps/qr-codes/package.json
+  s_ab777ee29d6597::t_aa08e22d344740 9-11
+  s_ab777ee29d6597::t_847bf0a2ce9f71 25-26,33,37-38
+apps/qr-codes/src/env.ts
+  s_ab777ee29d6597::t_698114d23e5dc2 1-14
+apps/qr-codes/vitest.config.ts
+  s_ab777ee29d6597::t_9590a459ed9bcf 1-12
+apps/qr-codes/.gitignore
+  s_ab777ee29d6597::t_074a51aaa18271 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "7f4e5e8f85a52539bc17a27d2ccc8e862cbd6512",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
