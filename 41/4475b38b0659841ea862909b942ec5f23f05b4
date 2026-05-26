@@ -1,0 +1,40 @@
+apps/qr-codes/package.json
+  s_55632625bf3f42::t_41b3a59bb3bb18 14-15
+pnpm-workspace.yaml
+  s_55632625bf3f42::t_41b3a59bb3bb18 11
+apps/qr-codes/.agents/skills/react-doctor/SKILL.md
+  s_3c2083715ad314::t_2c72f70365fb6d 1-46
+apps/qr-codes/.claude/skills/react-doctor/SKILL.md
+  s_3c2083715ad314::t_2c72f70365fb6d 1-46
+package.json
+  s_55632625bf3f42::t_41b3a59bb3bb18 15-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "414475b38b0659841ea862909b942ec5f23f05b4",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_3c2083715ad314": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e6582-439a-7f12-8633-360a2dd2e820",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    },
+    "s_55632625bf3f42": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1e7e08a2-adca-42a9-a56f-cac2fb045094",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
