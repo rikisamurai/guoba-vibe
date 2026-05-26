@@ -1,13 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const sessionCookie = getSessionCookie(req);
   if (!sessionCookie) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/login";
-    url.search = "";
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
   return NextResponse.next();
 }
