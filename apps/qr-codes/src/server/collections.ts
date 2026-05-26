@@ -44,5 +44,6 @@ export async function deleteCollection(id: string) {
   await requireAdmin();
   await db.delete(collections).where(eq(collections.id, id));
   revalidatePath("/admin");
+  revalidatePath(`/c/${id}`);
   redirect("/admin");
 }
