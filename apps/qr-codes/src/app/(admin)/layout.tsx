@@ -1,7 +1,5 @@
-import { asc } from "drizzle-orm";
 import { requireAdmin } from "@/auth/admin";
-import { db } from "@/db/client";
-import { collections } from "@/db/schema";
+import { listCollections } from "@/data/collections";
 import { Sidebar } from "@/components/sidebar";
 
 export default async function AdminLayout({
@@ -10,10 +8,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   await requireAdmin();
-  const cols = await db
-    .select({ id: collections.id, title: collections.title })
-    .from(collections)
-    .orderBy(asc(collections.title));
+  const cols = await listCollections();
 
   return (
     <div className="min-h-screen flex">

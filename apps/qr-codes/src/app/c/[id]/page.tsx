@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { desc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { db } from "@/db/client";
-import { collections, qrs, qrCollections } from "@/db/schema";
+import { getCollectionById } from "@/data/collections";
+import { listQrCards } from "@/data/qrs";
 import { QrCard } from "@/components/qr-card";
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  // Render collection pages on-demand and cache them. revalidatePath in server
+  // actions invalidates the cache when membership or titles change.
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -14,8 +17,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const rows = await db.select().from(collections).where(eq(collections.id, id)).limit(1);
-  const row = rows[0];
+  const row = await getCollectionById(id);
   return {
     title: row?.title,
     description: row?.description ?? undefined,
@@ -29,20 +31,10 @@ export default async function CollectionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const collectionRows = await db
-    .select()
-    .from(collections)
-    .where(eq(collections.id, id))
-    .limit(1);
-  if (collectionRows.length === 0) notFound();
-  const collection = collectionRows[0];
+  const collection = await getCollectionById(id);
+  if (!collection) notFound();
 
-  const rows = await db
-    .select({ id: qrs.id, title: qrs.title, url: qrs.url })
-    .from(qrs)
-    .innerJoin(qrCollections, eq(qrCollections.qrId, qrs.id))
-    .where(eq(qrCollections.collectionId, id))
-    .orderBy(desc(qrs.createdAt));
+  const rows = await listQrCards({ collectionId: id });
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 space-y-6">

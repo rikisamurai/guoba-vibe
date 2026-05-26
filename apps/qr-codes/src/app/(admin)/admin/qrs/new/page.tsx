@@ -1,6 +1,4 @@
-import { asc } from "drizzle-orm";
-import { db } from "@/db/client";
-import { collections } from "@/db/schema";
+import { listCollections } from "@/data/collections";
 import { QrForm } from "@/components/qr-form";
 import { createQr } from "@/server/qrs";
 
@@ -10,10 +8,7 @@ export default async function NewQrPage({
   searchParams: Promise<{ c?: string }>;
 }) {
   const { c } = await searchParams;
-  const cols = await db
-    .select({ id: collections.id, title: collections.title })
-    .from(collections)
-    .orderBy(asc(collections.title));
+  const cols = await listCollections();
 
   async function handle(input: {
     title: string;

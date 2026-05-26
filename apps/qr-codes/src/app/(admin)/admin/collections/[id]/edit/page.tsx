@@ -1,7 +1,5 @@
-import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { db } from "@/db/client";
-import { collections } from "@/db/schema";
+import { getCollectionById } from "@/data/collections";
 import { CollectionForm } from "@/components/collection-form";
 import { DeleteButton } from "@/components/delete-button";
 import { updateCollection, deleteCollection } from "@/server/collections";
@@ -12,9 +10,8 @@ export default async function EditCollectionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const row = await db.select().from(collections).where(eq(collections.id, id)).limit(1);
-  if (row.length === 0) notFound();
-  const collection = row[0];
+  const collection = await getCollectionById(id);
+  if (!collection) notFound();
 
   async function update(input: { title: string; description: string | null }) {
     "use server";

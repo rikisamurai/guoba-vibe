@@ -1,7 +1,5 @@
-import { eq } from "drizzle-orm";
 import { NextResponse, type NextRequest } from "next/server";
-import { db } from "@/db/client";
-import { qrs } from "@/db/schema";
+import { getQrById } from "@/data/qrs";
 import { renderPng, renderSvg } from "@/lib/qr";
 
 export const dynamic = "force-dynamic";
@@ -11,9 +9,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const rows = await db.select().from(qrs).where(eq(qrs.id, id)).limit(1);
-  if (rows.length === 0) return new NextResponse("Not found", { status: 404 });
-  const row = rows[0];
+  const row = await getQrById(id);
+  if (!row) return new NextResponse("Not found", { status: 404 });
 
   const url = new URL(req.url);
   const format = (url.searchParams.get("format") ?? "png").toLowerCase();

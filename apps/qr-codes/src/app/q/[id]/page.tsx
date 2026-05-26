@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { db } from "@/db/client";
-import { qrs, qrCollections, collections } from "@/db/schema";
+import { getQrById, getQrCollections } from "@/data/qrs";
 import { renderSvg } from "@/lib/qr";
 import { UrlPreview } from "@/components/url-preview";
 import { CopyButton } from "@/components/copy-button";
@@ -20,7 +18,12 @@ function isSafeOpenScheme(url: string): boolean {
   return !SCHEME_BLOCKLIST.has(scheme);
 }
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  // Render QR pages on-demand and cache them. revalidatePath in server actions
+  // (see lib/revalidate.ts) invalidates the cache when a QR or its collection
+  // titles change.
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -28,8 +31,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const rows = await db.select().from(qrs).where(eq(qrs.id, id)).limit(1);
-  const row = rows[0];
+  const row = await getQrById(id);
   return {
     title: row?.title,
     description: row?.description ?? row?.url ?? undefined,
@@ -43,16 +45,10 @@ export default async function QrDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const rows = await db.select().from(qrs).where(eq(qrs.id, id)).limit(1);
-  if (rows.length === 0) notFound();
-  const row = rows[0];
+  const row = await getQrById(id);
+  if (!row) notFound();
 
-  const cols = await db
-    .select({ id: collections.id, title: collections.title })
-    .from(qrCollections)
-    .innerJoin(collections, eq(qrCollections.collectionId, collections.id))
-    .where(eq(qrCollections.qrId, id));
-
+  const cols = await getQrCollections(id);
   const svg = await renderSvg(row.url, { width: 480, margin: 2 });
 
   return (

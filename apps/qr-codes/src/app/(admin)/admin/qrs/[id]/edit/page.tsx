@@ -1,7 +1,6 @@
-import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { db } from "@/db/client";
-import { qrs, qrCollections, collections } from "@/db/schema";
+import { getQrById, getQrCollections } from "@/data/qrs";
+import { listCollections } from "@/data/collections";
 import { QrForm } from "@/components/qr-form";
 import { DeleteButton } from "@/components/delete-button";
 import { updateQr, deleteQr } from "@/server/qrs";
@@ -12,19 +11,13 @@ export default async function EditQrPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const row = await db.select().from(qrs).where(eq(qrs.id, id)).limit(1);
-  if (row.length === 0) notFound();
-  const qr = row[0];
+  const qr = await getQrById(id);
+  if (!qr) notFound();
 
-  const links = await db
-    .select({ collectionId: qrCollections.collectionId })
-    .from(qrCollections)
-    .where(eq(qrCollections.qrId, id));
-
-  const cols = await db
-    .select({ id: collections.id, title: collections.title })
-    .from(collections)
-    .orderBy(asc(collections.title));
+  const [links, cols] = await Promise.all([
+    getQrCollections(id),
+    listCollections(),
+  ]);
 
   async function update(input: {
     title: string;
@@ -49,7 +42,7 @@ export default async function EditQrPage({
           title: qr.title,
           description: qr.description,
           url: qr.url,
-          collectionIds: links.map((l) => l.collectionId),
+          collectionIds: links.map((l) => l.id),
         }}
         onSubmit={update}
         submitLabel="Save"

@@ -1,6 +1,5 @@
-import { and, desc, eq, ilike, or, inArray } from "drizzle-orm";
-import { db } from "@/db/client";
-import { qrs, qrCollections, collections } from "@/db/schema";
+import { getCollectionById } from "@/data/collections";
+import { listQrCards } from "@/data/qrs";
 import { SearchBar } from "@/components/search-bar";
 import { QrCard } from "@/components/qr-card";
 
@@ -9,40 +8,8 @@ type SearchParams = Promise<{ c?: string; q?: string }>;
 export default async function AdminHome({ searchParams }: { searchParams: SearchParams }) {
   const { c, q } = await searchParams;
 
-  const filters = [];
-  if (q) {
-    const needle = `%${q}%`;
-    filters.push(
-      or(
-        ilike(qrs.title, needle),
-        ilike(qrs.url, needle),
-        ilike(qrs.description, needle),
-      )!,
-    );
-  }
-  if (c) {
-    const inCollection = db
-      .select({ id: qrCollections.qrId })
-      .from(qrCollections)
-      .where(eq(qrCollections.collectionId, c));
-    filters.push(inArray(qrs.id, inCollection));
-  }
-
-  const rows = await db
-    .select({ id: qrs.id, title: qrs.title, url: qrs.url })
-    .from(qrs)
-    .where(filters.length ? and(...filters) : undefined)
-    .orderBy(desc(qrs.createdAt));
-
-  const collection = c
-    ? (
-        await db
-          .select()
-          .from(collections)
-          .where(eq(collections.id, c))
-          .limit(1)
-      )[0]
-    : null;
+  const rows = await listQrCards({ search: q, collectionId: c });
+  const collection = c ? await getCollectionById(c) : null;
 
   return (
     <div className="flex flex-col gap-4">

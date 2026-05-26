@@ -1,7 +1,5 @@
 import { ImageResponse } from "next/og";
-import { eq } from "drizzle-orm";
-import { db } from "@/db/client";
-import { qrs } from "@/db/schema";
+import { getQrById } from "@/data/qrs";
 import { renderPng } from "@/lib/qr";
 
 export const runtime = "nodejs";
@@ -14,9 +12,9 @@ export default async function OgImage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const rows = await db.select().from(qrs).where(eq(qrs.id, id)).limit(1);
+  const row = await getQrById(id);
 
-  if (rows.length === 0) {
+  if (!row) {
     return new ImageResponse(
       (
         <div
@@ -37,7 +35,6 @@ export default async function OgImage({
     );
   }
 
-  const row = rows[0];
   const png = await renderPng(row.url, { width: 480, margin: 1 });
   const buffer = Buffer.from(png);
   const dataUrl = `data:image/png;base64,${buffer.toString("base64")}`;
