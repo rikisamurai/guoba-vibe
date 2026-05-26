@@ -1,0 +1,20 @@
+apps/qr-codes/src/server/qrs.ts
+  s_ab777ee29d6597::t_3d29dd8928c345 52,73,80
+  s_ab777ee29d6597::t_22bf3c875900f4 25,39,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "7df597abe4a5cbb6a009452c92671de4025701f6",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
