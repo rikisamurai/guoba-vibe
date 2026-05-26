@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { db } from "@/db/client";
 import { collections } from "@/db/schema";
 import { CollectionForm } from "@/components/collection-form";
+import { DeleteButton } from "@/components/delete-button";
 import { updateCollection, deleteCollection } from "@/server/collections";
-import { Button } from "@/components/ui/button";
 
 export default async function EditCollectionPage({
   params,
@@ -33,11 +33,11 @@ export default async function EditCollectionPage({
         onSubmit={update}
         submitLabel="Save"
       />
-      <form action={remove}>
-        <Button type="submit" variant="destructive">
-          Delete collection
-        </Button>
-      </form>
+      <DeleteButton
+        action={remove}
+        label="Delete collection"
+        confirmMessage={`Delete collection "${collection.title}"? This will remove the collection but keep the QRs (they will become unaffiliated and may violate the ≥1 collection rule on edit).`}
+      />
     </div>
   );
 }
