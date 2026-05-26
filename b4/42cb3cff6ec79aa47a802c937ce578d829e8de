@@ -1,0 +1,22 @@
+apps/qr-codes/src/components/qr-form.tsx
+  s_ab777ee29d6597::t_a55030857b4557 60
+  s_ab777ee29d6597::t_e1d86bc1604b33 13
+apps/qr-codes/src/app/(admin)/admin/qrs/new/page.tsx
+  s_ab777ee29d6597::t_8416b2b4e4151e 28-32,36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "b442cb3cff6ec79aa47a802c937ce578d829e8de",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
