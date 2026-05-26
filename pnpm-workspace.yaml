@@ -2,6 +2,16 @@ packages:
   - "apps/*"
   - "packages/*"
 
+peerDependencyRules:
+  allowedVersions:
+    eslint: "10"
+
+allowBuilds:
+  esbuild: true
+  msw: false
+  sharp: false
+  unrs-resolver: false
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver

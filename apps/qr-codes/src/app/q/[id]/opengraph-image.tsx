@@ -52,7 +52,6 @@ export default async function OgImage({
           alignItems: "center",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={dataUrl} width={480} height={480} alt="QR" />
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
           <div style={{ fontSize: 56, fontWeight: 700, color: "#0a0a0a" }}>
