@@ -1,0 +1,19 @@
+.github/workflows/react-doctor.yml
+  s_1f89cd16eba7bf::t_307f518dcaf53a 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a09ded0ccf5ba997164cc53c1fa6fdcb3dc06925",
+  "prompts": {},
+  "sessions": {
+    "s_1f89cd16eba7bf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1b386edc-e36a-4031-a0a8-453e4d7280c2",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
