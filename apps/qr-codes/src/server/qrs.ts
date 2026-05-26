@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -8,6 +7,7 @@ import { db } from "@/db/client";
 import { qrs, qrCollections } from "@/db/schema";
 import { requireAdmin } from "@/auth/admin";
 import { parseUrl } from "@/lib/url-parse";
+import { revalidateQr } from "@/lib/revalidate";
 
 const inputSchema = z.object({
   title: z.string().min(1, "title is required").max(200),
@@ -41,8 +41,7 @@ export async function createQr(input: z.infer<typeof inputSchema>) {
     return row.id;
   });
 
-  revalidatePath("/admin");
-  for (const cid of collectionIds) revalidatePath(`/c/${cid}`);
+  revalidateQr(id, collectionIds);
   redirect(`/q/${id}`);
 }
 
@@ -73,13 +72,11 @@ export async function updateQr(id: string, input: z.infer<typeof inputSchema>) {
       .values(collectionIds.map((cid) => ({ qrId: id, collectionId: cid })));
   });
 
-  revalidatePath("/admin");
-  revalidatePath(`/q/${id}`);
-  const allCollections = new Set([
+  const allCollections = [
     ...oldLinks.map((l) => l.collectionId),
     ...collectionIds,
-  ]);
-  for (const cid of allCollections) revalidatePath(`/c/${cid}`);
+  ];
+  revalidateQr(id, allCollections);
   redirect(`/q/${id}`);
 }
 
@@ -93,8 +90,9 @@ export async function deleteQr(id: string) {
 
   await db.delete(qrs).where(eq(qrs.id, id));
 
-  revalidatePath("/admin");
-  revalidatePath(`/q/${id}`);
-  for (const link of oldLinks) revalidatePath(`/c/${link.collectionId}`);
+  revalidateQr(
+    id,
+    oldLinks.map((l) => l.collectionId),
+  );
   redirect("/admin");
 }
