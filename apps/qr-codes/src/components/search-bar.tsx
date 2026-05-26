@@ -12,14 +12,15 @@ function SearchBarInner() {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      const next = new URLSearchParams(params.toString());
-      if (value) next.set("q", value);
-      else next.delete("q");
-      router.replace(`${pathname}?${next.toString()}`);
+      // Read current URL at fire-time, not the snapshot captured at render.
+      const current = new URLSearchParams(window.location.search);
+      if (value) current.set("q", value);
+      else current.delete("q");
+      const next = current.toString();
+      router.replace(next ? `${pathname}?${next}` : pathname);
     }, 250);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [value, pathname, router]);
 
   return (
     <Input
