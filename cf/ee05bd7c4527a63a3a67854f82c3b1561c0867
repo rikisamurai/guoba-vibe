@@ -1,0 +1,30 @@
+apps/qr-codes/package.json
+  s_3c2083715ad314::t_17cc1b55c8db5b 38
+  s_3c2083715ad314::t_072f9c6778f787 40,47,49
+.nvmrc
+  s_3c2083715ad314::t_072f9c6778f787 1
+apps/qr-codes/eslint.config.ts
+  s_3c2083715ad314::t_b15e3d71181034 1,7-8
+package.json
+  s_3c2083715ad314::t_072f9c6778f787 5,14
+pnpm-workspace.yaml
+  s_3c2083715ad314::t_8c2e4684c82635 5-8
+  s_3c2083715ad314::t_1552d839369565 9,14
+  s_3c2083715ad314::t_7eb57224cde634 10-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "cfee05bd7c4527a63a3a67854f82c3b1561c0867",
+  "prompts": {},
+  "sessions": {
+    "s_3c2083715ad314": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e6582-439a-7f12-8633-360a2dd2e820",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
