@@ -1,0 +1,16 @@
+{
+  "name": "guoba-vibe",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "pnpm --filter qr-codes dev",
+    "build": "pnpm --filter qr-codes build",
+    "start": "pnpm --filter qr-codes start",
+    "lint": "pnpm --filter qr-codes lint",
+    "test": "pnpm --filter qr-codes test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

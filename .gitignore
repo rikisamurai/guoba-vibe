@@ -57,3 +57,14 @@ tmp/
 temp/
 *.tmp
 *.bak
+
+# Node / Next.js / monorepo
+node_modules/
+.next/
+.turbo/
+.vercel/
+.env
+.env.local
+.env.*.local
+*.tsbuildinfo
+coverage/
