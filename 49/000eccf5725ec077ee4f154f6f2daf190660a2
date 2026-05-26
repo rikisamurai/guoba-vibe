@@ -1,0 +1,26 @@
+.gitignore
+  s_136e01204ef3f7::t_483f982a644091 1-59
+.claude/settings.json
+  h_64bbaa61ee70b1 2-12,14-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "49000eccf5725ec077ee4f154f6f2daf190660a2",
+  "prompts": {},
+  "humans": {
+    "h_64bbaa61ee70b1": {
+      "author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  },
+  "sessions": {
+    "s_136e01204ef3f7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "13c03eac-ae2a-46a2-a68a-45eaae110fc9",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
