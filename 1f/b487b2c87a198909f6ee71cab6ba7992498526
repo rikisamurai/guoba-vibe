@@ -1,0 +1,23 @@
+apps/qr-codes/src/components/copy-button.tsx
+  s_ab777ee29d6597::t_82745141de2fbb 1-27
+apps/qr-codes/src/components/download-buttons.tsx
+  s_ab777ee29d6597::t_6f9db6a8946313 1-19
+apps/qr-codes/src/app/q/[id]/page.tsx
+  s_ab777ee29d6597::t_1397cfbed52740 1-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "1fb487b2c87a198909f6ee71cab6ba7992498526",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
