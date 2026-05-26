@@ -57,6 +57,12 @@ export default async function QrDetailPage({
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 space-y-8">
+      <Link
+        href="/"
+        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+      >
+        ← QR Codes
+      </Link>
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold">{row.title}</h1>
         {row.description && <p className="text-muted-foreground">{row.description}</p>}
