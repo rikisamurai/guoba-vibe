@@ -16,7 +16,7 @@ export async function generateMetadata({
   const rows = await db.select().from(collections).where(eq(collections.id, id)).limit(1);
   const row = rows[0];
   return {
-    title: row ? `${row.title} — QR Codes` : "QR Codes",
+    title: row?.title,
     description: row?.description ?? undefined,
     robots: { index: false, follow: false },
   };
