@@ -1,0 +1,20 @@
+apps/qr-codes/src/app/api/qr/[id]/route.ts
+  s_ab777ee29d6597::t_0779818b37b39c 1-36,38-47
+  s_ab777ee29d6597::t_5cbe806dc52f23 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a64d9d1c53e10b12e13dd1fa0091c1a8fe1a10d8",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
