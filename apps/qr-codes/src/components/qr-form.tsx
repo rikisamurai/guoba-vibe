@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { UrlEditor } from "@/components/url-editor";
+import { parseUrl } from "@/lib/url-parse";
 
 export type QrInput = {
   title: string;
@@ -56,6 +57,7 @@ export function QrForm({
 
         if (!title) return toast.error("Title is required");
         if (!url) return toast.error("URL is required");
+        if (!parseUrl(url).isValid) return toast.error("Not a valid URL");
         if (collectionIds.length === 0)
           return toast.error("Select at least one collection");
 
