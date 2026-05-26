@@ -1,0 +1,21 @@
+apps/qr-codes/tests/url-parse.test.ts
+  s_ab777ee29d6597::t_16fff2a2e7b555 1-51
+apps/qr-codes/src/lib/url-parse.ts
+  s_ab777ee29d6597::t_d1019217880839 1-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "3eb8d76c21723c3178ced659123c6624d1b4dc10",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
