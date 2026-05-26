@@ -10,6 +10,11 @@ export default async function AdminHome({ searchParams }: { searchParams: Search
 
   const rows = await listQrCards({ search: q, collectionId: c });
   const collection = c ? await getCollectionById(c) : null;
+  const adminSearch = new URLSearchParams();
+  if (c) adminSearch.set("c", c);
+  if (q) adminSearch.set("q", q);
+  const adminQuery = adminSearch.toString();
+  const adminHref = adminQuery ? `/admin?${adminQuery}` : "/admin";
 
   return (
     <div className="flex flex-col gap-4">
@@ -25,7 +30,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Search
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
           {rows.map((r) => (
-            <QrCard key={r.id} id={r.id} title={r.title} url={r.url} />
+            <QrCard key={r.id} id={r.id} title={r.title} url={r.url} returnHref={adminHref} />
           ))}
         </div>
       )}
