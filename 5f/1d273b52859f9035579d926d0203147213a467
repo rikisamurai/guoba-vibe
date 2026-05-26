@@ -1,0 +1,31 @@
+apps/qr-codes/package.json
+  s_ab777ee29d6597::t_a586bc69264735 19,21,24
+  s_ab777ee29d6597::t_5525ad9a349a4b 43
+  s_ab777ee29d6597::t_02bd04b6bfb530 11-14
+apps/qr-codes/src/lib/nanoid.ts
+  s_ab777ee29d6597::t_3faa27550f41ca 1-6
+apps/qr-codes/src/db/schema.ts
+  s_ab777ee29d6597::t_0cc058162443d0 1-80
+apps/qr-codes/drizzle.config.ts
+  s_ab777ee29d6597::t_71b37632c23e39 1-10
+apps/qr-codes/src/db/client.ts
+  s_ab777ee29d6597::t_09236432f8543d 1-7
+apps/qr-codes/drizzle/0000_eager_guardian.sql
+  s_ab777ee29d6597::t_21a282c13b2bdd 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "5f1d273b52859f9035579d926d0203147213a467",
+  "prompts": {},
+  "sessions": {
+    "s_ab777ee29d6597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6b7f878-66fe-42c5-8ef8-4eacb0dfa21e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <shanyulong@xiaohongshu.com>"
+    }
+  }
+}
