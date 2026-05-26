@@ -1,0 +1,31 @@
+apps/qr-codes/tests/qr-detail-navigation.test.ts
+  s_3c6f08df6096e0::t_8dbd6057644cd9 24-38
+  s_3c6f08df6096e0::t_5e20a22a87c46b 1-5,7-11,21,23,39
+  s_3c6f08df6096e0::t_6497f52490d104 6,12-20,22
+apps/qr-codes/src/app/q/[id]/page.tsx
+  s_3c6f08df6096e0::t_93105dd8dafa67 9,57-58,62
+apps/qr-codes/src/app/(admin)/admin/page.tsx
+  s_3c6f08df6096e0::t_93105dd8dafa67 13-17,33
+apps/qr-codes/src/components/qr-card.tsx
+  s_3c6f08df6096e0::t_93105dd8dafa67 2,8,13,17-18,20,29
+apps/qr-codes/src/components/qr-card-link.tsx
+  s_3c6f08df6096e0::t_93105dd8dafa67 1-36
+apps/qr-codes/src/components/back-to-admin-link.tsx
+  s_3c6f08df6096e0::t_93105dd8dafa67 1-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "2c8dfb50b53f6093df06c151e090c0626cb7b3df",
+  "prompts": {},
+  "sessions": {
+    "s_3c6f08df6096e0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e6554-5e22-7660-a0dc-ee8631ad9d0e",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
