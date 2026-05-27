@@ -1,11 +1,21 @@
 "use client";
 
-import type { MouseEvent, ReactNode } from "react";
+import { useSyncExternalStore, type MouseEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function isModifiedClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+}
+
+const subscribe = () => () => {};
+
+function useEnteredFromAdmin(qrId: string) {
+  return useSyncExternalStore(
+    subscribe,
+    () => sessionStorage.getItem(`qr:return:${qrId}`)?.startsWith("/admin") ?? false,
+    () => false,
+  );
 }
 
 export function BackToAdminLink({
@@ -18,16 +28,14 @@ export function BackToAdminLink({
   children: ReactNode;
 }) {
   const router = useRouter();
+  const enteredFromAdmin = useEnteredFromAdmin(qrId);
+
+  if (!enteredFromAdmin) return null;
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     if (isModifiedClick(event)) return;
-
-    const key = `qr:return:${qrId}`;
-    const returnHref = sessionStorage.getItem(key);
-    if (!returnHref?.startsWith("/admin")) return;
-
+    sessionStorage.removeItem(`qr:return:${qrId}`);
     event.preventDefault();
-    sessionStorage.removeItem(key);
     router.back();
   }
 

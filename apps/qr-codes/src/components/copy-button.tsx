@@ -2,14 +2,31 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import type { VariantProps } from "class-variance-authority";
+import { Button, buttonVariants } from "@/components/ui/button";
 
-export function CopyButton({ value, label }: { value: string; label?: string }) {
+type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
+type ButtonSize = VariantProps<typeof buttonVariants>["size"];
+
+export function CopyButton({
+  value,
+  label,
+  variant = "outline",
+  size = "sm",
+  className,
+}: {
+  value: string;
+  label?: string;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
   return (
     <Button
-      variant="outline"
-      size="sm"
+      variant={variant}
+      size={size}
+      className={className}
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(value);
