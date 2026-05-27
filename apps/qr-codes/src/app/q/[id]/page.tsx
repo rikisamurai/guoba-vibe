@@ -7,6 +7,7 @@ import { UrlPreview } from "@/components/url-preview";
 import { CopyButton } from "@/components/copy-button";
 import { DownloadButtons } from "@/components/download-buttons";
 import { BackToAdminLink } from "@/components/back-to-admin-link";
+import { AdminEditButton } from "@/components/admin-edit-button";
 import { Button } from "@/components/ui/button";
 
 function isSafeOpenScheme(url: string): boolean {
@@ -86,16 +87,23 @@ export default async function QrDetailPage({
       <section className="space-y-3">
         <h2 className="text-sm font-medium text-muted-foreground">URL</h2>
         <code className="block break-all rounded-md bg-muted p-3 text-sm">{row.url}</code>
-        <div className="flex gap-2 flex-wrap">
-          <CopyButton value={row.url} label="Copy URL" />
+        <CopyButton
+          value={row.url}
+          label="Copy URL"
+          variant="default"
+          size="lg"
+          className="w-full"
+        />
+        <div className="flex gap-2 flex-wrap items-center">
           {isSafeOpenScheme(row.url) && (
-            <Button asChild size="sm">
+            <Button asChild size="sm" variant="outline">
               <a href={row.url} target="_blank" rel="noopener noreferrer">
                 Open link
               </a>
             </Button>
           )}
           <DownloadButtons id={row.id} title={row.title} />
+          <AdminEditButton qrId={row.id} className="ml-auto" />
         </div>
       </section>
 
