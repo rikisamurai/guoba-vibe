@@ -1,0 +1,23 @@
+apps/qr-vault/src/app/workspace-page.tsx
+  s_4809fb623e484b::t_4605ca71b612ad 260-320,327,333,335-336,339-347
+  s_4809fb623e484b::t_59cac02aad639b 38-45
+  s_4809fb623e484b::t_dd8e5ad962bac8 2-11,28-29
+  s_4809fb623e484b::t_c01c7e3df28d95 206
+  s_4809fb623e484b::t_a1068a9831df3c 54,56-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "e2252ce08ddd0613b6acd9cca2a6782d2b99ddf2",
+  "prompts": {},
+  "sessions": {
+    "s_4809fb623e484b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c0d968b2-dc3f-42ef-9c6a-95912c0b5c96",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
