@@ -27,20 +27,20 @@ export function BackToAdminLink({
   className?: string;
   children: ReactNode;
 }) {
-  const router = useRouter();
+  const { back } = useRouter();
   const enteredFromAdmin = useEnteredFromAdmin(qrId);
 
   if (!enteredFromAdmin) return null;
 
-  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+  function returnToAdmin(event: MouseEvent<HTMLAnchorElement>) {
     if (isModifiedClick(event)) return;
     sessionStorage.removeItem(`qr:return:${qrId}`);
     event.preventDefault();
-    router.back();
+    back();
   }
 
   return (
-    <Link href="/admin" className={className} onClick={handleClick}>
+    <Link href="/admin" className={className} onClick={returnToAdmin}>
       {children}
     </Link>
   );
