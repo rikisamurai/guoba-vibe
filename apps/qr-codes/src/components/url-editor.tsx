@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { parseUrl, buildUrl, type UrlParts } from "@/lib/url-parse";
 
@@ -35,8 +36,9 @@ export function UrlEditor({
   }
 
   function onRawChange(value: string) {
-    setRaw(value);
-    const parsed = parseUrl(value);
+    const sanitized = value.replace(/[\n\r\t]+/g, "");
+    setRaw(sanitized);
+    const parsed = parseUrl(sanitized);
     if (parsed.isValid) {
       setParts({
         scheme: parsed.scheme,
@@ -66,13 +68,14 @@ export function UrlEditor({
     <div className="space-y-3">
       <div className="space-y-1">
         <Label htmlFor={`${name}-raw`}>URL</Label>
-        <Input
+        <Textarea
           id={`${name}-raw`}
           value={raw}
           onChange={(e) => onRawChange(e.target.value)}
           placeholder="xhsdiscover://rn/wakanda/buyer-conversion?sku_id=1"
           required={required}
-          className="font-mono"
+          rows={1}
+          className="font-mono break-all min-h-9 py-1.5"
           aria-invalid={rawIsInvalid || undefined}
         />
         {rawIsInvalid && (
