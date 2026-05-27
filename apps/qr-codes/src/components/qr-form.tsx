@@ -19,21 +19,34 @@ export type QrInput = {
   collectionIds: string[];
 };
 
+export type CollectionOption = { id: string; title: string };
+
 export function QrForm({
   collections,
   initial,
   onSubmit,
+  onCreateCollection,
   submitLabel,
 }: {
-  collections: { id: string; title: string }[];
+  collections: CollectionOption[];
   initial?: { title: string; description: string | null; url: string; collectionIds: string[] };
   onSubmit: (input: QrInput) => Promise<void>;
+  onCreateCollection: (input: {
+    title: string;
+    description: string | null;
+  }) => Promise<CollectionOption>;
   submitLabel: string;
 }) {
   const [pending, start] = useTransition();
+  const [collectionsList, setCollectionsList] = useState<CollectionOption[]>(collections);
   const [selected, setSelected] = useState<Set<string>>(
     new Set(initial?.collectionIds ?? []),
   );
+
+  const [adding, setAdding] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+  const [creating, startCreating] = useTransition();
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -41,6 +54,31 @@ export function QrForm({
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
+    });
+  }
+
+  function resetNewCollection() {
+    setNewTitle("");
+    setNewDesc("");
+    setAdding(false);
+  }
+
+  function submitNewCollection() {
+    const title = newTitle.trim();
+    if (!title) {
+      toast.error("Collection title is required");
+      return;
+    }
+    const description = newDesc.trim() || null;
+    startCreating(async () => {
+      try {
+        const created = await onCreateCollection({ title, description });
+        setCollectionsList((prev) => [...prev, created]);
+        setSelected((prev) => new Set(prev).add(created.id));
+        resetNewCollection();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Failed to create collection");
+      }
     });
   }
 
@@ -87,13 +125,13 @@ export function QrForm({
       <UrlEditor name="url" defaultValue={initial?.url ?? ""} />
       <div>
         <Label>Collections</Label>
-        {collections.length === 0 ? (
+        {collectionsList.length === 0 && !adding ? (
           <p className="text-sm text-muted-foreground mt-2">
-            No collections yet — create one first in the sidebar.
+            No collections yet — create one below.
           </p>
         ) : (
           <div className="flex flex-wrap gap-2 mt-2">
-            {collections.map((c) => {
+            {collectionsList.map((c) => {
               const active = selected.has(c.id);
               return (
                 <button
@@ -111,6 +149,59 @@ export function QrForm({
               );
             })}
           </div>
+        )}
+
+        {adding ? (
+          <div className="mt-3 space-y-2 rounded-md border bg-muted/30 p-3">
+            <div>
+              <Label htmlFor="new-collection-title">New collection title</Label>
+              <Input
+                id="new-collection-title"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                placeholder="e.g. Travel"
+                autoFocus
+              />
+            </div>
+            <div>
+              <Label htmlFor="new-collection-description">Description (optional)</Label>
+              <Textarea
+                id="new-collection-description"
+                value={newDesc}
+                onChange={(e) => setNewDesc(e.target.value)}
+                rows={2}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={submitNewCollection}
+                disabled={creating}
+              >
+                {creating ? "Creating…" : "Create"}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={resetNewCollection}
+                disabled={creating}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="mt-3"
+            onClick={() => setAdding(true)}
+          >
+            + New collection
+          </Button>
         )}
       </div>
       <Button type="submit" disabled={pending}>
