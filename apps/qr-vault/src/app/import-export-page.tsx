@@ -4,7 +4,7 @@ import { useVault } from "@/app/use-vault";
 import { exportVaultJson, mergeVaultData, parseVaultData, replaceVaultData, type VaultData } from "@/lib/storage";
 
 export function ImportExportPage() {
-  const { data, updateVault, reloadVault } = useVault();
+  const { data, updateVault } = useVault();
   const [pendingData, setPendingData] = useState<VaultData | null>(null);
   const [fileName, setFileName] = useState("");
   const [message, setMessage] = useState("");
@@ -42,14 +42,12 @@ export function ImportExportPage() {
     if (!pendingData) return;
     updateVault((current) => mergeVaultData(current, pendingData));
     setMessage(`Merged ${fileName || "vault file"} into local data.`);
-    reloadVault();
   }
 
   function replaceImport() {
     if (!pendingData) return;
     updateVault((current) => replaceVaultData(current, pendingData));
     setMessage(`Replaced local data with ${fileName || "vault file"}.`);
-    reloadVault();
   }
 
   return (
@@ -73,7 +71,7 @@ export function ImportExportPage() {
           </div>
           <div>
             <strong>{data.collectionItems.length}</strong>
-            <span>links</span>
+            <span>assignments</span>
           </div>
         </div>
 

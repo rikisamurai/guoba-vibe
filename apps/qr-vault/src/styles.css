@@ -328,6 +328,12 @@ h2 {
   background: #f1f6ef;
 }
 
+.qr-row--selected {
+  border-color: #5a9e8f;
+  background: #edf5ef;
+  border-left-width: 3px;
+}
+
 .qr-row strong,
 .qr-row small {
   display: block;

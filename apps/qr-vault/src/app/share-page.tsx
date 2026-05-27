@@ -24,6 +24,7 @@ export function SharePage() {
     if (!parsed.isValid) return;
     const id = nanoid8();
     updateVault((current) => upsertQr(current, { id, title, description, url }));
+    sessionStorage.setItem("qr-vault:focus-title", "1");
     void navigate({ to: "/q/$qrId", params: { qrId: id } });
   }
 

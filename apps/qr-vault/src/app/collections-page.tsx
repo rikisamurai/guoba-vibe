@@ -77,7 +77,10 @@ export function CollectionsPage() {
 
       <section className="panel list-panel">
         <div className="section-heading">
-          <h1>{selectedCollection?.title ?? "All QR codes"}</h1>
+          <div>
+            {selectedCollection && <p className="eyebrow">QRs in collection</p>}
+            <h1>{selectedCollection?.title ?? "All QR codes"}</h1>
+          </div>
           <span className="status">{qrs.length}</span>
         </div>
         <div className="qr-list">

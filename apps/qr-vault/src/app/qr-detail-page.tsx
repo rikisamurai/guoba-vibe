@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Save, Share2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CollectionPicker } from "@/components/collection-picker";
 import { CopyButton } from "@/components/copy-button";
 import { ParsedUrlPanel } from "@/components/parsed-url-panel";
@@ -16,6 +16,12 @@ export function QrDetailPage() {
   const navigate = useNavigate();
   const location = useRouterState({ select: (state) => state.location });
   const search = location.search as { url?: string };
+  const titleRef = useRef<HTMLInputElement>(null);
+  const [autoFocusTitle] = useState(() => {
+    const flag = sessionStorage.getItem("qr-vault:focus-title") === "1";
+    if (flag) sessionStorage.removeItem("qr-vault:focus-title");
+    return flag;
+  });
   const isNew = location.pathname === "/new";
   const qrId = location.pathname.startsWith("/q/") ? decodeURIComponent(location.pathname.slice("/q/".length)) : "";
   const existingQr = data.qrs.find((qr) => qr.id === qrId);
@@ -37,6 +43,10 @@ export function QrDetailPage() {
     );
     setError("");
   }, [data.collectionItems, existingQr, search.url]);
+
+  useEffect(() => {
+    if (autoFocusTitle) titleRef.current?.focus();
+  }, [autoFocusTitle]);
 
   function saveQr() {
     if (!parsed.isValid) {
@@ -86,7 +96,12 @@ export function QrDetailPage() {
         <div className="form-grid">
           <label className="field">
             <span>Title</span>
-            <input value={title} onChange={(event) => setTitle(event.target.value)} />
+            <input
+              ref={titleRef}
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder={autoFocusTitle ? "给这个 QR 起个名字" : undefined}
+            />
           </label>
           <label className="field">
             <span>Description</span>

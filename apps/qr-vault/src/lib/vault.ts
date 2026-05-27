@@ -17,3 +17,8 @@ export function getQrsForCollection(data: VaultData, collectionId: string) {
   const qrIds = new Set(data.collectionItems.filter((item) => item.collectionId === collectionId).map((item) => item.qrId));
   return data.qrs.filter((qr) => qrIds.has(qr.id));
 }
+
+export function getUncategorizedQrs(data: VaultData) {
+  const assignedIds = new Set(data.collectionItems.map((item) => item.qrId));
+  return data.qrs.filter((qr) => !assignedIds.has(qr.id));
+}

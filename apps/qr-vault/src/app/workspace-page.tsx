@@ -5,7 +5,7 @@ import { ParsedUrlPanel } from "@/components/parsed-url-panel";
 import { QrPreview } from "@/components/qr-preview";
 import { useVault } from "@/app/use-vault";
 import { parseDeepLink } from "@/lib/url";
-import { searchQrs } from "@/lib/vault";
+import { getUncategorizedQrs, searchQrs } from "@/lib/vault";
 
 export function WorkspacePage() {
   const { data } = useVault();
@@ -13,8 +13,11 @@ export function WorkspacePage() {
   const [search, setSearch] = useState("");
   const [quickUrl, setQuickUrl] = useState("");
   const [selectedId, setSelectedId] = useState("");
-  const visibleQrs = searchQrs(data, search);
+  const [showUncategorized, setShowUncategorized] = useState(false);
+  const baseQrs = showUncategorized ? getUncategorizedQrs(data) : data.qrs;
+  const visibleQrs = searchQrs({ ...data, qrs: baseQrs }, search);
   const selectedQr = data.qrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0];
+  const uncategorizedCount = getUncategorizedQrs(data).length;
 
   function openNewQr() {
     void navigate({ to: "/new", search: { url: quickUrl } });
@@ -30,9 +33,22 @@ export function WorkspacePage() {
           </Link>
         </div>
         <div className="collection-list">
-          <Link to="/" className="collection-chip active">
+          <button
+            type="button"
+            className={`collection-chip${!showUncategorized ? " active" : ""}`}
+            onClick={() => setShowUncategorized(false)}
+          >
             All QR <span>{data.qrs.length}</span>
-          </Link>
+          </button>
+          {uncategorizedCount > 0 && (
+            <button
+              type="button"
+              className={`collection-chip${showUncategorized ? " active" : ""}`}
+              onClick={() => setShowUncategorized(true)}
+            >
+              Uncategorized <span>{uncategorizedCount}</span>
+            </button>
+          )}
           {data.collections.map((collection) => {
             const count = data.collectionItems.filter((item) => item.collectionId === collection.id).length;
             return (
@@ -82,7 +98,12 @@ export function WorkspacePage() {
               const parsed = parseDeepLink(qr.url);
               const collectionCount = data.collectionItems.filter((item) => item.qrId === qr.id).length;
               return (
-                <button className="qr-row" key={qr.id} type="button" onClick={() => setSelectedId(qr.id)}>
+                <button
+                  className={`qr-row${qr.id === selectedQr?.id ? " qr-row--selected" : ""}`}
+                  key={qr.id}
+                  type="button"
+                  onClick={() => setSelectedId(qr.id)}
+                >
                   <span>
                     <strong>{qr.title || parsed.path || qr.url}</strong>
                     <small>{parsed.path || qr.url}</small>
@@ -113,7 +134,18 @@ export function WorkspacePage() {
             <ParsedUrlPanel url={selectedQr.url} />
           </>
         ) : (
-          <div className="panel empty-state">No preview</div>
+          <div className="panel empty-state">
+            {search ? (
+              <p>没有匹配的 QR</p>
+            ) : (
+              <>
+                <p>暂无 QR</p>
+                <Link to="/new" search={{ url: "" }} className="primary-button">
+                  <Plus aria-hidden="true" /> 新建 QR
+                </Link>
+              </>
+            )}
+          </div>
         )}
       </aside>
     </div>
