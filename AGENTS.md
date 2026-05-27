@@ -63,3 +63,28 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+## Project tooling: agent-browser session persistence
+
+The admin UI (`/admin`) is gated by GitHub OAuth (`ADMIN_GITHUB_ID`). To avoid re-doing OAuth on every browser command, use a named session that persists cookies across daemon restarts.
+
+**Rule:** every `agent-browser` invocation in this repo must be prefixed with:
+
+```bash
+AGENT_BROWSER_SESSION_NAME=guoba agent-browser <cmd>
+```
+
+Cookies are saved to `~/.agent-browser/sessions/guoba-default.json` on daemon close and restored on next open. Do NOT export this env var globally — keep it per-command.
+
+**One-time bootstrap** (only if session file is missing or cookies expired):
+
+```bash
+AGENT_BROWSER_SESSION_NAME=guoba agent-browser close          # drop any headless daemon
+AGENT_BROWSER_SESSION_NAME=guoba agent-browser --headed open https://github.com
+# user logs into github.com manually in the headed window
+AGENT_BROWSER_SESSION_NAME=guoba agent-browser close          # flushes cookies to disk
+```
+
+After bootstrap, opening `https://guoba-qr-codes.vercel.app/admin` (or any app OAuth target) auto-completes the GitHub OAuth redirect with zero clicks — github.com already trusts the session.
+
+**Do not** try to reuse the user's real Chrome profile via `--profile Default`. agent-browser ships its own Chrome for Testing binary with a different Keychain entry, so encrypted cookies from the real profile won't decrypt.
