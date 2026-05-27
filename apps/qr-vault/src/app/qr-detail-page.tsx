@@ -142,7 +142,7 @@ export function QrDetailPage() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-4 items-start">
         <Card>
           <CardHeader className="border-b">
             <div className="min-w-0">
@@ -234,7 +234,7 @@ export function QrDetailPage() {
         </Card>
 
         <aside className="space-y-4 lg:sticky lg:top-0">
-          <QrPreview title={title || "QR code"} url={url} />
+          <QrPreview title={title || "QR code"} url={url} size="lg" />
           <ParsedUrlPanel url={url} />
           <Card>
             <CardHeader className="border-b">
