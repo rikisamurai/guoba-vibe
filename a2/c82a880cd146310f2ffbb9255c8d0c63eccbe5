@@ -1,0 +1,19 @@
+docs/superpowers/specs/2026-05-27-qr-vault-ux-fixes-design.md
+  s_2f6da3f49e904c::t_c89ded887d3c5e 1-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a2c82a880cd146310f2ffbb9255c8d0c63eccbe5",
+  "prompts": {},
+  "sessions": {
+    "s_2f6da3f49e904c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bc5530ef-6870-4058-b716-b9d4f17a740e",
+        "model": "unknown"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
