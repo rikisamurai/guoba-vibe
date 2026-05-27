@@ -1,4 +1,5 @@
 import { nanoid8 } from "@/lib/ids";
+import { buildDemoVault } from "@/lib/demo-seed";
 
 export const VAULT_STORAGE_KEY = "qr-vault:data";
 
@@ -54,7 +55,11 @@ export function parseVaultData(raw: string): VaultData | null {
 
 export function loadVault(storage: Storage = window.localStorage): VaultData {
   const raw = storage.getItem(VAULT_STORAGE_KEY);
-  if (!raw) return createEmptyVault();
+  if (raw === null) {
+    const seeded = buildDemoVault();
+    saveVault(seeded, storage);
+    return seeded;
+  }
   return parseVaultData(raw) ?? createEmptyVault();
 }
 
@@ -100,6 +105,14 @@ export function upsertQr(data: VaultData, input: SaveQrInput, now = new Date().t
   ];
 
   return { ...data, qrs, collectionItems };
+}
+
+export function deleteQr(data: VaultData, qrId: string): VaultData {
+  return {
+    ...data,
+    qrs: data.qrs.filter((qr) => qr.id !== qrId),
+    collectionItems: data.collectionItems.filter((item) => item.qrId !== qrId),
+  };
 }
 
 export function upsertCollection(

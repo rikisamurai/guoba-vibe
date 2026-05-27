@@ -57,6 +57,7 @@ export function QrDetailPage() {
   const [error, setError] = useState("");
   const [shareCopied, setShareCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const parsed = parseDeepLink(url);
   const sharePath = buildSharePath({ url, title, description });
   const shareUrl = `${window.location.origin}${window.location.pathname}#${sharePath}`;
@@ -96,6 +97,8 @@ export function QrDetailPage() {
         collectionIds,
       })
     );
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 1200);
     void navigate({ to: "/q/$qrId", params: { qrId: id } });
   }
 
@@ -139,7 +142,7 @@ export function QrDetailPage() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-4 items-start">
         <Card>
           <CardHeader className="border-b">
             <div className="min-w-0">
@@ -152,7 +155,8 @@ export function QrDetailPage() {
             </div>
             <CardAction className="flex items-center gap-2">
               <Button onClick={saveQr} type="button" variant="outline">
-                <Save /> Save
+                {saved ? <Check /> : <Save />}
+                {saved ? "Saved" : "Save"}
               </Button>
               <Button onClick={copyUrl} type="button" disabled={!url}>
                 {urlCopied ? <Check /> : <Copy />}
@@ -230,7 +234,7 @@ export function QrDetailPage() {
         </Card>
 
         <aside className="space-y-4 lg:sticky lg:top-0">
-          <QrPreview title={title || "QR code"} url={url} />
+          <QrPreview title={title || "QR code"} url={url} size="lg" />
           <ParsedUrlPanel url={url} />
           <Card>
             <CardHeader className="border-b">

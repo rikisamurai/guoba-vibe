@@ -1,6 +1,16 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, Inbox, LayoutGrid, Plus, Search, Share2, SquarePen } from "lucide-react";
-import { useState } from "react";
+import {
+  ArrowRight,
+  Inbox,
+  LayoutGrid,
+  Plus,
+  Search,
+  Settings2,
+  Share2,
+  SquarePen,
+  Trash2,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { useDocumentTitle } from "@/lib/use-document-title";
 import { ParsedUrlPanel } from "@/components/parsed-url-panel";
 import { QrPreview } from "@/components/qr-preview";
@@ -13,88 +23,69 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { useVault } from "@/app/use-vault";
 import { cn } from "@/lib/utils";
 import { parseDeepLink } from "@/lib/url";
-import { getUncategorizedQrs, searchQrs } from "@/lib/vault";
+import { getQrsForCollection, getUncategorizedQrs, searchQrs } from "@/lib/vault";
+import { deleteQr } from "@/lib/storage";
+import type { VaultData } from "@/lib/storage";
 
 export function WorkspacePage() {
   useDocumentTitle("Vault");
-  const { data } = useVault();
+  const { data, updateVault } = useVault();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [quickUrl, setQuickUrl] = useState("");
   const [selectedId, setSelectedId] = useState("");
-  const [showUncategorized, setShowUncategorized] = useState(false);
-  const baseQrs = showUncategorized ? getUncategorizedQrs(data) : data.qrs;
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
+  const [armedDelete, setArmedDelete] = useState("");
+
+  useEffect(() => {
+    if (!armedDelete) return;
+    function onDocClick(event: MouseEvent) {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest(`[data-armed-for="${armedDelete}"]`)) return;
+      setArmedDelete("");
+    }
+    const attach = window.setTimeout(() => {
+      document.addEventListener("click", onDocClick);
+    }, 0);
+    const autoCancel = window.setTimeout(() => setArmedDelete(""), 3000);
+    return () => {
+      window.clearTimeout(attach);
+      window.clearTimeout(autoCancel);
+      document.removeEventListener("click", onDocClick);
+    };
+  }, [armedDelete]);
+
+  function handleDelete(qrId: string) {
+    updateVault((current) => deleteQr(current, qrId));
+    setArmedDelete("");
+    if (selectedId === qrId) setSelectedId("");
+  }
+  const uncategorizedCount = getUncategorizedQrs(data).length;
+  const baseQrs =
+    activeFilter === "all"
+      ? data.qrs
+      : activeFilter === "uncategorized"
+        ? getUncategorizedQrs(data)
+        : getQrsForCollection(data, activeFilter);
   const visibleQrs = searchQrs({ ...data, qrs: baseQrs }, search);
   const selectedQr = data.qrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0];
-  const uncategorizedCount = getUncategorizedQrs(data).length;
 
   function openNewQr() {
     void navigate({ to: "/new", search: { url: quickUrl } });
   }
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-[240px_minmax(0,1fr)_340px] gap-4 items-start">
-      <Card className="xl:sticky xl:top-0">
-        <CardHeader className="border-b">
-          <CardTitle>Collections</CardTitle>
-          <CardAction>
-            <Link
-              to="/collections"
-              className="text-xs text-muted-foreground hover:text-foreground font-medium flex items-center gap-1"
-            >
-              Manage <ArrowRight className="size-3" />
-            </Link>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="space-y-1 pt-4">
-          <FilterChip
-            icon={<LayoutGrid className="size-3.5" />}
-            label="All QR"
-            count={data.qrs.length}
-            active={!showUncategorized}
-            onClick={() => setShowUncategorized(false)}
-          />
-          {uncategorizedCount > 0 && (
-            <FilterChip
-              icon={<Inbox className="size-3.5" />}
-              label="Uncategorized"
-              count={uncategorizedCount}
-              active={showUncategorized}
-              onClick={() => setShowUncategorized(true)}
-            />
-          )}
-          {data.collections.length > 0 && (
-            <>
-              <Separator className="my-2" />
-              <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground px-3 py-1">
-                By collection
-              </p>
-              {data.collections.map((collection) => {
-                const count = data.collectionItems.filter(
-                  (i) => i.collectionId === collection.id
-                ).length;
-                return (
-                  <Link
-                    key={collection.id}
-                    to="/collections/$collectionId"
-                    params={{ collectionId: collection.id }}
-                    className="flex items-center justify-between gap-2 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                  >
-                    <span className="truncate">{collection.title}</span>
-                    <Badge variant="outline">{count}</Badge>
-                  </Link>
-                );
-              })}
-            </>
-          )}
-        </CardContent>
-      </Card>
-
+    <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] gap-4 items-start">
       <div className="space-y-4">
+        <CollectionChipRow
+          data={data}
+          uncategorizedCount={uncategorizedCount}
+          active={activeFilter}
+          onChange={setActiveFilter}
+        />
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs uppercase tracking-wider font-medium text-muted-foreground">
@@ -159,9 +150,6 @@ export function WorkspacePage() {
             <div className="space-y-2">
               {visibleQrs.map((qr) => {
                 const parsed = parseDeepLink(qr.url);
-                const collectionCount = data.collectionItems.filter(
-                  (i) => i.qrId === qr.id
-                ).length;
                 const isSelected = qr.id === selectedQr?.id;
                 return (
                   <div key={qr.id} className="relative group">
@@ -178,51 +166,76 @@ export function WorkspacePage() {
                       {isSelected && (
                         <div className="absolute left-0 top-3 bottom-3 w-0.5 bg-foreground rounded-r-full" />
                       )}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span
-                              className={cn(
-                                "size-1.5 rounded-full",
-                                parsed.isValid ? "bg-foreground" : "bg-muted-foreground"
-                              )}
-                            />
-                            <strong className="text-sm font-medium truncate">
-                              {qr.title || parsed.path || qr.url}
-                            </strong>
-                          </div>
-                          <p className="text-xs font-mono text-muted-foreground truncate pl-3.5">
-                            {parsed.path || qr.url}
-                          </p>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className={cn(
+                              "size-1.5 rounded-full",
+                              parsed.isValid ? "bg-foreground" : "bg-muted-foreground"
+                            )}
+                          />
+                          <strong className="text-sm font-medium truncate">
+                            {qr.title || parsed.path || qr.url}
+                          </strong>
                         </div>
-                        <Badge variant={collectionCount > 0 ? "secondary" : "outline"}>
-                          {collectionCount}
-                        </Badge>
+                        <p className="text-xs font-mono text-muted-foreground truncate pl-3.5">
+                          {parsed.path || qr.url}
+                        </p>
                       </div>
                     </button>
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                      <Link
-                        to="/share"
-                        search={{
-                          url: qr.url,
-                          title: qr.title ?? "",
-                          description: qr.description ?? "",
-                        }}
-                        title="Share"
-                        aria-label={`Share ${qr.title || parsed.path || "QR"}`}
-                        className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background border border-transparent hover:border-border transition-colors"
-                      >
-                        <Share2 className="size-4" />
-                      </Link>
-                      <Link
-                        to="/q/$qrId"
-                        params={{ qrId: qr.id }}
-                        title="Edit"
-                        aria-label={`Edit ${qr.title || parsed.path || "QR"}`}
-                        className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background border border-transparent hover:border-border transition-colors"
-                      >
-                        <SquarePen className="size-4" />
-                      </Link>
+                      {armedDelete === qr.id ? (
+                        <button
+                          type="button"
+                          data-armed-for={qr.id}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleDelete(qr.id);
+                          }}
+                          className="h-9 px-3 rounded-md flex items-center gap-1.5 text-xs font-medium text-destructive bg-destructive/10 border border-destructive/40 hover:bg-destructive/20 transition-colors"
+                          aria-label={`Confirm delete ${qr.title || parsed.path || "QR"}`}
+                        >
+                          <Trash2 className="size-3.5" /> Confirm?
+                        </button>
+                      ) : (
+                        <>
+                          <Link
+                            to="/share"
+                            search={{
+                              url: qr.url,
+                              title: qr.title ?? "",
+                              description: qr.description ?? "",
+                            }}
+                            title="Share"
+                            aria-label={`Share ${qr.title || parsed.path || "QR"}`}
+                            className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background border border-transparent hover:border-border transition-colors"
+                          >
+                            <Share2 className="size-4" />
+                          </Link>
+                          <Link
+                            to="/q/$qrId"
+                            params={{ qrId: qr.id }}
+                            title="Edit"
+                            aria-label={`Edit ${qr.title || parsed.path || "QR"}`}
+                            className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background border border-transparent hover:border-border transition-colors"
+                          >
+                            <SquarePen className="size-4" />
+                          </Link>
+                          <button
+                            type="button"
+                            data-armed-for={qr.id}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setArmedDelete(qr.id);
+                            }}
+                            title="Delete"
+                            aria-label={`Delete ${qr.title || parsed.path || "QR"}`}
+                            className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-background border border-transparent hover:border-destructive/40 transition-colors"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
@@ -247,7 +260,7 @@ export function WorkspacePage() {
       <div className="space-y-4 xl:sticky xl:top-0">
         {selectedQr ? (
           <>
-            <QrPreview title={selectedQr.title} url={selectedQr.url} />
+            <QrPreview title={selectedQr.title} url={selectedQr.url} size="lg" />
             <Card>
               <CardHeader className="border-b">
                 <div className="min-w-0">
@@ -301,31 +314,95 @@ export function WorkspacePage() {
   );
 }
 
-type FilterChipProps = {
-  icon: React.ReactNode;
+type ActiveFilter = "all" | "uncategorized" | string;
+
+type CollectionChipRowProps = {
+  data: VaultData;
+  uncategorizedCount: number;
+  active: ActiveFilter;
+  onChange: (next: ActiveFilter) => void;
+};
+
+function CollectionChipRow({ data, uncategorizedCount, active, onChange }: CollectionChipRowProps) {
+  return (
+    <div className="flex items-center gap-2 overflow-x-auto -mx-1 px-1 pb-1">
+      <Chip
+        icon={<LayoutGrid className="size-3.5" />}
+        label="All QR"
+        count={data.qrs.length}
+        active={active === "all"}
+        onClick={() => onChange("all")}
+      />
+      {uncategorizedCount > 0 && (
+        <Chip
+          icon={<Inbox className="size-3.5" />}
+          label="Uncategorized"
+          count={uncategorizedCount}
+          active={active === "uncategorized"}
+          onClick={() => onChange("uncategorized")}
+        />
+      )}
+      {data.collections.length > 0 && (
+        <span aria-hidden className="h-5 w-px bg-border shrink-0 mx-1" />
+      )}
+      {data.collections.map((collection) => {
+        const count = data.collectionItems.filter(
+          (item) => item.collectionId === collection.id
+        ).length;
+        return (
+          <Chip
+            key={collection.id}
+            label={collection.title}
+            count={count}
+            active={active === collection.id}
+            onClick={() => onChange(collection.id)}
+          />
+        );
+      })}
+      <div className="ml-auto shrink-0">
+        <Link
+          to="/collections"
+          aria-label="Manage collections"
+          title="Manage collections"
+          className="size-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent hover:border-border transition-colors"
+        >
+          <Settings2 className="size-4" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+type ChipProps = {
+  icon?: React.ReactNode;
   label: string;
   count: number;
   active: boolean;
   onClick: () => void;
 };
 
-function FilterChip({ icon, label, count, active, onClick }: FilterChipProps) {
+function Chip({ icon, label, count, active, onClick }: ChipProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+        "shrink-0 inline-flex items-center gap-1.5 h-8 pl-3 pr-2.5 rounded-full text-sm font-medium transition-colors border",
         active
-          ? "bg-accent text-accent-foreground"
-          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          ? "bg-foreground text-background border-foreground"
+          : "bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted/50"
       )}
     >
-      <span className="flex items-center gap-2 min-w-0">
-        <span className="shrink-0">{icon}</span>
-        <span className="truncate">{label}</span>
+      {icon && <span className="shrink-0">{icon}</span>}
+      <span className="truncate">{label}</span>
+      <span
+        className={cn(
+          "ml-0.5 text-[11px] font-mono tabular-nums",
+          active ? "text-background/70" : "text-muted-foreground/80"
+        )}
+      >
+        {count}
       </span>
-      <Badge variant={active ? "secondary" : "outline"}>{count}</Badge>
     </button>
   );
 }
