@@ -1,0 +1,19 @@
+apps/qr-codes/src/components/url-editor.tsx
+  s_a14851eaeabe3a::t_b78f570b6cb353 6-17,28-64,66-79,81-146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "3e2a3db65ec310a9fc0fb2dddbd270fb32aa3c12",
+  "prompts": {},
+  "sessions": {
+    "s_a14851eaeabe3a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4486a0d5-ff53-4c10-b95d-e49275a8988d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
