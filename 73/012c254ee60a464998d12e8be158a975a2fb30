@@ -1,0 +1,25 @@
+apps/qr-vault/src/tests/storage.test.ts
+  s_48ac40ec5e36f9::t_f6b8cc58ce866c 1-90
+apps/qr-vault/src/lib/ids.ts
+  s_48ac40ec5e36f9::t_fb96763cb5979b 1-5
+apps/qr-vault/src/lib/storage.ts
+  s_48ac40ec5e36f9::t_fb96763cb5979b 1-152
+apps/qr-vault/src/lib/vault.ts
+  s_48ac40ec5e36f9::t_fb96763cb5979b 1-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "73012c254ee60a464998d12e8be158a975a2fb30",
+  "prompts": {},
+  "sessions": {
+    "s_48ac40ec5e36f9": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e67ca-e793-7ad1-8ab7-f3911cf00118",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
