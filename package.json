@@ -8,7 +8,11 @@
     "build": "pnpm --filter qr-codes build",
     "start": "pnpm --filter qr-codes start",
     "lint": "pnpm --filter qr-codes lint",
-    "test": "pnpm --filter qr-codes test"
+    "test": "pnpm --filter qr-codes test",
+    "dev:qr-vault": "pnpm --filter qr-vault dev",
+    "build:qr-vault": "pnpm --filter qr-vault build",
+    "preview:qr-vault": "pnpm --filter qr-vault preview",
+    "test:qr-vault": "pnpm --filter qr-vault test"
   },
   "engines": {
     "node": ">=24"
