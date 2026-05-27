@@ -1,0 +1,19 @@
+apps/qr-codes/src/components/admin-edit-button.tsx
+  s_1bbecb963f01a4::t_4213b7974136af 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "bdfd237e6202e00465c97bd9089f39353cbefef7",
+  "prompts": {},
+  "sessions": {
+    "s_1bbecb963f01a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "18e847a8-3c8e-4f76-8f1f-d15ce2a01d8c",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
