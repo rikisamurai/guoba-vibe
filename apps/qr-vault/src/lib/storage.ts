@@ -107,6 +107,14 @@ export function upsertQr(data: VaultData, input: SaveQrInput, now = new Date().t
   return { ...data, qrs, collectionItems };
 }
 
+export function deleteQr(data: VaultData, qrId: string): VaultData {
+  return {
+    ...data,
+    qrs: data.qrs.filter((qr) => qr.id !== qrId),
+    collectionItems: data.collectionItems.filter((item) => item.qrId !== qrId),
+  };
+}
+
 export function upsertCollection(
   data: VaultData,
   input: { id?: string; title: string; description?: string },

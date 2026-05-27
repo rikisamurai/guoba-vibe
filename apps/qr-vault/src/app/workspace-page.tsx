@@ -8,8 +8,9 @@ import {
   Settings2,
   Share2,
   SquarePen,
+  Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDocumentTitle } from "@/lib/use-document-title";
 import { ParsedUrlPanel } from "@/components/parsed-url-panel";
 import { QrPreview } from "@/components/qr-preview";
@@ -26,16 +27,42 @@ import { useVault } from "@/app/use-vault";
 import { cn } from "@/lib/utils";
 import { parseDeepLink } from "@/lib/url";
 import { getQrsForCollection, getUncategorizedQrs, searchQrs } from "@/lib/vault";
+import { deleteQr } from "@/lib/storage";
 import type { VaultData } from "@/lib/storage";
 
 export function WorkspacePage() {
   useDocumentTitle("Vault");
-  const { data } = useVault();
+  const { data, updateVault } = useVault();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [quickUrl, setQuickUrl] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
+  const [armedDelete, setArmedDelete] = useState("");
+
+  useEffect(() => {
+    if (!armedDelete) return;
+    function onDocClick(event: MouseEvent) {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest(`[data-armed-for="${armedDelete}"]`)) return;
+      setArmedDelete("");
+    }
+    const attach = window.setTimeout(() => {
+      document.addEventListener("click", onDocClick);
+    }, 0);
+    const autoCancel = window.setTimeout(() => setArmedDelete(""), 3000);
+    return () => {
+      window.clearTimeout(attach);
+      window.clearTimeout(autoCancel);
+      document.removeEventListener("click", onDocClick);
+    };
+  }, [armedDelete]);
+
+  function handleDelete(qrId: string) {
+    updateVault((current) => deleteQr(current, qrId));
+    setArmedDelete("");
+    if (selectedId === qrId) setSelectedId("");
+  }
   const uncategorizedCount = getUncategorizedQrs(data).length;
   const baseQrs =
     activeFilter === "all"
@@ -157,28 +184,58 @@ export function WorkspacePage() {
                       </div>
                     </button>
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                      <Link
-                        to="/share"
-                        search={{
-                          url: qr.url,
-                          title: qr.title ?? "",
-                          description: qr.description ?? "",
-                        }}
-                        title="Share"
-                        aria-label={`Share ${qr.title || parsed.path || "QR"}`}
-                        className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background border border-transparent hover:border-border transition-colors"
-                      >
-                        <Share2 className="size-4" />
-                      </Link>
-                      <Link
-                        to="/q/$qrId"
-                        params={{ qrId: qr.id }}
-                        title="Edit"
-                        aria-label={`Edit ${qr.title || parsed.path || "QR"}`}
-                        className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background border border-transparent hover:border-border transition-colors"
-                      >
-                        <SquarePen className="size-4" />
-                      </Link>
+                      {armedDelete === qr.id ? (
+                        <button
+                          type="button"
+                          data-armed-for={qr.id}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleDelete(qr.id);
+                          }}
+                          className="h-9 px-3 rounded-md flex items-center gap-1.5 text-xs font-medium text-destructive bg-destructive/10 border border-destructive/40 hover:bg-destructive/20 transition-colors"
+                          aria-label={`Confirm delete ${qr.title || parsed.path || "QR"}`}
+                        >
+                          <Trash2 className="size-3.5" /> Confirm?
+                        </button>
+                      ) : (
+                        <>
+                          <Link
+                            to="/share"
+                            search={{
+                              url: qr.url,
+                              title: qr.title ?? "",
+                              description: qr.description ?? "",
+                            }}
+                            title="Share"
+                            aria-label={`Share ${qr.title || parsed.path || "QR"}`}
+                            className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background border border-transparent hover:border-border transition-colors"
+                          >
+                            <Share2 className="size-4" />
+                          </Link>
+                          <Link
+                            to="/q/$qrId"
+                            params={{ qrId: qr.id }}
+                            title="Edit"
+                            aria-label={`Edit ${qr.title || parsed.path || "QR"}`}
+                            className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background border border-transparent hover:border-border transition-colors"
+                          >
+                            <SquarePen className="size-4" />
+                          </Link>
+                          <button
+                            type="button"
+                            data-armed-for={qr.id}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setArmedDelete(qr.id);
+                            }}
+                            title="Delete"
+                            aria-label={`Delete ${qr.title || parsed.path || "QR"}`}
+                            className="size-9 rounded-md flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-background border border-transparent hover:border-destructive/40 transition-colors"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
