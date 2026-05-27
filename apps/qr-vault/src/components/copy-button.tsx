@@ -1,5 +1,6 @@
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 type CopyButtonProps = {
   value: string;
@@ -16,9 +17,9 @@ export function CopyButton({ value, label = "Copy" }: CopyButtonProps) {
   }
 
   return (
-    <button className="icon-button" type="button" onClick={copyValue} disabled={!value}>
-      {isCopied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
+    <Button variant="outline" size="sm" type="button" onClick={copyValue} disabled={!value}>
+      {isCopied ? <Check /> : <Copy />}
       <span>{isCopied ? "Copied" : label}</span>
-    </button>
+    </Button>
   );
 }

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .fg { fill: #0a0a0a; }
+    @media (prefers-color-scheme: dark) {
+      .fg { fill: #fafafa; }
+    }
+  </style>
+  <!-- 3 finder corners -->
+  <path class="fg" d="M2 2h10v10H2V2zm2 2v6h6V4H4z"/>
+  <rect class="fg" x="5" y="5" width="4" height="4"/>
+  <path class="fg" d="M20 2h10v10H20V2zm2 2v6h6V4h-6z"/>
+  <rect class="fg" x="23" y="5" width="4" height="4"/>
+  <path class="fg" d="M2 20h10v10H2V20zm2 2v6h6v-6H4z"/>
+  <rect class="fg" x="5" y="23" width="4" height="4"/>
+  <!-- module dots -->
+  <rect class="fg" x="14" y="2" width="2" height="2"/>
+  <rect class="fg" x="18" y="4" width="2" height="2"/>
+  <rect class="fg" x="14" y="6" width="2" height="2"/>
+  <rect class="fg" x="16" y="10" width="2" height="2"/>
+  <rect class="fg" x="2" y="14" width="2" height="2"/>
+  <rect class="fg" x="6" y="14" width="2" height="2"/>
+  <rect class="fg" x="10" y="14" width="2" height="2"/>
+  <rect class="fg" x="14" y="14" width="4" height="4"/>
+  <rect class="fg" x="20" y="14" width="2" height="2"/>
+  <rect class="fg" x="24" y="14" width="2" height="2"/>
+  <rect class="fg" x="28" y="14" width="2" height="2"/>
+  <rect class="fg" x="20" y="18" width="2" height="2"/>
+  <rect class="fg" x="26" y="18" width="2" height="2"/>
+  <rect class="fg" x="14" y="20" width="2" height="2"/>
+  <rect class="fg" x="20" y="20" width="2" height="2"/>
+  <rect class="fg" x="24" y="20" width="6" height="6"/>
+  <rect class="fg" x="14" y="24" width="2" height="2"/>
+  <rect class="fg" x="18" y="24" width="2" height="2"/>
+  <rect class="fg" x="14" y="28" width="2" height="2"/>
+  <rect class="fg" x="18" y="28" width="2" height="2"/>
+  <rect class="fg" x="22" y="28" width="2" height="2"/>
+</svg>

@@ -1,4 +1,5 @@
 import {
+  Outlet,
   RouterProvider,
   createHashHistory,
   createRootRoute,
@@ -12,39 +13,53 @@ import { QrDetailPage } from "@/app/qr-detail-page";
 import { SharePage } from "@/app/share-page";
 import { WorkspacePage } from "@/app/workspace-page";
 
-const rootRoute = createRootRoute({ component: AppShell });
+const rootRoute = createRootRoute({
+  component: () => <Outlet />,
+});
+
+const shellRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: "_shell",
+  component: AppShell,
+});
 
 const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => shellRoute,
   path: "/",
   component: WorkspacePage,
 });
 
 const collectionsRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => shellRoute,
   path: "/collections",
   component: CollectionsPage,
 });
 
 const collectionDetailRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => shellRoute,
   path: "/collections/$collectionId",
   component: CollectionsPage,
 });
 
 const qrDetailRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => shellRoute,
   path: "/q/$qrId",
   component: QrDetailPage,
 });
 
 const newRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => shellRoute,
   path: "/new",
   validateSearch: (search: Record<string, unknown>) => ({
     url: typeof search.url === "string" ? search.url : "",
   }),
   component: QrDetailPage,
+});
+
+const importRoute = createRoute({
+  getParentRoute: () => shellRoute,
+  path: "/import",
+  component: ImportExportPage,
 });
 
 const shareRoute = createRoute({
@@ -58,20 +73,16 @@ const shareRoute = createRoute({
   component: SharePage,
 });
 
-const importRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/import",
-  component: ImportExportPage,
-});
-
 const routeTree = rootRoute.addChildren([
-  indexRoute,
-  collectionsRoute,
-  collectionDetailRoute,
-  qrDetailRoute,
-  newRoute,
+  shellRoute.addChildren([
+    indexRoute,
+    collectionsRoute,
+    collectionDetailRoute,
+    qrDetailRoute,
+    newRoute,
+    importRoute,
+  ]),
   shareRoute,
-  importRoute,
 ]);
 
 export const router = createRouter({
