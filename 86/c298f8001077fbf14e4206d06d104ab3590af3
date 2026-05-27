@@ -1,0 +1,33 @@
+apps/qr-vault/src/app/import-export-page.tsx
+  s_48ac40ec5e36f9::t_5d5a1c46f0c3ae 1-3
+apps/qr-vault/src/router.tsx
+  s_48ac40ec5e36f9::t_5d5a1c46f0c3ae 1-90
+apps/qr-vault/src/app/collections-page.tsx
+  s_48ac40ec5e36f9::t_5d5a1c46f0c3ae 1-3
+apps/qr-vault/src/main.tsx
+  s_48ac40ec5e36f9::t_5d5a1c46f0c3ae 3,8
+apps/qr-vault/src/app/app-shell.tsx
+  s_48ac40ec5e36f9::t_5d5a1c46f0c3ae 1-32
+apps/qr-vault/src/app/share-page.tsx
+  s_48ac40ec5e36f9::t_5d5a1c46f0c3ae 1-3
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_48ac40ec5e36f9::t_5d5a1c46f0c3ae 1-3
+apps/qr-vault/src/app/workspace-page.tsx
+  s_48ac40ec5e36f9::t_5d5a1c46f0c3ae 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "86c298f8001077fbf14e4206d06d104ab3590af3",
+  "prompts": {},
+  "sessions": {
+    "s_48ac40ec5e36f9": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e67ca-e793-7ad1-8ab7-f3911cf00118",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
