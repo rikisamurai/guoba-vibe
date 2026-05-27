@@ -1,0 +1,31 @@
+apps/qr-codes/src/app/q/[id]/page.tsx
+  s_18e11288910794::t_f0a953053f2198 90-97,99,106
+apps/qr-codes/src/components/admin-edit-button.tsx
+  s_18e11288910794::t_d3255eb55ce193 3,7,9-16,24
+  s_18e11288910794::t_c433d028d69943 30
+  s_18e11288910794::t_14bacc4272ab69 17-23,26,29
+apps/qr-codes/src/components/copy-button.tsx
+  s_18e11288910794::t_18ea9f689f2924 6
+  s_18e11288910794::t_2c7fbf32933ff5 5,8-23,27-29
+apps/qr-codes/src/components/back-to-admin-link.tsx
+  s_18e11288910794::t_e3350177dfceea 3,11-20,31
+  s_18e11288910794::t_a01b4251c50ddd 33,37
+pnpm-lock.yaml
+  ai_agent 8428,8451,8466,8473,8488
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "02cd27a01c8a35c556c64a0f933d21a3ce7c6d94",
+  "prompts": {},
+  "sessions": {
+    "s_18e11288910794": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5f1bcd1f-2085-4ea4-9fb4-6c6c63ea84b0",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
