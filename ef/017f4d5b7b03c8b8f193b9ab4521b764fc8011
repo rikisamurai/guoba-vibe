@@ -1,0 +1,20 @@
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_4809fb623e484b::t_4d5b3c713148b5 145
+  s_4809fb623e484b::t_9e48e873597b96 237
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "ef017f4d5b7b03c8b8f193b9ab4521b764fc8011",
+  "prompts": {},
+  "sessions": {
+    "s_4809fb623e484b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c0d968b2-dc3f-42ef-9c6a-95912c0b5c96",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
