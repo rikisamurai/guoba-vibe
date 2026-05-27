@@ -7,6 +7,7 @@ import { UrlPreview } from "@/components/url-preview";
 import { CopyButton } from "@/components/copy-button";
 import { DownloadButtons } from "@/components/download-buttons";
 import { BackToAdminLink } from "@/components/back-to-admin-link";
+import { AdminEditButton } from "@/components/admin-edit-button";
 import { Button } from "@/components/ui/button";
 
 function isSafeOpenScheme(url: string): boolean {
@@ -96,6 +97,7 @@ export default async function QrDetailPage({
             </Button>
           )}
           <DownloadButtons id={row.id} title={row.title} />
+          <AdminEditButton qrId={row.id} />
         </div>
       </section>
 
