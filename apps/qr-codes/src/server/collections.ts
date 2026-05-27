@@ -24,6 +24,22 @@ export async function createCollection(input: z.infer<typeof inputSchema>) {
   redirect(`/admin?c=${row.id}`);
 }
 
+// Variant for inline creation inside the QR form: returns the new collection
+// instead of redirecting, so the client can immediately add it to the pill
+// list and auto-select it without leaving the page.
+export async function createCollectionInline(
+  input: z.infer<typeof inputSchema>,
+): Promise<{ id: string; title: string }> {
+  await requireAdmin();
+  const data = inputSchema.parse(input);
+  const [row] = await db
+    .insert(collections)
+    .values({ title: data.title, description: data.description ?? null })
+    .returning({ id: collections.id, title: collections.title });
+  revalidateCollection(row.id, []);
+  return row;
+}
+
 export async function updateCollection(id: string, input: z.infer<typeof inputSchema>) {
   await requireAdmin();
   const data = inputSchema.parse(input);

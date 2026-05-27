@@ -4,6 +4,7 @@ import { listCollections } from "@/data/collections";
 import { QrForm } from "@/components/qr-form";
 import { DeleteButton } from "@/components/delete-button";
 import { updateQr, deleteQr } from "@/server/qrs";
+import { createCollectionInline } from "@/server/collections";
 
 export default async function EditQrPage({
   params,
@@ -32,6 +33,13 @@ export default async function EditQrPage({
     "use server";
     await deleteQr(id);
   }
+  async function handleCreateCollection(input: {
+    title: string;
+    description: string | null;
+  }) {
+    "use server";
+    return createCollectionInline(input);
+  }
 
   return (
     <div className="space-y-6">
@@ -45,6 +53,7 @@ export default async function EditQrPage({
           collectionIds: links.map((l) => l.id),
         }}
         onSubmit={update}
+        onCreateCollection={handleCreateCollection}
         submitLabel="Save"
       />
       <DeleteButton
