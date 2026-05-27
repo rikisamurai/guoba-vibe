@@ -1,0 +1,20 @@
+docs/superpowers/specs/2026-05-27-qr-edit-entry-points-design.md
+  s_1bbecb963f01a4::t_71657b0f3cc4ba 1-34,36-74
+  s_1bbecb963f01a4::t_74257ed8a0e170 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "cb21dd9851dec8df9fa1c84141635245b49542f2",
+  "prompts": {},
+  "sessions": {
+    "s_1bbecb963f01a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "18e847a8-3c8e-4f76-8f1f-d15ce2a01d8c",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
