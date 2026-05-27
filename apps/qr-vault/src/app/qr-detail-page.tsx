@@ -57,6 +57,7 @@ export function QrDetailPage() {
   const [error, setError] = useState("");
   const [shareCopied, setShareCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const parsed = parseDeepLink(url);
   const sharePath = buildSharePath({ url, title, description });
   const shareUrl = `${window.location.origin}${window.location.pathname}#${sharePath}`;
@@ -96,6 +97,8 @@ export function QrDetailPage() {
         collectionIds,
       })
     );
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 1200);
     void navigate({ to: "/q/$qrId", params: { qrId: id } });
   }
 
@@ -152,7 +155,8 @@ export function QrDetailPage() {
             </div>
             <CardAction className="flex items-center gap-2">
               <Button onClick={saveQr} type="button" variant="outline">
-                <Save /> Save
+                {saved ? <Check /> : <Save />}
+                {saved ? "Saved" : "Save"}
               </Button>
               <Button onClick={copyUrl} type="button" disabled={!url}>
                 {urlCopied ? <Check /> : <Copy />}

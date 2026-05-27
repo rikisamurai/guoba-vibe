@@ -159,9 +159,6 @@ export function WorkspacePage() {
             <div className="space-y-2">
               {visibleQrs.map((qr) => {
                 const parsed = parseDeepLink(qr.url);
-                const collectionCount = data.collectionItems.filter(
-                  (i) => i.qrId === qr.id
-                ).length;
                 const isSelected = qr.id === selectedQr?.id;
                 return (
                   <div key={qr.id} className="relative group">
@@ -178,26 +175,21 @@ export function WorkspacePage() {
                       {isSelected && (
                         <div className="absolute left-0 top-3 bottom-3 w-0.5 bg-foreground rounded-r-full" />
                       )}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span
-                              className={cn(
-                                "size-1.5 rounded-full",
-                                parsed.isValid ? "bg-foreground" : "bg-muted-foreground"
-                              )}
-                            />
-                            <strong className="text-sm font-medium truncate">
-                              {qr.title || parsed.path || qr.url}
-                            </strong>
-                          </div>
-                          <p className="text-xs font-mono text-muted-foreground truncate pl-3.5">
-                            {parsed.path || qr.url}
-                          </p>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className={cn(
+                              "size-1.5 rounded-full",
+                              parsed.isValid ? "bg-foreground" : "bg-muted-foreground"
+                            )}
+                          />
+                          <strong className="text-sm font-medium truncate">
+                            {qr.title || parsed.path || qr.url}
+                          </strong>
                         </div>
-                        <Badge variant={collectionCount > 0 ? "secondary" : "outline"}>
-                          {collectionCount}
-                        </Badge>
+                        <p className="text-xs font-mono text-muted-foreground truncate pl-3.5">
+                          {parsed.path || qr.url}
+                        </p>
                       </div>
                     </button>
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
