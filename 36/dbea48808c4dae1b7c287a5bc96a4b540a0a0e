@@ -1,0 +1,25 @@
+apps/qr-vault/src/lib/storage.ts
+  s_48ac40ec5e36f9::t_a7b30d8aece633 65-68
+apps/qr-vault/src/tests/storage.test.ts
+  s_48ac40ec5e36f9::t_6d61b7c2280b35 4,92-108
+apps/qr-vault/src/app/import-export-page.tsx
+  s_48ac40ec5e36f9::t_a7b30d8aece633 1-5,7-112
+apps/qr-vault/src/styles.css
+  s_48ac40ec5e36f9::t_a7b30d8aece633 119-120,350,373-378,384-387,389,575-576,600-658,673-674
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "36dbea48808c4dae1b7c287a5bc96a4b540a0a0e",
+  "prompts": {},
+  "sessions": {
+    "s_48ac40ec5e36f9": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e67ca-e793-7ad1-8ab7-f3911cf00118",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
