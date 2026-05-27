@@ -1,0 +1,19 @@
+apps/qr-codes/src/components/qr-card.tsx
+  s_a14851eaeabe3a::t_0d0c6cf45b1d1c 32-39,46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "2596fb3123b3a228bb70760b760bd3ff36866407",
+  "prompts": {},
+  "sessions": {
+    "s_a14851eaeabe3a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4486a0d5-ff53-4c10-b95d-e49275a8988d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
