@@ -116,7 +116,8 @@ svg {
 }
 
 .detail-layout,
-.share-layout {
+.share-layout,
+.import-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
   gap: 16px;
@@ -346,6 +347,7 @@ h2 {
 }
 
 .primary-button,
+.danger-button,
 .ghost-button,
 .icon-button,
 .icon-only,
@@ -368,12 +370,23 @@ h2 {
   color: var(--accent-ink);
 }
 
+.danger-button {
+  background: #fff2ee;
+  color: var(--danger);
+  border-color: #efc2b8;
+}
+
 .primary-button:hover,
 .quick-add button:hover {
   background: #174c47;
 }
 
+.danger-button:hover {
+  background: #ffe7df;
+}
+
 .primary-button:disabled,
+.danger-button:disabled,
 .quick-add button:disabled,
 .icon-button:disabled {
   cursor: not-allowed;
@@ -559,7 +572,8 @@ code {
 
 .empty-state,
 .empty-inline,
-.error-banner {
+.error-banner,
+.success-banner {
   border-radius: 8px;
   color: var(--muted);
 }
@@ -583,6 +597,65 @@ code {
   border: 1px solid #efc2b8;
 }
 
+.success-banner {
+  margin-top: 16px;
+  padding: 10px 12px;
+  color: var(--ok);
+  background: #edf8f1;
+  border: 1px solid #c4e5d1;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.stats-grid div {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbf8ef;
+}
+
+.stats-grid strong {
+  font-size: 24px;
+}
+
+.stats-grid span {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.file-drop {
+  min-height: 92px;
+  display: grid;
+  place-items: center;
+  margin-top: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: #fbf8ef;
+  cursor: pointer;
+}
+
+.file-drop input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
 .raw-url {
   margin: 14px 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -597,7 +670,8 @@ code {
   .workspace-grid,
   .collections-layout,
   .detail-layout,
-  .share-layout {
+  .share-layout,
+  .import-layout {
     grid-template-columns: 1fr;
   }
 

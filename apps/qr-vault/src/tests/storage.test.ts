@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createEmptyVault,
+  exportVaultJson,
   mergeVaultData,
   parseVaultData,
   replaceVaultData,
@@ -86,5 +87,24 @@ describe("upsertQr", () => {
       { collectionId: "a", qrId: result.qrs[0].id },
       { collectionId: "b", qrId: result.qrs[0].id },
     ]);
+  });
+});
+
+describe("exportVaultJson", () => {
+  it("exports pretty JSON that can be parsed back into vault data", () => {
+    const exported = exportVaultJson({
+      version: 1,
+      qrs: [],
+      collections: [],
+      collectionItems: [],
+    });
+
+    expect(JSON.parse(exported)).toEqual({
+      version: 1,
+      qrs: [],
+      collections: [],
+      collectionItems: [],
+    });
+    expect(exported).toContain("\n  ");
   });
 });

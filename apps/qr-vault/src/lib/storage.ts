@@ -62,6 +62,10 @@ export function saveVault(data: VaultData, storage: Storage = window.localStorag
   storage.setItem(VAULT_STORAGE_KEY, JSON.stringify(data, null, 2));
 }
 
+export function exportVaultJson(data: VaultData): string {
+  return JSON.stringify(data, null, 2);
+}
+
 export function mergeVaultData(local: VaultData, incoming: VaultData): VaultData {
   return {
     version: 1,
