@@ -6,6 +6,12 @@ export type ParsedUrl = {
   isValid: boolean;
 };
 
+export type UrlParts = {
+  scheme: string;
+  path: string;
+  query: Array<{ key: string; value: string }>;
+};
+
 const SEP = "://";
 
 /** Parses a URL into scheme, path (text between `://` and the first `?` or `#`), and query map.
@@ -42,4 +48,16 @@ export function parseUrl(input: string): ParsedUrl {
   });
 
   return { raw, scheme, path, query, isValid: true };
+}
+
+/** Composes a URL string from parts. Rows with empty keys are skipped so an
+ *  in-progress "add parameter" row does not pollute the URL. Keys and values
+ *  are URI-encoded. Returns "" when scheme is empty. */
+export function buildUrl(parts: UrlParts): string {
+  if (!parts.scheme) return "";
+  const base = `${parts.scheme}${SEP}${parts.path}`;
+  const pairs = parts.query
+    .filter((p) => p.key !== "")
+    .map((p) => `${encodeURIComponent(p.key)}=${encodeURIComponent(p.value)}`);
+  return pairs.length ? `${base}?${pairs.join("&")}` : base;
 }
