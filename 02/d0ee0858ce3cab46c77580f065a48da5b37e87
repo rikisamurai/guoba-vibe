@@ -1,0 +1,149 @@
+apps/qr-vault/src/hooks/use-mobile.ts
+  s_6b10f8c8f0eeea::t_77923107af60ff 1-19
+apps/qr-vault/components.json
+  s_6b10f8c8f0eeea::t_eadd7c29d6024b 1-25
+apps/qr-vault/src/components/theme-toggle.tsx
+  s_6b10f8c8f0eeea::t_e36ba0c93bff16 1-20
+apps/qr-vault/src/app/workspace-page.tsx
+  s_6b10f8c8f0eeea::t_01e9bc7eb524dd 167-171,173-196,198-200,202,227
+  s_6b10f8c8f0eeea::t_3eb519694ed3fa 9-16,42,44-51,53-58,63,71-79,85,88,92,100-104,109-110,113-121,126-127,130-131,136,142,153,156,162-164,234-235,237-238,252-254,257-259,261-272,282-287,293,318,320-321,325,328
+  s_6b10f8c8f0eeea::t_fa3585e2e6e757 23
+  s_6b10f8c8f0eeea::t_d9a078206833bc 172,203-207,210-226
+  s_6b10f8c8f0eeea::t_c46e39277eb599 208-209
+  s_6b10f8c8f0eeea::t_b773954d5d3755 4
+  s_6b10f8c8f0eeea::t_5f9dd8f6dd0df5 52,66,129,132,137,197,201,236
+  s_6b10f8c8f0eeea::t_b012459a4f54af 2
+  s_6b10f8c8f0eeea::t_fd6c4412ae2bc7 7-8,18,62,68,124-125,150,232,256,260,275-276,299,303-317,319,322-323,326-327,329
+apps/qr-vault/src/components/copy-button.tsx
+  s_6b10f8c8f0eeea::t_b2b0d984d7268f 21
+  s_6b10f8c8f0eeea::t_c41c26ea4e495b 3,20,23
+apps/qr-vault/src/components/ui/sheet.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1-147
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_6b10f8c8f0eeea::t_4443406bfba321 24
+  s_6b10f8c8f0eeea::t_02c904f21c7f39 153-154,156-159
+  s_6b10f8c8f0eeea::t_6661f7e3b8f482 2
+  s_6b10f8c8f0eeea::t_9759baee7aac9d 102-108
+  s_6b10f8c8f0eeea::t_9e61bfda3fc6ad 59
+  s_6b10f8c8f0eeea::t_707f428e2d3b50 197,208,216-217,219,223-225
+  s_6b10f8c8f0eeea::t_cdbfa55fed097f 10-16,18-19,26,28-33,49-51,72-74,113-116,119,130-134,136-137,144,146,149,151,155,160-161,164,166,172-173,175,181-183,185,190,194-196,199,205-207,210,213-215,218,220,236,238-255,257-259,263
+  s_6b10f8c8f0eeea::t_760d1c81d01368 8-9,17,27,34-35,71,75,111,117-118,120-123,135,138-140,143,145,148,150,152,162,165,167-169,171,174,176-178,180,184,186-189,191,228-230,233-235,237,256,260-262,264-269
+  s_2f6da3f49e904c::t_14c93073441857 58
+  s_6b10f8c8f0eeea::t_785765df0a112d 64-65
+apps/qr-vault/src/components/url-editor.tsx
+  s_6b10f8c8f0eeea::t_84c73fc0015372 5,20,22-25,27,52-54,68-69,71,78,81-82,84,90-92,94,106-107,133,138,147
+  s_6b10f8c8f0eeea::t_84cc8ea4fc76a5 149
+  s_6b10f8c8f0eeea::t_32c73b118f9cd8 3-4,6-13,21,26,28-30,67,70,72-77,79-80,83,85-89,93,95-99,101-102,104-105,108-117,121-122,124,128-129,131-132,134-137,139,141-146,148,150-151
+apps/qr-vault/src/components/ui/sidebar.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1-700
+apps/qr-vault/public/favicon.svg
+  s_6b10f8c8f0eeea::t_9d968769cfcede 1-37
+apps/qr-vault/src/components/ui/button.tsx
+  s_6b10f8c8f0eeea::t_3d0db5764b2081 4,7,9-11,13,22-23,35-41,43,55,66
+  s_6b10f8c8f0eeea::t_8e7d0c295fd0bc 12
+  s_6b10f8c8f0eeea::t_eadd7c29d6024b 1-3,5-6,8,14-21,24-34,42,44-54,56-65,67
+apps/qr-vault/src/components/ui/card.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1,3-49,52-53,56,59-69,72-79,82,84-89,92-102
+  s_6b10f8c8f0eeea::t_3a5683831d17a6 2,50-51,54-55,57-58,70-71,80-81,83,90-91,103
+apps/qr-vault/src/app/app-shell.tsx
+  s_6b10f8c8f0eeea::t_5a72f4dbf23c92 1,3,23-24,26-29,38
+  s_6b10f8c8f0eeea::t_690f40d8b0e4b5 5-22,25,30-37,39-41,44-48,50-54,57-108,110-112
+  s_6b10f8c8f0eeea::t_caf96565b97667 2,4
+  s_6b10f8c8f0eeea::t_2b45468463616d 55-56,109
+apps/qr-vault/src/router.tsx
+  s_6b10f8c8f0eeea::t_09a2cb8a307ee7 2,16-18,20,22-27,33,39,45,51,59-64,77-84
+apps/qr-vault/src/app/share-page.tsx
+  s_6b10f8c8f0eeea::t_bb04e9539251b3 15-16,76,90,156,158,170,200
+  s_6b10f8c8f0eeea::t_3951f31e73f378 1,155
+  s_6b10f8c8f0eeea::t_ca96a75494305e 36,48-52
+  s_6b10f8c8f0eeea::t_58f7e267eb00d1 14,21,35,38,56-57,59-75,77,80-89,91-93,157,162-164,171,196-199,201,203-208
+  s_6b10f8c8f0eeea::t_70e952af2d92a4 58,78-79,94-154,159-161,165-169,172,193-195,202
+  s_6b10f8c8f0eeea::t_6f09f62536c75e 173-192
+  s_6b10f8c8f0eeea::t_7ae8e84382a453 2-12
+apps/qr-vault/vite.config.ts
+  s_6b10f8c8f0eeea::t_0c4e0745591ead 2,7
+apps/qr-vault/src/components/ui/input.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1,3,5,8-9,11,16-17,19
+  s_6b10f8c8f0eeea::t_da9ba6d7edb63b 2,4,6-7,10,12-15,18
+apps/qr-vault/src/components/ui/skeleton.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1-13
+apps/qr-vault/src/lib/utils.ts
+  s_6b10f8c8f0eeea::t_eadd7c29d6024b 1-2,5
+  s_6b10f8c8f0eeea::t_999290ea409bc8 3-4,6
+apps/qr-vault/src/components/ui/separator.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1-28
+apps/qr-vault/src/components/ui/badge.tsx
+  s_6b10f8c8f0eeea::t_d4e8063e0f4f45 4,7,9-11,22-27,29,38,47
+  s_6b10f8c8f0eeea::t_77923107af60ff 1-3,5-6,8,12-21,28,30-37,39-46,48-49
+apps/qr-vault/src/styles.css
+  s_6b10f8c8f0eeea::t_2cb5874c1cfeae 13,20,24
+  s_6b10f8c8f0eeea::t_77f018c38903e4 1
+  s_6b10f8c8f0eeea::t_f6e8b80a030340 165-169
+  s_6b10f8c8f0eeea::t_079f570ac4b7dd 5,9-12,14-19,21-23,26-45,56,88-89,118-119,124-130,133-137,140-145,148-152,155-158,161-162,172-176
+  s_6b10f8c8f0eeea::t_eadd7c29d6024b 2-4,7-8,25,46-52,55,57-87,90-117,120-123
+apps/qr-vault/src/components/ui/textarea.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1,3,5,8,10,15-16,18
+  s_6b10f8c8f0eeea::t_75885430ff6a01 2,4,6-7,9,11-14,17
+apps/qr-vault/index.html
+  s_6b10f8c8f0eeea::t_131e0adbfc33c8 9
+  s_6b10f8c8f0eeea::t_483d65476c68ab 6-8,15-20
+  s_6b10f8c8f0eeea::t_f6f07135561904 11-14,21-22
+apps/qr-vault/src/components/qr-preview.tsx
+  s_6b10f8c8f0eeea::t_c71f4acd0c32f0 5,10-11,14-19,23,36,54-79,83-87
+  s_6b10f8c8f0eeea::t_51351d8897a156 31
+  s_6b10f8c8f0eeea::t_45450357fc6776 4,82,88-89
+apps/qr-vault/src/lib/theme.ts
+  s_6b10f8c8f0eeea::t_361cb4a4bd680b 8-9,12-13,17,22
+  s_6b10f8c8f0eeea::t_28f6c880bccc5b 1-7,10-11,14-16,18-21,23-34
+apps/qr-vault/src/components/ui/tooltip.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1-55
+apps/qr-vault/src/app/collections-page.tsx
+  s_6b10f8c8f0eeea::t_7a2c045a6c4fe5 4-5,13,15,17,24,31-32,75-76,78,80,84,86,90,92-93,95-99,101,104-105,107,110-111,113-119,121,123-124,126-129,133,135-138,142,144-148,150,152-156,158-159,161-163,165,169,171-178,180-183,186-187,189-191,193-198,200-205
+  s_6b10f8c8f0eeea::t_c9d9619be71fe4 6-12,14,23,25-30,40-41,45,57-59,70,73,77,79,85,87-89,91,100,102-103,106,112,120,122,125,130-132,134,139-141,143,149,151,157,160,164,166-168,170,179,184-185,188,192,199
+  s_6b10f8c8f0eeea::t_4a4c9b0020f998 21
+  s_6b10f8c8f0eeea::t_19b14d22e93b11 42-44
+  s_6b10f8c8f0eeea::t_9409cf34e5a235 2,69,71-72
+apps/qr-vault/package.json
+  s_6b10f8c8f0eeea::t_eadd7c29d6024b 14,22,25-27
+  s_6b10f8c8f0eeea::t_365e44eebd0dc1 15
+  s_6b10f8c8f0eeea::t_a53501eb37c6ed 17-18,24,30,36
+apps/qr-vault/src/components/ui/label.tsx
+  s_6b10f8c8f0eeea::t_77923107af60ff 1-22
+apps/qr-vault/src/components/collection-picker.tsx
+  s_6b10f8c8f0eeea::t_e7903f6ef974d6 1,3,21,23-25,30-35,37,40-49,51,54-55,57-61
+  s_6b10f8c8f0eeea::t_85c86db8182bfc 22,36,38-39,50,52-53,56
+apps/qr-vault/src/components/parsed-url-panel.tsx
+  s_6b10f8c8f0eeea::t_1cabfd35ebde5c 3,22,24,31,33,35-36,41-42,49,53-54,56-59,61-63,65,67-68,70-73,75,77-82
+  s_6b10f8c8f0eeea::t_dcdbb666a3166c 1,4-11,23,25-30,32,34,37-40,43-45,47-48,52,55,64,66,69,76
+apps/qr-vault/src/app/import-export-page.tsx
+  s_6b10f8c8f0eeea::t_0e302f9dbdcf95 1,5-11,56-58,77,80,82-83,89,91-93,95,104,106-107,115,117-119,121,124,127-128,135,137-138,141,147-148,153,162-168,172-176,187-189
+  s_6b10f8c8f0eeea::t_891b99a3f0a205 24
+  s_6b10f8c8f0eeea::t_2940f1975e6d37 21
+  s_6b10f8c8f0eeea::t_a2fc874ccbd62d 3-4,13-20,74-76,78-79,84-85,87-88,90,94,96-100,102-103,105,108-112,114,116,120,122-123,125-126,129-134,136,139-140,142-144,146,149-152,154-156,158-161,169-171,177-186,190-191
+apps/qr-vault/src/lib/use-document-title.ts
+  s_6b10f8c8f0eeea::t_30331fe93d745a 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "02d0ee0858ce3cab46c77580f065a48da5b37e87",
+  "prompts": {},
+  "sessions": {
+    "s_2f6da3f49e904c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bc5530ef-6870-4058-b716-b9d4f17a740e",
+        "model": "unknown"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    },
+    "s_6b10f8c8f0eeea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "89f7c804-ef90-4fb9-8340-1289fbc829af",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
