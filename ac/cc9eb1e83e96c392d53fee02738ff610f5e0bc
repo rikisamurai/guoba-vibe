@@ -1,0 +1,21 @@
+pnpm-lock.yaml
+  ai_agent 138-140,3462-3464,8464
+apps/qr-vault/package.json
+  s_6fd25d089780db::t_7d8b410c7bedda 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "accc9eb1e83e96c392d53fee02738ff610f5e0bc",
+  "prompts": {},
+  "sessions": {
+    "s_6fd25d089780db": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be56e68d-20f3-4f71-8d9e-b092a0fc99f6",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
