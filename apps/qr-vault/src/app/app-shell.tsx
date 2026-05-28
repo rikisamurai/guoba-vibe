@@ -2,7 +2,6 @@ import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Database, Download, FolderOpen, Plus, QrCode } from "lucide-react";
 import { type ComponentType } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -101,7 +100,7 @@ export function AppShell() {
         <SidebarInset>
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
             <SidebarTrigger />
-            <Separator orientation="vertical" className="h-4" />
+            <div aria-hidden className="h-4 w-px shrink-0 bg-border" />
             <span className="font-mono text-xs text-muted-foreground">qr-vault</span>
           </header>
           <div className="flex-1 overflow-auto p-5">

@@ -181,6 +181,11 @@ export function WorkspacePage() {
                         <p className="text-xs font-mono text-muted-foreground truncate pl-3.5">
                           {parsed.path || qr.url}
                         </p>
+                        {qr.description && (
+                          <p className="text-xs text-muted-foreground truncate pl-3.5 mt-0.5">
+                            {qr.description}
+                          </p>
+                        )}
                       </div>
                     </button>
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -281,7 +286,12 @@ export function WorkspacePage() {
                   </Link>
                 </CardAction>
               </CardHeader>
-              <CardContent className="pt-4">
+              <CardContent className="pt-4 space-y-3">
+                {selectedQr.description && (
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {selectedQr.description}
+                  </p>
+                )}
                 <p className="text-xs font-mono text-muted-foreground break-all leading-relaxed">
                   {selectedQr.url}
                 </p>
