@@ -1,0 +1,27 @@
+apps/qr-vault/src/app/workspace-page.tsx
+  s_48495b51ec8184::t_11f5ae8f1ecf6c 289-294
+  s_48495b51ec8184::t_939bd35d4b7cc3 184-188
+apps/qr-vault/src/app/app-shell.tsx
+  s_48495b51ec8184::t_e240ca60973559 103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "d76f22b3c66b5a4ee5a430d0ecd1e8d738efc30d",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_48495b51ec8184": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c3429850-044c-418b-986b-adb6980fee40",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
