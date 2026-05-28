@@ -52,6 +52,8 @@ const newRoute = createRoute({
   path: "/new",
   validateSearch: (search: Record<string, unknown>) => ({
     url: typeof search.url === "string" ? search.url : "",
+    title: typeof search.title === "string" ? search.title : "",
+    description: typeof search.description === "string" ? search.description : "",
   }),
   component: QrDetailPage,
 });

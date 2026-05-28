@@ -91,7 +91,7 @@ export function WorkspacePage() {
             </p>
           </div>
           <Button asChild>
-            <Link to="/new" search={{ url: "" }}>
+            <Link to="/new" search={{ url: "", title: "", description: "" }}>
               <Plus /> New QR
             </Link>
           </Button>
@@ -292,7 +292,7 @@ export function WorkspacePage() {
                   {search ? "No matching QR for current search" : "Create your first deep-link QR"}
                 </p>
               </div>
-              <Link to="/new" search={{ url: "" }}>
+              <Link to="/new" search={{ url: "", title: "", description: "" }}>
                 <Button type="button">
                   <Plus /> Create QR
                 </Button>
