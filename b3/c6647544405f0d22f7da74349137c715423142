@@ -1,0 +1,41 @@
+package.json
+  s_58505211c70d70::t_22f6e1f32fa68a 14
+apps/qr-vault/tsconfig.app.json
+  s_58505211c70d70::t_22f6e1f32fa68a 1-26
+apps/qr-vault/tsconfig.node.json
+  s_58505211c70d70::t_22f6e1f32fa68a 1-20
+apps/qr-vault/vite.config.ts
+  h_5d5a5826f18d67 8
+apps/qr-vault/package.json
+  s_58505211c70d70::t_22f6e1f32fa68a 9,45
+  s_58505211c70d70::t_3823f9ef57ca32 31,38-41
+apps/qr-vault/tsconfig.json
+  s_58505211c70d70::t_22f6e1f32fa68a 2-6
+apps/qr-vault/src/app/workspace-page.tsx
+  s_58505211c70d70::t_22f6e1f32fa68a 86
+apps/qr-vault/eslint.config.js
+  s_58505211c70d70::t_ec81438c62b964 21-25,27-30
+  s_58505211c70d70::t_22f6e1f32fa68a 1-20,31-32
+  s_58505211c70d70::t_43a54c497bfa6f 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "b3c6647544405f0d22f7da74349137c715423142",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_58505211c70d70": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e6d0c-0d18-7cf2-b340-5fbb5734280e",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
