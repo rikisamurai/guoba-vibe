@@ -1,0 +1,19 @@
+docs/superpowers/specs/2026-05-28-qr-vault-onboarding-design.md
+  s_6fd25d089780db::t_cc06016728679e 1-115
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "e8c3ab2ff979227e91f3849213a7c98c42501a7f",
+  "prompts": {},
+  "sessions": {
+    "s_6fd25d089780db": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be56e68d-20f3-4f71-8d9e-b092a0fc99f6",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
