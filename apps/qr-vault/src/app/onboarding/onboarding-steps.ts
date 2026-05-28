@@ -32,7 +32,7 @@ export function buildOnboardingSteps(hooks: OnboardingStepHooks): DriveStep[] {
       popover: {
         title: "Paste any URL or deep link",
         description:
-          "QR Vault works with any web URL or app deep link. Paste your own, or try a sample like https://example.com.",
+          "QR Vault works with any web URL or app deep link. We've pre-filled a sample — replace it with your own, or keep it to see how it works.",
         side: "bottom",
         align: "start",
       },

@@ -13,6 +13,7 @@ import {
 } from "@/app/onboarding/onboarding-storage";
 
 const MAX_WAIT_FRAMES = 20;
+const ONBOARDING_SAMPLE_URL = "https://www.google.com";
 
 /**
  * Wait for a selector to exist in the DOM, up to MAX_WAIT_FRAMES animation
@@ -51,7 +52,7 @@ export function useOnboarding() {
     const steps = buildOnboardingSteps({
       onStartNewQr: () => {
         pendingAdvanceRef.current = true;
-        void navigate({ to: "/new", search: { url: "" } });
+        void navigate({ to: "/new", search: { url: ONBOARDING_SAMPLE_URL } });
       },
     });
 
