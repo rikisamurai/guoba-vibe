@@ -1,0 +1,19 @@
+apps/qr-vault/src/app/share-page.tsx
+  s_1145e1b32c9a73::t_7e3ab9da45dc74 36,56-61,88-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "9c906e87f8592abcbe34bc555b5680b96433e208",
+  "prompts": {},
+  "sessions": {
+    "s_1145e1b32c9a73": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e6eb5-8ab7-74f3-a266-eb9fff856c97",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
