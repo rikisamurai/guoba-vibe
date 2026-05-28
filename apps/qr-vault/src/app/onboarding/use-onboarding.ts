@@ -75,7 +75,10 @@ export function useOnboarding() {
 
     return () => {
       instance.destroy();
-      driverRef.current = null;
+      if (driverRef.current === instance) {
+        driverRef.current = null;
+      }
+      autoStartedRef.current = false;
     };
   }, [navigate]);
 
@@ -89,6 +92,7 @@ export function useOnboarding() {
     autoStartedRef.current = true;
     void waitForElement(TOUR_SELECTORS.navNewQr).then((found) => {
       if (!found) return;
+      if (driverRef.current !== instance) return;
       instance.drive(0);
     });
   }, [pathname]);
@@ -103,6 +107,7 @@ export function useOnboarding() {
     pendingAdvanceRef.current = false;
     void waitForElement(TOUR_SELECTORS.newUrlInput).then((found) => {
       if (!found) return;
+      if (driverRef.current !== instance) return;
       instance.moveNext();
     });
   }, [pathname]);
@@ -113,17 +118,19 @@ export function useOnboarding() {
     pendingAdvanceRef.current = false;
     const instance = driverRef.current;
     if (!instance) return;
+    const startTour = () =>
+      waitForElement(TOUR_SELECTORS.navNewQr).then((found) => {
+        if (!found) return;
+        if (driverRef.current !== instance) return;
+        instance.drive(0);
+      });
     if (pathname !== "/") {
       void navigate({ to: "/" }).then(() => {
-        void waitForElement(TOUR_SELECTORS.navNewQr).then((found) => {
-          if (found) instance.drive(0);
-        });
+        void startTour();
       });
       return;
     }
-    void waitForElement(TOUR_SELECTORS.navNewQr).then((found) => {
-      if (found) instance.drive(0);
-    });
+    void startTour();
   }, [navigate, pathname]);
 
   return { restart };
