@@ -1,0 +1,22 @@
+apps/qr-vault/src/app/onboarding/onboarding-steps.ts
+  s_6fd25d089780db::t_a980afd9ac155e 35
+apps/qr-vault/src/app/onboarding/use-onboarding.ts
+  s_6fd25d089780db::t_4f1e404557ee62 55
+  s_6fd25d089780db::t_1a0b2fce72dd03 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "42da898ca45978f7c91371cf552422c0f1dfcbeb",
+  "prompts": {},
+  "sessions": {
+    "s_6fd25d089780db": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be56e68d-20f3-4f71-8d9e-b092a0fc99f6",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
