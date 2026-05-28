@@ -1,13 +1,7 @@
 import { AlertCircle, Check } from "lucide-react";
 import { parseDeepLink } from "@/lib/url";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 type ParsedUrlPanelProps = {
@@ -40,9 +34,7 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
           <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground pt-0.5">
             path
           </span>
-          <span className="font-mono text-xs text-foreground break-all">
-            {parsed.path || "—"}
-          </span>
+          <span className="font-mono text-xs text-foreground break-all">{parsed.path || "—"}</span>
         </div>
 
         <Separator />

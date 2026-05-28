@@ -21,10 +21,7 @@ export default async function NewQrPage({
     await createQr(input);
   }
 
-  async function handleCreateCollection(input: {
-    title: string;
-    description: string | null;
-  }) {
+  async function handleCreateCollection(input: { title: string; description: string | null }) {
     "use server";
     return createCollectionInline(input);
   }

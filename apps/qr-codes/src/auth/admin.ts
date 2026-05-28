@@ -30,9 +30,7 @@ export const getAdminSession = cache(async () => {
   const rows = await db
     .select({ accountId: schema.account.accountId })
     .from(schema.account)
-    .where(
-      and(eq(schema.account.userId, session.user.id), eq(schema.account.providerId, "github")),
-    )
+    .where(and(eq(schema.account.userId, session.user.id), eq(schema.account.providerId, "github")))
     .limit(1);
 
   const githubId = rows[0]?.accountId;

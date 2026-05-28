@@ -39,9 +39,7 @@ export function QrForm({
 }) {
   const [pending, start] = useTransition();
   const [collectionsList, setCollectionsList] = useState<CollectionOption[]>(collections);
-  const [selected, setSelected] = useState<Set<string>>(
-    new Set(initial?.collectionIds ?? []),
-  );
+  const [selected, setSelected] = useState<Set<string>>(new Set(initial?.collectionIds ?? []));
 
   const [adding, setAdding] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -96,8 +94,7 @@ export function QrForm({
         if (!title) return toast.error("Title is required");
         if (!url) return toast.error("URL is required");
         if (!parseUrl(url).isValid) return toast.error("Not a valid URL");
-        if (collectionIds.length === 0)
-          return toast.error("Select at least one collection");
+        if (collectionIds.length === 0) return toast.error("Select at least one collection");
 
         start(async () => {
           try {
@@ -173,12 +170,7 @@ export function QrForm({
               />
             </div>
             <div className="flex gap-2">
-              <Button
-                type="button"
-                size="sm"
-                onClick={submitNewCollection}
-                disabled={creating}
-              >
+              <Button type="button" size="sm" onClick={submitNewCollection} disabled={creating}>
                 {creating ? "Creating…" : "Create"}
               </Button>
               <Button

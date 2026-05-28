@@ -78,9 +78,7 @@ export function UrlEditor({
           className="font-mono break-all min-h-9 py-1.5"
           aria-invalid={rawIsInvalid || undefined}
         />
-        {rawIsInvalid && (
-          <p className="text-sm text-red-500">Invalid URL</p>
-        )}
+        {rawIsInvalid && <p className="text-sm text-red-500">Invalid URL</p>}
         <input type="hidden" name={name} value={raw} />
       </div>
 
@@ -137,12 +135,7 @@ export function UrlEditor({
                 </Button>
               </div>
             ))}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addQueryRow}
-            >
+            <Button type="button" variant="outline" size="sm" onClick={addQueryRow}>
               + add parameter
             </Button>
           </div>

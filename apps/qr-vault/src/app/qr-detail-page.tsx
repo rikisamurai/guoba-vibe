@@ -1,5 +1,14 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { AlertCircle, ArrowLeft, ArrowRight, Check, Copy, CopyPlus, Save, Share2 } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Copy,
+  CopyPlus,
+  Save,
+  Share2,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { CollectionPicker } from "@/components/collection-picker";
 import { ParsedUrlPanel } from "@/components/parsed-url-panel";
@@ -7,13 +16,7 @@ import { QrPreview } from "@/components/qr-preview";
 import { UrlEditor } from "@/components/url-editor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -74,7 +77,7 @@ export function QrDetailPage() {
         ? data.collectionItems
             .filter((item) => item.qrId === existingQr.id)
             .map((item) => item.collectionId)
-        : []
+        : [],
     );
     setError("");
   }, [data.collectionItems, existingQr, search.url, search.title, search.description]);
@@ -96,7 +99,7 @@ export function QrDetailPage() {
         description,
         url,
         collectionIds,
-      })
+      }),
     );
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1200);
@@ -110,7 +113,7 @@ export function QrDetailPage() {
     }
     const newId = nanoid8();
     updateVault((current) =>
-      upsertQr(current, { id: newId, title, description, url, collectionIds })
+      upsertQr(current, { id: newId, title, description, url, collectionIds }),
     );
     toast.success("Saved as new QR");
     void navigate({ to: "/q/$qrId", params: { qrId: newId } });
@@ -128,9 +131,7 @@ export function QrDetailPage() {
       <Card>
         <CardContent className="py-12 text-center space-y-4">
           <p className="text-xl font-semibold">QR not found</p>
-          <p className="text-sm text-muted-foreground">
-            This QR code doesn't exist in your vault.
-          </p>
+          <p className="text-sm text-muted-foreground">This QR code doesn't exist in your vault.</p>
           <Link to="/">
             <Button type="button">
               <ArrowLeft /> Back to vault
@@ -230,9 +231,7 @@ export function QrDetailPage() {
                 <Separator className="flex-1" />
               </div>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs text-muted-foreground">
-                  Assign to one or more collections
-                </p>
+                <p className="text-xs text-muted-foreground">Assign to one or more collections</p>
                 <Link
                   to="/collections"
                   className="text-xs text-muted-foreground hover:text-foreground font-medium flex items-center gap-1"

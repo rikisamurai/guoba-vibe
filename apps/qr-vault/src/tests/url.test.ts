@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildSharePath,
-  buildUrlFromParts,
-  normalizeQueryRows,
-  parseDeepLink,
-} from "@/lib/url";
+import { buildSharePath, buildUrlFromParts, normalizeQueryRows, parseDeepLink } from "@/lib/url";
 
 describe("parseDeepLink", () => {
   it("parses a xhsdiscover deeplink with query", () => {
@@ -36,7 +31,7 @@ describe("buildUrlFromParts", () => {
         scheme: "xhsdiscover",
         path: "rn/wakanda/buyer-conversion",
         query: { sku_id: "1", item_id: "2" },
-      })
+      }),
     ).toBe("xhsdiscover://rn/wakanda/buyer-conversion?sku_id=1&item_id=2");
   });
 
@@ -46,7 +41,7 @@ describe("buildUrlFromParts", () => {
         scheme: "xhsdiscover",
         path: "rn/page",
         query: { keyword: "中文 商品", "": "ignored" },
-      })
+      }),
     ).toBe("xhsdiscover://rn/page?keyword=%E4%B8%AD%E6%96%87+%E5%95%86%E5%93%81");
   });
 });
@@ -58,7 +53,7 @@ describe("normalizeQueryRows", () => {
         { key: "sku_id", value: "1" },
         { key: "", value: "ignored" },
         { key: "item_id", value: "2" },
-      ])
+      ]),
     ).toEqual({ sku_id: "1", item_id: "2" });
   });
 });

@@ -2,13 +2,7 @@ import { Check, Download, FileUp, Replace, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useVault } from "@/app/use-vault";
 import { cn } from "@/lib/utils";
 import {
@@ -54,7 +48,7 @@ export function ImportExportPage() {
 
     setPendingData(parsed);
     setMessage(
-      `Loaded ${parsed.qrs.length} QR codes and ${parsed.collections.length} collections.`
+      `Loaded ${parsed.qrs.length} QR codes and ${parsed.collections.length} collections.`,
     );
   }
 
@@ -125,7 +119,7 @@ export function ImportExportPage() {
                 "px-4 py-6 text-center",
                 pendingData
                   ? "border-foreground/40 bg-muted/50"
-                  : "border-border bg-card hover:bg-muted/30"
+                  : "border-border bg-card hover:bg-muted/30",
               )}
             >
               <input
@@ -172,8 +166,8 @@ export function ImportExportPage() {
             <p className="text-xs text-muted-foreground leading-relaxed">
               <strong className="text-foreground">Merge</strong> keeps existing local items, adds
               new ones, and overwrites on ID conflicts.{" "}
-              <strong className="text-foreground">Replace</strong> wipes everything and starts
-              fresh — this can't be undone.
+              <strong className="text-foreground">Replace</strong> wipes everything and starts fresh
+              — this can't be undone.
             </p>
           </CardContent>
         </Card>

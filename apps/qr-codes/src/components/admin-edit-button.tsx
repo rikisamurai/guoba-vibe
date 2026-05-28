@@ -14,13 +14,7 @@ function useEnteredFromAdmin(qrId: string) {
   );
 }
 
-export function AdminEditButton({
-  qrId,
-  className,
-}: {
-  qrId: string;
-  className?: string;
-}) {
+export function AdminEditButton({ qrId, className }: { qrId: string; className?: string }) {
   const enteredFromAdmin = useEnteredFromAdmin(qrId);
 
   if (!enteredFromAdmin) return null;

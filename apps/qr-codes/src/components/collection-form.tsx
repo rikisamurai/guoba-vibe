@@ -50,7 +50,12 @@ export function CollectionForm({
       </div>
       <div>
         <Label htmlFor="description">Description</Label>
-        <Textarea id="description" name="description" defaultValue={initial?.description ?? ""} rows={3} />
+        <Textarea
+          id="description"
+          name="description"
+          defaultValue={initial?.description ?? ""}
+          rows={3}
+        />
       </div>
       <Button type="submit" disabled={pending}>
         {pending ? "Saving…" : submitLabel}

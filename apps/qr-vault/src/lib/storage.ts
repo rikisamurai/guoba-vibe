@@ -84,7 +84,11 @@ export function replaceVaultData(_local: VaultData, incoming: VaultData): VaultD
   return incoming;
 }
 
-export function upsertQr(data: VaultData, input: SaveQrInput, now = new Date().toISOString()): VaultData {
+export function upsertQr(
+  data: VaultData,
+  input: SaveQrInput,
+  now = new Date().toISOString(),
+): VaultData {
   const existing = input.id ? data.qrs.find((qr) => qr.id === input.id) : undefined;
   const id = existing?.id ?? input.id ?? nanoid8();
   const nextQr: QRCodeItem = {
@@ -118,9 +122,11 @@ export function deleteQr(data: VaultData, qrId: string): VaultData {
 export function upsertCollection(
   data: VaultData,
   input: { id?: string; title: string; description?: string },
-  now = new Date().toISOString()
+  now = new Date().toISOString(),
 ): VaultData {
-  const existing = input.id ? data.collections.find((collection) => collection.id === input.id) : undefined;
+  const existing = input.id
+    ? data.collections.find((collection) => collection.id === input.id)
+    : undefined;
   const id = existing?.id ?? input.id ?? nanoid8();
   const nextCollection: Collection = {
     id,
@@ -142,7 +148,10 @@ function mergeById<T extends { id: string }>(local: T[], incoming: T[]): T[] {
   return Array.from(map.values());
 }
 
-function mergeCollectionItems(local: CollectionItem[], incoming: CollectionItem[]): CollectionItem[] {
+function mergeCollectionItems(
+  local: CollectionItem[],
+  incoming: CollectionItem[],
+): CollectionItem[] {
   const map = new Map<string, CollectionItem>();
   [...local, ...incoming].forEach((item) => {
     map.set(`${item.collectionId}:${item.qrId}`, item);
@@ -160,10 +169,10 @@ function isVaultData(value: unknown): value is VaultData {
     Array.isArray(candidate.collectionItems) &&
     candidate.qrs.every((qr) => typeof qr.id === "string" && typeof qr.url === "string") &&
     candidate.collections.every(
-      (collection) => typeof collection.id === "string" && typeof collection.title === "string"
+      (collection) => typeof collection.id === "string" && typeof collection.title === "string",
     ) &&
     candidate.collectionItems.every(
-      (item) => typeof item.collectionId === "string" && typeof item.qrId === "string"
+      (item) => typeof item.collectionId === "string" && typeof item.qrId === "string",
     )
   );
 }

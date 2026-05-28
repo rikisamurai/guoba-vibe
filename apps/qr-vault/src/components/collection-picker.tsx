@@ -36,7 +36,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
               "group flex items-center gap-3 px-3 py-2 rounded-md border cursor-pointer transition-colors",
               isChecked
                 ? "bg-accent text-accent-foreground"
-                : "bg-card text-foreground hover:bg-muted/50"
+                : "bg-card text-foreground hover:bg-muted/50",
             )}
           >
             <input
@@ -50,7 +50,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
                 "size-4 rounded-sm border flex items-center justify-center transition-colors shrink-0",
                 isChecked
                   ? "bg-primary border-primary text-primary-foreground"
-                  : "border-input bg-background"
+                  : "border-input bg-background",
               )}
             >
               {isChecked && <Check className="size-3" />}

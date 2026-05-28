@@ -2,10 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { driver, type Driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import {
-  TOUR_SELECTORS,
-  buildOnboardingSteps,
-} from "@/app/onboarding/onboarding-steps";
+import { TOUR_SELECTORS, buildOnboardingSteps } from "@/app/onboarding/onboarding-steps";
 import {
   clearOnboardingStatus,
   getOnboardingStatus,
@@ -31,7 +28,7 @@ function waitForElement(selector: string): Promise<boolean> {
       }
       if (++frames >= MAX_WAIT_FRAMES) {
         console.warn(
-          `[useOnboarding] waitForElement timed out after ${MAX_WAIT_FRAMES} frames waiting for ${selector}`
+          `[useOnboarding] waitForElement timed out after ${MAX_WAIT_FRAMES} frames waiting for ${selector}`,
         );
         resolve(false);
         return;

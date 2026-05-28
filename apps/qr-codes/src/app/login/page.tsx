@@ -11,7 +11,8 @@ function ForbiddenNotice() {
   if (params.get("reason") !== "forbidden") return null;
   return (
     <div className="rounded-md border border-amber-500/40 bg-amber-50 dark:bg-amber-950/20 px-4 py-3 text-sm max-w-md">
-      You are signed in with a GitHub account that is not authorized. Sign out and try a different account.
+      You are signed in with a GitHub account that is not authorized. Sign out and try a different
+      account.
     </div>
   );
 }

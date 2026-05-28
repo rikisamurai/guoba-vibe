@@ -2,11 +2,7 @@ import { requireAdmin } from "@/auth/admin";
 import { listCollections } from "@/data/collections";
 import { Sidebar } from "@/components/sidebar";
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
   const cols = await listCollections();
 

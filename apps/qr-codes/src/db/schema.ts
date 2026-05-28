@@ -3,7 +3,9 @@ import { nanoid8 } from "@/lib/nanoid";
 
 // ---- Domain ----
 export const collections = pgTable("collections", {
-  id: text("id").primaryKey().$defaultFn(() => nanoid8()),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid8()),
   title: text("title").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -14,7 +16,9 @@ export const collections = pgTable("collections", {
 });
 
 export const qrs = pgTable("qrs", {
-  id: text("id").primaryKey().$defaultFn(() => nanoid8()),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid8()),
   title: text("title").notNull(),
   description: text("description"),
   url: text("url").notNull(),
@@ -38,7 +42,7 @@ export const qrCollections = pgTable(
   (t) => [
     primaryKey({ columns: [t.qrId, t.collectionId] }),
     index("qr_collections_collection_id_idx").on(t.collectionId),
-  ]
+  ],
 );
 
 // ---- better-auth (manual mirror of better-auth default schema) ----
@@ -59,7 +63,9 @@ export const session = pgTable(
   "session",
   {
     id: text("id").primaryKey(),
-    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
     token: text("token").notNull().unique(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     ipAddress: text("ip_address"),
@@ -70,14 +76,16 @@ export const session = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (t) => [index("session_user_id_idx").on(t.userId)]
+  (t) => [index("session_user_id_idx").on(t.userId)],
 );
 
 export const account = pgTable(
   "account",
   {
     id: text("id").primaryKey(),
-    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     accessToken: text("access_token"),
@@ -93,7 +101,7 @@ export const account = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (t) => [index("account_user_id_idx").on(t.userId)]
+  (t) => [index("account_user_id_idx").on(t.userId)],
 );
 
 export const verification = pgTable(
@@ -109,5 +117,5 @@ export const verification = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (t) => [index("verification_identifier_idx").on(t.identifier)]
+  (t) => [index("verification_identifier_idx").on(t.identifier)],
 );

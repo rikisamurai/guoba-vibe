@@ -69,15 +69,11 @@ describe("parseUrl", () => {
 
 describe("buildUrl", () => {
   it("builds https url with no query", () => {
-    expect(buildUrl({ scheme: "https", path: "a.com/p", query: [] })).toBe(
-      "https://a.com/p",
-    );
+    expect(buildUrl({ scheme: "https", path: "a.com/p", query: [] })).toBe("https://a.com/p");
   });
 
   it("builds custom-scheme deep link", () => {
-    expect(buildUrl({ scheme: "xhsdiscover", path: "rn/x", query: [] })).toBe(
-      "xhsdiscover://rn/x",
-    );
+    expect(buildUrl({ scheme: "xhsdiscover", path: "rn/x", query: [] })).toBe("xhsdiscover://rn/x");
   });
 
   it("appends single query param", () => {
@@ -140,9 +136,7 @@ describe("buildUrl", () => {
         path: "a.com",
         query: [{ key: "中文", value: "测试" }],
       }),
-    ).toBe(
-      "https://a.com?%E4%B8%AD%E6%96%87=%E6%B5%8B%E8%AF%95",
-    );
+    ).toBe("https://a.com?%E4%B8%AD%E6%96%87=%E6%B5%8B%E8%AF%95");
   });
 
   it("returns empty string when scheme is empty", () => {

@@ -72,10 +72,7 @@ export async function updateQr(id: string, input: z.infer<typeof inputSchema>) {
       .values(collectionIds.map((cid) => ({ qrId: id, collectionId: cid })));
   });
 
-  const allCollections = [
-    ...oldLinks.map((l) => l.collectionId),
-    ...collectionIds,
-  ];
+  const allCollections = [...oldLinks.map((l) => l.collectionId), ...collectionIds];
   revalidateQr(id, allCollections);
   redirect(`/q/${id}`);
 }

@@ -26,7 +26,13 @@ describe("mergeVaultData", () => {
     const local = {
       version: 1 as const,
       qrs: [
-        { id: "local", title: "Local", url: "xhsdiscover://rn/local", createdAt: "1", updatedAt: "1" },
+        {
+          id: "local",
+          title: "Local",
+          url: "xhsdiscover://rn/local",
+          createdAt: "1",
+          updatedAt: "1",
+        },
         { id: "same", title: "Old", url: "xhsdiscover://rn/old", createdAt: "1", updatedAt: "1" },
       ],
       collections: [{ id: "c1", title: "Local collection", createdAt: "1", updatedAt: "1" }],
@@ -34,7 +40,9 @@ describe("mergeVaultData", () => {
     };
     const incoming = {
       version: 1 as const,
-      qrs: [{ id: "same", title: "New", url: "xhsdiscover://rn/new", createdAt: "2", updatedAt: "2" }],
+      qrs: [
+        { id: "same", title: "New", url: "xhsdiscover://rn/new", createdAt: "2", updatedAt: "2" },
+      ],
       collections: [{ id: "c2", title: "Imported", createdAt: "2", updatedAt: "2" }],
       collectionItems: [{ collectionId: "c2", qrId: "same" }],
     };
@@ -79,7 +87,7 @@ describe("upsertQr", () => {
         url: "xhsdiscover://rn/wakanda/buyer-conversion",
         collectionIds: ["a", "b"],
       },
-      "now"
+      "now",
     );
 
     expect(result.qrs).toHaveLength(1);

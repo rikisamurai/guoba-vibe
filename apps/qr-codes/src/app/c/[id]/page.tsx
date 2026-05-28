@@ -25,11 +25,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function CollectionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function CollectionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const collection = await getCollectionById(id);
   if (!collection) notFound();

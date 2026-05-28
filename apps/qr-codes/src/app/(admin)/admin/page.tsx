@@ -30,7 +30,14 @@ export default async function AdminHome({ searchParams }: { searchParams: Search
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
           {rows.map((r) => (
-            <QrCard key={r.id} id={r.id} title={r.title} url={r.url} returnHref={adminHref} editable />
+            <QrCard
+              key={r.id}
+              id={r.id}
+              title={r.title}
+              url={r.url}
+              returnHref={adminHref}
+              editable
+            />
           ))}
         </div>
       )}

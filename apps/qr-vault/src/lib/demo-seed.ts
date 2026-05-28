@@ -10,8 +10,18 @@ export function buildDemoVault(): VaultData {
   ];
 
   const qrs = [
-    { id: nanoid8(), title: "YouTube", url: "https://www.youtube.com", collectionId: collections[0].id },
-    { id: nanoid8(), title: "MDN", url: "https://developer.mozilla.org", collectionId: collections[0].id },
+    {
+      id: nanoid8(),
+      title: "YouTube",
+      url: "https://www.youtube.com",
+      collectionId: collections[0].id,
+    },
+    {
+      id: nanoid8(),
+      title: "MDN",
+      url: "https://developer.mozilla.org",
+      collectionId: collections[0].id,
+    },
     { id: nanoid8(), title: "GitHub", url: "https://github.com", collectionId: collections[1].id },
     { id: nanoid8(), title: "Vercel", url: "https://vercel.com", collectionId: collections[1].id },
     { id: nanoid8(), title: "Linear", url: "https://linear.app", collectionId: collections[1].id },

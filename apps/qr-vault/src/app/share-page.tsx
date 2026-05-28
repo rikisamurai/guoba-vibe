@@ -148,8 +148,7 @@ export function SharePage() {
                       Query params
                     </p>
                     <span className="text-[10px] font-mono text-muted-foreground">
-                      {queryEntries.length}{" "}
-                      {queryEntries.length === 1 ? "key" : "keys"}
+                      {queryEntries.length} {queryEntries.length === 1 ? "key" : "keys"}
                     </span>
                   </div>
                   <div className="grid gap-1">
@@ -196,12 +195,7 @@ export function SharePage() {
                 >
                   <Save /> Save to local
                 </Button>
-                <Button
-                  type="button"
-                  onClick={copyUrl}
-                  disabled={!url}
-                  size="lg"
-                >
+                <Button type="button" onClick={copyUrl} disabled={!url} size="lg">
                   {urlCopied ? <Check /> : <Copy />}
                   {urlCopied ? "Copied" : "Copy URL"}
                 </Button>

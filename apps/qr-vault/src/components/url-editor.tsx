@@ -44,14 +44,12 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
         scheme: next.scheme ?? parsed.scheme,
         path: next.path ?? parsed.path,
         query: normalizeQueryRows(nextRows),
-      })
+      }),
     );
   }
 
   function updateRow(index: number, patch: Partial<QueryRow>) {
-    const nextRows = rows.map((row, rowIndex) =>
-      rowIndex === index ? { ...row, ...patch } : row
-    );
+    const nextRows = rows.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row));
     updateParts({ rows: nextRows });
   }
 

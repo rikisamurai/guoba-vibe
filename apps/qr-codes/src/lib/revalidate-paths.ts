@@ -11,10 +11,7 @@ export function qrAffectedPaths(qrId: string, collectionIds: string[]): string[]
 
 // Cascades into every QR detail page in the collection, because each one
 // renders the collection title as a pill (see app/q/[id]/page.tsx).
-export function collectionAffectedPaths(
-  collectionId: string,
-  qrIds: string[],
-): string[] {
+export function collectionAffectedPaths(collectionId: string, qrIds: string[]): string[] {
   const uniqueQrs = Array.from(new Set(qrIds));
   return [`/c/${collectionId}`, ...uniqueQrs.map((qid) => `/q/${qid}`)];
 }

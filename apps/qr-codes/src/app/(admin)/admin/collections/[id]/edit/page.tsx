@@ -4,11 +4,7 @@ import { CollectionForm } from "@/components/collection-form";
 import { DeleteButton } from "@/components/delete-button";
 import { updateCollection, deleteCollection } from "@/server/collections";
 
-export default async function EditCollectionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EditCollectionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const collection = await getCollectionById(id);
   if (!collection) notFound();

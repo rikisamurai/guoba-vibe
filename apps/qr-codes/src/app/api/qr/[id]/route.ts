@@ -4,10 +4,7 @@ import { renderPng, renderSvg } from "@/lib/qr";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const row = await getQrById(id);
   if (!row) return new NextResponse("Not found", { status: 404 });

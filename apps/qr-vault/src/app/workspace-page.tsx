@@ -16,13 +16,7 @@ import { ParsedUrlPanel } from "@/components/parsed-url-panel";
 import { QrPreview } from "@/components/qr-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useVault } from "@/app/use-vault";
 import { cn } from "@/lib/utils";
 import { parseDeepLink } from "@/lib/url";
@@ -141,7 +135,7 @@ export function WorkspacePage() {
                         "w-full text-left p-3.5 pr-24 rounded-lg border transition-colors",
                         isSelected
                           ? "border-foreground/20 bg-muted/50"
-                          : "border-border bg-card hover:bg-muted/30"
+                          : "border-border bg-card hover:bg-muted/30",
                       )}
                     >
                       {isSelected && (
@@ -152,7 +146,7 @@ export function WorkspacePage() {
                           <span
                             className={cn(
                               "size-1.5 rounded-full",
-                              parsed.isValid ? "bg-foreground" : "bg-muted-foreground"
+                              parsed.isValid ? "bg-foreground" : "bg-muted-foreground",
                             )}
                           />
                           <strong className="text-sm font-medium truncate">
@@ -253,9 +247,7 @@ export function WorkspacePage() {
                   <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-1">
                     Selected
                   </p>
-                  <CardTitle className="truncate">
-                    {selectedQr.title || "Untitled QR"}
-                  </CardTitle>
+                  <CardTitle className="truncate">{selectedQr.title || "Untitled QR"}</CardTitle>
                 </div>
                 <CardAction>
                   <Link
@@ -338,7 +330,7 @@ function CollectionChipRow({ data, uncategorizedCount, active, onChange }: Colle
       )}
       {data.collections.map((collection) => {
         const count = data.collectionItems.filter(
-          (item) => item.collectionId === collection.id
+          (item) => item.collectionId === collection.id,
         ).length;
         return (
           <Chip
@@ -381,7 +373,7 @@ function Chip({ icon, label, count, active, onClick }: ChipProps) {
         "shrink-0 inline-flex items-center gap-1.5 h-8 pl-3 pr-2.5 rounded-full text-sm font-medium transition-colors border",
         active
           ? "bg-foreground text-background border-foreground"
-          : "bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted/50"
+          : "bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted/50",
       )}
     >
       {icon && <span className="shrink-0">{icon}</span>}
@@ -389,7 +381,7 @@ function Chip({ icon, label, count, active, onClick }: ChipProps) {
       <span
         className={cn(
           "ml-0.5 text-[11px] font-mono tabular-nums",
-          active ? "text-background/70" : "text-muted-foreground/80"
+          active ? "text-background/70" : "text-muted-foreground/80",
         )}
       >
         {count}

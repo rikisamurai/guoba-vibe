@@ -26,11 +26,7 @@ export async function listQrCards(
   if (opts.search) {
     const needle = `%${opts.search}%`;
     filters.push(
-      or(
-        ilike(qrs.title, needle),
-        ilike(qrs.url, needle),
-        ilike(qrs.description, needle),
-      )!,
+      or(ilike(qrs.title, needle), ilike(qrs.url, needle), ilike(qrs.description, needle))!,
     );
   }
   if (opts.collectionId) {

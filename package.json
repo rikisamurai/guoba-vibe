@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "pnpm --filter qr-codes dev",
     "build": "pnpm --filter qr-codes build",
+    "fmt": "oxfmt .",
+    "fmt:check": "oxfmt --check .",
     "start": "pnpm --filter qr-codes start",
     "lint": "pnpm --filter qr-codes lint",
     "test": "pnpm --filter qr-codes test",
+    "prepare": "simple-git-hooks",
     "dev:qr-vault": "pnpm --filter qr-vault dev",
     "build:qr-vault": "pnpm --filter qr-vault build",
     "lint:qr-vault": "pnpm --filter qr-vault lint",
@@ -19,6 +22,15 @@
     "node": ">=24"
   },
   "devDependencies": {
-    "react-doctor": "^0.2.6"
+    "lint-staged": "^17.0.5",
+    "oxfmt": "^0.52.0",
+    "react-doctor": "^0.2.6",
+    "simple-git-hooks": "^2.13.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm exec lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,jsonc,json5,yml,yaml,css,scss,md,mdx,html}": "oxfmt --write"
   }
 }

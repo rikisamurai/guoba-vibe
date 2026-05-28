@@ -3,13 +3,7 @@ import { ArrowRight, FolderOpen, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,11 +31,9 @@ export function CollectionsPage() {
   const collectionId = pathname.startsWith("/collections/")
     ? decodeURIComponent(pathname.slice("/collections/".length))
     : "";
-  const selectedCollection = data.collections.find(
-    (collection) => collection.id === collectionId
-  );
+  const selectedCollection = data.collections.find((collection) => collection.id === collectionId);
   useDocumentTitle(
-    selectedCollection ? `${selectedCollection.title} · Collections` : "Collections"
+    selectedCollection ? `${selectedCollection.title} · Collections` : "Collections",
   );
   const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : data.qrs;
   const [title, setTitle] = useState("");
@@ -55,7 +47,7 @@ export function CollectionsPage() {
   function saveCollection() {
     if (!title.trim()) return;
     updateVault((current) =>
-      upsertCollection(current, { id: selectedCollection?.id, title, description })
+      upsertCollection(current, { id: selectedCollection?.id, title, description }),
     );
     if (!selectedCollection) {
       setTitle("");
@@ -100,7 +92,7 @@ export function CollectionsPage() {
                     "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors truncate",
                     isActive
                       ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
                   )}
                 >
                   <FolderOpen className="size-3.5 shrink-0" />
@@ -182,7 +174,7 @@ export function CollectionsPage() {
                       <span
                         className={cn(
                           "size-1.5 rounded-full shrink-0",
-                          parsed.isValid ? "bg-foreground" : "bg-muted-foreground"
+                          parsed.isValid ? "bg-foreground" : "bg-muted-foreground",
                         )}
                       />
                       <strong className="text-sm font-medium truncate group-hover:underline">

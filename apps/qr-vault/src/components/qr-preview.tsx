@@ -16,7 +16,12 @@ const SIZE_MAP = {
   lg: { qr: 380, min: 440, pad: "p-5" },
 } as const;
 
-export function QrPreview({ url, title = "QR code", size = "default", bare = false }: QrPreviewProps) {
+export function QrPreview({
+  url,
+  title = "QR code",
+  size = "default",
+  bare = false,
+}: QrPreviewProps) {
   const [dataUrl, setDataUrl] = useState("");
   const [error, setError] = useState("");
   const parsed = parseDeepLink(url);
