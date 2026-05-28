@@ -1,0 +1,23 @@
+.gitignore
+  s_e59bede204f6d5::t_83c8d92a427d82 29-31
+.vscode/extensions.json
+  s_e59bede204f6d5::t_c29b6267a8a52a 1-3
+.vscode/settings.json
+  s_e59bede204f6d5::t_49a3035f409b76 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "57b6a9f39ce1e239fa4da607a07867ff2ddec48a",
+  "prompts": {},
+  "sessions": {
+    "s_e59bede204f6d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "383c8e9b-be7c-4003-bdbe-09a39aed3388",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
