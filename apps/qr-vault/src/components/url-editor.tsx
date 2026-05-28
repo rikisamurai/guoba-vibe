@@ -69,6 +69,7 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
         <FieldLabel htmlFor="url-full">Full URL</FieldLabel>
         <Textarea
           id="url-full"
+          data-tour="new-url-input"
           value={value}
           onChange={(event) => onChange(event.target.value)}
           rows={3}

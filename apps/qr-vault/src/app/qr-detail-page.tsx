@@ -168,7 +168,7 @@ export function QrDetailPage() {
               </CardTitle>
             </div>
             <CardAction className="flex items-center gap-2">
-              <Button onClick={saveQr} type="button">
+              <Button onClick={saveQr} type="button" data-tour="qr-save">
                 {saved ? <Check /> : <Save />}
                 {saved ? "Saved" : "Save"}
               </Button>
@@ -250,7 +250,9 @@ export function QrDetailPage() {
         </Card>
 
         <aside className="space-y-4 lg:sticky lg:top-0">
-          <QrPreview title={title || "QR code"} url={url} size="lg" />
+          <div data-tour="qr-preview">
+            <QrPreview title={title || "QR code"} url={url} size="lg" />
+          </div>
           <Button
             onClick={copyUrl}
             type="button"

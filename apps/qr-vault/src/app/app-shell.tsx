@@ -25,12 +25,20 @@ type NavItem = {
   icon: ComponentType<{ className?: string }>;
   exact?: boolean;
   search?: Record<string, string>;
+  dataTour?: string;
 };
 
 const NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Vault", icon: Database, exact: true },
   { to: "/collections", label: "Collections", icon: FolderOpen },
-  { to: "/new", label: "New QR", icon: Plus, exact: true, search: { url: "" } },
+  {
+    to: "/new",
+    label: "New QR",
+    icon: Plus,
+    exact: true,
+    search: { url: "" },
+    dataTour: "nav-new-qr",
+  },
   { to: "/import", label: "Import", icon: Download, exact: true },
 ];
 
@@ -43,7 +51,11 @@ function NavLink({ item }: { item: NavItem }) {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
-        <Link to={item.to} search={item.search as never}>
+        <Link
+          to={item.to}
+          search={item.search as never}
+          {...(item.dataTour ? { "data-tour": item.dataTour } : {})}
+        >
           <item.icon />
           <span>{item.label}</span>
         </Link>
