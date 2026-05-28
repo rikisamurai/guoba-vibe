@@ -33,6 +33,7 @@ export function SharePage() {
   const description = search.description ?? "";
   const parsed = parseDeepLink(url);
   const queryEntries = Object.entries(parsed.query);
+  const [shareCopied, setShareCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
 
   useDocumentTitle(title ? `Share · ${title}` : "Incoming share");
@@ -50,6 +51,12 @@ export function SharePage() {
     void navigator.clipboard.writeText(url);
     setUrlCopied(true);
     window.setTimeout(() => setUrlCopied(false), 1200);
+  }
+
+  function copyShareUrl() {
+    void navigator.clipboard.writeText(window.location.href);
+    setShareCopied(true);
+    window.setTimeout(() => setShareCopied(false), 1200);
   }
 
   return (
@@ -78,8 +85,17 @@ export function SharePage() {
         <div className="mx-auto w-full max-w-xl lg:max-w-4xl px-6 py-12 sm:py-16 space-y-10">
           {/* Hero - centered full width */}
           <div className="text-center space-y-4">
-            <Badge variant="outline" className="gap-1.5">
-              <Share2 className="size-3" /> Incoming share
+            <Badge variant="outline" asChild>
+              <button
+                type="button"
+                className="gap-1.5 cursor-pointer hover:bg-muted"
+                onClick={copyShareUrl}
+                aria-label="Copy share URL"
+                title="Copy share URL"
+              >
+                {shareCopied ? <Check className="size-3" /> : <Share2 className="size-3" />}
+                {shareCopied ? "Copied share URL" : "Copy share URL"}
+              </button>
             </Badge>
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-balance">
               {title || parsed.path || "Untitled QR"}
