@@ -176,3 +176,74 @@
     margin: 0;
   }
 }
+
+/* driver.js onboarding overrides — match radix-nova theme tokens */
+.driver-popover {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2);
+}
+
+.driver-popover-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--popover-foreground);
+}
+
+.driver-popover-description {
+  font-size: 0.825rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+.driver-popover-progress-text {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+}
+
+.driver-popover-footer button {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: calc(var(--radius) - 2px);
+  text-shadow: none;
+  cursor: pointer;
+}
+
+.driver-popover-footer button:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.driver-popover-next-btn {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--primary) !important;
+}
+
+.driver-popover-next-btn:hover {
+  filter: brightness(0.95);
+}
+
+.driver-popover-close-btn {
+  color: var(--muted-foreground);
+}
+
+.driver-popover-arrow-side-top.driver-popover-arrow {
+  border-top-color: var(--popover);
+}
+.driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-bottom-color: var(--popover);
+}
+.driver-popover-arrow-side-left.driver-popover-arrow {
+  border-left-color: var(--popover);
+}
+.driver-popover-arrow-side-right.driver-popover-arrow {
+  border-right-color: var(--popover);
+}
