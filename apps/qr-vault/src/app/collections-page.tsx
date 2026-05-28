@@ -1,18 +1,18 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowRight, FolderOpen, Save } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useVault } from "@/app/use-vault";
-import { cn } from "@/lib/utils";
-import { parseDeepLink } from "@/lib/url";
-import { getQrsForCollection } from "@/lib/vault";
-import { upsertCollection } from "@/lib/storage";
-import { useDocumentTitle } from "@/lib/use-document-title";
+import { Link, useRouterState } from '@tanstack/react-router'
+import { ArrowRight, FolderOpen, Save } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { useVault } from '@/app/use-vault'
+import { cn } from '@/lib/utils'
+import { parseDeepLink } from '@/lib/url'
+import { getQrsForCollection } from '@/lib/vault'
+import { upsertCollection } from '@/lib/storage'
+import { useDocumentTitle } from '@/lib/use-document-title'
 
 function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
   return (
@@ -22,36 +22,34 @@ function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.R
     >
       {children}
     </Label>
-  );
+  )
 }
 
 export function CollectionsPage() {
-  const { data, updateVault } = useVault();
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const collectionId = pathname.startsWith("/collections/")
-    ? decodeURIComponent(pathname.slice("/collections/".length))
-    : "";
-  const selectedCollection = data.collections.find((collection) => collection.id === collectionId);
-  useDocumentTitle(
-    selectedCollection ? `${selectedCollection.title} · Collections` : "Collections",
-  );
-  const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : data.qrs;
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const { data, updateVault } = useVault()
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const collectionId = pathname.startsWith('/collections/')
+    ? decodeURIComponent(pathname.slice('/collections/'.length))
+    : ''
+  const selectedCollection = data.collections.find((collection) => collection.id === collectionId)
+  useDocumentTitle(selectedCollection ? `${selectedCollection.title} · Collections` : 'Collections')
+  const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : data.qrs
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
 
   useEffect(() => {
-    setTitle(selectedCollection?.title ?? "");
-    setDescription(selectedCollection?.description ?? "");
-  }, [selectedCollection?.id, selectedCollection?.title, selectedCollection?.description]);
+    setTitle(selectedCollection?.title ?? '')
+    setDescription(selectedCollection?.description ?? '')
+  }, [selectedCollection?.id, selectedCollection?.title, selectedCollection?.description])
 
   function saveCollection() {
-    if (!title.trim()) return;
+    if (!title.trim()) return
     updateVault((current) =>
       upsertCollection(current, { id: selectedCollection?.id, title, description }),
-    );
+    )
     if (!selectedCollection) {
-      setTitle("");
-      setDescription("");
+      setTitle('')
+      setDescription('')
     }
   }
 
@@ -82,23 +80,23 @@ export function CollectionsPage() {
           </CardHeader>
           <CardContent className="space-y-1 pt-4">
             {data.collections.map((collection) => {
-              const isActive = collection.id === collectionId;
+              const isActive = collection.id === collectionId
               return (
                 <Link
                   key={collection.id}
                   to="/collections/$collectionId"
                   params={{ collectionId: collection.id }}
                   className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors truncate",
+                    'flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors truncate',
                     isActive
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                      ? 'bg-accent text-accent-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
                   )}
                 >
                   <FolderOpen className="size-3.5 shrink-0" />
                   <span className="truncate">{collection.title}</span>
                 </Link>
-              );
+              )
             })}
             {!data.collections.length && (
               <p className="text-xs text-muted-foreground italic px-3 py-4 text-center border border-dashed rounded-md">
@@ -112,10 +110,10 @@ export function CollectionsPage() {
           <CardHeader className="border-b">
             <div>
               <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-1">
-                {selectedCollection ? "Edit" : "Create"}
+                {selectedCollection ? 'Edit' : 'Create'}
               </p>
               <CardTitle>
-                {selectedCollection ? selectedCollection.title : "New collection"}
+                {selectedCollection ? selectedCollection.title : 'New collection'}
               </CardTitle>
             </div>
           </CardHeader>
@@ -153,7 +151,7 @@ export function CollectionsPage() {
                   QRs in collection
                 </p>
               )}
-              <CardTitle>{selectedCollection?.title ?? "All QR codes"}</CardTitle>
+              <CardTitle>{selectedCollection?.title ?? 'All QR codes'}</CardTitle>
             </div>
             <CardAction>
               <Badge variant="secondary">{qrs.length}</Badge>
@@ -162,7 +160,7 @@ export function CollectionsPage() {
           <CardContent className="space-y-2 pt-4">
             {qrs.length ? (
               qrs.map((qr) => {
-                const parsed = parseDeepLink(qr.url);
+                const parsed = parseDeepLink(qr.url)
                 return (
                   <Link
                     key={qr.id}
@@ -173,8 +171,8 @@ export function CollectionsPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <span
                         className={cn(
-                          "size-1.5 rounded-full shrink-0",
-                          parsed.isValid ? "bg-foreground" : "bg-muted-foreground",
+                          'size-1.5 rounded-full shrink-0',
+                          parsed.isValid ? 'bg-foreground' : 'bg-muted-foreground',
                         )}
                       />
                       <strong className="text-sm font-medium truncate group-hover:underline">
@@ -185,7 +183,7 @@ export function CollectionsPage() {
                       {parsed.path || qr.url}
                     </p>
                   </Link>
-                );
+                )
               })
             ) : (
               <p className="text-xs text-muted-foreground italic px-3 py-6 text-center border border-dashed rounded-md">
@@ -196,5 +194,5 @@ export function CollectionsPage() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

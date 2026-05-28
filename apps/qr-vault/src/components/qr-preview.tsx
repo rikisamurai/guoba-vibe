@@ -1,68 +1,68 @@
-import { useEffect, useState } from "react";
-import { renderQrDataUrl } from "@/lib/qr";
-import { parseDeepLink } from "@/lib/url";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from 'react'
+import { renderQrDataUrl } from '@/lib/qr'
+import { parseDeepLink } from '@/lib/url'
+import { Card, CardContent } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 type QrPreviewProps = {
-  url: string;
-  title?: string;
-  size?: "default" | "lg";
-  bare?: boolean;
-};
+  url: string
+  title?: string
+  size?: 'default' | 'lg'
+  bare?: boolean
+}
 
 const SIZE_MAP = {
-  default: { qr: 260, min: 320, pad: "p-3" },
-  lg: { qr: 380, min: 440, pad: "p-5" },
-} as const;
+  default: { qr: 260, min: 320, pad: 'p-3' },
+  lg: { qr: 380, min: 440, pad: 'p-5' },
+} as const
 
 export function QrPreview({
   url,
-  title = "QR code",
-  size = "default",
+  title = 'QR code',
+  size = 'default',
   bare = false,
 }: QrPreviewProps) {
-  const [dataUrl, setDataUrl] = useState("");
-  const [error, setError] = useState("");
-  const parsed = parseDeepLink(url);
-  const dims = SIZE_MAP[size];
+  const [dataUrl, setDataUrl] = useState('')
+  const [error, setError] = useState('')
+  const parsed = parseDeepLink(url)
+  const dims = SIZE_MAP[size]
 
   useEffect(() => {
-    let isActive = true;
+    let isActive = true
 
     async function render() {
       if (!parsed.isValid) {
-        setDataUrl("");
-        setError("Awaiting valid URL");
-        return;
+        setDataUrl('')
+        setError('Awaiting valid URL')
+        return
       }
 
       try {
-        const nextDataUrl = await renderQrDataUrl(url, Math.max(dims.qr * 2, 512));
+        const nextDataUrl = await renderQrDataUrl(url, Math.max(dims.qr * 2, 512))
         if (isActive) {
-          setDataUrl(nextDataUrl);
-          setError("");
+          setDataUrl(nextDataUrl)
+          setError('')
         }
       } catch (err) {
         if (isActive) {
-          setDataUrl("");
-          setError(err instanceof Error ? err.message : "Unable to render QR");
+          setDataUrl('')
+          setError(err instanceof Error ? err.message : 'Unable to render QR')
         }
       }
     }
 
-    void render();
+    void render()
 
     return () => {
-      isActive = false;
-    };
-  }, [parsed.isValid, url, dims.qr]);
+      isActive = false
+    }
+  }, [parsed.isValid, url, dims.qr])
 
   const inner = dataUrl ? (
     <img
       src={dataUrl}
       alt={title}
-      className={cn("rounded-md border bg-white", dims.pad)}
+      className={cn('rounded-md border bg-white', dims.pad)}
       style={{ width: dims.qr, height: dims.qr }}
     />
   ) : (
@@ -71,16 +71,16 @@ export function QrPreview({
       style={{ width: dims.qr, height: dims.qr }}
     >
       <div className="size-10 rounded-md border border-dashed" />
-      <span className="font-mono text-xs">{error || "No QR"}</span>
+      <span className="font-mono text-xs">{error || 'No QR'}</span>
     </div>
-  );
+  )
 
   if (bare) {
     return (
       <div className="flex items-center justify-center" aria-label="QR preview">
         {inner}
       </div>
-    );
+    )
   }
 
   return (
@@ -92,5 +92,5 @@ export function QrPreview({
         {inner}
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -1,53 +1,53 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getQrById, getQrCollections } from "@/data/qrs";
-import { renderSvg } from "@/lib/qr";
-import { UrlPreview } from "@/components/url-preview";
-import { CopyButton } from "@/components/copy-button";
-import { DownloadButtons } from "@/components/download-buttons";
-import { BackToAdminLink } from "@/components/back-to-admin-link";
-import { AdminEditButton } from "@/components/admin-edit-button";
-import { Button } from "@/components/ui/button";
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { getQrById, getQrCollections } from '@/data/qrs'
+import { renderSvg } from '@/lib/qr'
+import { UrlPreview } from '@/components/url-preview'
+import { CopyButton } from '@/components/copy-button'
+import { DownloadButtons } from '@/components/download-buttons'
+import { BackToAdminLink } from '@/components/back-to-admin-link'
+import { AdminEditButton } from '@/components/admin-edit-button'
+import { Button } from '@/components/ui/button'
 
 function isSafeOpenScheme(url: string): boolean {
   // Allow http(s) and any custom app scheme (xhsdiscover://, etc.) but block
   // schemes that execute code in the current origin.
-  const SCHEME_BLOCKLIST = new Set(["javascript", "data", "vbscript", "file"]);
-  const colon = url.indexOf(":");
-  if (colon === -1) return false;
-  const scheme = url.slice(0, colon).toLowerCase();
-  return !SCHEME_BLOCKLIST.has(scheme);
+  const SCHEME_BLOCKLIST = new Set(['javascript', 'data', 'vbscript', 'file'])
+  const colon = url.indexOf(':')
+  if (colon === -1) return false
+  const scheme = url.slice(0, colon).toLowerCase()
+  return !SCHEME_BLOCKLIST.has(scheme)
 }
 
 export async function generateStaticParams() {
   // Render QR pages on-demand and cache them. revalidatePath in server actions
   // (see lib/revalidate.ts) invalidates the cache when a QR or its collection
   // titles change.
-  return [];
+  return []
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>
 }): Promise<Metadata> {
-  const { id } = await params;
-  const row = await getQrById(id);
+  const { id } = await params
+  const row = await getQrById(id)
   return {
     title: row?.title,
     description: row?.description ?? row?.url ?? undefined,
     robots: { index: false, follow: false },
-  };
+  }
 }
 
 export default async function QrDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const row = await getQrById(id);
-  if (!row) notFound();
+  const { id } = await params
+  const row = await getQrById(id)
+  if (!row) notFound()
 
-  const cols = await getQrCollections(id);
-  const svg = await renderSvg(row.url, { width: 480, margin: 2 });
+  const cols = await getQrCollections(id)
+  const svg = await renderSvg(row.url, { width: 480, margin: 2 })
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 space-y-8">
@@ -110,5 +110,5 @@ export default async function QrDetailPage({ params }: { params: Promise<{ id: s
         </div>
       </section>
     </main>
-  );
+  )
 }

@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { PencilIcon } from "lucide-react";
-import { renderSvg } from "@/lib/qr";
-import { QrCardLink } from "@/components/qr-card-link";
+import Link from 'next/link'
+import { PencilIcon } from 'lucide-react'
+import { renderSvg } from '@/lib/qr'
+import { QrCardLink } from '@/components/qr-card-link'
 
 export async function QrCard({
   id,
@@ -10,13 +10,13 @@ export async function QrCard({
   returnHref,
   editable = false,
 }: {
-  id: string;
-  title: string;
-  url: string;
-  returnHref?: string;
-  editable?: boolean;
+  id: string
+  title: string
+  url: string
+  returnHref?: string
+  editable?: boolean
 }) {
-  const svg = await renderSvg(url, { width: 256, margin: 1 });
+  const svg = await renderSvg(url, { width: 256, margin: 1 })
   return (
     <div className="relative">
       <QrCardLink
@@ -32,7 +32,7 @@ export async function QrCard({
         <h3 className="mt-3 font-medium truncate">{title}</h3>
         <p
           className={`mt-1 text-xs text-muted-foreground font-mono truncate ${
-            editable ? "pr-8" : ""
+            editable ? 'pr-8' : ''
           }`}
         >
           {url}
@@ -49,5 +49,5 @@ export async function QrCard({
         </Link>
       )}
     </div>
-  );
+  )
 }

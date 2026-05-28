@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect } from 'react'
 
-const SUFFIX = "QR Vault";
+const SUFFIX = 'QR Vault'
 
 export function useDocumentTitle(section?: string | null) {
   useEffect(() => {
-    document.title = section ? `${section} · ${SUFFIX}` : SUFFIX;
-  }, [section]);
+    document.title = section ? `${section} · ${SUFFIX}` : SUFFIX
+  }, [section])
 }

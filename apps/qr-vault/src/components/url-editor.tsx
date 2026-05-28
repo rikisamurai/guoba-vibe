@@ -1,21 +1,21 @@
-import { Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Plus, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import {
   buildUrlFromParts,
   normalizeQueryRows,
   parseDeepLink,
   queryToRows,
   type QueryRow,
-} from "@/lib/url";
+} from '@/lib/url'
 
 type UrlEditorProps = {
-  value: string;
-  onChange: (value: string) => void;
-};
+  value: string
+  onChange: (value: string) => void
+}
 
 function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
   return (
@@ -25,40 +25,40 @@ function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.R
     >
       {children}
     </Label>
-  );
+  )
 }
 
 export function UrlEditor({ value, onChange }: UrlEditorProps) {
-  const parsed = parseDeepLink(value);
-  const [rows, setRows] = useState<QueryRow[]>(() => queryToRows(parsed.query));
+  const parsed = parseDeepLink(value)
+  const [rows, setRows] = useState<QueryRow[]>(() => queryToRows(parsed.query))
 
   useEffect(() => {
-    setRows(queryToRows(parseDeepLink(value).query));
-  }, [value]);
+    setRows(queryToRows(parseDeepLink(value).query))
+  }, [value])
 
   function updateParts(next: { scheme?: string; path?: string; rows?: QueryRow[] }) {
-    const nextRows = next.rows ?? rows;
-    setRows(nextRows);
+    const nextRows = next.rows ?? rows
+    setRows(nextRows)
     onChange(
       buildUrlFromParts({
         scheme: next.scheme ?? parsed.scheme,
         path: next.path ?? parsed.path,
         query: normalizeQueryRows(nextRows),
       }),
-    );
+    )
   }
 
   function updateRow(index: number, patch: Partial<QueryRow>) {
-    const nextRows = rows.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row));
-    updateParts({ rows: nextRows });
+    const nextRows = rows.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row))
+    updateParts({ rows: nextRows })
   }
 
   function addRow() {
-    setRows([...rows, { key: "", value: "" }]);
+    setRows([...rows, { key: '', value: '' }])
   }
 
   function removeRow(index: number) {
-    updateParts({ rows: rows.filter((_, rowIndex) => rowIndex !== index) });
+    updateParts({ rows: rows.filter((_, rowIndex) => rowIndex !== index) })
   }
 
   return (
@@ -150,5 +150,5 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
         )}
       </div>
     </div>
-  );
+  )
 }

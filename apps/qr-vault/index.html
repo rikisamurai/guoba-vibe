@@ -9,16 +9,16 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>QR Vault</title>
     <script>
-      (function () {
+      ;(function () {
         try {
-          var stored = localStorage.getItem("qr-vault:theme");
+          var stored = localStorage.getItem('qr-vault:theme')
           var dark =
-            stored === "dark" ||
-            (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches);
-          if (dark) document.documentElement.classList.add("dark");
-          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+            stored === 'dark' ||
+            (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          if (dark) document.documentElement.classList.add('dark')
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light'
         } catch (e) {}
-      })();
+      })()
     </script>
   </head>
   <body>

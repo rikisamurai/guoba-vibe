@@ -1,27 +1,27 @@
-"use client";
+'use client'
 
-import { useSyncExternalStore } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { useSyncExternalStore } from 'react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
-const subscribe = () => () => {};
+const subscribe = () => () => {}
 
 function useEnteredFromAdmin(qrId: string) {
   return useSyncExternalStore(
     subscribe,
-    () => sessionStorage.getItem(`qr:return:${qrId}`)?.startsWith("/admin") ?? false,
+    () => sessionStorage.getItem(`qr:return:${qrId}`)?.startsWith('/admin') ?? false,
     () => false,
-  );
+  )
 }
 
 export function AdminEditButton({ qrId, className }: { qrId: string; className?: string }) {
-  const enteredFromAdmin = useEnteredFromAdmin(qrId);
+  const enteredFromAdmin = useEnteredFromAdmin(qrId)
 
-  if (!enteredFromAdmin) return null;
+  if (!enteredFromAdmin) return null
 
   return (
     <Button asChild size="sm" variant="ghost" className={className}>
       <Link href={`/admin/qrs/${qrId}/edit`}>Edit</Link>
     </Button>
-  );
+  )
 }

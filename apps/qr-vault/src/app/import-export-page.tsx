@@ -1,67 +1,65 @@
-import { Check, Download, FileUp, Replace, ShieldCheck } from "lucide-react";
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useVault } from "@/app/use-vault";
-import { cn } from "@/lib/utils";
+import { Check, Download, FileUp, Replace, ShieldCheck } from 'lucide-react'
+import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useVault } from '@/app/use-vault'
+import { cn } from '@/lib/utils'
 import {
   exportVaultJson,
   mergeVaultData,
   parseVaultData,
   replaceVaultData,
   type VaultData,
-} from "@/lib/storage";
-import { useDocumentTitle } from "@/lib/use-document-title";
+} from '@/lib/storage'
+import { useDocumentTitle } from '@/lib/use-document-title'
 
 export function ImportExportPage() {
-  useDocumentTitle("Import & Export");
-  const { data, updateVault } = useVault();
-  const [pendingData, setPendingData] = useState<VaultData | null>(null);
-  const [fileName, setFileName] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  useDocumentTitle('Import & Export')
+  const { data, updateVault } = useVault()
+  const [pendingData, setPendingData] = useState<VaultData | null>(null)
+  const [fileName, setFileName] = useState('')
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   function exportVault() {
-    const blob = new Blob([exportVaultJson(data)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "qr-vault-export.json";
-    link.click();
-    URL.revokeObjectURL(url);
+    const blob = new Blob([exportVaultJson(data)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'qr-vault-export.json'
+    link.click()
+    URL.revokeObjectURL(url)
   }
 
   async function readImportFile(file: File | undefined) {
-    setMessage("");
-    setError("");
-    setPendingData(null);
-    setFileName(file?.name ?? "");
-    if (!file) return;
+    setMessage('')
+    setError('')
+    setPendingData(null)
+    setFileName(file?.name ?? '')
+    if (!file) return
 
-    const raw = await file.text();
-    const parsed = parseVaultData(raw);
+    const raw = await file.text()
+    const parsed = parseVaultData(raw)
     if (!parsed) {
-      setError("Invalid vault JSON. Local data was not changed.");
-      return;
+      setError('Invalid vault JSON. Local data was not changed.')
+      return
     }
 
-    setPendingData(parsed);
-    setMessage(
-      `Loaded ${parsed.qrs.length} QR codes and ${parsed.collections.length} collections.`,
-    );
+    setPendingData(parsed)
+    setMessage(`Loaded ${parsed.qrs.length} QR codes and ${parsed.collections.length} collections.`)
   }
 
   function mergeImport() {
-    if (!pendingData) return;
-    updateVault((current) => mergeVaultData(current, pendingData));
-    setMessage(`Merged ${fileName || "vault file"} into local data.`);
+    if (!pendingData) return
+    updateVault((current) => mergeVaultData(current, pendingData))
+    setMessage(`Merged ${fileName || 'vault file'} into local data.`)
   }
 
   function replaceImport() {
-    if (!pendingData) return;
-    updateVault((current) => replaceVaultData(current, pendingData));
-    setMessage(`Replaced local data with ${fileName || "vault file"}.`);
+    if (!pendingData) return
+    updateVault((current) => replaceVaultData(current, pendingData))
+    setMessage(`Replaced local data with ${fileName || 'vault file'}.`)
   }
 
   return (
@@ -115,11 +113,11 @@ export function ImportExportPage() {
           <CardContent className="space-y-4 pt-4">
             <label
               className={cn(
-                "block relative cursor-pointer rounded-md border-2 border-dashed transition-colors",
-                "px-4 py-6 text-center",
+                'block relative cursor-pointer rounded-md border-2 border-dashed transition-colors',
+                'px-4 py-6 text-center',
                 pendingData
-                  ? "border-foreground/40 bg-muted/50"
-                  : "border-border bg-card hover:bg-muted/30",
+                  ? 'border-foreground/40 bg-muted/50'
+                  : 'border-border bg-card hover:bg-muted/30',
               )}
             >
               <input
@@ -130,10 +128,10 @@ export function ImportExportPage() {
               />
               <FileUp className="size-5 mx-auto mb-2 text-muted-foreground" />
               <p className="text-sm font-medium mb-0.5">
-                {fileName || "Drop or choose vault file"}
+                {fileName || 'Drop or choose vault file'}
               </p>
               <p className="text-xs text-muted-foreground font-mono">
-                {fileName ? "click to replace" : "qr-vault-export.json"}
+                {fileName ? 'click to replace' : 'qr-vault-export.json'}
               </p>
             </label>
 
@@ -165,7 +163,7 @@ export function ImportExportPage() {
 
             <p className="text-xs text-muted-foreground leading-relaxed">
               <strong className="text-foreground">Merge</strong> keeps existing local items, adds
-              new ones, and overwrites on ID conflicts.{" "}
+              new ones, and overwrites on ID conflicts.{' '}
               <strong className="text-foreground">Replace</strong> wipes everything and starts fresh
               — this can't be undone.
             </p>
@@ -173,7 +171,7 @@ export function ImportExportPage() {
         </Card>
       </div>
     </div>
-  );
+  )
 }
 
 function StatTile({ value, label }: { value: number; label: string }) {
@@ -184,5 +182,5 @@ function StatTile({ value, label }: { value: number; label: string }) {
         {label}
       </div>
     </div>
-  );
+  )
 }

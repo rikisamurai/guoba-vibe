@@ -1,16 +1,16 @@
-import { AlertCircle, Check } from "lucide-react";
-import { parseDeepLink } from "@/lib/url";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { AlertCircle, Check } from 'lucide-react'
+import { parseDeepLink } from '@/lib/url'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 
 type ParsedUrlPanelProps = {
-  url: string;
-};
+  url: string
+}
 
 export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
-  const parsed = parseDeepLink(url);
-  const queryEntries = Object.entries(parsed.query);
+  const parsed = parseDeepLink(url)
+  const queryEntries = Object.entries(parsed.query)
 
   return (
     <Card>
@@ -19,7 +19,7 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
         <CardAction>
           <Badge variant="outline" className="gap-1.5">
             {parsed.isValid ? <Check className="size-3" /> : <AlertCircle className="size-3" />}
-            {parsed.isValid ? "valid" : "invalid"}
+            {parsed.isValid ? 'valid' : 'invalid'}
           </Badge>
         </CardAction>
       </CardHeader>
@@ -29,12 +29,12 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
             scheme
           </span>
           <span className="font-mono text-xs text-foreground break-all">
-            {parsed.scheme || "—"}
+            {parsed.scheme || '—'}
           </span>
           <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground pt-0.5">
             path
           </span>
-          <span className="font-mono text-xs text-foreground break-all">{parsed.path || "—"}</span>
+          <span className="font-mono text-xs text-foreground break-all">{parsed.path || '—'}</span>
         </div>
 
         <Separator />
@@ -45,7 +45,7 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
               query params
             </span>
             <span className="text-[10px] font-mono text-muted-foreground">
-              {queryEntries.length} {queryEntries.length === 1 ? "key" : "keys"}
+              {queryEntries.length} {queryEntries.length === 1 ? 'key' : 'keys'}
             </span>
           </div>
           {queryEntries.length ? (
@@ -72,5 +72,5 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

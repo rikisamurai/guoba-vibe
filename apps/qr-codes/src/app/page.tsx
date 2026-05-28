@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { getAdminSession } from "@/auth/admin";
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { getAdminSession } from '@/auth/admin'
 
 export default async function HomePage() {
-  const session = await getAdminSession();
-  if (session) redirect("/admin");
+  const session = await getAdminSession()
+  if (session) redirect('/admin')
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center">
@@ -18,5 +18,5 @@ export default async function HomePage() {
         <Link href="/login">Continue with GitHub</Link>
       </Button>
     </main>
-  );
+  )
 }

@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 
-type Item = { id: string; title: string };
+type Item = { id: string; title: string }
 
 function CollectionsList({ collections }: { collections: Item[] }) {
-  const params = useSearchParams();
-  const active = params.get("c") ?? undefined;
+  const params = useSearchParams()
+  const active = params.get('c') ?? undefined
   return (
     <nav className="flex flex-col gap-1">
       <Link
         href="/admin"
         className={`rounded px-2 py-1.5 text-sm hover:bg-muted ${
-          !active ? "bg-muted font-medium" : ""
+          !active ? 'bg-muted font-medium' : ''
         }`}
       >
         All QRs
@@ -26,14 +26,14 @@ function CollectionsList({ collections }: { collections: Item[] }) {
           key={c.id}
           href={`/admin?c=${c.id}`}
           className={`rounded px-2 py-1.5 text-sm hover:bg-muted truncate ${
-            active === c.id ? "bg-muted font-medium" : ""
+            active === c.id ? 'bg-muted font-medium' : ''
           }`}
         >
           {c.title}
         </Link>
       ))}
     </nav>
-  );
+  )
 }
 
 export function Sidebar({ collections }: { collections: Item[] }) {
@@ -55,5 +55,5 @@ export function Sidebar({ collections }: { collections: Item[] }) {
         </Button>
       </div>
     </aside>
-  );
+  )
 }

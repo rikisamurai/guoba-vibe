@@ -1,4 +1,4 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   AlertCircle,
   ArrowLeft,
@@ -8,55 +8,55 @@ import {
   Save,
   Share2,
   ShieldCheck,
-} from "lucide-react";
-import { useState } from "react";
-import { QrPreview } from "@/components/qr-preview";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useVault } from "@/app/use-vault";
-import { nanoid8 } from "@/lib/ids";
-import { upsertQr } from "@/lib/storage";
-import { parseDeepLink } from "@/lib/url";
-import { useDocumentTitle } from "@/lib/use-document-title";
+} from 'lucide-react'
+import { useState } from 'react'
+import { QrPreview } from '@/components/qr-preview'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { useVault } from '@/app/use-vault'
+import { nanoid8 } from '@/lib/ids'
+import { upsertQr } from '@/lib/storage'
+import { parseDeepLink } from '@/lib/url'
+import { useDocumentTitle } from '@/lib/use-document-title'
 
 export function SharePage() {
-  const { updateVault } = useVault();
-  const navigate = useNavigate();
+  const { updateVault } = useVault()
+  const navigate = useNavigate()
   const search = useRouterState({ select: (state) => state.location.search }) as {
-    url?: string;
-    title?: string;
-    description?: string;
-  };
-  const url = search.url ?? "";
-  const title = search.title ?? "";
-  const description = search.description ?? "";
-  const parsed = parseDeepLink(url);
-  const queryEntries = Object.entries(parsed.query);
-  const [shareCopied, setShareCopied] = useState(false);
-  const [urlCopied, setUrlCopied] = useState(false);
+    url?: string
+    title?: string
+    description?: string
+  }
+  const url = search.url ?? ''
+  const title = search.title ?? ''
+  const description = search.description ?? ''
+  const parsed = parseDeepLink(url)
+  const queryEntries = Object.entries(parsed.query)
+  const [shareCopied, setShareCopied] = useState(false)
+  const [urlCopied, setUrlCopied] = useState(false)
 
-  useDocumentTitle(title ? `Share · ${title}` : "Incoming share");
+  useDocumentTitle(title ? `Share · ${title}` : 'Incoming share')
 
   function saveToLocal() {
-    if (!parsed.isValid) return;
-    const id = nanoid8();
-    updateVault((current) => upsertQr(current, { id, title, description, url }));
-    sessionStorage.setItem("qr-vault:focus-title", "1");
-    void navigate({ to: "/q/$qrId", params: { qrId: id } });
+    if (!parsed.isValid) return
+    const id = nanoid8()
+    updateVault((current) => upsertQr(current, { id, title, description, url }))
+    sessionStorage.setItem('qr-vault:focus-title', '1')
+    void navigate({ to: '/q/$qrId', params: { qrId: id } })
   }
 
   function copyUrl() {
-    if (!url) return;
-    void navigator.clipboard.writeText(url);
-    setUrlCopied(true);
-    window.setTimeout(() => setUrlCopied(false), 1200);
+    if (!url) return
+    void navigator.clipboard.writeText(url)
+    setUrlCopied(true)
+    window.setTimeout(() => setUrlCopied(false), 1200)
   }
 
   function copyShareUrl() {
-    void navigator.clipboard.writeText(window.location.href);
-    setShareCopied(true);
-    window.setTimeout(() => setShareCopied(false), 1200);
+    void navigator.clipboard.writeText(window.location.href)
+    setShareCopied(true)
+    window.setTimeout(() => setShareCopied(false), 1200)
   }
 
   return (
@@ -94,11 +94,11 @@ export function SharePage() {
                 title="Copy share URL"
               >
                 {shareCopied ? <Check className="size-3" /> : <Share2 className="size-3" />}
-                {shareCopied ? "Copied share URL" : "Copy share URL"}
+                {shareCopied ? 'Copied share URL' : 'Copy share URL'}
               </button>
             </Badge>
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-balance">
-              {title || parsed.path || "Untitled QR"}
+              {title || parsed.path || 'Untitled QR'}
             </h1>
             {description && (
               <p className="text-muted-foreground text-base max-w-md mx-auto text-balance">
@@ -111,7 +111,7 @@ export function SharePage() {
           <div className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)] lg:gap-12 lg:items-start">
             {/* QR centerpiece + validation */}
             <div className="flex flex-col items-center gap-3">
-              <QrPreview url={url} title={title || "Shared QR"} size="lg" bare />
+              <QrPreview url={url} title={title || 'Shared QR'} size="lg" bare />
               <div className="flex items-center gap-2 text-xs">
                 {parsed.isValid ? (
                   <Check className="size-3.5" />
@@ -119,7 +119,7 @@ export function SharePage() {
                   <AlertCircle className="size-3.5" />
                 )}
                 <span className="font-medium">
-                  {parsed.isValid ? "Valid deep link" : "Invalid URL"}
+                  {parsed.isValid ? 'Valid deep link' : 'Invalid URL'}
                 </span>
                 {parsed.scheme && (
                   <>
@@ -137,9 +137,9 @@ export function SharePage() {
               </p>
               <div className="grid grid-cols-[70px_minmax(0,1fr)] gap-x-4 gap-y-2 text-xs">
                 <span className="font-mono text-muted-foreground">scheme</span>
-                <span className="font-mono break-all">{parsed.scheme || "—"}</span>
+                <span className="font-mono break-all">{parsed.scheme || '—'}</span>
                 <span className="font-mono text-muted-foreground">path</span>
-                <span className="font-mono break-all">{parsed.path || "—"}</span>
+                <span className="font-mono break-all">{parsed.path || '—'}</span>
               </div>
               {queryEntries.length > 0 && (
                 <div className="space-y-2 pt-2">
@@ -148,7 +148,7 @@ export function SharePage() {
                       Query params
                     </p>
                     <span className="text-[10px] font-mono text-muted-foreground">
-                      {queryEntries.length} {queryEntries.length === 1 ? "key" : "keys"}
+                      {queryEntries.length} {queryEntries.length === 1 ? 'key' : 'keys'}
                     </span>
                   </div>
                   <div className="grid gap-1">
@@ -179,7 +179,7 @@ export function SharePage() {
               </span>
               <div className="p-3.5 rounded-md bg-muted/50 border">
                 <p className="text-xs font-mono break-all leading-relaxed">
-                  {url || "No URL provided"}
+                  {url || 'No URL provided'}
                 </p>
               </div>
             </div>
@@ -197,7 +197,7 @@ export function SharePage() {
                 </Button>
                 <Button type="button" onClick={copyUrl} disabled={!url} size="lg">
                   {urlCopied ? <Check /> : <Copy />}
-                  {urlCopied ? "Copied" : "Copy URL"}
+                  {urlCopied ? 'Copied' : 'Copy URL'}
                 </Button>
               </div>
               <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
@@ -217,5 +217,5 @@ export function SharePage() {
         </div>
       </footer>
     </div>
-  );
+  )
 }

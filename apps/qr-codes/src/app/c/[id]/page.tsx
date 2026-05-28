@@ -1,36 +1,36 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getCollectionById } from "@/data/collections";
-import { listQrCards } from "@/data/qrs";
-import { QrCard } from "@/components/qr-card";
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { getCollectionById } from '@/data/collections'
+import { listQrCards } from '@/data/qrs'
+import { QrCard } from '@/components/qr-card'
 
 export async function generateStaticParams() {
   // Render collection pages on-demand and cache them. revalidatePath in server
   // actions invalidates the cache when membership or titles change.
-  return [];
+  return []
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>
 }): Promise<Metadata> {
-  const { id } = await params;
-  const row = await getCollectionById(id);
+  const { id } = await params
+  const row = await getCollectionById(id)
   return {
     title: row?.title,
     description: row?.description ?? undefined,
     robots: { index: false, follow: false },
-  };
+  }
 }
 
 export default async function CollectionPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const collection = await getCollectionById(id);
-  if (!collection) notFound();
+  const { id } = await params
+  const collection = await getCollectionById(id)
+  if (!collection) notFound()
 
-  const rows = await listQrCards({ collectionId: id });
+  const rows = await listQrCards({ collectionId: id })
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 space-y-6">
@@ -57,5 +57,5 @@ export default async function CollectionPage({ params }: { params: Promise<{ id:
         </div>
       )}
     </main>
-  );
+  )
 }

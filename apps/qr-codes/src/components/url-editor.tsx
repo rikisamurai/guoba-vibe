@@ -1,50 +1,50 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { parseUrl, buildUrl, type UrlParts } from "@/lib/url-parse";
+import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { parseUrl, buildUrl, type UrlParts } from '@/lib/url-parse'
 
 function partsFromUrl(input: string): UrlParts {
-  const parsed = parseUrl(input);
-  if (!parsed.isValid) return { scheme: "", path: "", query: [] };
+  const parsed = parseUrl(input)
+  if (!parsed.isValid) return { scheme: '', path: '', query: [] }
   return {
     scheme: parsed.scheme,
     path: parsed.path,
     query: Object.entries(parsed.query).map(([key, value]) => ({ key, value })),
-  };
+  }
 }
 
 export function UrlEditor({
-  name = "url",
-  defaultValue = "",
+  name = 'url',
+  defaultValue = '',
   required = true,
 }: {
-  name?: string;
-  defaultValue?: string;
-  required?: boolean;
+  name?: string
+  defaultValue?: string
+  required?: boolean
 }) {
-  const [raw, setRaw] = useState(defaultValue);
-  const [parts, setParts] = useState<UrlParts>(() => partsFromUrl(defaultValue));
-  const rawIsInvalid = raw.trim() !== "" && !parseUrl(raw).isValid;
+  const [raw, setRaw] = useState(defaultValue)
+  const [parts, setParts] = useState<UrlParts>(() => partsFromUrl(defaultValue))
+  const rawIsInvalid = raw.trim() !== '' && !parseUrl(raw).isValid
 
   function commitParts(next: UrlParts) {
-    setParts(next);
-    setRaw(buildUrl(next));
+    setParts(next)
+    setRaw(buildUrl(next))
   }
 
   function onRawChange(value: string) {
-    const sanitized = value.replace(/[\n\r\t]+/g, "");
-    setRaw(sanitized);
-    const parsed = parseUrl(sanitized);
+    const sanitized = value.replace(/[\n\r\t]+/g, '')
+    setRaw(sanitized)
+    const parsed = parseUrl(sanitized)
     if (parsed.isValid) {
       setParts({
         scheme: parsed.scheme,
         path: parsed.path,
         query: Object.entries(parsed.query).map(([key, value]) => ({ key, value })),
-      });
+      })
     }
   }
 
@@ -52,16 +52,16 @@ export function UrlEditor({
     const next: UrlParts = {
       ...parts,
       query: parts.query.map((p, i) => (i === index ? { ...p, ...patch } : p)),
-    };
-    commitParts(next);
+    }
+    commitParts(next)
   }
 
   function removeQueryAt(index: number) {
-    commitParts({ ...parts, query: parts.query.filter((_, i) => i !== index) });
+    commitParts({ ...parts, query: parts.query.filter((_, i) => i !== index) })
   }
 
   function addQueryRow() {
-    commitParts({ ...parts, query: [...parts.query, { key: "", value: "" }] });
+    commitParts({ ...parts, query: [...parts.query, { key: '', value: '' }] })
   }
 
   return (
@@ -142,5 +142,5 @@ export function UrlEditor({
         </div>
       </div>
     </div>
-  );
+  )
 }

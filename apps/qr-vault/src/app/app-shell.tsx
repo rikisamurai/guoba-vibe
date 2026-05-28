@@ -1,7 +1,7 @@
-import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from "lucide-react";
-import { type ComponentType } from "react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Link, Outlet, useRouterState } from '@tanstack/react-router'
+import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from 'lucide-react'
+import { type ComponentType } from 'react'
+import { ThemeToggle } from '@/components/theme-toggle'
 import {
   Sidebar,
   SidebarContent,
@@ -15,14 +15,14 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Toaster } from "sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { useOnboarding } from "@/app/onboarding/use-onboarding";
+} from '@/components/ui/sidebar'
+import { Toaster } from 'sonner'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
+import { useOnboarding } from '@/app/onboarding/use-onboarding'
 
 function OnboardingReplayButton() {
-  const { restart } = useOnboarding();
+  const { restart } = useOnboarding()
   return (
     <Button
       type="button"
@@ -34,37 +34,37 @@ function OnboardingReplayButton() {
     >
       <HelpCircle />
     </Button>
-  );
+  )
 }
 
 type NavItem = {
-  to: string;
-  label: string;
-  icon: ComponentType<{ className?: string }>;
-  exact?: boolean;
-  search?: Record<string, string>;
-  dataTour?: string;
-};
+  to: string
+  label: string
+  icon: ComponentType<{ className?: string }>
+  exact?: boolean
+  search?: Record<string, string>
+  dataTour?: string
+}
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/", label: "Vault", icon: Database, exact: true },
-  { to: "/collections", label: "Collections", icon: FolderOpen },
+  { to: '/', label: 'Vault', icon: Database, exact: true },
+  { to: '/collections', label: 'Collections', icon: FolderOpen },
   {
-    to: "/new",
-    label: "New QR",
+    to: '/new',
+    label: 'New QR',
     icon: Plus,
     exact: true,
-    search: { url: "" },
-    dataTour: "nav-new-qr",
+    search: { url: '' },
+    dataTour: 'nav-new-qr',
   },
-  { to: "/import", label: "Import", icon: Download, exact: true },
-];
+  { to: '/import', label: 'Import', icon: Download, exact: true },
+]
 
 function NavLink({ item }: { item: NavItem }) {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
   const isActive = item.exact
     ? pathname === item.to
-    : pathname === item.to || pathname.startsWith(item.to + "/");
+    : pathname === item.to || pathname.startsWith(item.to + '/')
 
   return (
     <SidebarMenuItem>
@@ -72,14 +72,14 @@ function NavLink({ item }: { item: NavItem }) {
         <Link
           to={item.to}
           search={item.search as never}
-          {...(item.dataTour ? { "data-tour": item.dataTour } : {})}
+          {...(item.dataTour ? { 'data-tour': item.dataTour } : {})}
         >
           <item.icon />
           <span>{item.label}</span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
-  );
+  )
 }
 
 export function AppShell() {
@@ -143,5 +143,5 @@ export function AppShell() {
       </SidebarProvider>
       <Toaster position="top-center" />
     </TooltipProvider>
-  );
+  )
 }
