@@ -39,7 +39,7 @@ export function QrDetailPage() {
   const { data, updateVault } = useVault();
   const navigate = useNavigate();
   const location = useRouterState({ select: (state) => state.location });
-  const search = location.search as { url?: string };
+  const search = location.search as { url?: string; title?: string; description?: string };
   const titleRef = useRef<HTMLInputElement>(null);
   const [autoFocusTitle] = useState(() => {
     const flag = sessionStorage.getItem("qr-vault:focus-title") === "1";
@@ -66,8 +66,8 @@ export function QrDetailPage() {
   useDocumentTitle(isNew ? "New QR" : title || existingQr?.title || "QR");
 
   useEffect(() => {
-    setTitle(existingQr?.title ?? "");
-    setDescription(existingQr?.description ?? "");
+    setTitle(existingQr?.title ?? search.title ?? "");
+    setDescription(existingQr?.description ?? search.description ?? "");
     setUrl(existingQr?.url ?? search.url ?? "");
     setCollectionIds(
       existingQr
@@ -77,7 +77,7 @@ export function QrDetailPage() {
         : []
     );
     setError("");
-  }, [data.collectionItems, existingQr, search.url]);
+  }, [data.collectionItems, existingQr, search.url, search.title, search.description]);
 
   useEffect(() => {
     if (autoFocusTitle) titleRef.current?.focus();
