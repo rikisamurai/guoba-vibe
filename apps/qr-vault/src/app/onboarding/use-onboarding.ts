@@ -27,6 +27,9 @@ function waitForElement(selector: string): Promise<boolean> {
         return;
       }
       if (++frames >= MAX_WAIT_FRAMES) {
+        console.warn(
+          `[useOnboarding] waitForElement timed out after ${MAX_WAIT_FRAMES} frames waiting for ${selector}`
+        );
         resolve(false);
         return;
       }
@@ -66,6 +69,7 @@ export function useOnboarding() {
         const total = instance.getConfig().steps?.length ?? 0;
         const isLast = activeIndex !== undefined && activeIndex === total - 1;
         setOnboardingStatus(isLast ? "done" : "skipped");
+        pendingAdvanceRef.current = false;
         instance.destroy();
       },
       steps,
