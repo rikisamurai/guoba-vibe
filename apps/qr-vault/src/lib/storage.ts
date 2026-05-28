@@ -1,5 +1,5 @@
-import { nanoid8 } from '@/lib/ids'
 import { buildDemoVault } from '@/lib/demo-seed'
+import { nanoid8 } from '@/lib/ids'
 
 export const VAULT_STORAGE_KEY = 'qr-vault:data'
 

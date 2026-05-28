@@ -1,4 +1,5 @@
 import { pgTable, text, timestamp, primaryKey, boolean, index } from 'drizzle-orm/pg-core'
+
 import { nanoid8 } from '@/lib/nanoid'
 
 // ---- Domain ----

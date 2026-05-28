@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+
 import { getQrById } from '@/data/qrs'
 import { renderPng } from '@/lib/qr'
 

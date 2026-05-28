@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation'
-import { getQrById, getQrCollections } from '@/data/qrs'
-import { listCollections } from '@/data/collections'
-import { QrForm } from '@/components/qr-form'
+
 import { DeleteButton } from '@/components/delete-button'
-import { updateQr, deleteQr } from '@/server/qrs'
+import { QrForm } from '@/components/qr-form'
+import { listCollections } from '@/data/collections'
+import { getQrById, getQrCollections } from '@/data/qrs'
 import { createCollectionInline } from '@/server/collections'
+import { updateQr, deleteQr } from '@/server/qrs'
 
 export default async function EditQrPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

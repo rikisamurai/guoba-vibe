@@ -1,8 +1,9 @@
 'use client'
 
+import type { VariantProps } from 'class-variance-authority'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import type { VariantProps } from 'class-variance-authority'
+
 import { Button, buttonVariants } from '@/components/ui/button'
 
 type ButtonVariant = VariantProps<typeof buttonVariants>['variant']

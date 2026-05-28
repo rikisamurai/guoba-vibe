@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+
+import { QrCard } from '@/components/qr-card'
 import { getCollectionById } from '@/data/collections'
 import { listQrCards } from '@/data/qrs'
-import { QrCard } from '@/components/qr-card'
 
 export async function generateStaticParams() {
   // Render collection pages on-demand and cache them. revalidatePath in server
@@ -33,10 +34,10 @@ export default async function CollectionPage({ params }: { params: Promise<{ id:
   const rows = await listQrCards({ collectionId: id })
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 space-y-6">
+    <main className="mx-auto max-w-5xl space-y-6 px-4 py-10">
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground inline-flex items-center text-sm"
       >
         ← QR Codes
       </Link>
@@ -45,7 +46,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ id:
         {collection.description && (
           <p className="text-muted-foreground">{collection.description}</p>
         )}
-        <p className="text-sm text-muted-foreground">{rows.length} QR codes</p>
+        <p className="text-muted-foreground text-sm">{rows.length} QR codes</p>
       </header>
       {rows.length === 0 ? (
         <p className="text-muted-foreground">No QRs in this collection yet.</p>

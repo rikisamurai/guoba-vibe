@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
+
+import { Card, CardContent } from '@/components/ui/card'
 import { renderQrDataUrl } from '@/lib/qr'
 import { parseDeepLink } from '@/lib/url'
-import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 type QrPreviewProps = {
@@ -67,7 +68,7 @@ export function QrPreview({
     />
   ) : (
     <div
-      className="rounded-md border border-dashed flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground"
+      className="text-muted-foreground flex flex-col items-center justify-center gap-2 rounded-md border border-dashed text-sm"
       style={{ width: dims.qr, height: dims.qr }}
     >
       <div className="size-10 rounded-md border border-dashed" />

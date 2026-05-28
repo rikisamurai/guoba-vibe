@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
@@ -15,7 +16,7 @@ function CollectionsList({ collections }: { collections: Item[] }) {
     <nav className="flex flex-col gap-1">
       <Link
         href="/admin"
-        className={`rounded px-2 py-1.5 text-sm hover:bg-muted ${
+        className={`hover:bg-muted rounded px-2 py-1.5 text-sm ${
           !active ? 'bg-muted font-medium' : ''
         }`}
       >
@@ -25,7 +26,7 @@ function CollectionsList({ collections }: { collections: Item[] }) {
         <Link
           key={c.id}
           href={`/admin?c=${c.id}`}
-          className={`rounded px-2 py-1.5 text-sm hover:bg-muted truncate ${
+          className={`hover:bg-muted truncate rounded px-2 py-1.5 text-sm ${
             active === c.id ? 'bg-muted font-medium' : ''
           }`}
         >
@@ -38,15 +39,15 @@ function CollectionsList({ collections }: { collections: Item[] }) {
 
 export function Sidebar({ collections }: { collections: Item[] }) {
   return (
-    <aside className="w-64 border-r flex flex-col p-4 gap-2 shrink-0">
+    <aside className="flex w-64 shrink-0 flex-col gap-2 border-r p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-muted-foreground">Collections</h2>
+        <h2 className="text-muted-foreground text-sm font-medium">Collections</h2>
         <Button asChild size="sm" variant="ghost">
           <Link href="/admin/collections/new">+ New</Link>
         </Button>
       </div>
       <Separator />
-      <Suspense fallback={<div className="text-sm text-muted-foreground">…</div>}>
+      <Suspense fallback={<div className="text-muted-foreground text-sm">…</div>}>
         <CollectionsList collections={collections} />
       </Suspense>
       <div className="mt-auto">

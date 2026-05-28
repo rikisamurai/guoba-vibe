@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+
 import { parseUrl, buildUrl } from '@/lib/url-parse'
 
 describe('parseUrl', () => {

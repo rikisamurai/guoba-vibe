@@ -1,16 +1,17 @@
 'use client'
 
-import { Suspense, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { Suspense, useState } from 'react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+
 import { signIn, signOut } from '@/auth/client'
+import { Button } from '@/components/ui/button'
 
 function ForbiddenNotice() {
   const params = useSearchParams()
   if (params.get('reason') !== 'forbidden') return null
   return (
-    <div className="rounded-md border border-amber-500/40 bg-amber-50 dark:bg-amber-950/20 px-4 py-3 text-sm max-w-md">
+    <div className="max-w-md rounded-md border border-amber-500/40 bg-amber-50 px-4 py-3 text-sm dark:bg-amber-950/20">
       You are signed in with a GitHub account that is not authorized. Sign out and try a different
       account.
     </div>
@@ -46,7 +47,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-6 px-6">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6">
       <h1 className="text-2xl font-semibold">Sign in</h1>
       <Suspense fallback={null}>
         <ForbiddenNotice />

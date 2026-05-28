@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { driver, type Driver } from 'driver.js'
+import { useCallback, useEffect, useRef } from 'react'
+
 import 'driver.js/dist/driver.css'
 import { TOUR_SELECTORS, buildOnboardingSteps } from '@/app/onboarding/onboarding-steps'
 import {

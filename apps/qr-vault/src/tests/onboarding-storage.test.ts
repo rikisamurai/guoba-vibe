@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+
 import {
   ONBOARDING_STORAGE_KEY,
   clearOnboardingStatus,

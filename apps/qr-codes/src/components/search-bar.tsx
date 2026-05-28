@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
+
 import { Input } from '@/components/ui/input'
 
 function SearchBarInner() {

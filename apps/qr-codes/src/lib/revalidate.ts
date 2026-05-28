@@ -1,5 +1,6 @@
 import 'server-only'
 import { revalidatePath } from 'next/cache'
+
 import { qrAffectedPaths, collectionAffectedPaths } from './revalidate-paths'
 
 export function revalidateQr(qrId: string, collectionIds: string[]): void {

@@ -1,7 +1,11 @@
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from 'lucide-react'
 import { type ComponentType } from 'react'
+import { Toaster } from 'sonner'
+
+import { useOnboarding } from '@/app/onboarding/use-onboarding'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Button } from '@/components/ui/button'
 import {
   Sidebar,
   SidebarContent,
@@ -16,10 +20,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
-import { Toaster } from 'sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { Button } from '@/components/ui/button'
-import { useOnboarding } from '@/app/onboarding/use-onboarding'
 
 function OnboardingReplayButton() {
   const { restart } = useOnboarding()
@@ -92,12 +93,12 @@ export function AppShell() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild size="lg" tooltip="QR Vault">
                   <Link to="/">
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                    <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md">
                       <QrCode className="size-4" />
                     </div>
                     <div className="grid flex-1 text-left leading-tight">
                       <span className="font-semibold">QR Vault</span>
-                      <span className="text-xs text-muted-foreground">Local deep-link store</span>
+                      <span className="text-muted-foreground text-xs">Local deep-link store</span>
                     </div>
                   </Link>
                 </SidebarMenuButton>
@@ -119,7 +120,7 @@ export function AppShell() {
 
           <SidebarFooter>
             <div className="flex items-center justify-between gap-2 px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center">
-              <span className="font-mono text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+              <span className="text-muted-foreground font-mono text-xs group-data-[collapsible=icon]:hidden">
                 v0.1.0
               </span>
               <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col">
@@ -133,8 +134,8 @@ export function AppShell() {
         <SidebarInset>
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
             <SidebarTrigger />
-            <div aria-hidden className="h-4 w-px shrink-0 bg-border" />
-            <span className="font-mono text-xs text-muted-foreground">qr-vault</span>
+            <div aria-hidden className="bg-border h-4 w-px shrink-0" />
+            <span className="text-muted-foreground font-mono text-xs">qr-vault</span>
           </header>
           <div className="flex-1 overflow-auto p-5">
             <Outlet />

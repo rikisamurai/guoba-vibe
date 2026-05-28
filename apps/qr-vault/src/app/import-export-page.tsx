@@ -1,10 +1,10 @@
 import { Check, Download, FileUp, Replace, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
+
+import { useVault } from '@/app/use-vault'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useVault } from '@/app/use-vault'
-import { cn } from '@/lib/utils'
 import {
   exportVaultJson,
   mergeVaultData,
@@ -13,6 +13,7 @@ import {
   type VaultData,
 } from '@/lib/storage'
 import { useDocumentTitle } from '@/lib/use-document-title'
+import { cn } from '@/lib/utils'
 
 export function ImportExportPage() {
   useDocumentTitle('Import & Export')
@@ -66,7 +67,7 @@ export function ImportExportPage() {
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-wider font-medium text-muted-foreground mb-1">
+          <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
             Data · Backup
           </p>
           <h1 className="text-3xl font-semibold tracking-tight">Import & Export</h1>
@@ -76,7 +77,7 @@ export function ImportExportPage() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader className="border-b">
             <CardTitle>Vault snapshot</CardTitle>
@@ -95,8 +96,8 @@ export function ImportExportPage() {
               <Button type="button" onClick={exportVault} size="lg" className="w-full">
                 <Download /> Export JSON snapshot
               </Button>
-              <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                Downloads a single <code className="font-mono text-foreground">.json</code> file
+              <p className="text-muted-foreground mt-3 text-xs leading-relaxed">
+                Downloads a single <code className="text-foreground font-mono">.json</code> file
                 containing your entire vault. Store it anywhere — Git, Dropbox, a USB stick.
               </p>
             </div>
@@ -107,13 +108,13 @@ export function ImportExportPage() {
           <CardHeader className="border-b">
             <CardTitle>Import from file</CardTitle>
             <CardAction>
-              <FileUp className="size-3.5 text-muted-foreground" />
+              <FileUp className="text-muted-foreground size-3.5" />
             </CardAction>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <label
               className={cn(
-                'block relative cursor-pointer rounded-md border-2 border-dashed transition-colors',
+                'relative block cursor-pointer rounded-md border-2 border-dashed transition-colors',
                 'px-4 py-6 text-center',
                 pendingData
                   ? 'border-foreground/40 bg-muted/50'
@@ -124,25 +125,25 @@ export function ImportExportPage() {
                 accept="application/json,.json"
                 type="file"
                 onChange={(event) => void readImportFile(event.target.files?.[0])}
-                className="absolute inset-0 size-full opacity-0 cursor-pointer"
+                className="absolute inset-0 size-full cursor-pointer opacity-0"
               />
-              <FileUp className="size-5 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm font-medium mb-0.5">
+              <FileUp className="text-muted-foreground mx-auto mb-2 size-5" />
+              <p className="mb-0.5 text-sm font-medium">
                 {fileName || 'Drop or choose vault file'}
               </p>
-              <p className="text-xs text-muted-foreground font-mono">
+              <p className="text-muted-foreground font-mono text-xs">
                 {fileName ? 'click to replace' : 'qr-vault-export.json'}
               </p>
             </label>
 
             {message && (
-              <div className="px-3 py-2.5 rounded-md border bg-muted/50 text-foreground text-xs flex items-start gap-2">
-                <Check className="size-3.5 shrink-0 mt-0.5" />
+              <div className="bg-muted/50 text-foreground flex items-start gap-2 rounded-md border px-3 py-2.5 text-xs">
+                <Check className="mt-0.5 size-3.5 shrink-0" />
                 <span>{message}</span>
               </div>
             )}
             {error && (
-              <div className="px-3 py-2.5 rounded-md border border-destructive/30 bg-destructive/10 text-destructive text-xs">
+              <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-3 py-2.5 text-xs">
                 {error}
               </div>
             )}
@@ -161,7 +162,7 @@ export function ImportExportPage() {
               </Button>
             </div>
 
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground text-xs leading-relaxed">
               <strong className="text-foreground">Merge</strong> keeps existing local items, adds
               new ones, and overwrites on ID conflicts.{' '}
               <strong className="text-foreground">Replace</strong> wipes everything and starts fresh
@@ -176,9 +177,9 @@ export function ImportExportPage() {
 
 function StatTile({ value, label }: { value: number; label: string }) {
   return (
-    <div className="rounded-md border bg-muted/30 p-3">
-      <div className="text-2xl font-semibold tracking-tight leading-none">{value}</div>
-      <div className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mt-2">
+    <div className="bg-muted/30 rounded-md border p-3">
+      <div className="text-2xl leading-none font-semibold tracking-tight">{value}</div>
+      <div className="text-muted-foreground mt-2 text-[10px] font-medium tracking-wider uppercase">
         {label}
       </div>
     </div>

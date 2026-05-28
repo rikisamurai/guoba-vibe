@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import { buildSharePath, buildUrlFromParts, normalizeQueryRows, parseDeepLink } from '@/lib/url'
 
 describe('parseDeepLink', () => {

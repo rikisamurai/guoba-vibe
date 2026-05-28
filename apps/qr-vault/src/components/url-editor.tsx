@@ -1,5 +1,6 @@
 import { Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -21,7 +22,7 @@ function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.R
   return (
     <Label
       htmlFor={htmlFor}
-      className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground"
+      className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase"
     >
       {children}
     </Label>
@@ -76,7 +77,7 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-[180px_1fr]">
         <div className="grid gap-1.5">
           <FieldLabel htmlFor="url-scheme">Scheme</FieldLabel>
           <Input
@@ -111,7 +112,7 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
             {rows.map((row, index) => (
               <div
                 key={`${row.key}:${index}`}
-                className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 items-center"
+                className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] items-center gap-2"
               >
                 <Input
                   aria-label={`Query key ${index + 1}`}
@@ -143,7 +144,7 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
           <button
             type="button"
             onClick={addRow}
-            className="w-full text-xs text-muted-foreground hover:text-foreground py-3 border border-dashed rounded-md hover:bg-muted/50 transition-colors"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted/50 w-full rounded-md border border-dashed py-3 text-xs transition-colors"
           >
             + Add query param
           </button>

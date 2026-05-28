@@ -1,7 +1,7 @@
-import { listCollections } from '@/data/collections'
 import { QrForm } from '@/components/qr-form'
-import { createQr } from '@/server/qrs'
+import { listCollections } from '@/data/collections'
 import { createCollectionInline } from '@/server/collections'
+import { createQr } from '@/server/qrs'
 
 export default async function NewQrPage({
   searchParams,

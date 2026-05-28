@@ -10,11 +10,12 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { useState } from 'react'
+
+import { useVault } from '@/app/use-vault'
 import { QrPreview } from '@/components/qr-preview'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { useVault } from '@/app/use-vault'
 import { nanoid8 } from '@/lib/ids'
 import { upsertQr } from '@/lib/storage'
 import { parseDeepLink } from '@/lib/url'
@@ -60,11 +61,11 @@ export function SharePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="bg-background text-foreground flex min-h-screen flex-col">
       <header className="border-b">
-        <div className="mx-auto w-full max-w-4xl flex items-center justify-between px-6 h-14">
+        <div className="mx-auto flex h-14 w-full max-w-4xl items-center justify-between px-6">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex aspect-square size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <div className="bg-primary text-primary-foreground flex aspect-square size-7 items-center justify-center rounded-md">
               <QrCode className="size-3.5" />
             </div>
             <span className="font-semibold tracking-tight">QR Vault</span>
@@ -72,7 +73,7 @@ export function SharePage() {
           <div className="flex items-center gap-3">
             <Link
               to="/"
-              className="text-xs text-muted-foreground hover:text-foreground hidden sm:inline-flex items-center gap-1.5"
+              className="text-muted-foreground hover:text-foreground hidden items-center gap-1.5 text-xs sm:inline-flex"
             >
               <ArrowLeft className="size-3" /> Back to vault
             </Link>
@@ -81,14 +82,14 @@ export function SharePage() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col">
-        <div className="mx-auto w-full max-w-xl lg:max-w-4xl px-6 py-12 sm:py-16 space-y-10">
+      <main className="flex flex-1 flex-col">
+        <div className="mx-auto w-full max-w-xl space-y-10 px-6 py-12 sm:py-16 lg:max-w-4xl">
           {/* Hero - centered full width */}
-          <div className="text-center space-y-4">
+          <div className="space-y-4 text-center">
             <Badge variant="outline" asChild>
               <button
                 type="button"
-                className="gap-1.5 cursor-pointer hover:bg-muted"
+                className="hover:bg-muted cursor-pointer gap-1.5"
                 onClick={copyShareUrl}
                 aria-label="Copy share URL"
                 title="Copy share URL"
@@ -97,18 +98,18 @@ export function SharePage() {
                 {shareCopied ? 'Copied share URL' : 'Copy share URL'}
               </button>
             </Badge>
-            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-balance">
+            <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               {title || parsed.path || 'Untitled QR'}
             </h1>
             {description && (
-              <p className="text-muted-foreground text-base max-w-md mx-auto text-balance">
+              <p className="text-muted-foreground mx-auto max-w-md text-base text-balance">
                 {description}
               </p>
             )}
           </div>
 
           {/* QR + Parsed: 2-col at lg+, stacked otherwise */}
-          <div className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)] lg:gap-12 lg:items-start">
+          <div className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start lg:gap-12">
             {/* QR centerpiece + validation */}
             <div className="flex flex-col items-center gap-3">
               <QrPreview url={url} title={title || 'Shared QR'} size="lg" bare />
@@ -124,7 +125,7 @@ export function SharePage() {
                 {parsed.scheme && (
                   <>
                     <span className="text-muted-foreground">·</span>
-                    <span className="font-mono text-muted-foreground">{parsed.scheme}://</span>
+                    <span className="text-muted-foreground font-mono">{parsed.scheme}://</span>
                   </>
                 )}
               </div>
@@ -132,22 +133,22 @@ export function SharePage() {
 
             {/* Parsed details — bare content (no Card) */}
             <div className="space-y-4 lg:pt-2">
-              <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+              <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
                 Parsed details
               </p>
               <div className="grid grid-cols-[70px_minmax(0,1fr)] gap-x-4 gap-y-2 text-xs">
-                <span className="font-mono text-muted-foreground">scheme</span>
+                <span className="text-muted-foreground font-mono">scheme</span>
                 <span className="font-mono break-all">{parsed.scheme || '—'}</span>
-                <span className="font-mono text-muted-foreground">path</span>
+                <span className="text-muted-foreground font-mono">path</span>
                 <span className="font-mono break-all">{parsed.path || '—'}</span>
               </div>
               {queryEntries.length > 0 && (
                 <div className="space-y-2 pt-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+                    <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
                       Query params
                     </p>
-                    <span className="text-[10px] font-mono text-muted-foreground">
+                    <span className="text-muted-foreground font-mono text-[10px]">
                       {queryEntries.length} {queryEntries.length === 1 ? 'key' : 'keys'}
                     </span>
                   </div>
@@ -155,12 +156,12 @@ export function SharePage() {
                     {queryEntries.map(([key, value]) => (
                       <div
                         key={key}
-                        className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 px-2.5 py-1.5 rounded-md bg-muted/50 text-xs"
+                        className="bg-muted/50 grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 rounded-md px-2.5 py-1.5 text-xs"
                       >
-                        <code className="font-mono text-foreground truncate" title={key}>
+                        <code className="text-foreground truncate font-mono" title={key}>
                           {key}
                         </code>
-                        <code className="font-mono text-muted-foreground truncate" title={value}>
+                        <code className="text-muted-foreground truncate font-mono" title={value}>
                           {value || '""'}
                         </code>
                       </div>
@@ -174,11 +175,11 @@ export function SharePage() {
           {/* Raw URL + CTA — always narrow + centered */}
           <div className="mx-auto w-full max-w-xl space-y-6">
             <div className="space-y-1.5">
-              <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+              <span className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
                 Raw URL
               </span>
-              <div className="p-3.5 rounded-md bg-muted/50 border">
-                <p className="text-xs font-mono break-all leading-relaxed">
+              <div className="bg-muted/50 rounded-md border p-3.5">
+                <p className="font-mono text-xs leading-relaxed break-all">
                   {url || 'No URL provided'}
                 </p>
               </div>
@@ -200,7 +201,7 @@ export function SharePage() {
                   {urlCopied ? 'Copied' : 'Copy URL'}
                 </Button>
               </div>
-              <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+              <p className="text-muted-foreground flex items-center justify-center gap-1.5 text-xs">
                 <ShieldCheck className="size-3" /> Stays on this device. Nothing is uploaded.
               </p>
             </div>
@@ -209,7 +210,7 @@ export function SharePage() {
       </main>
 
       <footer className="border-t">
-        <div className="mx-auto w-full max-w-4xl px-6 h-12 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="text-muted-foreground mx-auto flex h-12 w-full max-w-4xl items-center justify-between px-6 text-xs">
           <span className="font-mono">qr-vault · local · static</span>
           <Link to="/" className="hover:text-foreground">
             Open vault →

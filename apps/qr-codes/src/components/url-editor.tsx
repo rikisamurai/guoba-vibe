@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
 import { parseUrl, buildUrl, type UrlParts } from '@/lib/url-parse'
 
 function partsFromUrl(input: string): UrlParts {
@@ -75,14 +76,14 @@ export function UrlEditor({
           placeholder="xhsdiscover://rn/wakanda/buyer-conversion?sku_id=1"
           required={required}
           rows={1}
-          className="font-mono break-all min-h-9 py-1.5"
+          className="min-h-9 py-1.5 font-mono break-all"
           aria-invalid={rawIsInvalid || undefined}
         />
         {rawIsInvalid && <p className="text-sm text-red-500">Invalid URL</p>}
         <input type="hidden" name={name} value={raw} />
       </div>
 
-      <div className="rounded-md border bg-muted/30 p-3 space-y-3">
+      <div className="bg-muted/30 space-y-3 rounded-md border p-3">
         <div className="grid grid-cols-[5rem_1fr] items-center gap-x-3 gap-y-2">
           <Label htmlFor={`${name}-scheme`} className="text-muted-foreground">
             scheme
@@ -104,10 +105,10 @@ export function UrlEditor({
             placeholder="rn/wakanda/buyer-conversion"
             className="font-mono"
           />
-          <span className="text-sm text-muted-foreground self-start mt-2">query</span>
+          <span className="text-muted-foreground mt-2 self-start text-sm">query</span>
           <div className="space-y-2">
             {parts.query.length === 0 && (
-              <p className="text-sm text-muted-foreground italic">(none)</p>
+              <p className="text-muted-foreground text-sm italic">(none)</p>
             )}
             {parts.query.map((p, i) => (
               <div key={i} className="flex items-center gap-2">

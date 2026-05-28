@@ -1,13 +1,14 @@
 'use server'
 
-import { redirect } from 'next/navigation'
 import { eq } from 'drizzle-orm'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
+
+import { requireAdmin } from '@/auth/admin'
 import { db } from '@/db/client'
 import { qrs, qrCollections } from '@/db/schema'
-import { requireAdmin } from '@/auth/admin'
-import { parseUrl } from '@/lib/url-parse'
 import { revalidateQr } from '@/lib/revalidate'
+import { parseUrl } from '@/lib/url-parse'
 
 const inputSchema = z.object({
   title: z.string().min(1, 'title is required').max(200),

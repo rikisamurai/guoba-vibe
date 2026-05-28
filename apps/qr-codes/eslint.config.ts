@@ -1,7 +1,7 @@
 import { fixupConfigRules } from '@eslint/compat'
-import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
 const eslintConfig = defineConfig([
   // Next's transitive plugins have not all published ESLint 10 peer ranges yet.

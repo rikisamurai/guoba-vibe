@@ -10,20 +10,21 @@ import {
   Share2,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
+
+import { useVault } from '@/app/use-vault'
 import { CollectionPicker } from '@/components/collection-picker'
 import { ParsedUrlPanel } from '@/components/parsed-url-panel'
 import { QrPreview } from '@/components/qr-preview'
-import { UrlEditor } from '@/components/url-editor'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { useVault } from '@/app/use-vault'
+import { UrlEditor } from '@/components/url-editor'
 import { nanoid8 } from '@/lib/ids'
 import { upsertQr } from '@/lib/storage'
-import { toast } from 'sonner'
 import { buildSharePath, parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
@@ -31,7 +32,7 @@ function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.R
   return (
     <Label
       htmlFor={htmlFor}
-      className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground"
+      className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase"
     >
       {children}
     </Label>
@@ -129,9 +130,9 @@ export function QrDetailPage() {
   if (!isNew && !existingQr) {
     return (
       <Card>
-        <CardContent className="py-12 text-center space-y-4">
+        <CardContent className="space-y-4 py-12 text-center">
           <p className="text-xl font-semibold">QR not found</p>
-          <p className="text-sm text-muted-foreground">This QR code doesn't exist in your vault.</p>
+          <p className="text-muted-foreground text-sm">This QR code doesn't exist in your vault.</p>
           <Link to="/">
             <Button type="button">
               <ArrowLeft /> Back to vault
@@ -147,7 +148,7 @@ export function QrDetailPage() {
       <div className="flex items-center justify-between gap-4">
         <Link
           to="/"
-          className="text-xs text-muted-foreground hover:text-foreground font-medium flex items-center gap-1"
+          className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs font-medium"
         >
           <ArrowLeft className="size-3" /> Vault
         </Link>
@@ -157,14 +158,14 @@ export function QrDetailPage() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-4 items-start">
+      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
         <Card>
           <CardHeader className="border-b">
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-wider font-medium text-muted-foreground mb-1">
+              <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
                 {isNew ? 'New QR' : 'Saved QR'}
               </p>
-              <CardTitle className="text-2xl font-semibold tracking-tight truncate">
+              <CardTitle className="truncate text-2xl font-semibold tracking-tight">
                 {title || 'Untitled QR'}
               </CardTitle>
             </div>
@@ -184,12 +185,12 @@ export function QrDetailPage() {
 
           <CardContent className="space-y-5 pt-4">
             {error && (
-              <div className="px-3 py-2.5 rounded-md border border-destructive/30 bg-destructive/10 text-destructive text-sm">
+              <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-3 py-2.5 text-sm">
                 {error}
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="grid gap-1.5">
                 <FieldLabel htmlFor="qr-title">Title</FieldLabel>
                 <Input
@@ -212,9 +213,9 @@ export function QrDetailPage() {
             </div>
 
             <div className="pt-1">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="mb-3 flex items-center gap-3">
                 <Separator className="flex-1" />
-                <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+                <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
                   Deep link
                 </p>
                 <Separator className="flex-1" />
@@ -223,18 +224,18 @@ export function QrDetailPage() {
             </div>
 
             <div className="pt-1">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="mb-3 flex items-center gap-3">
                 <Separator className="flex-1" />
-                <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+                <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
                   Collections
                 </p>
                 <Separator className="flex-1" />
               </div>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs text-muted-foreground">Assign to one or more collections</p>
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-muted-foreground text-xs">Assign to one or more collections</p>
                 <Link
                   to="/collections"
-                  className="text-xs text-muted-foreground hover:text-foreground font-medium flex items-center gap-1"
+                  className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs font-medium"
                 >
                   Manage <ArrowRight className="size-3" />
                 </Link>
@@ -286,12 +287,12 @@ export function QrDetailPage() {
               </CardAction>
             </CardHeader>
             <CardContent className="space-y-2 pt-4">
-              <div className="p-3 rounded-md bg-muted/50 border">
-                <p className="text-[10px] font-mono text-foreground break-all leading-relaxed">
+              <div className="bg-muted/50 rounded-md border p-3">
+                <p className="text-foreground font-mono text-[10px] leading-relaxed break-all">
                   {shareUrl || '—'}
                 </p>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Send this hash URL to share the QR without uploading data.
               </p>
             </CardContent>

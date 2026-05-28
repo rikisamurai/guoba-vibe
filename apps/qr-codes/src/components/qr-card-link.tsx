@@ -1,7 +1,7 @@
 'use client'
 
-import type { MouseEvent, ReactNode } from 'react'
 import Link from 'next/link'
+import type { MouseEvent, ReactNode } from 'react'
 
 function isModifiedClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0

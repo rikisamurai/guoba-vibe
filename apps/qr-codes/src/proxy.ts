@@ -1,5 +1,5 @@
-import { NextResponse, type NextRequest } from 'next/server'
 import { getSessionCookie } from 'better-auth/cookies'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export function proxy(req: NextRequest) {
   const sessionCookie = getSessionCookie(req)

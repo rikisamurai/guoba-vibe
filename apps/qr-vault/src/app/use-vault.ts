@@ -1,4 +1,5 @@
 import { useState } from 'react'
+
 import { loadVault, saveVault, type VaultData } from '@/lib/storage'
 
 export function useVault() {

@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+
 import { db } from '@/db/client'
 import * as schema from '@/db/schema'
 import { env } from '@/env'

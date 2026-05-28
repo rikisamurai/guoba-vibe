@@ -1,8 +1,7 @@
 {
   "name": "guoba-vibe",
-  "private": true,
   "version": "0.0.0",
-  "packageManager": "pnpm@11.3.0",
+  "private": true,
   "scripts": {
     "dev": "pnpm --filter qr-codes dev",
     "build": "pnpm --filter qr-codes build",
@@ -18,9 +17,6 @@
     "preview:qr-vault": "pnpm --filter qr-vault preview",
     "test:qr-vault": "pnpm --filter qr-vault test"
   },
-  "engines": {
-    "node": ">=24"
-  },
   "devDependencies": {
     "lint-staged": "^17.0.5",
     "oxfmt": "^0.52.0",
@@ -32,5 +28,9 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,jsonc,json5,yml,yaml,css,scss,md,mdx,html}": "oxfmt --write"
-  }
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@11.3.0"
 }

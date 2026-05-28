@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+
 import { getQrById } from '@/data/qrs'
 import { renderPng, renderSvg } from '@/lib/qr'
 

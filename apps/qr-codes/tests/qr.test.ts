@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+
 import { renderSvg, renderPng } from '@/lib/qr'
 
 describe('renderSvg', () => {

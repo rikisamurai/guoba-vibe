@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useTransition } from 'react'
 // NEXT 16.2.6: isRedirectError is not publicly exported from "next/navigation".
 // If this internal path breaks on a future minor, fall back to err.message === "NEXT_REDIRECT".
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
+import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -123,11 +124,11 @@ export function QrForm({
       <div>
         <Label>Collections</Label>
         {collectionsList.length === 0 && !adding ? (
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 text-sm">
             No collections yet — create one below.
           </p>
         ) : (
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             {collectionsList.map((c) => {
               const active = selected.has(c.id)
               return (
@@ -135,7 +136,7 @@ export function QrForm({
                   type="button"
                   key={c.id}
                   onClick={() => toggle(c.id)}
-                  className={`rounded-full px-3 py-1 text-sm border ${
+                  className={`rounded-full border px-3 py-1 text-sm ${
                     active
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'bg-background hover:bg-muted'
@@ -149,7 +150,7 @@ export function QrForm({
         )}
 
         {adding ? (
-          <div className="mt-3 space-y-2 rounded-md border bg-muted/30 p-3">
+          <div className="bg-muted/30 mt-3 space-y-2 rounded-md border p-3">
             <div>
               <Label htmlFor="new-collection-title">New collection title</Label>
               <Input

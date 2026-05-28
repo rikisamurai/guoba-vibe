@@ -6,9 +6,11 @@
   "semi": false,
   "singleQuote": true,
   "trailingComma": "all",
-  "sortPackageJson": false,
-  "sortImports": false,
-  "sortTailwindcss": false,
+  "sortPackageJson": true,
+  "sortImports": true,
+  "sortTailwindcss": {
+    "functions": ["cn"]
+  },
   "ignorePatterns": [
     ".agents/**",
     ".claude/**",

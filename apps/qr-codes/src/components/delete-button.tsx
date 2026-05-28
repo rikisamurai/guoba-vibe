@@ -1,10 +1,11 @@
 'use client'
 
-import { useTransition } from 'react'
 // Internal import; isRedirectError is not publicly exported in Next 16.2.6.
 // If this breaks on a future minor, fall back to `err instanceof Error && err.message === "NEXT_REDIRECT"`.
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
+import { useTransition } from 'react'
 import { toast } from 'sonner'
+
 import { Button } from '@/components/ui/button'
 
 export function DeleteButton({

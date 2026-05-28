@@ -1,11 +1,12 @@
 'use server'
 
-import { redirect } from 'next/navigation'
 import { eq } from 'drizzle-orm'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
+
+import { requireAdmin } from '@/auth/admin'
 import { db } from '@/db/client'
 import { collections, qrCollections } from '@/db/schema'
-import { requireAdmin } from '@/auth/admin'
 import { revalidateCollection } from '@/lib/revalidate'
 
 const inputSchema = z.object({

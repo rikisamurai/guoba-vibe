@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
-import { getCollectionById } from '@/data/collections'
+
 import { CollectionForm } from '@/components/collection-form'
 import { DeleteButton } from '@/components/delete-button'
+import { getCollectionById } from '@/data/collections'
 import { updateCollection, deleteCollection } from '@/server/collections'
 
 export default async function EditCollectionPage({ params }: { params: Promise<{ id: string }> }) {

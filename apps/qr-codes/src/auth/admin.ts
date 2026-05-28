@@ -1,8 +1,9 @@
 import 'server-only'
-import { cache } from 'react'
+import { and, eq } from 'drizzle-orm'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { and, eq } from 'drizzle-orm'
+import { cache } from 'react'
+
 import { auth } from '@/auth/server'
 import { db } from '@/db/client'
 import * as schema from '@/db/schema'
