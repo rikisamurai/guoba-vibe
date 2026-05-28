@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { Database, Download, FolderOpen, Plus, QrCode } from "lucide-react";
+import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from "lucide-react";
 import { type ComponentType } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
@@ -18,6 +18,24 @@ import {
 } from "@/components/ui/sidebar";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { useOnboarding } from "@/app/onboarding/use-onboarding";
+
+function OnboardingReplayButton() {
+  const { restart } = useOnboarding();
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-sm"
+      onClick={restart}
+      aria-label="Replay onboarding"
+      title="Replay onboarding"
+    >
+      <HelpCircle />
+    </Button>
+  );
+}
 
 type NavItem = {
   to: string;
@@ -100,12 +118,14 @@ export function AppShell() {
           </SidebarContent>
 
           <SidebarFooter>
-            <div className="flex items-center justify-between gap-2 px-2 py-1 group-data-[collapsible=icon]:hidden">
-              <span className="font-mono text-xs text-muted-foreground">v0.1.0</span>
-              <ThemeToggle />
-            </div>
-            <div className="hidden group-data-[collapsible=icon]:flex justify-center">
-              <ThemeToggle />
+            <div className="flex items-center justify-between gap-2 px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center">
+              <span className="font-mono text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+                v0.1.0
+              </span>
+              <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col">
+                <OnboardingReplayButton />
+                <ThemeToggle />
+              </div>
             </div>
           </SidebarFooter>
         </Sidebar>
