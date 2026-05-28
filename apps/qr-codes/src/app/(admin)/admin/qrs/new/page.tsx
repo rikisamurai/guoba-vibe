@@ -8,8 +8,7 @@ export default async function NewQrPage({
 }: {
   searchParams: Promise<{ c?: string }>
 }) {
-  const { c } = await searchParams
-  const cols = await listCollections()
+  const [{ c }, cols] = await Promise.all([searchParams, listCollections()])
 
   async function handle(input: {
     title: string

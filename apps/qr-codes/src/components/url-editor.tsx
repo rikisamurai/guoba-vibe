@@ -6,15 +6,22 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { parseUrl, buildUrl, type UrlParts } from '@/lib/url-parse'
+import { parseUrl, buildUrl } from '@/lib/url-parse'
 
-function partsFromUrl(input: string): UrlParts {
+type QueryRow = { id: string; key: string; value: string }
+type EditorParts = { scheme: string; path: string; query: QueryRow[] }
+
+function makeRow(key: string, value: string): QueryRow {
+  return { id: crypto.randomUUID(), key, value }
+}
+
+function partsFromUrl(input: string): EditorParts {
   const parsed = parseUrl(input)
   if (!parsed.isValid) return { scheme: '', path: '', query: [] }
   return {
     scheme: parsed.scheme,
     path: parsed.path,
-    query: Object.entries(parsed.query).map(([key, value]) => ({ key, value })),
+    query: Object.entries(parsed.query).map(([key, value]) => makeRow(key, value)),
   }
 }
 
@@ -28,10 +35,10 @@ export function UrlEditor({
   required?: boolean
 }) {
   const [raw, setRaw] = useState(defaultValue)
-  const [parts, setParts] = useState<UrlParts>(() => partsFromUrl(defaultValue))
+  const [parts, setParts] = useState<EditorParts>(() => partsFromUrl(defaultValue))
   const rawIsInvalid = raw.trim() !== '' && !parseUrl(raw).isValid
 
-  function commitParts(next: UrlParts) {
+  function commitParts(next: EditorParts) {
     setParts(next)
     setRaw(buildUrl(next))
   }
@@ -44,25 +51,24 @@ export function UrlEditor({
       setParts({
         scheme: parsed.scheme,
         path: parsed.path,
-        query: Object.entries(parsed.query).map(([key, value]) => ({ key, value })),
+        query: Object.entries(parsed.query).map(([key, value]) => makeRow(key, value)),
       })
     }
   }
 
-  function setQueryAt(index: number, patch: Partial<{ key: string; value: string }>) {
-    const next: UrlParts = {
+  function setQueryAt(id: string, patch: Partial<{ key: string; value: string }>) {
+    commitParts({
       ...parts,
-      query: parts.query.map((p, i) => (i === index ? { ...p, ...patch } : p)),
-    }
-    commitParts(next)
+      query: parts.query.map((p) => (p.id === id ? { ...p, ...patch } : p)),
+    })
   }
 
-  function removeQueryAt(index: number) {
-    commitParts({ ...parts, query: parts.query.filter((_, i) => i !== index) })
+  function removeQueryAt(id: string) {
+    commitParts({ ...parts, query: parts.query.filter((p) => p.id !== id) })
   }
 
   function addQueryRow() {
-    commitParts({ ...parts, query: [...parts.query, { key: '', value: '' }] })
+    commitParts({ ...parts, query: [...parts.query, makeRow('', '')] })
   }
 
   return (
@@ -110,18 +116,18 @@ export function UrlEditor({
             {parts.query.length === 0 && (
               <p className="text-muted-foreground text-sm italic">(none)</p>
             )}
-            {parts.query.map((p, i) => (
-              <div key={i} className="flex items-center gap-2">
+            {parts.query.map((p) => (
+              <div key={p.id} className="flex items-center gap-2">
                 <Input
                   value={p.key}
-                  onChange={(e) => setQueryAt(i, { key: e.target.value })}
+                  onChange={(e) => setQueryAt(p.id, { key: e.target.value })}
                   placeholder="key"
                   className="font-mono"
                 />
                 <span className="text-muted-foreground">=</span>
                 <Input
                   value={p.value}
-                  onChange={(e) => setQueryAt(i, { value: e.target.value })}
+                  onChange={(e) => setQueryAt(p.id, { value: e.target.value })}
                   placeholder="value"
                   className="font-mono"
                 />
@@ -129,7 +135,7 @@ export function UrlEditor({
                   type="button"
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => removeQueryAt(i)}
+                  onClick={() => removeQueryAt(p.id)}
                   aria-label="Remove parameter"
                 >
                   ×

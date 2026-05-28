@@ -47,8 +47,10 @@ export default async function QrDetailPage({ params }: { params: Promise<{ id: s
   const row = await getQrById(id)
   if (!row) notFound()
 
-  const cols = await getQrCollections(id)
-  const svg = await renderSvg(row.url, { width: 480, margin: 2 })
+  const [cols, svg] = await Promise.all([
+    getQrCollections(id),
+    renderSvg(row.url, { width: 480, margin: 2 }),
+  ])
 
   return (
     <main className="mx-auto max-w-2xl space-y-8 px-4 py-10">

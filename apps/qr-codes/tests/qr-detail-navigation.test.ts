@@ -17,7 +17,7 @@ describe('QR detail navigation', () => {
     )
 
     expect(source).toContain('href="/admin"')
-    expect(source).toContain('back();')
+    expect(source).toContain('back()')
   })
 
   it('marks admin-origin QR card navigations for history back', async () => {
