@@ -11,6 +11,7 @@
     "test": "pnpm --filter qr-codes test",
     "dev:qr-vault": "pnpm --filter qr-vault dev",
     "build:qr-vault": "pnpm --filter qr-vault build",
+    "lint:qr-vault": "pnpm --filter qr-vault lint",
     "preview:qr-vault": "pnpm --filter qr-vault preview",
     "test:qr-vault": "pnpm --filter qr-vault test"
   },

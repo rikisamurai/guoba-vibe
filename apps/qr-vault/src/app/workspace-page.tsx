@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   Inbox,
@@ -33,9 +33,7 @@ import type { VaultData } from "@/lib/storage";
 export function WorkspacePage() {
   useDocumentTitle("Vault");
   const { data, updateVault } = useVault();
-  const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [quickUrl, setQuickUrl] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
   const [armedDelete, setArmedDelete] = useState("");
@@ -73,10 +71,6 @@ export function WorkspacePage() {
   const visibleQrs = searchQrs({ ...data, qrs: baseQrs }, search);
   const selectedQr = data.qrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0];
 
-  function openNewQr() {
-    void navigate({ to: "/new", search: { url: quickUrl } });
-  }
-
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] gap-4 items-start">
       <div className="space-y-4">
@@ -89,35 +83,22 @@ export function WorkspacePage() {
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs uppercase tracking-wider font-medium text-muted-foreground">
-              Local · Static · Encrypted
+              Local · Static · Private
             </p>
             <h1 className="text-3xl font-semibold tracking-tight">QR Vault</h1>
             <p className="text-sm text-muted-foreground">
               Deep-link QR codes, stored & shared on your own terms.
             </p>
           </div>
-          <Button onClick={openNewQr} type="button">
-            <Plus /> New QR
+          <Button asChild>
+            <Link to="/new" search={{ url: "" }}>
+              <Plus /> New QR
+            </Link>
           </Button>
         </div>
 
         <Card>
-          <CardContent className="space-y-2 py-2">
-            <div className="flex items-center gap-2 px-3 h-9 rounded-md border focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 transition-colors">
-              <span className="font-mono text-xs text-muted-foreground shrink-0">{">"}_</span>
-              <input
-                value={quickUrl}
-                onChange={(event) => setQuickUrl(event.target.value)}
-                placeholder="xhsdiscover://rn/wakanda/buyer-conversion?sku_id=1"
-                className="flex-1 min-w-0 bg-transparent text-sm font-mono outline-none placeholder:text-muted-foreground"
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") openNewQr();
-                }}
-              />
-              <Button variant="ghost" size="xs" type="button" onClick={openNewQr}>
-                Open editor <ArrowRight />
-              </Button>
-            </div>
+          <CardContent className="py-2">
             <div className="flex items-center gap-2 px-3 h-9 rounded-md border focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 transition-colors">
               <Search className="size-3.5 text-muted-foreground shrink-0" />
               <input
@@ -181,6 +162,11 @@ export function WorkspacePage() {
                         <p className="text-xs font-mono text-muted-foreground truncate pl-3.5">
                           {parsed.path || qr.url}
                         </p>
+                        {qr.description && (
+                          <p className="text-xs text-muted-foreground truncate pl-3.5 mt-0.5">
+                            {qr.description}
+                          </p>
+                        )}
                       </div>
                     </button>
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -281,7 +267,12 @@ export function WorkspacePage() {
                   </Link>
                 </CardAction>
               </CardHeader>
-              <CardContent className="pt-4">
+              <CardContent className="pt-4 space-y-3">
+                {selectedQr.description && (
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {selectedQr.description}
+                  </p>
+                )}
                 <p className="text-xs font-mono text-muted-foreground break-all leading-relaxed">
                   {selectedQr.url}
                 </p>
