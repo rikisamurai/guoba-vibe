@@ -83,7 +83,7 @@ export function WorkspacePage() {
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs uppercase tracking-wider font-medium text-muted-foreground">
-              Local · Static · Encrypted
+              Local · Static · Private
             </p>
             <h1 className="text-3xl font-semibold tracking-tight">QR Vault</h1>
             <p className="text-sm text-muted-foreground">
