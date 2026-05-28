@@ -16,6 +16,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 type NavItem = {
@@ -108,6 +109,7 @@ export function AppShell() {
           </div>
         </SidebarInset>
       </SidebarProvider>
+      <Toaster position="top-center" />
     </TooltipProvider>
   );
 }

@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { AlertCircle, ArrowLeft, ArrowRight, Check, Copy, Save, Share2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, Check, Copy, CopyPlus, Save, Share2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { CollectionPicker } from "@/components/collection-picker";
 import { ParsedUrlPanel } from "@/components/parsed-url-panel";
@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { useVault } from "@/app/use-vault";
 import { nanoid8 } from "@/lib/ids";
 import { upsertQr } from "@/lib/storage";
+import { toast } from "sonner";
 import { buildSharePath, parseDeepLink } from "@/lib/url";
 import { useDocumentTitle } from "@/lib/use-document-title";
 
@@ -102,6 +103,19 @@ export function QrDetailPage() {
     void navigate({ to: "/q/$qrId", params: { qrId: id } });
   }
 
+  function saveAsNew() {
+    if (!parsed.isValid) {
+      setError("A valid scheme and path are required.");
+      return;
+    }
+    const newId = nanoid8();
+    updateVault((current) =>
+      upsertQr(current, { id: newId, title, description, url, collectionIds })
+    );
+    toast.success("Saved as new QR");
+    void navigate({ to: "/q/$qrId", params: { qrId: newId } });
+  }
+
   function copyUrl() {
     if (!url) return;
     void navigator.clipboard.writeText(url);
@@ -154,14 +168,16 @@ export function QrDetailPage() {
               </CardTitle>
             </div>
             <CardAction className="flex items-center gap-2">
-              <Button onClick={saveQr} type="button" variant="outline">
+              <Button onClick={saveQr} type="button">
                 {saved ? <Check /> : <Save />}
                 {saved ? "Saved" : "Save"}
               </Button>
-              <Button onClick={copyUrl} type="button" disabled={!url}>
-                {urlCopied ? <Check /> : <Copy />}
-                {urlCopied ? "Copied" : "Copy URL"}
-              </Button>
+              {!isNew && existingQr && (
+                <Button onClick={saveAsNew} type="button" variant="outline">
+                  <CopyPlus />
+                  Save as New
+                </Button>
+              )}
             </CardAction>
           </CardHeader>
 
@@ -235,6 +251,16 @@ export function QrDetailPage() {
 
         <aside className="space-y-4 lg:sticky lg:top-0">
           <QrPreview title={title || "QR code"} url={url} size="lg" />
+          <Button
+            onClick={copyUrl}
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={!url}
+          >
+            {urlCopied ? <Check /> : <Copy />}
+            {urlCopied ? "Copied" : "Copy URL"}
+          </Button>
           <ParsedUrlPanel url={url} />
           <Card>
             <CardHeader className="border-b">
