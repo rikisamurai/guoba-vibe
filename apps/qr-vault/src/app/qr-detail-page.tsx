@@ -25,7 +25,7 @@ import { Separator } from '@/components/ui/separator'
 import { UrlEditor } from '@/components/url-editor'
 import { nanoid8 } from '@/lib/ids'
 import { upsertQr } from '@/lib/storage'
-import { buildSharePath, parseDeepLink } from '@/lib/url'
+import { buildShareUrl, parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
 function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
@@ -64,8 +64,13 @@ export function QrDetailPage() {
   const [urlCopied, setUrlCopied] = useState(false)
   const [saved, setSaved] = useState(false)
   const parsed = parseDeepLink(url)
-  const sharePath = buildSharePath({ url, title, description })
-  const shareUrl = `${window.location.origin}${window.location.pathname}#${sharePath}`
+  const shareUrl = buildShareUrl({
+    origin: window.location.origin,
+    pathname: window.location.pathname,
+    url,
+    title,
+    description,
+  })
 
   useDocumentTitle(isNew ? 'New QR' : title || existingQr?.title || 'QR')
 
