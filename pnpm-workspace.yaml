@@ -1,16 +1,17 @@
 packages:
-  - "apps/*"
-  - "packages/*"
+  - 'apps/*'
+  - 'packages/*'
 
 peerDependencyRules:
   allowedVersions:
-    eslint: "10"
+    eslint: '10'
 
 allowBuilds:
   esbuild: true
   msgpackr-extract: true
   msw: false
   sharp: false
+  simple-git-hooks: true
   unrs-resolver: false
 
 ignoredBuiltDependencies:

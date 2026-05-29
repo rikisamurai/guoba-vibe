@@ -1,44 +1,35 @@
-import { notFound } from "next/navigation";
-import { getQrById, getQrCollections } from "@/data/qrs";
-import { listCollections } from "@/data/collections";
-import { QrForm } from "@/components/qr-form";
-import { DeleteButton } from "@/components/delete-button";
-import { updateQr, deleteQr } from "@/server/qrs";
-import { createCollectionInline } from "@/server/collections";
+import { notFound } from 'next/navigation'
 
-export default async function EditQrPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const qr = await getQrById(id);
-  if (!qr) notFound();
+import { DeleteButton } from '@/components/delete-button'
+import { QrForm } from '@/components/qr-form'
+import { listCollections } from '@/data/collections'
+import { getQrById, getQrCollections } from '@/data/qrs'
+import { createCollectionInline } from '@/server/collections'
+import { updateQr, deleteQr } from '@/server/qrs'
 
-  const [links, cols] = await Promise.all([
-    getQrCollections(id),
-    listCollections(),
-  ]);
+export default async function EditQrPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const qr = await getQrById(id)
+  if (!qr) notFound()
+
+  const [links, cols] = await Promise.all([getQrCollections(id), listCollections()])
 
   async function update(input: {
-    title: string;
-    description: string | null;
-    url: string;
-    collectionIds: string[];
+    title: string
+    description: string | null
+    url: string
+    collectionIds: string[]
   }) {
-    "use server";
-    await updateQr(id, input);
+    'use server'
+    await updateQr(id, input)
   }
   async function remove() {
-    "use server";
-    await deleteQr(id);
+    'use server'
+    await deleteQr(id)
   }
-  async function handleCreateCollection(input: {
-    title: string;
-    description: string | null;
-  }) {
-    "use server";
-    return createCollectionInline(input);
+  async function handleCreateCollection(input: { title: string; description: string | null }) {
+    'use server'
+    return createCollectionInline(input)
   }
 
   return (
@@ -62,5 +53,5 @@ export default async function EditQrPage({
         confirmMessage={`Delete QR "${qr.title}"? This cannot be undone.`}
       />
     </div>
-  );
+  )
 }

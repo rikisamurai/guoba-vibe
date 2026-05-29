@@ -1,25 +1,22 @@
-import { notFound } from "next/navigation";
-import { getCollectionById } from "@/data/collections";
-import { CollectionForm } from "@/components/collection-form";
-import { DeleteButton } from "@/components/delete-button";
-import { updateCollection, deleteCollection } from "@/server/collections";
+import { notFound } from 'next/navigation'
 
-export default async function EditCollectionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const collection = await getCollectionById(id);
-  if (!collection) notFound();
+import { CollectionForm } from '@/components/collection-form'
+import { DeleteButton } from '@/components/delete-button'
+import { getCollectionById } from '@/data/collections'
+import { updateCollection, deleteCollection } from '@/server/collections'
+
+export default async function EditCollectionPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const collection = await getCollectionById(id)
+  if (!collection) notFound()
 
   async function update(input: { title: string; description: string | null }) {
-    "use server";
-    await updateCollection(id, input);
+    'use server'
+    await updateCollection(id, input)
   }
   async function remove() {
-    "use server";
-    await deleteCollection(id);
+    'use server'
+    await deleteCollection(id)
   }
 
   return (
@@ -36,5 +33,5 @@ export default async function EditCollectionPage({
         confirmMessage={`Delete collection "${collection.title}"? This will remove the collection but keep the QRs (they will become unaffiliated and may violate the ≥1 collection rule on edit).`}
       />
     </div>
-  );
+  )
 }

@@ -1,27 +1,28 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { toast } from "sonner";
-import type { VariantProps } from "class-variance-authority";
-import { Button, buttonVariants } from "@/components/ui/button";
+import type { VariantProps } from 'class-variance-authority'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
-type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
-type ButtonSize = VariantProps<typeof buttonVariants>["size"];
+import { Button, buttonVariants } from '@/components/ui/button'
+
+type ButtonVariant = VariantProps<typeof buttonVariants>['variant']
+type ButtonSize = VariantProps<typeof buttonVariants>['size']
 
 export function CopyButton({
   value,
   label,
-  variant = "outline",
-  size = "sm",
+  variant = 'outline',
+  size = 'sm',
   className,
 }: {
-  value: string;
-  label?: string;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  className?: string;
+  value: string
+  label?: string
+  variant?: ButtonVariant
+  size?: ButtonSize
+  className?: string
 }) {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false)
   return (
     <Button
       variant={variant}
@@ -29,16 +30,16 @@ export function CopyButton({
       className={className}
       onClick={async () => {
         try {
-          await navigator.clipboard.writeText(value);
-          setCopied(true);
-          toast.success("Copied");
-          setTimeout(() => setCopied(false), 1500);
+          await navigator.clipboard.writeText(value)
+          setCopied(true)
+          toast.success('Copied')
+          setTimeout(() => setCopied(false), 1500)
         } catch {
-          toast.error("Copy failed");
+          toast.error('Copy failed')
         }
       }}
     >
-      {copied ? "Copied" : (label ?? "Copy")}
+      {copied ? 'Copied' : (label ?? 'Copy')}
     </Button>
-  );
+  )
 }

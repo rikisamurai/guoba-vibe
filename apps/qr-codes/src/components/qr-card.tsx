@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { PencilIcon } from "lucide-react";
-import { renderSvg } from "@/lib/qr";
-import { QrCardLink } from "@/components/qr-card-link";
+import { PencilIcon } from 'lucide-react'
+import Link from 'next/link'
+
+import { QrCardLink } from '@/components/qr-card-link'
+import { renderSvg } from '@/lib/qr'
 
 export async function QrCard({
   id,
@@ -10,29 +11,29 @@ export async function QrCard({
   returnHref,
   editable = false,
 }: {
-  id: string;
-  title: string;
-  url: string;
-  returnHref?: string;
-  editable?: boolean;
+  id: string
+  title: string
+  url: string
+  returnHref?: string
+  editable?: boolean
 }) {
-  const svg = await renderSvg(url, { width: 256, margin: 1 });
+  const svg = await renderSvg(url, { width: 256, margin: 1 })
   return (
     <div className="relative">
       <QrCardLink
         id={id}
         href={`/q/${id}`}
         returnHref={returnHref}
-        className="block rounded-lg border p-4 hover:shadow-md transition"
+        className="block rounded-lg border p-4 transition hover:shadow-md"
       >
         <div
-          className="aspect-square w-full max-w-[180px] mx-auto [&_svg]:w-full [&_svg]:h-full"
+          className="mx-auto aspect-square w-full max-w-[180px] [&_svg]:h-full [&_svg]:w-full"
           dangerouslySetInnerHTML={{ __html: svg }}
         />
-        <h3 className="mt-3 font-medium truncate">{title}</h3>
+        <h3 className="mt-3 truncate font-medium">{title}</h3>
         <p
-          className={`mt-1 text-xs text-muted-foreground font-mono truncate ${
-            editable ? "pr-8" : ""
+          className={`text-muted-foreground mt-1 truncate font-mono text-xs ${
+            editable ? 'pr-8' : ''
           }`}
         >
           {url}
@@ -43,11 +44,11 @@ export async function QrCard({
           href={`/admin/qrs/${id}/edit`}
           aria-label="编辑"
           title="编辑"
-          className="absolute bottom-3 right-3 z-10 rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground absolute right-3 bottom-3 z-10 rounded-md p-1.5"
         >
           <PencilIcon className="size-4" />
         </Link>
       )}
     </div>
-  );
+  )
 }

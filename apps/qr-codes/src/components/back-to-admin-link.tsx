@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { useSyncExternalStore, type MouseEvent, type ReactNode } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useSyncExternalStore, type MouseEvent, type ReactNode } from 'react'
 
 function isModifiedClick(event: MouseEvent<HTMLAnchorElement>) {
-  return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+  return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0
 }
 
-const subscribe = () => () => {};
+const subscribe = () => () => {}
 
 function useEnteredFromAdmin(qrId: string) {
   return useSyncExternalStore(
     subscribe,
-    () => sessionStorage.getItem(`qr:return:${qrId}`)?.startsWith("/admin") ?? false,
+    () => sessionStorage.getItem(`qr:return:${qrId}`)?.startsWith('/admin') ?? false,
     () => false,
-  );
+  )
 }
 
 export function BackToAdminLink({
@@ -23,25 +23,25 @@ export function BackToAdminLink({
   className,
   children,
 }: {
-  qrId: string;
-  className?: string;
-  children: ReactNode;
+  qrId: string
+  className?: string
+  children: ReactNode
 }) {
-  const { back } = useRouter();
-  const enteredFromAdmin = useEnteredFromAdmin(qrId);
+  const { back } = useRouter()
+  const enteredFromAdmin = useEnteredFromAdmin(qrId)
 
-  if (!enteredFromAdmin) return null;
+  if (!enteredFromAdmin) return null
 
   function returnToAdmin(event: MouseEvent<HTMLAnchorElement>) {
-    if (isModifiedClick(event)) return;
-    sessionStorage.removeItem(`qr:return:${qrId}`);
-    event.preventDefault();
-    back();
+    if (isModifiedClick(event)) return
+    sessionStorage.removeItem(`qr:return:${qrId}`)
+    event.preventDefault()
+    back()
   }
 
   return (
     <Link href="/admin" className={className} onClick={returnToAdmin}>
       {children}
     </Link>
-  );
+  )
 }

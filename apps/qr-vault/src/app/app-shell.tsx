@@ -1,7 +1,11 @@
-import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from "lucide-react";
-import { type ComponentType } from "react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Link, Outlet, useRouterState } from '@tanstack/react-router'
+import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from 'lucide-react'
+import { type ComponentType } from 'react'
+import { Toaster } from 'sonner'
+
+import { useOnboarding } from '@/app/onboarding/use-onboarding'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { Button } from '@/components/ui/button'
 import {
   Sidebar,
   SidebarContent,
@@ -15,14 +19,11 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Toaster } from "sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { useOnboarding } from "@/app/onboarding/use-onboarding";
+} from '@/components/ui/sidebar'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 function OnboardingReplayButton() {
-  const { restart } = useOnboarding();
+  const { restart } = useOnboarding()
   return (
     <Button
       type="button"
@@ -34,37 +35,37 @@ function OnboardingReplayButton() {
     >
       <HelpCircle />
     </Button>
-  );
+  )
 }
 
 type NavItem = {
-  to: string;
-  label: string;
-  icon: ComponentType<{ className?: string }>;
-  exact?: boolean;
-  search?: Record<string, string>;
-  dataTour?: string;
-};
+  to: string
+  label: string
+  icon: ComponentType<{ className?: string }>
+  exact?: boolean
+  search?: Record<string, string>
+  dataTour?: string
+}
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/", label: "Vault", icon: Database, exact: true },
-  { to: "/collections", label: "Collections", icon: FolderOpen },
+  { to: '/', label: 'Vault', icon: Database, exact: true },
+  { to: '/collections', label: 'Collections', icon: FolderOpen },
   {
-    to: "/new",
-    label: "New QR",
+    to: '/new',
+    label: 'New QR',
     icon: Plus,
     exact: true,
-    search: { url: "" },
-    dataTour: "nav-new-qr",
+    search: { url: '' },
+    dataTour: 'nav-new-qr',
   },
-  { to: "/import", label: "Import", icon: Download, exact: true },
-];
+  { to: '/import', label: 'Import', icon: Download, exact: true },
+]
 
 function NavLink({ item }: { item: NavItem }) {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
   const isActive = item.exact
     ? pathname === item.to
-    : pathname === item.to || pathname.startsWith(item.to + "/");
+    : pathname === item.to || pathname.startsWith(item.to + '/')
 
   return (
     <SidebarMenuItem>
@@ -72,14 +73,14 @@ function NavLink({ item }: { item: NavItem }) {
         <Link
           to={item.to}
           search={item.search as never}
-          {...(item.dataTour ? { "data-tour": item.dataTour } : {})}
+          {...(item.dataTour ? { 'data-tour': item.dataTour } : {})}
         >
           <item.icon />
           <span>{item.label}</span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
-  );
+  )
 }
 
 export function AppShell() {
@@ -92,12 +93,12 @@ export function AppShell() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild size="lg" tooltip="QR Vault">
                   <Link to="/">
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                    <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md">
                       <QrCode className="size-4" />
                     </div>
                     <div className="grid flex-1 text-left leading-tight">
                       <span className="font-semibold">QR Vault</span>
-                      <span className="text-xs text-muted-foreground">Local deep-link store</span>
+                      <span className="text-muted-foreground text-xs">Local deep-link store</span>
                     </div>
                   </Link>
                 </SidebarMenuButton>
@@ -119,7 +120,7 @@ export function AppShell() {
 
           <SidebarFooter>
             <div className="flex items-center justify-between gap-2 px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center">
-              <span className="font-mono text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+              <span className="text-muted-foreground font-mono text-xs group-data-[collapsible=icon]:hidden">
                 v0.1.0
               </span>
               <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col">
@@ -133,8 +134,8 @@ export function AppShell() {
         <SidebarInset>
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
             <SidebarTrigger />
-            <div aria-hidden className="h-4 w-px shrink-0 bg-border" />
-            <span className="font-mono text-xs text-muted-foreground">qr-vault</span>
+            <div aria-hidden className="bg-border h-4 w-px shrink-0" />
+            <span className="text-muted-foreground font-mono text-xs">qr-vault</span>
           </header>
           <div className="flex-1 overflow-auto p-5">
             <Outlet />
@@ -143,5 +144,5 @@ export function AppShell() {
       </SidebarProvider>
       <Toaster position="top-center" />
     </TooltipProvider>
-  );
+  )
 }

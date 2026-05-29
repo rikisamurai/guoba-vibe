@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import type { MouseEvent, ReactNode } from "react";
-import Link from "next/link";
+import Link from 'next/link'
+import type { MouseEvent, ReactNode } from 'react'
 
 function isModifiedClick(event: MouseEvent<HTMLAnchorElement>) {
-  return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+  return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0
 }
 
 export function QrCardLink({
@@ -14,23 +14,23 @@ export function QrCardLink({
   className,
   children,
 }: {
-  id: string;
-  href: string;
-  returnHref?: string;
-  className?: string;
-  children: ReactNode;
+  id: string
+  href: string
+  returnHref?: string
+  className?: string
+  children: ReactNode
 }) {
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
-    if (isModifiedClick(event)) return;
+    if (isModifiedClick(event)) return
 
-    const key = `qr:return:${id}`;
-    if (returnHref) sessionStorage.setItem(key, returnHref);
-    else sessionStorage.removeItem(key);
+    const key = `qr:return:${id}`
+    if (returnHref) sessionStorage.setItem(key, returnHref)
+    else sessionStorage.removeItem(key)
   }
 
   return (
     <Link href={href} className={className} onClick={handleClick}>
       {children}
     </Link>
-  );
+  )
 }

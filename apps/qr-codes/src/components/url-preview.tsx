@@ -1,11 +1,11 @@
-import { parseUrl } from "@/lib/url-parse";
+import { parseUrl } from '@/lib/url-parse'
 
 export function UrlPreview({ url }: { url: string }) {
-  const parsed = parseUrl(url);
+  const parsed = parseUrl(url)
   if (!parsed.isValid) {
-    return <p className="text-sm text-red-500">Invalid URL</p>;
+    return <p className="text-sm text-red-500">Invalid URL</p>
   }
-  const queryEntries = Object.entries(parsed.query);
+  const queryEntries = Object.entries(parsed.query)
   return (
     <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
       <dt className="text-muted-foreground">scheme</dt>
@@ -27,5 +27,5 @@ export function UrlPreview({ url }: { url: string }) {
         )}
       </dd>
     </dl>
-  );
+  )
 }
