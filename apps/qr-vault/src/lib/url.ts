@@ -82,6 +82,16 @@ export function buildSharePath(input: {
   return `/share?${params.toString()}`
 }
 
+export function buildShareUrl(input: {
+  origin: string
+  pathname: string
+  url: string
+  title?: string
+  description?: string
+}): string {
+  return `${input.origin}${input.pathname}#${buildSharePath(input)}`
+}
+
 function extractPath(raw: string, scheme: string): string {
   const queryStart = raw.indexOf('?')
   const hashStart = raw.indexOf('#')

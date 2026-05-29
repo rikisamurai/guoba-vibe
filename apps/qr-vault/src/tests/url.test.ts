@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildSharePath, buildUrlFromParts, normalizeQueryRows, parseDeepLink } from '@/lib/url'
+import {
+  buildSharePath,
+  buildShareUrl,
+  buildUrlFromParts,
+  normalizeQueryRows,
+  parseDeepLink,
+} from '@/lib/url'
 
 describe('parseDeepLink', () => {
   it('parses a xhsdiscover deeplink with query', () => {
@@ -71,5 +77,21 @@ describe('buildSharePath', () => {
     expect(path).toContain('url=')
     expect(path).toContain('title=Buyer')
     expect(path).toContain('description=Debug+QR')
+  })
+})
+
+describe('buildShareUrl', () => {
+  it('builds an absolute hash URL for sharing from the current app location', () => {
+    expect(
+      buildShareUrl({
+        origin: 'https://example.com',
+        pathname: '/qr-vault/',
+        url: 'https://www.google.com',
+        title: 'Google',
+        description: 'homepage',
+      }),
+    ).toBe(
+      'https://example.com/qr-vault/#/share?url=https%3A%2F%2Fwww.google.com&title=Google&description=homepage',
+    )
   })
 })
