@@ -10,6 +10,7 @@ type QrPreviewProps = {
   title?: string
   size?: 'default' | 'inspector' | 'lg'
   bare?: boolean
+  onDataUrl?: (dataUrl: string | null) => void
 }
 
 const SIZE_MAP = {
@@ -23,6 +24,7 @@ export function QrPreview({
   title = 'QR code',
   size = 'default',
   bare = false,
+  onDataUrl,
 }: QrPreviewProps) {
   const [dataUrl, setDataUrl] = useState('')
   const [error, setError] = useState('')
@@ -36,6 +38,7 @@ export function QrPreview({
       if (!parsed.isValid) {
         setDataUrl('')
         setError('Awaiting valid URL')
+        onDataUrl?.(null)
         return
       }
 
@@ -44,11 +47,13 @@ export function QrPreview({
         if (isActive) {
           setDataUrl(nextDataUrl)
           setError('')
+          onDataUrl?.(nextDataUrl)
         }
       } catch (err) {
         if (isActive) {
           setDataUrl('')
           setError(err instanceof Error ? err.message : 'Unable to render QR')
+          onDataUrl?.(null)
         }
       }
     }
@@ -58,7 +63,7 @@ export function QrPreview({
     return () => {
       isActive = false
     }
-  }, [parsed.isValid, url, dims.qr])
+  }, [parsed.isValid, url, dims.qr, onDataUrl])
 
   const inner = dataUrl ? (
     <img

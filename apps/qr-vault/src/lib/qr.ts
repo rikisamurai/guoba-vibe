@@ -9,3 +9,22 @@ export async function renderQrDataUrl(data: string, width = 512): Promise<string
     errorCorrectionLevel: 'M',
   })
 }
+
+export function qrFileName(title?: string): string {
+  const slug = (title ?? '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+  return `qr-${slug || 'untitled'}.png`
+}
+
+export function downloadDataUrl(dataUrl: string, filename: string): void {
+  const link = document.createElement('a')
+  link.href = dataUrl
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+}
