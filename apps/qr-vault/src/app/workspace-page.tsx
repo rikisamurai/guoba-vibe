@@ -207,7 +207,7 @@ export function WorkspacePage() {
           </div>
         </div>
 
-        <div className="min-h-0 space-y-2 xl:flex-1 xl:overflow-y-auto xl:pr-1">
+        <div className="min-h-0 space-y-2 xl:flex-1 xl:[scrollbar-gutter:stable] xl:overflow-y-auto xl:pr-3">
           {visibleQrs.length ? (
             <div className="space-y-2">
               {visibleQrs.map((qr) => {
@@ -340,7 +340,7 @@ export function WorkspacePage() {
         </div>
       </div>
 
-      <aside className="min-h-0 space-y-3 xl:h-full xl:overflow-y-auto xl:pt-px xl:pr-1 xl:pb-1 xl:pl-px">
+      <aside className="min-h-0 space-y-3 xl:h-full xl:[scrollbar-gutter:stable] xl:overflow-y-auto xl:pt-px xl:pr-3 xl:pb-1 xl:pl-px">
         {selectedQr ? (
           <>
             <Card size="sm">
@@ -457,7 +457,7 @@ type CollectionChipRowProps = {
 
 function CollectionChipRow({ data, uncategorizedCount, active, onChange }: CollectionChipRowProps) {
   return (
-    <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1">
+    <div className="-mx-1 flex [scrollbar-gutter:stable] items-center gap-2 overflow-x-auto px-1 pb-3">
       <Chip
         icon={<LayoutGrid className="size-3.5" />}
         label="All QR"
