@@ -13,7 +13,8 @@ import {
   SquarePen,
   Trash2,
 } from 'lucide-react'
-import { type ReactElement, useEffect, useState } from 'react'
+import { type ReactElement, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import { useVault } from '@/app/use-vault'
 import { ParsedUrlPanel } from '@/components/parsed-url-panel'
@@ -22,12 +23,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { deleteQr } from '@/lib/storage'
+import { deleteQr, LAST_SAVED_QR_ID_KEY } from '@/lib/storage'
 import type { VaultData } from '@/lib/storage'
 import { buildShareUrl, parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 import { cn } from '@/lib/utils'
-import { getQrsForCollection, getUncategorizedQrs, searchQrs } from '@/lib/vault'
+import { getQrsForCollection, getUncategorizedQrs, searchQrs, sortQrsByRecent } from '@/lib/vault'
 
 export function WorkspacePage() {
   useDocumentTitle('Vault')
@@ -38,6 +39,12 @@ export function WorkspacePage() {
   const [armedDelete, setArmedDelete] = useState('')
   const [copiedUrlId, setCopiedUrlId] = useState('')
   const [copiedShareId, setCopiedShareId] = useState('')
+  const [pendingSavedId, setPendingSavedId] = useState(() => {
+    const id = sessionStorage.getItem(LAST_SAVED_QR_ID_KEY)
+    if (id) sessionStorage.removeItem(LAST_SAVED_QR_ID_KEY)
+    return id ?? ''
+  })
+  const listItemRefs = useRef(new Map<string, HTMLDivElement>())
 
   useEffect(() => {
     if (!armedDelete) return
@@ -57,16 +64,66 @@ export function WorkspacePage() {
     }
   }, [armedDelete])
 
+  useEffect(() => {
+    if (!pendingSavedId) return
+    if (!data.qrs.some((qr) => qr.id === pendingSavedId)) {
+      setPendingSavedId('')
+      return
+    }
+
+    setSelectedId(pendingSavedId)
+    const frame = window.requestAnimationFrame(() => {
+      listItemRefs.current.get(pendingSavedId)?.scrollIntoView({ block: 'nearest' })
+      setPendingSavedId('')
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [data.qrs, pendingSavedId])
+
   function handleDelete(qrId: string) {
+    const deletedQr = data.qrs.find((qr) => qr.id === qrId)
+    const deletedCollectionItems = data.collectionItems.filter((item) => item.qrId === qrId)
+
     updateVault((current) => deleteQr(current, qrId))
     setArmedDelete('')
     if (selectedId === qrId) setSelectedId('')
+    if (!deletedQr) return
+
+    toast.success('Deleted QR', {
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          updateVault((current) => {
+            if (current.qrs.some((qr) => qr.id === deletedQr.id)) return current
+
+            const existingItems = new Set(
+              current.collectionItems.map((item) => `${item.collectionId}:${item.qrId}`),
+            )
+            const restoredItems = deletedCollectionItems.filter(
+              (item) => !existingItems.has(`${item.collectionId}:${item.qrId}`),
+            )
+
+            return {
+              ...current,
+              qrs: [...current.qrs, deletedQr],
+              collectionItems: [...current.collectionItems, ...restoredItems],
+            }
+          })
+          setSelectedId(deletedQr.id)
+        },
+      },
+    })
   }
 
   async function copyUrl(qr: VaultData['qrs'][number]) {
-    await navigator.clipboard.writeText(qr.url)
-    setCopiedUrlId(qr.id)
-    window.setTimeout(() => setCopiedUrlId(''), 1200)
+    try {
+      await navigator.clipboard.writeText(qr.url)
+      setCopiedUrlId(qr.id)
+      toast.success('Copied URL')
+      window.setTimeout(() => setCopiedUrlId(''), 1200)
+    } catch {
+      toast.error('Could not copy URL')
+    }
   }
 
   async function copyShareUrl(qr: VaultData['qrs'][number]) {
@@ -77,9 +134,14 @@ export function WorkspacePage() {
       title: qr.title,
       description: qr.description,
     })
-    await navigator.clipboard.writeText(shareUrl)
-    setCopiedShareId(qr.id)
-    window.setTimeout(() => setCopiedShareId(''), 1200)
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setCopiedShareId(qr.id)
+      toast.success('Copied share link')
+      window.setTimeout(() => setCopiedShareId(''), 1200)
+    } catch {
+      toast.error('Could not copy share link')
+    }
   }
 
   const uncategorizedCount = getUncategorizedQrs(data).length
@@ -89,15 +151,15 @@ export function WorkspacePage() {
       : activeFilter === 'uncategorized'
         ? getUncategorizedQrs(data)
         : getQrsForCollection(data, activeFilter)
-  const visibleQrs = searchQrs({ ...data, qrs: baseQrs }, search)
+  const visibleQrs = sortQrsByRecent(searchQrs({ ...data, qrs: baseQrs }, search))
   const selectedQr = data.qrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0]
   const selectedParsed = selectedQr ? parseDeepLink(selectedQr.url) : null
 
   return (
-    <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(500px,1fr)_480px] 2xl:grid-cols-[minmax(560px,1fr)_560px]">
-      <div className="space-y-3">
+    <div className="grid grid-cols-1 items-start gap-5 xl:h-[calc(100svh-5.5rem)] xl:grid-cols-[minmax(500px,1fr)_480px] xl:items-stretch xl:overflow-hidden 2xl:grid-cols-[minmax(560px,1fr)_560px]">
+      <div className="min-h-0 space-y-3 xl:flex xl:h-full xl:flex-col xl:gap-3 xl:space-y-0 xl:overflow-hidden">
         <h1 className="sr-only">QR Vault</h1>
-        <div className="space-y-3 border-b pb-4">
+        <div className="shrink-0 space-y-3 border-b pb-4">
           <CollectionChipRow
             data={data}
             uncategorizedCount={uncategorizedCount}
@@ -145,14 +207,24 @@ export function WorkspacePage() {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="min-h-0 space-y-2 xl:flex-1 xl:[scrollbar-gutter:stable] xl:overflow-y-auto xl:pr-3">
           {visibleQrs.length ? (
             <div className="space-y-2">
               {visibleQrs.map((qr) => {
                 const parsed = parseDeepLink(qr.url)
                 const isSelected = qr.id === selectedQr?.id
                 return (
-                  <div key={qr.id} className="group relative">
+                  <div
+                    key={qr.id}
+                    ref={(node) => {
+                      if (node) {
+                        listItemRefs.current.set(qr.id, node)
+                      } else {
+                        listItemRefs.current.delete(qr.id)
+                      }
+                    }}
+                    className="group relative"
+                  >
                     <button
                       type="button"
                       onClick={() => setSelectedId(qr.id)}
@@ -268,7 +340,7 @@ export function WorkspacePage() {
         </div>
       </div>
 
-      <aside className="space-y-3 xl:sticky xl:top-0">
+      <aside className="min-h-0 space-y-3 xl:h-full xl:[scrollbar-gutter:stable] xl:overflow-y-auto xl:pt-px xl:pr-3 xl:pb-1 xl:pl-px">
         {selectedQr ? (
           <>
             <Card size="sm">
@@ -385,7 +457,7 @@ type CollectionChipRowProps = {
 
 function CollectionChipRow({ data, uncategorizedCount, active, onChange }: CollectionChipRowProps) {
   return (
-    <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1">
+    <div className="-mx-1 flex [scrollbar-gutter:stable] items-center gap-2 overflow-x-auto px-1 pb-3">
       <Chip
         icon={<LayoutGrid className="size-3.5" />}
         label="All QR"

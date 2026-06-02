@@ -10,6 +10,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 import { useVault } from '@/app/use-vault'
 import { QrPreview } from '@/components/qr-preview'
@@ -47,17 +48,27 @@ export function SharePage() {
     void navigate({ to: '/q/$qrId', params: { qrId: id } })
   }
 
-  function copyUrl() {
+  async function copyUrl() {
     if (!url) return
-    void navigator.clipboard.writeText(url)
-    setUrlCopied(true)
-    window.setTimeout(() => setUrlCopied(false), 1200)
+    try {
+      await navigator.clipboard.writeText(url)
+      setUrlCopied(true)
+      toast.success('Copied URL')
+      window.setTimeout(() => setUrlCopied(false), 1200)
+    } catch {
+      toast.error('Could not copy URL')
+    }
   }
 
-  function copyShareUrl() {
-    void navigator.clipboard.writeText(window.location.href)
-    setShareCopied(true)
-    window.setTimeout(() => setShareCopied(false), 1200)
+  async function copyShareUrl() {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setShareCopied(true)
+      toast.success('Copied share link')
+      window.setTimeout(() => setShareCopied(false), 1200)
+    } catch {
+      toast.error('Could not copy share link')
+    }
   }
 
   return (
@@ -90,7 +101,7 @@ export function SharePage() {
               <button
                 type="button"
                 className="hover:bg-muted cursor-pointer gap-1.5"
-                onClick={copyShareUrl}
+                onClick={() => void copyShareUrl()}
                 aria-label="Copy share URL"
                 title="Copy share URL"
               >
@@ -196,7 +207,7 @@ export function SharePage() {
                 >
                   <Save /> Save to local
                 </Button>
-                <Button type="button" onClick={copyUrl} disabled={!url} size="lg">
+                <Button type="button" onClick={() => void copyUrl()} disabled={!url} size="lg">
                   {urlCopied ? <Check /> : <Copy />}
                   {urlCopied ? 'Copied' : 'Copy URL'}
                 </Button>

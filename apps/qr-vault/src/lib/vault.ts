@@ -1,4 +1,4 @@
-import type { VaultData } from '@/lib/storage'
+import type { QRCodeItem, VaultData } from '@/lib/storage'
 import { parseDeepLink } from '@/lib/url'
 
 export function searchQrs(data: VaultData, search: string) {
@@ -33,4 +33,26 @@ export function getQrsForCollection(data: VaultData, collectionId: string) {
 export function getUncategorizedQrs(data: VaultData) {
   const assignedIds = new Set(data.collectionItems.map((item) => item.qrId))
   return data.qrs.filter((qr) => !assignedIds.has(qr.id))
+}
+
+export function sortQrsByRecent<T extends Pick<QRCodeItem, 'createdAt' | 'updatedAt'>>(
+  qrs: readonly T[],
+): T[] {
+  return qrs
+    .map((qr, index) => ({ qr, index }))
+    .sort((a, b) => {
+      const updatedDiff = timestamp(b.qr.updatedAt) - timestamp(a.qr.updatedAt)
+      if (updatedDiff !== 0) return updatedDiff
+
+      const createdDiff = timestamp(b.qr.createdAt) - timestamp(a.qr.createdAt)
+      if (createdDiff !== 0) return createdDiff
+
+      return a.index - b.index
+    })
+    .map(({ qr }) => qr)
+}
+
+function timestamp(value: string) {
+  const parsed = Date.parse(value)
+  return Number.isNaN(parsed) ? 0 : parsed
 }

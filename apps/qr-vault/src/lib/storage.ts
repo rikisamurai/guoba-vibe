@@ -2,6 +2,7 @@ import { buildDemoVault } from '@/lib/demo-seed'
 import { nanoid8 } from '@/lib/ids'
 
 export const VAULT_STORAGE_KEY = 'qr-vault:data'
+export const LAST_SAVED_QR_ID_KEY = 'qr-vault:last-saved-id'
 
 export type QRCodeItem = {
   id: string
