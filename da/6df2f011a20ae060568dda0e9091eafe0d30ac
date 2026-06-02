@@ -1,0 +1,9 @@
+apps/qr-vault/src/app/workspace-page.tsx
+  ai_agent 210,343,460
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "da6df2f011a20ae060568dda0e9091eafe0d30ac",
+  "prompts": {}
+}
