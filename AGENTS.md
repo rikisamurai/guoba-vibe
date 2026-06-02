@@ -6,7 +6,7 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 ## Addressing the User
 
-When replying to the user, address them as Rik.
+When replying to the user, address them as Riki.
 
 ## 1. Think Before Coding
 
