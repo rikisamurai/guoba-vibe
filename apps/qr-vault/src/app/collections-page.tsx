@@ -1,6 +1,7 @@
-import { Link, useRouterState } from '@tanstack/react-router'
-import { ArrowRight, FolderOpen, Save } from 'lucide-react'
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
+import { ArrowRight, FolderOpen, Save, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 import { useVault } from '@/app/use-vault'
 import { Badge } from '@/components/ui/badge'
@@ -9,7 +10,8 @@ import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { upsertCollection } from '@/lib/storage'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { type Collection, deleteCollection, upsertCollection } from '@/lib/storage'
 import { parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 import { cn } from '@/lib/utils'
@@ -28,6 +30,7 @@ function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.R
 
 export function CollectionsPage() {
   const { data, updateVault } = useVault()
+  const navigate = useNavigate()
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const collectionId = pathname.startsWith('/collections/')
     ? decodeURIComponent(pathname.slice('/collections/'.length))
@@ -37,11 +40,30 @@ export function CollectionsPage() {
   const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : data.qrs
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [armedDeleteId, setArmedDeleteId] = useState('')
 
   useEffect(() => {
     setTitle(selectedCollection?.title ?? '')
     setDescription(selectedCollection?.description ?? '')
   }, [selectedCollection?.id, selectedCollection?.title, selectedCollection?.description])
+
+  useEffect(() => {
+    if (!armedDeleteId) return
+    function onDocClick(event: MouseEvent) {
+      const target = event.target as HTMLElement | null
+      if (target?.closest(`[data-armed-for="${armedDeleteId}"]`)) return
+      setArmedDeleteId('')
+    }
+    const attach = window.setTimeout(() => {
+      document.addEventListener('click', onDocClick)
+    }, 0)
+    const autoCancel = window.setTimeout(() => setArmedDeleteId(''), 3000)
+    return () => {
+      window.clearTimeout(attach)
+      window.clearTimeout(autoCancel)
+      document.removeEventListener('click', onDocClick)
+    }
+  }, [armedDeleteId])
 
   function saveCollection() {
     if (!title.trim()) return
@@ -52,6 +74,43 @@ export function CollectionsPage() {
       setTitle('')
       setDescription('')
     }
+  }
+
+  function handleDelete(target: Collection) {
+    const deletedItems = data.collectionItems.filter((item) => item.collectionId === target.id)
+    updateVault((current) => deleteCollection(current, target.id))
+    setArmedDeleteId('')
+    if (collectionId === target.id) {
+      void navigate({ to: '/collections' })
+    }
+
+    toast.success('Deleted collection', {
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          updateVault((current) => {
+            if (current.collections.some((collection) => collection.id === target.id)) {
+              return current
+            }
+            const existingKeys = new Set(
+              current.collectionItems.map((item) => `${item.collectionId}:${item.qrId}`),
+            )
+            const restoredItems = deletedItems.filter(
+              (item) => !existingKeys.has(`${item.collectionId}:${item.qrId}`),
+            )
+            return {
+              ...current,
+              collections: [...current.collections, target],
+              collectionItems: [...current.collectionItems, ...restoredItems],
+            }
+          })
+          void navigate({
+            to: '/collections/$collectionId',
+            params: { collectionId: target.id },
+          })
+        },
+      },
+    })
   }
 
   return (
@@ -80,25 +139,73 @@ export function CollectionsPage() {
             </CardAction>
           </CardHeader>
           <CardContent className="space-y-1 pt-4">
-            {data.collections.map((collection) => {
-              const isActive = collection.id === collectionId
-              return (
-                <Link
-                  key={collection.id}
-                  to="/collections/$collectionId"
-                  params={{ collectionId: collection.id }}
-                  className={cn(
-                    'flex items-center gap-2.5 truncate rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
-                  )}
-                >
-                  <FolderOpen className="size-3.5 shrink-0" />
-                  <span className="truncate">{collection.title}</span>
-                </Link>
-              )
-            })}
+            <TooltipProvider delayDuration={400}>
+              {data.collections.map((collection) => {
+                const isActive = collection.id === collectionId
+                const isArmed = armedDeleteId === collection.id
+                return (
+                  <div key={collection.id} className="group relative">
+                    <Link
+                      to="/collections/$collectionId"
+                      params={{ collectionId: collection.id }}
+                      className={cn(
+                        'flex items-center gap-2.5 truncate rounded-md py-2 pl-3 text-sm font-medium transition-[padding,background-color,color] duration-150',
+                        isArmed ? 'pr-[92px]' : 'pr-3 group-focus-within:pr-9 group-hover:pr-9',
+                        isActive
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
+                      )}
+                    >
+                      <FolderOpen className="size-3.5 shrink-0" />
+                      <span className="truncate">{collection.title}</span>
+                    </Link>
+                    <div
+                      className={cn(
+                        'absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center transition-opacity',
+                        isArmed
+                          ? 'opacity-100'
+                          : 'opacity-0 group-focus-within:opacity-100 group-hover:opacity-100',
+                      )}
+                    >
+                      {isArmed ? (
+                        <button
+                          type="button"
+                          data-armed-for={collection.id}
+                          onClick={(event) => {
+                            event.preventDefault()
+                            event.stopPropagation()
+                            handleDelete(collection)
+                          }}
+                          className="text-destructive bg-destructive/10 border-destructive/40 hover:bg-destructive/20 flex h-6 items-center gap-1.5 rounded-md border px-2 text-[11px] font-medium transition-colors"
+                          aria-label={`Confirm delete ${collection.title}`}
+                        >
+                          <Trash2 className="size-3" /> Confirm?
+                        </button>
+                      ) : (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              data-armed-for={collection.id}
+                              onClick={(event) => {
+                                event.preventDefault()
+                                event.stopPropagation()
+                                setArmedDeleteId(collection.id)
+                              }}
+                              aria-label={`Delete ${collection.title}`}
+                              className="text-muted-foreground hover:text-destructive hover:border-destructive/40 hover:bg-background flex size-6 items-center justify-center rounded-md border border-transparent transition-colors"
+                            >
+                              <Trash2 className="size-3" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">Delete folder</TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </TooltipProvider>
             {!data.collections.length && (
               <p className="text-muted-foreground rounded-md border border-dashed px-3 py-4 text-center text-xs italic">
                 no collections yet

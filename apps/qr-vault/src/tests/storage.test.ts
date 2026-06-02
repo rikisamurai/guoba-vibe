@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   createEmptyVault,
+  deleteCollection,
   exportVaultJson,
   mergeVaultData,
   parseVaultData,
@@ -96,6 +97,34 @@ describe('upsertQr', () => {
       { collectionId: 'a', qrId: result.qrs[0].id },
       { collectionId: 'b', qrId: result.qrs[0].id },
     ])
+  })
+})
+
+describe('deleteCollection', () => {
+  it('removes the collection and unhooks its membership records, leaving QRs intact', () => {
+    const result = deleteCollection(
+      {
+        version: 1,
+        qrs: [
+          { id: 'q1', url: 'xhsdiscover://rn/a', createdAt: '1', updatedAt: '1' },
+          { id: 'q2', url: 'xhsdiscover://rn/b', createdAt: '1', updatedAt: '1' },
+        ],
+        collections: [
+          { id: 'keep', title: 'Keep', createdAt: '1', updatedAt: '1' },
+          { id: 'drop', title: 'Drop', createdAt: '1', updatedAt: '1' },
+        ],
+        collectionItems: [
+          { collectionId: 'keep', qrId: 'q1' },
+          { collectionId: 'drop', qrId: 'q1' },
+          { collectionId: 'drop', qrId: 'q2' },
+        ],
+      },
+      'drop',
+    )
+
+    expect(result.collections.map((collection) => collection.id)).toEqual(['keep'])
+    expect(result.collectionItems).toEqual([{ collectionId: 'keep', qrId: 'q1' }])
+    expect(result.qrs.map((qr) => qr.id).sort()).toEqual(['q1', 'q2'])
   })
 })
 
