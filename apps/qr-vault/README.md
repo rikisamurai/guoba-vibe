@@ -1,62 +1,124 @@
 # QR Vault
 
-QR Vault 是一个本地优先的二维码/深链管理工具，用来保存、编辑、预览和分享常用 URL 或 deep link。应用是纯前端实现，数据默认保存在当前浏览器的 `localStorage` 里，不依赖服务端。
+> 📦 Your local-first vault for QR codes and deep links —— 零后端、零账号、零网络出站。
 
-## 技术栈
+`Local-first` · `Static · Private` · `Deep-link aware`
 
-- React 19 + TypeScript
-- Vite 8，使用 `@vitejs/plugin-react`
-- TanStack React Router，使用 hash history 组织路由
-- Tailwind CSS v4 + shadcn/radix-nova 风格组件
-- Radix UI、lucide-react 图标
-- `qrcode` 在浏览器端生成二维码图片
-- Vitest 做工具函数单测
+线上 demo：<https://guoba-vibe-qr-vault.vercel.app/#/>
 
-## 功能
+![Vault 主页](docs/screenshots/01-vault.png)
 
-- 保存 QR 条目：支持标题、描述、完整 URL。
-- 结构化编辑 deep link：可以直接改完整 URL，也可以拆成 scheme、path、query params 来编辑。
-- 即时预览二维码：有效 URL 会在页面右侧生成二维码和解析结果。
-- 搜索和筛选：可以按标题、URL、path、query key/value 搜索，并按 collection 快速过滤。
-- Collection 管理：创建/编辑 collection，并把一个 QR 分配到一个或多个 collection。
-- 分享页：生成 `#/share?...` 链接，别人打开后可以查看二维码、复制 URL，或保存到自己的本地 vault。
-- 导入导出：把整个 vault 导出为 JSON，也可以从 JSON 文件 merge 或 replace 本地数据。
-- 首次打开会写入一份 demo 数据，方便直接体验。
+---
 
-## 本地开发
+## 💡 Why QR Vault？
 
-在仓库根目录运行：
+- **反复使用 / 测试同一批 deep link**：粘一次、起个名、归到 collection 里，之后随时一键复制 URL 或生成二维码——不用每次手输那段长长的 `xhsdiscover://...`。
+- **拆得开的 deep link 编辑器**：scheme、path、query params 三种视图双向同步；改一个 query 值，右边二维码立刻刷新。专治 RN / Native 跳转链接的反复调参。
+- **真·本地优先**：所有数据写进 `localStorage`，源码里没有任何 `fetch` / `axios` 调用，字体也走 bundle 不连 CDN。开完即用，关掉浏览器也不会泄漏到任何服务器。
+
+## ✨ Features
+
+### Vault：你的 deep link 主控台
+
+![Vault 列表 + Inspector](docs/screenshots/01-vault.png)
+
+- **双栏布局**：左侧列表，右侧 Inspector 显示选中条目的二维码、原始 URL 与分享按钮。
+- **Chip 行筛选**：顶部 `All QR` / `Uncategorized`（仅在有未归类条目时出现）/ 各 collection，附数量徽标。
+- **多维搜索**：搜索框同时匹配 title、description、URL、scheme、path 以及任意 query 的 key / value。
+- **删除有后悔药**：trash 按钮第一次点是"armed"，3 秒内再点一次才真删除；删除后 toast 内还有 `Undo` 一键恢复，并保留原 collection 归属。
+
+### Deep link 编辑器
+
+![Deep link 编辑器 + 实时 QR](docs/screenshots/03-editor.png)
+
+- **三种编辑视图双向同步**：完整 URL textarea、`scheme + path` 输入框、`query params` 行表格。改任意一个，其他两个跟着更新。
+- **任意 scheme 都能解析**：不限 `http(s)`，`xhsdiscover://`、`myapp://` 等自定义协议都能正确拆成 scheme / path / params。
+- **即时 QR 预览**：URL 校验通过才会渲染二维码；非法时显示虚线占位 + `Awaiting valid URL`，不会出"假 QR"。
+- **`Save as New`**：在已有条目上改完，可以选择保存为新条目，避免覆盖原版本。
+
+### Collections
+
+![Collections 三栏视图](docs/screenshots/04-collections.png)
+
+- 三栏布局：左 = 所有 folder、中 = 新建 / 编辑表单、右 = 当前 collection 下的 QR 列表。
+- 多对多归属，QR 详情页用 multi-select picker 一次性管理。
+- 路由 `/#/collections/<id>` 直接进入某个 collection 的子视图。
+
+### Share —— 离开设备前再确认一次
+
+![分享落地页](docs/screenshots/05-share.png)
+
+- 分享链接形如 `https://…/#/share?url=…&title=…`，**所有参数走 URL hash**——浏览器不会把 hash 发到服务器，数据不会上云。
+- 接收方落地页：QR 大图 + 解析详情（scheme / path / query params 一目了然）+ `Save to local`（一键写入对方自己的 vault）+ `Copy URL` / `Copy share URL`。
+- 页面底部明确标注 _Stays on this device. Nothing is uploaded._
+
+### Import / Export
+
+![Import & Export](docs/screenshots/02-import.png)
+
+- **导出**：一键下载 `qr-vault-export.json`，里面是完整 vault（QR + collections + 归属关系）。丢 Git / Dropbox / U 盘都行。
+- **导入有两种语义**：
+  - `Merge into local` —— 按 id upsert，重复 id 用 incoming 覆盖；不会丢已有数据。
+  - `Replace` —— 全量覆盖本地，UI 上有红字明确警告 _can't be undone_。
+- 校验严格：JSON 结构不合法时直接报错，本地数据不会被破坏。
+
+### 上手即用
+
+- **首次进入自动注入 demo 数据**：2 个 collection + 5 个常用站点（YouTube / MDN / GitHub / Vercel / Linear），不用对着空页面发呆。
+- **Driver.js 四步引导**：New QR → URL 输入 → 实时预览 → Save。可在侧栏底部 `?` 按钮随时 replay。
+
+### 其他贴心细节
+
+- **Light / Dark 主题**：支持系统跟随，HTML 内联脚本在 React 挂载前就应用主题，避免首屏闪白。
+- **Toast 反馈**：使用 sonner，复制成功 / 删除 / 撤销都有顶部居中提示。
+- **响应式**：xl 断点切两栏，移动端单列；侧栏自动收缩为 Sheet。
+
+## 🔒 Privacy & data
+
+- 全部数据只写浏览器 `localStorage`，三个 key：
+  - `qr-vault:data` —— vault 全量数据
+  - `qr-vault:theme` —— 主题偏好
+  - `qr-vault:onboarding-v1` —— 引导是否看过
+- **零网络出站**：源码里没有 `fetch` / `axios`，字体（Geist + Geist Mono）也打进 bundle，不连任何第三方 CDN。
+- **备份建议**：清浏览器数据前，先去 `Import` 页面导出 JSON。换设备时把 JSON 拷过去再 `Merge` 或 `Replace`。
+- **关于分享链接的安全提醒**：虽然数据不上传服务器，但 URL 本身明文写在 hash 里，截图 OCR 或 IM 历史都看得到。含 token / 个人信息的 deep link，别随手丢到公共群。
+
+## ⚠️ Known limitations
+
+- Collection 目前**只能新建 / 编辑，不能删除**——临时需要的话只能导出 JSON、手动删掉对应记录、再 `Replace` 导回。
+- 二维码图片没有"下载/复制图片"按钮，需要的话用浏览器**右键 → 另存为**。
+- 删除条目的 `Undo` 仅在 toast 显示窗口内有效，错过就找不回。
+- `Save as New` 会沿用当前 collection 归属，需要的话自行调整。
+
+## 🛠️ Tech stack
+
+- **UI**：React 19 + TypeScript 5
+- **构建**：Vite 8（`base: './'`，产物可以放到任意子路径）
+- **路由**：TanStack Router + `createHashHistory`——纯静态托管即可，无需后端 rewrite
+- **样式**：Tailwind CSS v4 + shadcn / Radix UI primitives + `tw-animate-css`
+- **图标 & toast**：lucide-react + sonner
+- **二维码**：`qrcode` 浏览器端 `toDataURL`
+- **ID**：`nanoid` 自定义 8 位 URL-safe 字母表
+- **引导**：driver.js
+- **测试**：Vitest（jsdom + node 双 env）
+
+## 🧑‍💻 Local development
+
+需要 Node `>=24` 与 pnpm `11.3.0`（仓库根 `.nvmrc` / `packageManager` 已锁，建议用 corepack 启用）。
 
 ```bash
+corepack enable
 pnpm install
-pnpm dev:qr-vault
+pnpm dev:qr-vault          # Vite dev server，默认 http://localhost:5173
 ```
 
-也可以直接使用 workspace filter：
+常用命令（都需要在仓库根目录跑）：
 
 ```bash
-pnpm --filter qr-vault dev
+pnpm test:qr-vault         # 单测一次性
+pnpm build:qr-vault        # tsc -b && vite build
+pnpm preview:qr-vault      # 预览 dist 产物
+pnpm lint:qr-vault         # eslint
 ```
 
-Vite 默认会使用 `http://localhost:5173/`。如果端口被占用，会自动切到下一个端口；本次实际启动时使用的是 `http://localhost:5174/`。
-
-常用命令：
-
-```bash
-pnpm test:qr-vault
-pnpm build:qr-vault
-pnpm preview:qr-vault
-```
-
-## 使用方式
-
-1. 打开首页 `Vault`，可以浏览 demo QR、搜索、按 collection 筛选，或在顶部快速输入 URL 后进入编辑器。
-2. 点击 `New QR` 创建新条目，填写标题、描述和 deep link；URL 可以整段粘贴，也可以在 scheme/path/query 表单里拆分编辑。
-3. 保存后回到详情页，可以复制原始 URL、复制分享链接，或继续编辑 collection 归属。
-4. 在 `Collections` 页面创建和编辑分组，并查看某个 collection 下的 QR。
-5. 在 `Import` 页面导出 `qr-vault-export.json` 做备份；导入时可以选择 merge 到本地，或 replace 当前本地数据。
-6. 分享链接是 hash URL，不会上传数据；对方打开分享页后可以直接查看二维码，也可以保存到自己的浏览器本地 vault。
-
-## 数据说明
-
-本地数据存储在浏览器 `localStorage` 的 `qr-vault:data` key 下。清理浏览器站点数据会删除本地 vault；需要迁移或备份时，请先在 `Import` 页面导出 JSON。
+> 仓库根 `pnpm dev` / `pnpm build` 默认指向同 monorepo 的 `qr-codes` 应用，本应用必须用带 `:qr-vault` 后缀的脚本。
