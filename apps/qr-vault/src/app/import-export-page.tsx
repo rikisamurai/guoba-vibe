@@ -89,7 +89,7 @@ export function ImportExportPage() {
             <div className="grid grid-cols-3 gap-2.5">
               <StatTile value={data.qrs.length} label="QR codes" />
               <StatTile value={data.collections.length} label="Collections" />
-              <StatTile value={data.collectionItems.length} label="Tags" />
+              <StatTile value={data.collectionItems.length} label="Assignments" />
             </div>
 
             <div>
