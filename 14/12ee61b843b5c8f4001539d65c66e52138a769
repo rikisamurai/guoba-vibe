@@ -1,0 +1,29 @@
+apps/qr-vault/src/tests/storage.test.ts
+  s_d6460fd3d0d2fe::t_18dc3a3ccda281 5
+  s_d6460fd3d0d2fe::t_90883c93572fe1 103-130
+apps/qr-vault/src/app/collections-page.tsx
+  s_d6460fd3d0d2fe::t_cfdc5ce10aef5f 179,196,198
+  s_d6460fd3d0d2fe::t_77505d722b1db4 13,153
+  s_d6460fd3d0d2fe::t_dd8366a0bb6ef4 33,43,50-67,79-113
+  s_d6460fd3d0d2fe::t_e7b97c8bd8bbc5 1-2,4,14
+  s_d6460fd3d0d2fe::t_1db23e7bdd8730 142-151,154-178,180-195,197,199-208
+  s_d6460fd3d0d2fe::t_6061c86416b406 152
+apps/qr-vault/src/lib/storage.ts
+  s_d6460fd3d0d2fe::t_df615e66e870ff 123-130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "1412ee61b843b5c8f4001539d65c66e52138a769",
+  "prompts": {},
+  "sessions": {
+    "s_d6460fd3d0d2fe": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9f9e6a0b-dc38-4ab8-9e66-9399511bdad4",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
