@@ -24,7 +24,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { UrlEditor } from '@/components/url-editor'
 import { nanoid8 } from '@/lib/ids'
-import { upsertQr } from '@/lib/storage'
+import { LAST_SAVED_QR_ID_KEY, upsertQr } from '@/lib/storage'
 import { buildShareUrl, parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
@@ -108,6 +108,7 @@ export function QrDetailPage() {
       }),
     )
     setSaved(true)
+    sessionStorage.setItem(LAST_SAVED_QR_ID_KEY, id)
     window.setTimeout(() => setSaved(false), 1200)
     void navigate({ to: '/q/$qrId', params: { qrId: id } })
   }
@@ -121,15 +122,33 @@ export function QrDetailPage() {
     updateVault((current) =>
       upsertQr(current, { id: newId, title, description, url, collectionIds }),
     )
+    sessionStorage.setItem(LAST_SAVED_QR_ID_KEY, newId)
     toast.success('Saved as new QR')
     void navigate({ to: '/q/$qrId', params: { qrId: newId } })
   }
 
-  function copyUrl() {
+  async function copyUrl() {
     if (!url) return
-    void navigator.clipboard.writeText(url)
-    setUrlCopied(true)
-    window.setTimeout(() => setUrlCopied(false), 1200)
+    try {
+      await navigator.clipboard.writeText(url)
+      setUrlCopied(true)
+      toast.success('Copied URL')
+      window.setTimeout(() => setUrlCopied(false), 1200)
+    } catch {
+      toast.error('Could not copy URL')
+    }
+  }
+
+  async function copyShareUrl() {
+    if (!shareUrl || !parsed.isValid) return
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setShareCopied(true)
+      toast.success('Copied share link')
+      window.setTimeout(() => setShareCopied(false), 1200)
+    } catch {
+      toast.error('Could not copy share link')
+    }
   }
 
   if (!isNew && !existingQr) {
@@ -259,7 +278,7 @@ export function QrDetailPage() {
             <QrPreview title={title || 'QR code'} url={url} size="lg" />
           </div>
           <Button
-            onClick={copyUrl}
+            onClick={() => void copyUrl()}
             type="button"
             variant="outline"
             className="w-full"
@@ -277,12 +296,7 @@ export function QrDetailPage() {
                   type="button"
                   variant="outline"
                   size="icon-sm"
-                  onClick={() => {
-                    if (!shareUrl) return
-                    void navigator.clipboard.writeText(shareUrl)
-                    setShareCopied(true)
-                    window.setTimeout(() => setShareCopied(false), 1200)
-                  }}
+                  onClick={() => void copyShareUrl()}
                   disabled={!shareUrl || !parsed.isValid}
                   title="Copy share URL"
                   aria-label="Copy share URL"

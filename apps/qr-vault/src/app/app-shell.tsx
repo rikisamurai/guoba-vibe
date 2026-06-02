@@ -1,7 +1,6 @@
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from 'lucide-react'
 import { type ComponentType } from 'react'
-import { Toaster } from 'sonner'
 
 import { useOnboarding } from '@/app/onboarding/use-onboarding'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -142,7 +141,6 @@ export function AppShell() {
           </div>
         </SidebarInset>
       </SidebarProvider>
-      <Toaster position="top-center" />
     </TooltipProvider>
   )
 }

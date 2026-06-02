@@ -6,6 +6,7 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router'
+import { Toaster } from 'sonner'
 
 import { AppShell } from '@/app/app-shell'
 import { CollectionsPage } from '@/app/collections-page'
@@ -15,7 +16,12 @@ import { SharePage } from '@/app/share-page'
 import { WorkspacePage } from '@/app/workspace-page'
 
 const rootRoute = createRootRoute({
-  component: () => <Outlet />,
+  component: () => (
+    <>
+      <Outlet />
+      <Toaster position="top-center" />
+    </>
+  ),
 })
 
 const shellRoute = createRoute({
