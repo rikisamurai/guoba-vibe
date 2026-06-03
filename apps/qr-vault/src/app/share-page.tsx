@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Check,
   Copy,
+  Download,
   QrCode,
   Save,
   Share2,
@@ -18,6 +19,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { nanoid8 } from '@/lib/ids'
+import { downloadDataUrl, qrFileName } from '@/lib/qr'
 import { upsertQr } from '@/lib/storage'
 import { parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
@@ -37,6 +39,8 @@ export function SharePage() {
   const queryEntries = Object.entries(parsed.query)
   const [shareCopied, setShareCopied] = useState(false)
   const [urlCopied, setUrlCopied] = useState(false)
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
+  const [pngDownloaded, setPngDownloaded] = useState(false)
 
   useDocumentTitle(title ? `Share · ${title}` : 'Incoming share')
 
@@ -69,6 +73,13 @@ export function SharePage() {
     } catch {
       toast.error('Could not copy share link')
     }
+  }
+
+  function downloadPng() {
+    if (!qrDataUrl) return
+    downloadDataUrl(qrDataUrl, qrFileName(title || parsed.path))
+    setPngDownloaded(true)
+    window.setTimeout(() => setPngDownloaded(false), 1200)
   }
 
   return (
@@ -123,7 +134,13 @@ export function SharePage() {
           <div className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start lg:gap-12">
             {/* QR centerpiece + validation */}
             <div className="flex flex-col items-center gap-3">
-              <QrPreview url={url} title={title || 'Shared QR'} size="lg" bare />
+              <QrPreview
+                url={url}
+                title={title || 'Shared QR'}
+                size="lg"
+                bare
+                onDataUrl={setQrDataUrl}
+              />
               <div className="flex items-center gap-2 text-xs">
                 {parsed.isValid ? (
                   <Check className="size-3.5" />
@@ -197,7 +214,7 @@ export function SharePage() {
             </div>
 
             <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid gap-2 sm:grid-cols-3">
                 <Button
                   type="button"
                   variant="outline"
@@ -206,6 +223,16 @@ export function SharePage() {
                   size="lg"
                 >
                   <Save /> Save to local
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={downloadPng}
+                  disabled={!qrDataUrl}
+                  size="lg"
+                >
+                  {pngDownloaded ? <Check /> : <Download />}
+                  {pngDownloaded ? 'Saved' : 'Download'}
                 </Button>
                 <Button type="button" onClick={() => void copyUrl()} disabled={!url} size="lg">
                   {urlCopied ? <Check /> : <Copy />}

@@ -6,6 +6,7 @@ import {
   Check,
   Copy,
   CopyPlus,
+  Download,
   Save,
   Share2,
 } from 'lucide-react'
@@ -24,6 +25,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { UrlEditor } from '@/components/url-editor'
 import { nanoid8 } from '@/lib/ids'
+import { downloadDataUrl, qrFileName } from '@/lib/qr'
 import { LAST_SAVED_QR_ID_KEY, upsertQr } from '@/lib/storage'
 import { buildShareUrl, parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
@@ -63,6 +65,8 @@ export function QrDetailPage() {
   const [shareCopied, setShareCopied] = useState(false)
   const [urlCopied, setUrlCopied] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
+  const [pngDownloaded, setPngDownloaded] = useState(false)
   const parsed = parseDeepLink(url)
   const shareUrl = buildShareUrl({
     origin: window.location.origin,
@@ -275,18 +279,28 @@ export function QrDetailPage() {
 
         <aside className="space-y-4 lg:sticky lg:top-0">
           <div data-tour="qr-preview">
-            <QrPreview title={title || 'QR code'} url={url} size="lg" />
+            <QrPreview title={title || 'QR code'} url={url} size="lg" onDataUrl={setQrDataUrl} />
           </div>
-          <Button
-            onClick={() => void copyUrl()}
-            type="button"
-            variant="outline"
-            className="w-full"
-            disabled={!url}
-          >
-            {urlCopied ? <Check /> : <Copy />}
-            {urlCopied ? 'Copied' : 'Copy URL'}
-          </Button>
+          <div className="grid grid-cols-2 gap-2">
+            <Button onClick={() => void copyUrl()} type="button" variant="outline" disabled={!url}>
+              {urlCopied ? <Check /> : <Copy />}
+              {urlCopied ? 'Copied' : 'Copy URL'}
+            </Button>
+            <Button
+              onClick={() => {
+                if (!qrDataUrl) return
+                downloadDataUrl(qrDataUrl, qrFileName(title))
+                setPngDownloaded(true)
+                window.setTimeout(() => setPngDownloaded(false), 1200)
+              }}
+              type="button"
+              variant="outline"
+              disabled={!qrDataUrl}
+            >
+              {pngDownloaded ? <Check /> : <Download />}
+              {pngDownloaded ? 'Saved' : 'Download PNG'}
+            </Button>
+          </div>
           <ParsedUrlPanel url={url} />
           <Card>
             <CardHeader className="border-b">

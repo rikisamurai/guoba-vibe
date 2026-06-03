@@ -3,6 +3,7 @@ import {
   ArrowRight,
   Check,
   Copy,
+  Download,
   ExternalLink,
   Inbox,
   LayoutGrid,
@@ -23,6 +24,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { downloadDataUrl, qrFileName } from '@/lib/qr'
 import { deleteQr, LAST_SAVED_QR_ID_KEY } from '@/lib/storage'
 import type { VaultData } from '@/lib/storage'
 import { buildShareUrl, parseDeepLink } from '@/lib/url'
@@ -39,6 +41,8 @@ export function WorkspacePage() {
   const [armedDelete, setArmedDelete] = useState('')
   const [copiedUrlId, setCopiedUrlId] = useState('')
   const [copiedShareId, setCopiedShareId] = useState('')
+  const [inspectorDataUrl, setInspectorDataUrl] = useState<string | null>(null)
+  const [downloadedInspectorId, setDownloadedInspectorId] = useState('')
   const [pendingSavedId, setPendingSavedId] = useState(() => {
     const id = sessionStorage.getItem(LAST_SAVED_QR_ID_KEY)
     if (id) sessionStorage.removeItem(LAST_SAVED_QR_ID_KEY)
@@ -142,6 +146,13 @@ export function WorkspacePage() {
     } catch {
       toast.error('Could not copy share link')
     }
+  }
+
+  function downloadInspectorPng(qr: VaultData['qrs'][number]) {
+    if (!inspectorDataUrl) return
+    downloadDataUrl(inspectorDataUrl, qrFileName(qr.title))
+    setDownloadedInspectorId(qr.id)
+    window.setTimeout(() => setDownloadedInspectorId(''), 1200)
   }
 
   const uncategorizedCount = getUncategorizedQrs(data).length
@@ -357,6 +368,21 @@ export function WorkspacePage() {
                   </p>
                 </div>
                 <CardAction className="flex items-center gap-1">
+                  <ActionTooltip label="Download PNG">
+                    <button
+                      type="button"
+                      onClick={() => downloadInspectorPng(selectedQr)}
+                      disabled={!inspectorDataUrl}
+                      aria-label={`Download PNG for ${selectedQr.title || selectedParsed?.path || 'QR'}`}
+                      className="text-muted-foreground hover:text-foreground hover:bg-muted/50 disabled:hover:text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded-md border border-transparent transition-colors disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                    >
+                      {downloadedInspectorId === selectedQr.id ? (
+                        <Check className="size-4" />
+                      ) : (
+                        <Download className="size-4" />
+                      )}
+                    </button>
+                  </ActionTooltip>
                   <ActionTooltip label="Copy share link">
                     <button
                       type="button"
@@ -395,7 +421,13 @@ export function WorkspacePage() {
                 </CardAction>
               </CardHeader>
               <CardContent className="space-y-4 pt-3">
-                <QrPreview title={selectedQr.title} url={selectedQr.url} size="inspector" bare />
+                <QrPreview
+                  title={selectedQr.title}
+                  url={selectedQr.url}
+                  size="inspector"
+                  bare
+                  onDataUrl={setInspectorDataUrl}
+                />
                 {selectedQr.description && (
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {selectedQr.description}
