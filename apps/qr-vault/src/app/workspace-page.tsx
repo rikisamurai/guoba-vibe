@@ -173,7 +173,7 @@ export function WorkspacePage() {
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search by title, path, or query keys…"
+                placeholder="Search title, URL, path, or query…"
                 className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm outline-none"
               />
               {search && (
