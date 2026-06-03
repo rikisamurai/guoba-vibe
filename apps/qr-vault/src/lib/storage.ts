@@ -120,6 +120,14 @@ export function deleteQr(data: VaultData, qrId: string): VaultData {
   }
 }
 
+export function deleteCollection(data: VaultData, collectionId: string): VaultData {
+  return {
+    ...data,
+    collections: data.collections.filter((collection) => collection.id !== collectionId),
+    collectionItems: data.collectionItems.filter((item) => item.collectionId !== collectionId),
+  }
+}
+
 export function upsertCollection(
   data: VaultData,
   input: { id?: string; title: string; description?: string },
