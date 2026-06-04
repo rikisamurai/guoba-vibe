@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import type { Collection } from '@/lib/storage'
 import { cn } from '@/lib/utils'
@@ -10,6 +11,8 @@ type CollectionPickerProps = {
 }
 
 export function CollectionPicker({ collections, selectedIds, onChange }: CollectionPickerProps) {
+  const { t } = useTranslation()
+
   function toggleCollection(collectionId: string) {
     if (selectedIds.includes(collectionId)) {
       onChange(selectedIds.filter((id) => id !== collectionId))
@@ -21,7 +24,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
   if (!collections.length) {
     return (
       <p className="text-muted-foreground rounded-md border border-dashed px-3 py-3 text-center text-xs italic">
-        no collections yet
+        {t('collectionPicker.noCollections')}
       </p>
     )
   }

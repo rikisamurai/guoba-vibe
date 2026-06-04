@@ -15,6 +15,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { type ReactElement, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { useVault } from '@/app/use-vault'
@@ -33,7 +34,8 @@ import { cn } from '@/lib/utils'
 import { getQrsForCollection, getUncategorizedQrs, searchQrs, sortQrsByRecent } from '@/lib/vault'
 
 export function WorkspacePage() {
-  useDocumentTitle('Vault')
+  const { t } = useTranslation()
+  useDocumentTitle(t('workspace.documentTitle'))
   const { data, updateVault } = useVault()
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState('')
@@ -96,9 +98,9 @@ export function WorkspacePage() {
     if (selectedId === qrId) setSelectedId('')
     if (!deletedQr) return
 
-    toast.success('Deleted QR', {
+    toast.success(t('toast.deletedQr'), {
       action: {
-        label: 'Undo',
+        label: t('toast.undo'),
         onClick: () => {
           updateVault((current) => {
             if (current.qrs.some((qr) => qr.id === deletedQr.id)) return current
@@ -126,10 +128,10 @@ export function WorkspacePage() {
     try {
       await navigator.clipboard.writeText(qr.url)
       setCopiedUrlId(qr.id)
-      toast.success('Copied URL')
+      toast.success(t('toast.copiedUrl'))
       window.setTimeout(() => setCopiedUrlId(''), 1200)
     } catch {
-      toast.error('Could not copy URL')
+      toast.error(t('toast.couldNotCopyUrl'))
     }
   }
 
@@ -144,10 +146,10 @@ export function WorkspacePage() {
     try {
       await navigator.clipboard.writeText(shareUrl)
       setCopiedShareId(qr.id)
-      toast.success('Copied share link')
+      toast.success(t('toast.copiedShareLink'))
       window.setTimeout(() => setCopiedShareId(''), 1200)
     } catch {
-      toast.error('Could not copy share link')
+      toast.error(t('toast.couldNotCopyShareLink'))
     }
   }
 
@@ -187,8 +189,8 @@ export function WorkspacePage() {
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                aria-label="Search QR codes"
-                placeholder="Search title, URL, path, or query…"
+                aria-label={t('workspace.searchLabel')}
+                placeholder={t('workspace.searchPlaceholder')}
                 className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm outline-none"
               />
               {search && (
@@ -197,26 +199,24 @@ export function WorkspacePage() {
                   onClick={() => setSearch('')}
                   className="text-muted-foreground hover:text-foreground text-xs"
                 >
-                  clear
+                  {t('common.clear')}
                 </button>
               )}
             </div>
             <Button asChild className="shrink-0 lg:w-auto">
               <Link to="/new" search={{ url: '', title: '', description: '' }}>
-                <Plus /> New QR
+                <Plus /> {t('nav.newQr')}
               </Link>
             </Button>
           </div>
 
           <div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-[10px] font-medium tracking-wider uppercase">
-            <span>Local · Static · Private</span>
+            <span>{t('workspace.statusLine')}</span>
             <span aria-hidden>·</span>
-            <span>
-              {visibleQrs.length} {visibleQrs.length === 1 ? 'result' : 'results'}
-            </span>
+            <span>{t('workspace.resultCount', { count: visibleQrs.length })}</span>
             {search && (
               <Badge variant="outline" className="h-5 px-1.5 text-[10px] tracking-normal">
-                filtered
+                {t('workspace.filtered')}
               </Badge>
             )}
           </div>
@@ -285,20 +285,24 @@ export function WorkspacePage() {
                             handleDelete(qr.id)
                           }}
                           className="text-destructive bg-destructive/10 border-destructive/40 hover:bg-destructive/20 flex h-10 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors sm:h-8"
-                          aria-label={`Confirm delete ${qr.title || parsed.path || 'QR'}`}
+                          aria-label={t('workspace.confirmDelete', {
+                            name: qr.title || parsed.path || t('common.qrFallback'),
+                          })}
                         >
-                          <Trash2 className="size-3.5" /> Confirm?
+                          <Trash2 className="size-3.5" /> {t('common.confirm')}
                         </button>
                       ) : (
                         <>
-                          <ActionTooltip label="Copy URL">
+                          <ActionTooltip label={t('common.copyUrl')}>
                             <button
                               type="button"
                               onClick={(event) => {
                                 event.stopPropagation()
                                 void copyUrl(qr)
                               }}
-                              aria-label={`Copy URL for ${qr.title || parsed.path || 'QR'}`}
+                              aria-label={t('workspace.copyUrlFor', {
+                                name: qr.title || parsed.path || t('common.qrFallback'),
+                              })}
                               className="text-muted-foreground hover:text-foreground hover:bg-background hover:border-border flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
                             >
                               {copiedUrlId === qr.id ? (
@@ -308,17 +312,19 @@ export function WorkspacePage() {
                               )}
                             </button>
                           </ActionTooltip>
-                          <ActionTooltip label="Edit">
+                          <ActionTooltip label={t('common.edit')}>
                             <Link
                               to="/q/$qrId"
                               params={{ qrId: qr.id }}
-                              aria-label={`Edit ${qr.title || parsed.path || 'QR'}`}
+                              aria-label={t('workspace.editQr', {
+                                name: qr.title || parsed.path || t('common.qrFallback'),
+                              })}
                               className="text-muted-foreground hover:text-foreground hover:bg-background hover:border-border flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
                             >
                               <SquarePen className="size-4" />
                             </Link>
                           </ActionTooltip>
-                          <ActionTooltip label="Delete">
+                          <ActionTooltip label={t('common.delete')}>
                             <button
                               type="button"
                               data-armed-for={qr.id}
@@ -326,7 +332,9 @@ export function WorkspacePage() {
                                 event.stopPropagation()
                                 setArmedDelete(qr.id)
                               }}
-                              aria-label={`Delete ${qr.title || parsed.path || 'QR'}`}
+                              aria-label={t('workspace.deleteQr', {
+                                name: qr.title || parsed.path || t('common.qrFallback'),
+                              })}
                               className="text-muted-foreground hover:text-destructive hover:bg-background hover:border-destructive/40 flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
                             >
                               <Trash2 className="size-4" />
@@ -345,9 +353,9 @@ export function WorkspacePage() {
                 <div className="mb-3 inline-flex size-12 items-center justify-center rounded-md border">
                   <Search className="text-muted-foreground size-4" />
                 </div>
-                <p className="mb-1 text-sm">No QR codes match</p>
+                <p className="mb-1 text-sm">{t('workspace.noMatches')}</p>
                 <p className="text-muted-foreground text-xs">
-                  {search ? 'Try a different search term' : 'Create your first one'}
+                  {search ? t('workspace.tryDifferentSearch') : t('workspace.createFirstOne')}
                 </p>
               </CardContent>
             </Card>
@@ -362,22 +370,24 @@ export function WorkspacePage() {
               <CardHeader className="border-b">
                 <div className="min-w-0 space-y-1">
                   <p className="text-muted-foreground mb-1 text-[10px] font-medium tracking-wider uppercase">
-                    Selected QR
+                    {t('common.selectedQr')}
                   </p>
                   <CardTitle className="truncate text-base">
-                    {selectedQr.title || 'Untitled QR'}
+                    {selectedQr.title || t('common.untitledQr')}
                   </CardTitle>
                   <p className="text-muted-foreground truncate font-mono text-[11px]">
                     {selectedParsed?.path || selectedQr.url}
                   </p>
                 </div>
                 <CardAction className="flex items-center gap-1">
-                  <ActionTooltip label="Download PNG">
+                  <ActionTooltip label={t('common.downloadPng')}>
                     <button
                       type="button"
                       onClick={() => downloadInspectorPng(selectedQr)}
                       disabled={!inspectorDataUrl}
-                      aria-label={`Download PNG for ${selectedQr.title || selectedParsed?.path || 'QR'}`}
+                      aria-label={t('workspace.downloadPngFor', {
+                        name: selectedQr.title || selectedParsed?.path || t('common.qrFallback'),
+                      })}
                       className="text-muted-foreground hover:text-foreground hover:bg-muted/50 disabled:hover:text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded-md border border-transparent transition-colors disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
                     >
                       {downloadedInspectorId === selectedQr.id ? (
@@ -387,11 +397,13 @@ export function WorkspacePage() {
                       )}
                     </button>
                   </ActionTooltip>
-                  <ActionTooltip label="Copy share link">
+                  <ActionTooltip label={t('common.copyShareLink')}>
                     <button
                       type="button"
                       onClick={() => void copyShareUrl(selectedQr)}
-                      aria-label={`Copy share link for ${selectedQr.title || selectedParsed?.path || 'QR'}`}
+                      aria-label={t('workspace.copyShareLinkFor', {
+                        name: selectedQr.title || selectedParsed?.path || t('common.qrFallback'),
+                      })}
                       className="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex size-8 shrink-0 items-center justify-center rounded-md border border-transparent transition-colors"
                     >
                       {copiedShareId === selectedQr.id ? (
@@ -401,7 +413,7 @@ export function WorkspacePage() {
                       )}
                     </button>
                   </ActionTooltip>
-                  <ActionTooltip label="Open share page">
+                  <ActionTooltip label={t('workspace.openSharePage')}>
                     <Link
                       to="/share"
                       search={{
@@ -409,7 +421,9 @@ export function WorkspacePage() {
                         title: selectedQr.title ?? '',
                         description: selectedQr.description ?? '',
                       }}
-                      aria-label={`Open share page for ${selectedQr.title || selectedParsed?.path || 'QR'}`}
+                      aria-label={t('workspace.openSharePageFor', {
+                        name: selectedQr.title || selectedParsed?.path || t('common.qrFallback'),
+                      })}
                       className="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex size-8 shrink-0 items-center justify-center rounded-md border border-transparent transition-colors"
                     >
                       <ExternalLink className="size-4" />
@@ -420,7 +434,7 @@ export function WorkspacePage() {
                     params={{ qrId: selectedQr.id }}
                     className="text-muted-foreground hover:text-foreground flex shrink-0 items-center gap-1 text-xs font-medium"
                   >
-                    Edit <ArrowRight className="size-3" />
+                    {t('common.edit')} <ArrowRight className="size-3" />
                   </Link>
                 </CardAction>
               </CardHeader>
@@ -453,14 +467,14 @@ export function WorkspacePage() {
                 <Plus className="text-muted-foreground size-5" />
               </div>
               <div>
-                <p className="mb-1 text-sm">Empty vault</p>
+                <p className="mb-1 text-sm">{t('workspace.emptyVault')}</p>
                 <p className="text-muted-foreground text-xs">
-                  {search ? 'No matching QR for current search' : 'Create your first deep-link QR'}
+                  {search ? t('workspace.noMatchingQr') : t('workspace.createFirstDeeplinkQr')}
                 </p>
               </div>
               <Link to="/new" search={{ url: '', title: '', description: '' }}>
                 <Button type="button">
-                  <Plus /> Create QR
+                  <Plus /> {t('workspace.createQr')}
                 </Button>
               </Link>
             </CardContent>
@@ -492,11 +506,13 @@ type CollectionChipRowProps = {
 }
 
 function CollectionChipRow({ data, uncategorizedCount, active, onChange }: CollectionChipRowProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-wrap items-center gap-2 px-1 pb-3 sm:-mx-1 sm:[scrollbar-gutter:stable] sm:flex-nowrap sm:overflow-x-auto">
       <Chip
         icon={<LayoutGrid className="size-3.5" />}
-        label="All QR"
+        label={t('common.allQr')}
         count={data.qrs.length}
         active={active === 'all'}
         onClick={() => onChange('all')}
@@ -504,7 +520,7 @@ function CollectionChipRow({ data, uncategorizedCount, active, onChange }: Colle
       {uncategorizedCount > 0 && (
         <Chip
           icon={<Inbox className="size-3.5" />}
-          label="Uncategorized"
+          label={t('workspace.uncategorized')}
           count={uncategorizedCount}
           active={active === 'uncategorized'}
           onClick={() => onChange('uncategorized')}
@@ -530,8 +546,8 @@ function CollectionChipRow({ data, uncategorizedCount, active, onChange }: Colle
       <div className="ml-auto shrink-0">
         <Link
           to="/collections"
-          aria-label="Manage collections"
-          title="Manage collections"
+          aria-label={t('workspace.manageCollections')}
+          title={t('workspace.manageCollections')}
           className="text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:border-border flex size-8 items-center justify-center rounded-md border border-transparent transition-colors"
         >
           <Settings2 className="size-4" />

@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import { ArrowRight, FolderOpen, Save, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { useVault } from '@/app/use-vault'
@@ -29,6 +30,7 @@ function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.R
 }
 
 export function CollectionsPage() {
+  const { t } = useTranslation()
   const { data, updateVault } = useVault()
   const navigate = useNavigate()
   const pathname = useRouterState({ select: (state) => state.location.pathname })
@@ -36,7 +38,11 @@ export function CollectionsPage() {
     ? decodeURIComponent(pathname.slice('/collections/'.length))
     : ''
   const selectedCollection = data.collections.find((collection) => collection.id === collectionId)
-  useDocumentTitle(selectedCollection ? `${selectedCollection.title} · Collections` : 'Collections')
+  useDocumentTitle(
+    selectedCollection
+      ? t('collections.documentDetail', { title: selectedCollection.title })
+      : t('collections.documentTitle'),
+  )
   const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : data.qrs
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -84,9 +90,9 @@ export function CollectionsPage() {
       void navigate({ to: '/collections' })
     }
 
-    toast.success('Deleted collection', {
+    toast.success(t('collections.deletedToast'), {
       action: {
-        label: 'Undo',
+        label: t('toast.undo'),
         onClick: () => {
           updateVault((current) => {
             if (current.collections.some((collection) => collection.id === target.id)) {
@@ -118,22 +124,22 @@ export function CollectionsPage() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
-            Workspace
+            {t('collections.eyebrow')}
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight">Collections</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">{t('common.collections')}</h1>
         </div>
         <Link
           to="/"
           className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs font-medium"
         >
-          Back to vault <ArrowRight className="size-3" />
+          {t('collections.backToVault')} <ArrowRight className="size-3" />
         </Link>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[220px_minmax(0,1fr)_minmax(0,1fr)]">
         <Card>
           <CardHeader className="border-b">
-            <CardTitle>All folders</CardTitle>
+            <CardTitle>{t('collections.allFolders')}</CardTitle>
             <CardAction>
               <Badge variant="outline">{data.collections.length}</Badge>
             </CardAction>
@@ -177,9 +183,9 @@ export function CollectionsPage() {
                             handleDelete(collection)
                           }}
                           className="text-destructive bg-destructive/10 border-destructive/40 hover:bg-destructive/20 flex h-6 items-center gap-1.5 rounded-md border px-2 text-[11px] font-medium transition-colors"
-                          aria-label={`Confirm delete ${collection.title}`}
+                          aria-label={t('collections.confirmDelete', { name: collection.title })}
                         >
-                          <Trash2 className="size-3" /> Confirm?
+                          <Trash2 className="size-3" /> {t('common.confirm')}
                         </button>
                       ) : (
                         <Tooltip>
@@ -192,13 +198,17 @@ export function CollectionsPage() {
                                 event.stopPropagation()
                                 setArmedDeleteId(collection.id)
                               }}
-                              aria-label={`Delete ${collection.title}`}
+                              aria-label={t('collections.deleteCollection', {
+                                name: collection.title,
+                              })}
                               className="text-muted-foreground hover:text-destructive hover:border-destructive/40 hover:bg-background flex size-6 items-center justify-center rounded-md border border-transparent transition-colors"
                             >
                               <Trash2 className="size-3" />
                             </button>
                           </TooltipTrigger>
-                          <TooltipContent side="right">Delete folder</TooltipContent>
+                          <TooltipContent side="right">
+                            {t('collections.deleteFolder')}
+                          </TooltipContent>
                         </Tooltip>
                       )}
                     </div>
@@ -208,7 +218,7 @@ export function CollectionsPage() {
             </TooltipProvider>
             {!data.collections.length && (
               <p className="text-muted-foreground rounded-md border border-dashed px-3 py-4 text-center text-xs italic">
-                no collections yet
+                {t('collections.noCollections')}
               </p>
             )}
           </CardContent>
@@ -218,35 +228,35 @@ export function CollectionsPage() {
           <CardHeader className="border-b">
             <div>
               <p className="text-muted-foreground mb-1 text-[10px] font-medium tracking-wider uppercase">
-                {selectedCollection ? 'Edit' : 'Create'}
+                {selectedCollection ? t('collections.edit') : t('collections.create')}
               </p>
               <CardTitle>
-                {selectedCollection ? selectedCollection.title : 'New collection'}
+                {selectedCollection ? selectedCollection.title : t('collections.newCollection')}
               </CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="grid gap-1.5">
-              <FieldLabel htmlFor="coll-title">Title</FieldLabel>
+              <FieldLabel htmlFor="coll-title">{t('common.title')}</FieldLabel>
               <Input
                 id="coll-title"
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="e.g. Mobile onboarding"
+                placeholder={t('collections.titlePlaceholder')}
               />
             </div>
             <div className="grid gap-1.5">
-              <FieldLabel htmlFor="coll-desc">Description</FieldLabel>
+              <FieldLabel htmlFor="coll-desc">{t('common.description')}</FieldLabel>
               <Textarea
                 id="coll-desc"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 rows={4}
-                placeholder="Optional context for this collection"
+                placeholder={t('collections.descriptionPlaceholder')}
               />
             </div>
             <Button type="button" onClick={saveCollection} disabled={!title.trim()}>
-              <Save /> Save collection
+              <Save /> {t('collections.saveCollection')}
             </Button>
           </CardContent>
         </Card>
@@ -256,10 +266,10 @@ export function CollectionsPage() {
             <div>
               {selectedCollection && (
                 <p className="text-muted-foreground mb-1 text-[10px] font-medium tracking-wider uppercase">
-                  QRs in collection
+                  {t('collections.qrsInCollection')}
                 </p>
               )}
-              <CardTitle>{selectedCollection?.title ?? 'All QR codes'}</CardTitle>
+              <CardTitle>{selectedCollection?.title ?? t('collections.allQrCodes')}</CardTitle>
             </div>
             <CardAction>
               <Badge variant="secondary">{qrs.length}</Badge>
@@ -295,7 +305,7 @@ export function CollectionsPage() {
               })
             ) : (
               <p className="text-muted-foreground rounded-md border border-dashed px-3 py-6 text-center text-xs italic">
-                no QR codes in this collection
+                {t('collections.noQrsInCollection')}
               </p>
             )}
           </CardContent>

@@ -1,4 +1,5 @@
 import { AlertCircle, Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,30 +11,31 @@ type ParsedUrlPanelProps = {
 }
 
 export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
+  const { t } = useTranslation()
   const parsed = parseDeepLink(url)
   const queryEntries = Object.entries(parsed.query)
 
   return (
     <Card>
       <CardHeader className="border-b">
-        <CardTitle>Parsed URL</CardTitle>
+        <CardTitle>{t('parsedUrl.title')}</CardTitle>
         <CardAction>
           <Badge variant="outline" className="gap-1.5">
             {parsed.isValid ? <Check className="size-3" /> : <AlertCircle className="size-3" />}
-            {parsed.isValid ? 'valid' : 'invalid'}
+            {parsed.isValid ? t('common.valid') : t('common.invalid')}
           </Badge>
         </CardAction>
       </CardHeader>
       <CardContent className="space-y-4 pt-4">
         <div className="grid grid-cols-[60px_1fr] gap-x-3 gap-y-2 text-sm">
           <span className="text-muted-foreground pt-0.5 text-[10px] font-medium tracking-wider uppercase">
-            scheme
+            {t('common.scheme')}
           </span>
           <span className="text-foreground font-mono text-xs break-all">
             {parsed.scheme || '—'}
           </span>
           <span className="text-muted-foreground pt-0.5 text-[10px] font-medium tracking-wider uppercase">
-            path
+            {t('common.path')}
           </span>
           <span className="text-foreground font-mono text-xs break-all">{parsed.path || '—'}</span>
         </div>
@@ -43,10 +45,10 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
         <div>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
-              query params
+              {t('common.queryParams')}
             </span>
             <span className="text-muted-foreground font-mono text-[10px]">
-              {queryEntries.length} {queryEntries.length === 1 ? 'key' : 'keys'}
+              {queryEntries.length} {queryEntries.length === 1 ? t('common.key') : t('common.keys')}
             </span>
           </div>
           {queryEntries.length ? (
@@ -67,7 +69,7 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
             </div>
           ) : (
             <p className="text-muted-foreground rounded-md border border-dashed px-2 py-3 text-center text-xs italic">
-              no query params
+              {t('parsedUrl.noQueryParams')}
             </p>
           )}
         </div>

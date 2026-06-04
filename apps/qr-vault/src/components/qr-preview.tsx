@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { renderQrDataUrl } from '@/lib/qr'
@@ -22,15 +23,17 @@ const SIZE_MAP = {
 
 export function QrPreview({
   url,
-  title = 'QR code',
+  title,
   size = 'default',
   bare = false,
   onDataUrl,
 }: QrPreviewProps) {
+  const { t } = useTranslation()
   const [dataUrl, setDataUrl] = useState('')
   const [error, setError] = useState('')
   const parsed = parseDeepLink(url)
   const dims = SIZE_MAP[size]
+  const altTitle = title || t('common.qrCode')
 
   useEffect(() => {
     let isActive = true
@@ -38,7 +41,7 @@ export function QrPreview({
     async function render() {
       if (!parsed.isValid) {
         setDataUrl('')
-        setError('Awaiting valid URL')
+        setError(t('common.awaitingValidUrl'))
         onDataUrl?.(null)
         return
       }
@@ -53,7 +56,7 @@ export function QrPreview({
       } catch (err) {
         if (isActive) {
           setDataUrl('')
-          setError(err instanceof Error ? err.message : 'Unable to render QR')
+          setError(err instanceof Error ? err.message : t('qrPreview.unableToRender'))
           onDataUrl?.(null)
         }
       }
@@ -64,12 +67,12 @@ export function QrPreview({
     return () => {
       isActive = false
     }
-  }, [parsed.isValid, url, dims.qr, onDataUrl])
+  }, [parsed.isValid, url, dims.qr, onDataUrl, t])
 
   const inner = dataUrl ? (
     <img
       src={dataUrl}
-      alt={title}
+      alt={altTitle}
       className={cn('rounded-md border bg-white', dims.pad)}
       style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
     />
@@ -77,7 +80,7 @@ export function QrPreview({
     <div
       className="flex items-center justify-center rounded-md border border-dashed"
       style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
-      aria-label={error || 'No QR'}
+      aria-label={error || t('common.noQr')}
     >
       <div className="border-muted-foreground/30 size-8 rounded-md border border-dashed" />
     </div>
@@ -87,20 +90,20 @@ export function QrPreview({
       style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
     >
       <div className="size-10 rounded-md border border-dashed" />
-      <span className="font-mono text-xs">{error || 'No QR'}</span>
+      <span className="font-mono text-xs">{error || t('common.noQr')}</span>
     </div>
   )
 
   if (bare) {
     return (
-      <div className="flex items-center justify-center" aria-label="QR preview">
+      <div className="flex items-center justify-center" aria-label={t('common.qrPreview')}>
         {inner}
       </div>
     )
   }
 
   return (
-    <Card aria-label="QR preview">
+    <Card aria-label={t('common.qrPreview')}>
       <CardContent
         className="flex items-center justify-center py-6"
         style={{ minHeight: dims.min }}

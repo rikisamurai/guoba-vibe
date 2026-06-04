@@ -1,8 +1,10 @@
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from 'lucide-react'
 import { type ComponentType } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useOnboarding } from '@/app/onboarding/use-onboarding'
+import { LanguageToggle } from '@/components/language-toggle'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,14 +25,15 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 
 function OnboardingReplayButton() {
   const { restart } = useOnboarding()
+  const { t } = useTranslation()
   return (
     <Button
       type="button"
       variant="ghost"
       size="icon-sm"
       onClick={restart}
-      aria-label="Replay onboarding"
-      title="Replay onboarding"
+      aria-label={t('common.replayOnboarding')}
+      title={t('common.replayOnboarding')}
     >
       <HelpCircle />
     </Button>
@@ -39,7 +42,7 @@ function OnboardingReplayButton() {
 
 type NavItem = {
   to: string
-  label: string
+  labelKey: string
   icon: ComponentType<{ className?: string }>
   exact?: boolean
   search?: Record<string, string>
@@ -47,35 +50,37 @@ type NavItem = {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: '/', label: 'Vault', icon: Database, exact: true },
-  { to: '/collections', label: 'Collections', icon: FolderOpen },
+  { to: '/', labelKey: 'nav.vault', icon: Database, exact: true },
+  { to: '/collections', labelKey: 'nav.collections', icon: FolderOpen },
   {
     to: '/new',
-    label: 'New QR',
+    labelKey: 'nav.newQr',
     icon: Plus,
     exact: true,
     search: { url: '' },
     dataTour: 'nav-new-qr',
   },
-  { to: '/import', label: 'Import', icon: Download, exact: true },
+  { to: '/import', labelKey: 'nav.import', icon: Download, exact: true },
 ]
 
 function NavLink({ item }: { item: NavItem }) {
+  const { t } = useTranslation()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const isActive = item.exact
     ? pathname === item.to
     : pathname === item.to || pathname.startsWith(item.to + '/')
+  const label = t(item.labelKey)
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
+      <SidebarMenuButton asChild isActive={isActive} tooltip={label}>
         <Link
           to={item.to}
           search={item.search as never}
           {...(item.dataTour ? { 'data-tour': item.dataTour } : {})}
         >
           <item.icon />
-          <span>{item.label}</span>
+          <span>{label}</span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
@@ -83,6 +88,8 @@ function NavLink({ item }: { item: NavItem }) {
 }
 
 export function AppShell() {
+  const { t } = useTranslation()
+
   return (
     <TooltipProvider delayDuration={200}>
       <SidebarProvider>
@@ -90,14 +97,14 @@ export function AppShell() {
           <SidebarHeader>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild size="lg" tooltip="QR Vault">
+                <SidebarMenuButton asChild size="lg" tooltip={t('app.brand')}>
                   <Link to="/">
                     <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md">
                       <QrCode className="size-4" />
                     </div>
                     <div className="grid flex-1 text-left leading-tight">
-                      <span className="font-semibold">QR Vault</span>
-                      <span className="text-muted-foreground text-xs">Local deep-link store</span>
+                      <span className="font-semibold">{t('app.brand')}</span>
+                      <span className="text-muted-foreground text-xs">{t('app.subtitle')}</span>
                     </div>
                   </Link>
                 </SidebarMenuButton>
@@ -118,12 +125,10 @@ export function AppShell() {
           </SidebarContent>
 
           <SidebarFooter>
-            <div className="flex items-center justify-between gap-2 px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center">
-              <span className="text-muted-foreground font-mono text-xs group-data-[collapsible=icon]:hidden">
-                v0.1.0
-              </span>
+            <div className="flex items-center justify-start gap-2 px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center">
               <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col">
                 <OnboardingReplayButton />
+                <LanguageToggle />
                 <ThemeToggle />
               </div>
             </div>
@@ -134,7 +139,7 @@ export function AppShell() {
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
             <SidebarTrigger />
             <div aria-hidden className="bg-border h-4 w-px shrink-0" />
-            <span className="text-muted-foreground font-mono text-xs">qr-vault</span>
+            <span className="text-muted-foreground font-mono text-xs">{t('app.shortName')}</span>
           </header>
           <div className="flex-1 overflow-auto p-5">
             <Outlet />

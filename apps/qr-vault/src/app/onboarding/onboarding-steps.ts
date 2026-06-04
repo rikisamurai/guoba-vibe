@@ -1,4 +1,5 @@
 import type { DriveStep } from 'driver.js'
+import type { TFunction } from 'i18next'
 
 export const TOUR_SELECTORS = {
   navNewQr: '[data-tour="nav-new-qr"]',
@@ -12,14 +13,13 @@ export type OnboardingStepHooks = {
   onStartNewQr: () => void
 }
 
-export function buildOnboardingSteps(hooks: OnboardingStepHooks): DriveStep[] {
+export function buildOnboardingSteps(hooks: OnboardingStepHooks, t: TFunction): DriveStep[] {
   return [
     {
       element: TOUR_SELECTORS.navNewQr,
       popover: {
-        title: 'Welcome to QR Vault',
-        description:
-          "Your local-first vault for QR codes and deep links. Let's create your first one.",
+        title: t('onboarding.welcomeTitle'),
+        description: t('onboarding.welcomeDescription'),
         side: 'right',
         align: 'start',
         onNextClick: () => {
@@ -30,9 +30,8 @@ export function buildOnboardingSteps(hooks: OnboardingStepHooks): DriveStep[] {
     {
       element: TOUR_SELECTORS.newUrlInput,
       popover: {
-        title: 'Paste any URL or deep link',
-        description:
-          "QR Vault works with any web URL or app deep link. We've pre-filled a sample — replace it with your own, or keep it to see how it works.",
+        title: t('onboarding.pasteTitle'),
+        description: t('onboarding.pasteDescription'),
         side: 'bottom',
         align: 'start',
       },
@@ -40,9 +39,8 @@ export function buildOnboardingSteps(hooks: OnboardingStepHooks): DriveStep[] {
     {
       element: TOUR_SELECTORS.qrPreview,
       popover: {
-        title: 'Live preview',
-        description:
-          'Your QR code is generated instantly on this device. The parsed URL appears below so you can verify it.',
+        title: t('onboarding.previewTitle'),
+        description: t('onboarding.previewDescription'),
         side: 'left',
         align: 'start',
       },
@@ -50,9 +48,8 @@ export function buildOnboardingSteps(hooks: OnboardingStepHooks): DriveStep[] {
     {
       element: TOUR_SELECTORS.qrSave,
       popover: {
-        title: 'Save it',
-        description:
-          'Stored locally in your browser — nothing leaves this device. You can edit, organize into Collections, or share via link anytime.',
+        title: t('onboarding.saveTitle'),
+        description: t('onboarding.saveDescription'),
         side: 'bottom',
         align: 'end',
       },

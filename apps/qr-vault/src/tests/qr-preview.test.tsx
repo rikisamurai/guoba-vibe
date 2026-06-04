@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { QrPreview } from '@/components/qr-preview'
+import '@/i18n/i18n'
 
 describe('QrPreview', () => {
   it('renders the inspector size as a compact preview', () => {
