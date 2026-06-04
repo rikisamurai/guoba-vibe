@@ -8,12 +8,13 @@ import { cn } from '@/lib/utils'
 type QrPreviewProps = {
   url: string
   title?: string
-  size?: 'default' | 'inspector' | 'lg'
+  size?: 'default' | 'inspector' | 'lg' | 'compact'
   bare?: boolean
   onDataUrl?: (dataUrl: string | null) => void
 }
 
 const SIZE_MAP = {
+  compact: { qr: 96, min: 112, pad: 'p-1.5' },
   default: { qr: 260, min: 320, pad: 'p-3' },
   inspector: { qr: 420, min: 500, pad: 'p-5' },
   lg: { qr: 380, min: 440, pad: 'p-5' },
@@ -72,6 +73,14 @@ export function QrPreview({
       className={cn('rounded-md border bg-white', dims.pad)}
       style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
     />
+  ) : size === 'compact' ? (
+    <div
+      className="flex items-center justify-center rounded-md border border-dashed"
+      style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
+      aria-label={error || 'No QR'}
+    >
+      <div className="border-muted-foreground/30 size-8 rounded-md border border-dashed" />
+    </div>
   ) : (
     <div
       className="text-muted-foreground flex flex-col items-center justify-center gap-2 rounded-md border border-dashed text-sm"

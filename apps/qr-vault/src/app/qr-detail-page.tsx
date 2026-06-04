@@ -41,6 +41,27 @@ function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.R
   )
 }
 
+function MobileUrlPreview({ title, url }: { title: string; url: string }) {
+  const parsed = parseDeepLink(url)
+
+  return (
+    <div className="bg-muted/30 flex items-center gap-3 rounded-md border p-2.5 lg:hidden">
+      <div className="w-24 shrink-0">
+        <QrPreview title={title || 'QR code'} url={url} size="compact" bare />
+      </div>
+      <div className="min-w-0 flex-1 space-y-1">
+        <div className="flex items-center gap-1.5 text-xs font-medium">
+          {parsed.isValid ? <Check className="size-3.5" /> : <AlertCircle className="size-3.5" />}
+          <span>{parsed.isValid ? 'QR preview ready' : 'Awaiting valid URL'}</span>
+        </div>
+        <p className="text-muted-foreground truncate font-mono text-[11px]">
+          {parsed.isValid ? `${parsed.scheme}://${parsed.path}` : 'Enter a scheme and path'}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export function QrDetailPage() {
   const { data, updateVault } = useVault()
   const navigate = useNavigate()
@@ -75,20 +96,19 @@ export function QrDetailPage() {
     title,
     description,
   })
-
   useDocumentTitle(isNew ? 'New QR' : title || existingQr?.title || 'QR')
 
   useEffect(() => {
     setTitle(existingQr?.title ?? search.title ?? '')
     setDescription(existingQr?.description ?? search.description ?? '')
     setUrl(existingQr?.url ?? search.url ?? '')
-    setCollectionIds(
-      existingQr
-        ? data.collectionItems
-            .filter((item) => item.qrId === existingQr.id)
-            .map((item) => item.collectionId)
-        : [],
-    )
+    const nextCollectionIds = existingQr
+      ? data.collectionItems.reduce<string[]>((ids, item) => {
+          if (item.qrId === existingQr.id) ids.push(item.collectionId)
+          return ids
+        }, [])
+      : []
+    setCollectionIds(nextCollectionIds)
     setError('')
   }, [data.collectionItems, existingQr, search.url, search.title, search.description])
 
@@ -248,7 +268,9 @@ export function QrDetailPage() {
                 </p>
                 <Separator className="flex-1" />
               </div>
-              <UrlEditor value={url} onChange={setUrl} />
+              <UrlEditor value={url} onChange={setUrl}>
+                <MobileUrlPreview title={title} url={url} />
+              </UrlEditor>
             </div>
 
             <div className="pt-1">
@@ -278,7 +300,7 @@ export function QrDetailPage() {
         </Card>
 
         <aside className="space-y-4 lg:sticky lg:top-0">
-          <div data-tour="qr-preview">
+          <div data-tour="qr-preview" className="hidden lg:block">
             <QrPreview title={title || 'QR code'} url={url} size="lg" onDataUrl={setQrDataUrl} />
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -322,7 +344,7 @@ export function QrDetailPage() {
             <CardContent className="space-y-2 pt-4">
               <div className="bg-muted/50 rounded-md border p-3">
                 <p className="text-foreground font-mono text-[10px] leading-relaxed break-all">
-                  {shareUrl || '—'}
+                  {shareUrl || 'Not ready'}
                 </p>
               </div>
               <p className="text-muted-foreground text-xs">

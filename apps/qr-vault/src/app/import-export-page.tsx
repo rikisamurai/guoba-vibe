@@ -1,5 +1,5 @@
 import { Check, Download, FileUp, Replace, ShieldCheck } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useVault } from '@/app/use-vault'
 import { Badge } from '@/components/ui/badge'
@@ -22,6 +22,13 @@ export function ImportExportPage() {
   const [fileName, setFileName] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [replaceArmed, setReplaceArmed] = useState(false)
+
+  useEffect(() => {
+    if (!replaceArmed) return
+    const timeout = window.setTimeout(() => setReplaceArmed(false), 3000)
+    return () => window.clearTimeout(timeout)
+  }, [replaceArmed])
 
   function exportVault() {
     const blob = new Blob([exportVaultJson(data)], { type: 'application/json' })
@@ -37,6 +44,7 @@ export function ImportExportPage() {
     setMessage('')
     setError('')
     setPendingData(null)
+    setReplaceArmed(false)
     setFileName(file?.name ?? '')
     if (!file) return
 
@@ -54,12 +62,19 @@ export function ImportExportPage() {
   function mergeImport() {
     if (!pendingData) return
     updateVault((current) => mergeVaultData(current, pendingData))
+    setReplaceArmed(false)
     setMessage(`Merged ${fileName || 'vault file'} into local data.`)
   }
 
   function replaceImport() {
     if (!pendingData) return
+    if (!replaceArmed) {
+      setReplaceArmed(true)
+      return
+    }
+
     updateVault((current) => replaceVaultData(current, pendingData))
+    setReplaceArmed(false)
     setMessage(`Replaced local data with ${fileName || 'vault file'}.`)
   }
 
@@ -98,7 +113,7 @@ export function ImportExportPage() {
               </Button>
               <p className="text-muted-foreground mt-3 text-xs leading-relaxed">
                 Downloads a single <code className="text-foreground font-mono">.json</code> file
-                containing your entire vault. Store it anywhere — Git, Dropbox, a USB stick.
+                containing your entire vault. Store it anywhere: Git, Dropbox, a USB stick.
               </p>
             </div>
           </CardContent>
@@ -124,6 +139,7 @@ export function ImportExportPage() {
               <input
                 accept="application/json,.json"
                 type="file"
+                aria-label="Choose vault JSON file"
                 onChange={(event) => void readImportFile(event.target.files?.[0])}
                 className="absolute inset-0 size-full cursor-pointer opacity-0"
               />
@@ -157,16 +173,17 @@ export function ImportExportPage() {
                 variant="destructive"
                 onClick={replaceImport}
                 disabled={!pendingData}
+                aria-label={replaceArmed ? 'Confirm replace local data' : 'Replace local data'}
               >
-                <Replace /> Replace
+                <Replace /> {replaceArmed ? 'Confirm replace' : 'Replace'}
               </Button>
             </div>
 
             <p className="text-muted-foreground text-xs leading-relaxed">
               <strong className="text-foreground">Merge</strong> keeps existing local items, adds
               new ones, and overwrites on ID conflicts.{' '}
-              <strong className="text-foreground">Replace</strong> wipes everything and starts fresh
-              — this can't be undone.
+              <strong className="text-foreground">Replace</strong> wipes everything and starts
+              fresh; this can't be undone.
             </p>
           </CardContent>
         </Card>

@@ -16,6 +16,7 @@ import {
 type UrlEditorProps = {
   value: string
   onChange: (value: string) => void
+  children?: React.ReactNode
 }
 
 function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
@@ -29,7 +30,7 @@ function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.R
   )
 }
 
-export function UrlEditor({ value, onChange }: UrlEditorProps) {
+export function UrlEditor({ value, onChange, children }: UrlEditorProps) {
   const parsed = parseDeepLink(value)
   const [rows, setRows] = useState<QueryRow[]>(() => queryToRows(parsed.query))
 
@@ -75,6 +76,7 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
           className="font-mono text-xs"
           placeholder="https://www.google.com/search?q=qr+vault"
         />
+        {children}
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-[180px_1fr]">

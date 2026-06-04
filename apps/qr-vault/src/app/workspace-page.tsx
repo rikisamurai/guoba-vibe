@@ -43,11 +43,7 @@ export function WorkspacePage() {
   const [copiedShareId, setCopiedShareId] = useState('')
   const [inspectorDataUrl, setInspectorDataUrl] = useState<string | null>(null)
   const [downloadedInspectorId, setDownloadedInspectorId] = useState('')
-  const [pendingSavedId, setPendingSavedId] = useState(() => {
-    const id = sessionStorage.getItem(LAST_SAVED_QR_ID_KEY)
-    if (id) sessionStorage.removeItem(LAST_SAVED_QR_ID_KEY)
-    return id ?? ''
-  })
+  const pendingSavedIdRef = useRef<string | null>(null)
   const listItemRefs = useRef(new Map<string, HTMLDivElement>())
 
   useEffect(() => {
@@ -69,20 +65,27 @@ export function WorkspacePage() {
   }, [armedDelete])
 
   useEffect(() => {
+    if (pendingSavedIdRef.current === null) {
+      const id = sessionStorage.getItem(LAST_SAVED_QR_ID_KEY)
+      if (id) sessionStorage.removeItem(LAST_SAVED_QR_ID_KEY)
+      pendingSavedIdRef.current = id ?? ''
+    }
+
+    const pendingSavedId = pendingSavedIdRef.current
     if (!pendingSavedId) return
     if (!data.qrs.some((qr) => qr.id === pendingSavedId)) {
-      setPendingSavedId('')
+      pendingSavedIdRef.current = ''
       return
     }
 
     setSelectedId(pendingSavedId)
     const frame = window.requestAnimationFrame(() => {
       listItemRefs.current.get(pendingSavedId)?.scrollIntoView({ block: 'nearest' })
-      setPendingSavedId('')
+      pendingSavedIdRef.current = ''
     })
 
     return () => window.cancelAnimationFrame(frame)
-  }, [data.qrs, pendingSavedId])
+  }, [data.qrs])
 
   function handleDelete(qrId: string) {
     const deletedQr = data.qrs.find((qr) => qr.id === qrId)
@@ -167,8 +170,8 @@ export function WorkspacePage() {
   const selectedParsed = selectedQr ? parseDeepLink(selectedQr.url) : null
 
   return (
-    <div className="grid grid-cols-1 items-start gap-5 xl:h-[calc(100svh-5.5rem)] xl:grid-cols-[minmax(500px,1fr)_480px] xl:items-stretch xl:overflow-hidden 2xl:grid-cols-[minmax(560px,1fr)_560px]">
-      <div className="min-h-0 space-y-3 xl:flex xl:h-full xl:flex-col xl:gap-3 xl:space-y-0 xl:overflow-hidden">
+    <div className="grid grid-cols-1 items-start gap-5 lg:h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1fr)_360px] lg:items-stretch lg:overflow-hidden xl:grid-cols-[minmax(500px,1fr)_480px] 2xl:grid-cols-[minmax(560px,1fr)_560px]">
+      <div className="flex min-h-0 flex-col gap-3 lg:h-full lg:overflow-hidden">
         <h1 className="sr-only">QR Vault</h1>
         <div className="shrink-0 space-y-3 border-b pb-4">
           <CollectionChipRow
@@ -184,6 +187,7 @@ export function WorkspacePage() {
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
+                aria-label="Search QR codes"
                 placeholder="Search title, URL, path, or query…"
                 className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm outline-none"
               />
@@ -218,7 +222,7 @@ export function WorkspacePage() {
           </div>
         </div>
 
-        <div className="min-h-0 space-y-2 xl:flex-1 xl:[scrollbar-gutter:stable] xl:overflow-y-auto xl:pr-3">
+        <div className="min-h-0 space-y-2 lg:flex-1 lg:[scrollbar-gutter:stable] lg:overflow-y-auto lg:pr-3">
           {visibleQrs.length ? (
             <div className="space-y-2">
               {visibleQrs.map((qr) => {
@@ -240,7 +244,7 @@ export function WorkspacePage() {
                       type="button"
                       onClick={() => setSelectedId(qr.id)}
                       className={cn(
-                        'w-full rounded-md border px-3 py-3 pr-24 text-left transition-colors',
+                        'w-full rounded-md border px-3 py-3 pr-32 text-left transition-colors sm:pr-24',
                         isSelected
                           ? 'border-foreground/25 bg-muted/45 shadow-[inset_2px_0_0_var(--foreground)]'
                           : 'border-border bg-card hover:bg-muted/30',
@@ -271,7 +275,7 @@ export function WorkspacePage() {
                         )}
                       </div>
                     </button>
-                    <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center gap-0.5 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+                    <div className="absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center gap-0.5 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
                       {armedDelete === qr.id ? (
                         <button
                           type="button"
@@ -280,7 +284,7 @@ export function WorkspacePage() {
                             event.stopPropagation()
                             handleDelete(qr.id)
                           }}
-                          className="text-destructive bg-destructive/10 border-destructive/40 hover:bg-destructive/20 flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors"
+                          className="text-destructive bg-destructive/10 border-destructive/40 hover:bg-destructive/20 flex h-10 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors sm:h-8"
                           aria-label={`Confirm delete ${qr.title || parsed.path || 'QR'}`}
                         >
                           <Trash2 className="size-3.5" /> Confirm?
@@ -295,7 +299,7 @@ export function WorkspacePage() {
                                 void copyUrl(qr)
                               }}
                               aria-label={`Copy URL for ${qr.title || parsed.path || 'QR'}`}
-                              className="text-muted-foreground hover:text-foreground hover:bg-background hover:border-border flex size-8 items-center justify-center rounded-md border border-transparent transition-colors"
+                              className="text-muted-foreground hover:text-foreground hover:bg-background hover:border-border flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
                             >
                               {copiedUrlId === qr.id ? (
                                 <Check className="size-4" />
@@ -309,7 +313,7 @@ export function WorkspacePage() {
                               to="/q/$qrId"
                               params={{ qrId: qr.id }}
                               aria-label={`Edit ${qr.title || parsed.path || 'QR'}`}
-                              className="text-muted-foreground hover:text-foreground hover:bg-background hover:border-border flex size-8 items-center justify-center rounded-md border border-transparent transition-colors"
+                              className="text-muted-foreground hover:text-foreground hover:bg-background hover:border-border flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
                             >
                               <SquarePen className="size-4" />
                             </Link>
@@ -323,7 +327,7 @@ export function WorkspacePage() {
                                 setArmedDelete(qr.id)
                               }}
                               aria-label={`Delete ${qr.title || parsed.path || 'QR'}`}
-                              className="text-muted-foreground hover:text-destructive hover:bg-background hover:border-destructive/40 flex size-8 items-center justify-center rounded-md border border-transparent transition-colors"
+                              className="text-muted-foreground hover:text-destructive hover:bg-background hover:border-destructive/40 flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
                             >
                               <Trash2 className="size-4" />
                             </button>
@@ -351,7 +355,7 @@ export function WorkspacePage() {
         </div>
       </div>
 
-      <aside className="min-h-0 space-y-3 xl:h-full xl:[scrollbar-gutter:stable] xl:overflow-y-auto xl:pt-px xl:pr-3 xl:pb-1 xl:pl-px">
+      <aside className="min-h-0 space-y-3 lg:h-full lg:[scrollbar-gutter:stable] lg:overflow-y-auto lg:pt-px lg:pr-3 lg:pb-1 lg:pl-px">
         {selectedQr ? (
           <>
             <Card size="sm">
@@ -489,7 +493,7 @@ type CollectionChipRowProps = {
 
 function CollectionChipRow({ data, uncategorizedCount, active, onChange }: CollectionChipRowProps) {
   return (
-    <div className="-mx-1 flex [scrollbar-gutter:stable] items-center gap-2 overflow-x-auto px-1 pb-3">
+    <div className="flex flex-wrap items-center gap-2 px-1 pb-3 sm:-mx-1 sm:[scrollbar-gutter:stable] sm:flex-nowrap sm:overflow-x-auto">
       <Chip
         icon={<LayoutGrid className="size-3.5" />}
         label="All QR"
@@ -551,7 +555,7 @@ function Chip({ icon, label, count, active, onClick }: ChipProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border pr-2.5 pl-3 text-sm font-medium transition-colors',
+        'inline-flex h-8 max-w-full shrink-0 items-center gap-1.5 rounded-full border pr-2.5 pl-3 text-sm font-medium transition-colors sm:max-w-none',
         active
           ? 'bg-foreground text-background border-foreground'
           : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted/50',
