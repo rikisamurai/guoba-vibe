@@ -1,0 +1,76 @@
+apps/qr-vault/src/components/ui/sheet.tsx
+  s_5af06daa68d935::t_d16d5399442311 6,53-54,72
+apps/qr-vault/src/components/copy-button.tsx
+  s_5af06daa68d935::t_d16d5399442311 3,12,14,25
+apps/qr-vault/src/app/collections-page.tsx
+  s_5af06daa68d935::t_d16d5399442311 4,33,41-45,93,95,127,129,135,142,186,188,201-203,209-211,221,231,234,240,245,249,255,259,269,272,308
+apps/qr-vault/src/components/theme-toggle.tsx
+  s_5af06daa68d935::t_d16d5399442311 2,9,11-12,19-20
+apps/qr-vault/src/components/ui/sidebar.tsx
+  s_5af06daa68d935::t_d16d5399442311 5,157,191-192,248,264,271,277,280
+apps/qr-vault/src/app/workspace-page.tsx
+  s_5af06daa68d935::t_d16d5399442311 18,37-38,98,100,128,131,146,149,189-190,199,205,211,213,216,285-287,289,293,300-302,312,316-318,324,332-334,353,355,370,373,380,385-387,397,401-403,413,421-423,434,467,469,474,506-507,512,520,546-547
+apps/qr-vault/src/app/onboarding/use-onboarding.ts
+  s_5af06daa68d935::t_d16d5399442311 4,46,53-65,67-68,73-76,99
+apps/qr-vault/src/app/onboarding/onboarding-steps.ts
+  s_5af06daa68d935::t_d16d5399442311 2,16,21-22,33-34,42-43,51-52
+apps/qr-vault/src/i18n/i18n.ts
+  s_5af06daa68d935::t_aee7b7e0e947cf 1-5,7-35
+  s_5af06daa68d935::t_12bb8ae1622a8e 6
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_5af06daa68d935::t_d16d5399442311 14,46,80-84,106,127,135,144,147,156,159,167-168,171,186,190,199,202,208,213,228,234-238,242,247,256,267,272,277,291-296,301,315,321,329-330,339,342
+apps/qr-vault/src/app/app-shell.tsx
+  s_5af06daa68d935::t_d16d5399442311 4,7,28,35-36,45,53-54,57,63,67,72,76,83,91-92,100,106-107,130,134,145
+apps/qr-vault/src/components/collection-picker.tsx
+  s_5af06daa68d935::t_d16d5399442311 2,14-15,27
+apps/qr-vault/src/components/qr-preview.tsx
+  s_5af06daa68d935::t_d16d5399442311 2,25,30,35,43,58,69,74,84,90,97
+apps/qr-vault/src/i18n/language.ts
+  s_5af06daa68d935::t_aee7b7e0e947cf 1-57,59-60
+  s_5af06daa68d935::t_12bb8ae1622a8e 58
+apps/qr-vault/src/i18n/locales/zh-CN.json
+  s_5af06daa68d935::t_8fa52fd10e6043 4
+  s_5af06daa68d935::t_aee7b7e0e947cf 1-3,5-192,194-234
+  s_5af06daa68d935::t_113d2d8e034828 193
+apps/qr-vault/package.json
+  s_5af06daa68d935::t_d16d5399442311 21,28
+apps/qr-vault/src/main.tsx
+  s_5af06daa68d935::t_d16d5399442311 9
+apps/qr-vault/src/components/parsed-url-panel.tsx
+  s_5af06daa68d935::t_d16d5399442311 2,14,21,25,32,38,48,51,72
+apps/qr-vault/src/app/share-page.tsx
+  s_5af06daa68d935::t_d16d5399442311 14,18,30,48,63,66,74,77,103,105,120-121,124,128,143,155,169,172,174,181,184-185,212,216,230,240,244,248,257,259
+apps/qr-vault/src/app/import-export-page.tsx
+  s_5af06daa68d935::t_f0d7fdbc3e1797 178
+  s_5af06daa68d935::t_d16d5399442311 3,20-21,48,53-58,64-68,74-78,86,88,91,98,105-107,112,115-117,125,143,149,152,170,183-186
+apps/qr-vault/src/tests/qr-preview.test.tsx
+  s_5af06daa68d935::t_d16d5399442311 5
+apps/qr-vault/src/components/language-toggle.tsx
+  s_5af06daa68d935::t_f606bdfb6b9ed0 1-31
+apps/qr-vault/src/i18n/locales/en.json
+  s_5af06daa68d935::t_113d2d8e034828 193
+  s_5af06daa68d935::t_8fa52fd10e6043 4
+  s_5af06daa68d935::t_aee7b7e0e947cf 1-3,5-192,194-234
+apps/qr-vault/src/tests/i18n.test.ts
+  s_5af06daa68d935::t_4a2250584fa2d6 19,66
+  s_5af06daa68d935::t_aee7b7e0e947cf 1,3-18,20-27,36-65
+  s_5af06daa68d935::t_99be9a893bbdd4 2,28-35
+apps/qr-vault/src/components/url-editor.tsx
+  s_5af06daa68d935::t_d16d5399442311 3,34,70,78,84,90,94,100,107,109,120,123,127,130,138,151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "e4d0fbc55396fa5c3bd293857409993c58f21fd1",
+  "prompts": {},
+  "sessions": {
+    "s_5af06daa68d935": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e9255-80e7-7c40-a782-b353f8597824",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
