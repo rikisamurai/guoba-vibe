@@ -1,0 +1,38 @@
+apps/qr-vault/src/app/share-page.tsx
+  s_396bfc2d3156ab::t_41b29e33a63c1d 28,49-55,58
+apps/qr-vault/src/app/workspace-page.tsx
+  s_396bfc2d3156ab::t_ceec167bccb46c 174
+  s_396bfc2d3156ab::t_5ce1724a6d62eb 46,68-74,77,84,88,190
+  s_396bfc2d3156ab::t_96072dc23fe60c 173,225,247,278,287,302,316,330,358
+  s_396bfc2d3156ab::t_f3bcfaecfd5abd 558
+apps/qr-vault/src/components/url-editor.tsx
+  s_396bfc2d3156ab::t_ceec167bccb46c 19,33,79
+apps/qr-vault/src/components/qr-preview.tsx
+  s_396bfc2d3156ab::t_a495703c21f5cb 11,17
+  s_396bfc2d3156ab::t_505b1cb5e3802a 76-83
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_396bfc2d3156ab::t_d151d55ac46ee9 48-52
+  s_396bfc2d3156ab::t_c2b08b47cf397e 44-47,53,55-64,303
+  s_396bfc2d3156ab::t_ceec167bccb46c 271-273
+  s_396bfc2d3156ab::t_d6a616873d483a 105-111,347
+apps/qr-vault/src/app/import-export-page.tsx
+  s_396bfc2d3156ab::t_ceec167bccb46c 116,142
+  s_396bfc2d3156ab::t_32ecfc3be58786 2,25-31,47,65,71-75,77,176,178
+  s_396bfc2d3156ab::t_d6a616873d483a 185-186
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "6416f0706e100d69ecefb6ce5f17cd693fd1e68c",
+  "prompts": {},
+  "sessions": {
+    "s_396bfc2d3156ab": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e8e8d-d328-7211-825b-fb77bbd2e883",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
