@@ -1,9 +1,10 @@
 import 'server-only'
-import { and, desc, eq, ilike, inArray, or } from 'drizzle-orm'
+import { and, desc, eq, inArray, notInArray } from 'drizzle-orm'
 import { cache } from 'react'
 
 import { db } from '@/db/client'
 import { qrs, qrCollections, collections } from '@/db/schema'
+import { qrMatchesSearch } from '@/lib/qr-search'
 
 export type QrCard = { id: string; title: string; url: string }
 
@@ -21,25 +22,32 @@ export const getQrCollections = cache(async (qrId: string) => {
 })
 
 export async function listQrCards(
-  opts: { search?: string; collectionId?: string } = {},
+  opts: { search?: string; collectionId?: string; uncategorized?: boolean } = {},
 ): Promise<QrCard[]> {
   const filters = []
-  if (opts.search) {
-    const needle = `%${opts.search}%`
-    filters.push(
-      or(ilike(qrs.title, needle), ilike(qrs.url, needle), ilike(qrs.description, needle))!,
-    )
-  }
   if (opts.collectionId) {
     const inCollection = db
       .select({ id: qrCollections.qrId })
       .from(qrCollections)
       .where(eq(qrCollections.collectionId, opts.collectionId))
     filters.push(inArray(qrs.id, inCollection))
+  } else if (opts.uncategorized) {
+    const assigned = db.select({ id: qrCollections.qrId }).from(qrCollections)
+    filters.push(notInArray(qrs.id, assigned))
   }
-  return db
-    .select({ id: qrs.id, title: qrs.title, url: qrs.url })
+
+  const rows = await db
+    .select({
+      id: qrs.id,
+      title: qrs.title,
+      description: qrs.description,
+      url: qrs.url,
+    })
     .from(qrs)
     .where(filters.length ? and(...filters) : undefined)
-    .orderBy(desc(qrs.createdAt))
+    .orderBy(desc(qrs.updatedAt), desc(qrs.createdAt))
+
+  return rows
+    .filter((row) => qrMatchesSearch(row, opts.search ?? ''))
+    .map(({ id, title, url }) => ({ id, title, url }))
 }

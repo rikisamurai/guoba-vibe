@@ -7,20 +7,28 @@ export function UrlPreview({ url }: { url: string }) {
   }
   const queryEntries = Object.entries(parsed.query)
   return (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+    <dl className="grid min-w-0 grid-cols-[4.5rem_minmax(0,1fr)] gap-x-4 gap-y-2 text-sm">
       <dt className="text-muted-foreground">scheme</dt>
-      <dd className="font-mono break-all">{parsed.scheme}</dd>
+      <dd className="min-w-0 font-mono break-all">{parsed.scheme}</dd>
       <dt className="text-muted-foreground">path</dt>
-      <dd className="font-mono break-all">{parsed.path}</dd>
+      <dd className="min-w-0 font-mono break-all">{parsed.path}</dd>
       <dt className="text-muted-foreground">query</dt>
-      <dd>
+      <dd className="min-w-0">
         {queryEntries.length === 0 ? (
           <span className="text-muted-foreground italic">(none)</span>
         ) : (
-          <ul className="space-y-1">
+          <ul className="grid gap-1.5">
             {queryEntries.map(([k, v]) => (
-              <li key={k} className="font-mono">
-                <span className="text-muted-foreground">{k}</span>={v}
+              <li
+                key={k}
+                className="bg-muted/40 grid min-w-0 grid-cols-[minmax(0,0.85fr)_minmax(0,1.25fr)] gap-2 rounded-md px-2 py-1.5 text-xs"
+              >
+                <code className="text-muted-foreground truncate font-mono" title={k}>
+                  {k}
+                </code>
+                <code className="min-w-0 font-mono break-all" title={v}>
+                  {v || '""'}
+                </code>
               </li>
             ))}
           </ul>

@@ -6,9 +6,12 @@ import { createQr } from '@/server/qrs'
 export default async function NewQrPage({
   searchParams,
 }: {
-  searchParams: Promise<{ c?: string }>
+  searchParams: Promise<{ c?: string; title?: string; description?: string; url?: string }>
 }) {
-  const [{ c }, cols] = await Promise.all([searchParams, listCollections()])
+  const [{ c, title, description, url }, cols] = await Promise.all([
+    searchParams,
+    listCollections(),
+  ])
 
   async function handle(input: {
     title: string
@@ -26,8 +29,14 @@ export default async function NewQrPage({
   }
 
   const validCollectionIds = c && cols.some((col) => col.id === c) ? [c] : []
-  const initial = validCollectionIds.length
-    ? { title: '', description: null, url: '', collectionIds: validCollectionIds }
+  const hasPrefill = title || description || url || validCollectionIds.length
+  const initial = hasPrefill
+    ? {
+        title: title ?? '',
+        description: description ?? null,
+        url: url ?? '',
+        collectionIds: validCollectionIds,
+      }
     : undefined
 
   return (
