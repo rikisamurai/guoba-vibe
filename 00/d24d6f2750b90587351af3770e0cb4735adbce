@@ -1,0 +1,21 @@
+apps/qr-vault/src/components/url-editor.tsx
+  s_72b7ef50da1a3a::t_d69b96f741778a 76
+  s_72b7ef50da1a3a::t_535b6f8b099bc5 88
+  s_72b7ef50da1a3a::t_564c14515039f4 98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "00d24d6f2750b90587351af3770e0cb4735adbce",
+  "prompts": {},
+  "sessions": {
+    "s_72b7ef50da1a3a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b1d3568-8654-4256-8723-bebe9e8808a2",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
