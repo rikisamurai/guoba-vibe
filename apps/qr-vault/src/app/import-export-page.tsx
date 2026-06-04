@@ -1,5 +1,6 @@
 import { Check, Download, FileUp, Replace, ShieldCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useVault } from '@/app/use-vault'
 import { Badge } from '@/components/ui/badge'
@@ -16,7 +17,8 @@ import { useDocumentTitle } from '@/lib/use-document-title'
 import { cn } from '@/lib/utils'
 
 export function ImportExportPage() {
-  useDocumentTitle('Import & Export')
+  const { t } = useTranslation()
+  useDocumentTitle(t('importExport.documentTitle'))
   const { data, updateVault } = useVault()
   const [pendingData, setPendingData] = useState<VaultData | null>(null)
   const [fileName, setFileName] = useState('')
@@ -51,19 +53,28 @@ export function ImportExportPage() {
     const raw = await file.text()
     const parsed = parseVaultData(raw)
     if (!parsed) {
-      setError('Invalid vault JSON. Local data was not changed.')
+      setError(t('importExport.invalidJson'))
       return
     }
 
     setPendingData(parsed)
-    setMessage(`Loaded ${parsed.qrs.length} QR codes and ${parsed.collections.length} collections.`)
+    setMessage(
+      t('importExport.loadedSummary', {
+        qrCount: parsed.qrs.length,
+        collectionCount: parsed.collections.length,
+      }),
+    )
   }
 
   function mergeImport() {
     if (!pendingData) return
     updateVault((current) => mergeVaultData(current, pendingData))
     setReplaceArmed(false)
-    setMessage(`Merged ${fileName || 'vault file'} into local data.`)
+    setMessage(
+      t('importExport.mergedFile', {
+        fileName: fileName || t('importExport.fallbackFileName'),
+      }),
+    )
   }
 
   function replaceImport() {
@@ -75,7 +86,11 @@ export function ImportExportPage() {
 
     updateVault((current) => replaceVaultData(current, pendingData))
     setReplaceArmed(false)
-    setMessage(`Replaced local data with ${fileName || 'vault file'}.`)
+    setMessage(
+      t('importExport.replacedFile', {
+        fileName: fileName || t('importExport.fallbackFileName'),
+      }),
+    )
   }
 
   return (
@@ -83,37 +98,38 @@ export function ImportExportPage() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
-            Data · Backup
+            {t('importExport.eyebrow')}
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight">Import & Export</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">{t('importExport.title')}</h1>
         </div>
         <Badge variant="outline" className="gap-1.5">
-          <ShieldCheck className="size-3" /> local-only
+          <ShieldCheck className="size-3" /> {t('common.localOnly')}
         </Badge>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader className="border-b">
-            <CardTitle>Vault snapshot</CardTitle>
+            <CardTitle>{t('importExport.vaultSnapshot')}</CardTitle>
             <CardAction>
               <Badge variant="outline">JSON v1</Badge>
             </CardAction>
           </CardHeader>
           <CardContent className="space-y-5 pt-4">
             <div className="grid grid-cols-3 gap-2.5">
-              <StatTile value={data.qrs.length} label="QR codes" />
-              <StatTile value={data.collections.length} label="Collections" />
-              <StatTile value={data.collectionItems.length} label="Assignments" />
+              <StatTile value={data.qrs.length} label={t('common.qrCodes')} />
+              <StatTile value={data.collections.length} label={t('common.collections')} />
+              <StatTile value={data.collectionItems.length} label={t('common.assignments')} />
             </div>
 
             <div>
               <Button type="button" onClick={exportVault} size="lg" className="w-full">
-                <Download /> Export JSON snapshot
+                <Download /> {t('importExport.exportSnapshot')}
               </Button>
               <p className="text-muted-foreground mt-3 text-xs leading-relaxed">
-                Downloads a single <code className="text-foreground font-mono">.json</code> file
-                containing your entire vault. Store it anywhere: Git, Dropbox, a USB stick.
+                {t('importExport.exportDescriptionStart')}{' '}
+                <code className="text-foreground font-mono">.json</code>{' '}
+                {t('importExport.exportDescriptionEnd')}
               </p>
             </div>
           </CardContent>
@@ -121,7 +137,7 @@ export function ImportExportPage() {
 
         <Card>
           <CardHeader className="border-b">
-            <CardTitle>Import from file</CardTitle>
+            <CardTitle>{t('importExport.importFromFile')}</CardTitle>
             <CardAction>
               <FileUp className="text-muted-foreground size-3.5" />
             </CardAction>
@@ -139,16 +155,16 @@ export function ImportExportPage() {
               <input
                 accept="application/json,.json"
                 type="file"
-                aria-label="Choose vault JSON file"
+                aria-label={t('importExport.chooseFile')}
                 onChange={(event) => void readImportFile(event.target.files?.[0])}
                 className="absolute inset-0 size-full cursor-pointer opacity-0"
               />
               <FileUp className="text-muted-foreground mx-auto mb-2 size-5" />
               <p className="mb-0.5 text-sm font-medium">
-                {fileName || 'Drop or choose vault file'}
+                {fileName || t('importExport.dropOrChoose')}
               </p>
               <p className="text-muted-foreground font-mono text-xs">
-                {fileName ? 'click to replace' : 'qr-vault-export.json'}
+                {fileName ? t('importExport.clickToReplace') : 'qr-vault-export.json'}
               </p>
             </label>
 
@@ -166,24 +182,29 @@ export function ImportExportPage() {
 
             <div className="grid grid-cols-2 gap-2">
               <Button type="button" onClick={mergeImport} disabled={!pendingData}>
-                Merge into local
+                {t('importExport.mergeIntoLocal')}
               </Button>
               <Button
                 type="button"
                 variant="destructive"
                 onClick={replaceImport}
                 disabled={!pendingData}
-                aria-label={replaceArmed ? 'Confirm replace local data' : 'Replace local data'}
+                aria-label={
+                  replaceArmed
+                    ? t('importExport.confirmReplaceLocalData')
+                    : t('importExport.replaceLocalData')
+                }
               >
-                <Replace /> {replaceArmed ? 'Confirm replace' : 'Replace'}
+                <Replace />{' '}
+                {replaceArmed ? t('importExport.confirmReplace') : t('importExport.replace')}
               </Button>
             </div>
 
             <p className="text-muted-foreground text-xs leading-relaxed">
-              <strong className="text-foreground">Merge</strong> keeps existing local items, adds
-              new ones, and overwrites on ID conflicts.{' '}
-              <strong className="text-foreground">Replace</strong> wipes everything and starts
-              fresh; this can't be undone.
+              <strong className="text-foreground">{t('importExport.mergeLabel')}</strong>{' '}
+              {t('importExport.importDescriptionBeforeMerge')}{' '}
+              <strong className="text-foreground">{t('importExport.replaceLabel')}</strong>{' '}
+              {t('importExport.importDescriptionBeforeReplace')}
             </p>
           </CardContent>
         </Card>

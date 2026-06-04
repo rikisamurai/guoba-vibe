@@ -11,9 +11,11 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { useVault } from '@/app/use-vault'
+import { LanguageToggle } from '@/components/language-toggle'
 import { QrPreview } from '@/components/qr-preview'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Badge } from '@/components/ui/badge'
@@ -25,6 +27,7 @@ import { parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
 export function SharePage() {
+  const { t } = useTranslation()
   const { data, updateVault } = useVault()
   const navigate = useNavigate()
   const search = useRouterState({ select: (state) => state.location.search }) as {
@@ -42,20 +45,20 @@ export function SharePage() {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
   const [pngDownloaded, setPngDownloaded] = useState(false)
 
-  useDocumentTitle(title ? `Share · ${title}` : 'Incoming share')
+  useDocumentTitle(title ? t('share.documentShare', { title }) : t('share.documentIncoming'))
 
   function saveToLocal() {
     if (!parsed.isValid) return
     const existingQr = data.qrs.find((qr) => qr.url === url)
     if (existingQr) {
-      toast.success('Already in local vault')
+      toast.success(t('share.alreadyInVaultToast'))
       void navigate({ to: '/q/$qrId', params: { qrId: existingQr.id } })
       return
     }
 
     const id = nanoid8()
     updateVault((current) => upsertQr(current, { id, title, description, url }))
-    toast.success('Saved to local vault')
+    toast.success(t('share.savedToVaultToast'))
     sessionStorage.setItem('qr-vault:focus-title', '1')
     void navigate({ to: '/q/$qrId', params: { qrId: id } })
   }
@@ -65,10 +68,10 @@ export function SharePage() {
     try {
       await navigator.clipboard.writeText(url)
       setUrlCopied(true)
-      toast.success('Copied URL')
+      toast.success(t('toast.copiedUrl'))
       window.setTimeout(() => setUrlCopied(false), 1200)
     } catch {
-      toast.error('Could not copy URL')
+      toast.error(t('toast.couldNotCopyUrl'))
     }
   }
 
@@ -76,10 +79,10 @@ export function SharePage() {
     try {
       await navigator.clipboard.writeText(window.location.href)
       setShareCopied(true)
-      toast.success('Copied share link')
+      toast.success(t('toast.copiedShareLink'))
       window.setTimeout(() => setShareCopied(false), 1200)
     } catch {
-      toast.error('Could not copy share link')
+      toast.error(t('toast.couldNotCopyShareLink'))
     }
   }
 
@@ -105,8 +108,9 @@ export function SharePage() {
               to="/"
               className="text-muted-foreground hover:text-foreground hidden items-center gap-1.5 text-xs sm:inline-flex"
             >
-              <ArrowLeft className="size-3" /> Back to vault
+              <ArrowLeft className="size-3" /> {t('share.backToVault')}
             </Link>
+            <LanguageToggle />
             <ThemeToggle />
           </div>
         </div>
@@ -121,15 +125,15 @@ export function SharePage() {
                 type="button"
                 className="hover:bg-muted cursor-pointer gap-1.5"
                 onClick={() => void copyShareUrl()}
-                aria-label="Copy share URL"
-                title="Copy share URL"
+                aria-label={t('common.copyShareUrl')}
+                title={t('common.copyShareUrl')}
               >
                 {shareCopied ? <Check className="size-3" /> : <Share2 className="size-3" />}
-                {shareCopied ? 'Copied share URL' : 'Copy share URL'}
+                {shareCopied ? t('share.copiedShareUrl') : t('common.copyShareUrl')}
               </button>
             </Badge>
             <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              {title || parsed.path || 'Untitled QR'}
+              {title || parsed.path || t('share.untitledQr')}
             </h1>
             {description && (
               <p className="text-muted-foreground mx-auto max-w-md text-base text-balance">
@@ -144,7 +148,7 @@ export function SharePage() {
             <div className="flex flex-col items-center gap-3">
               <QrPreview
                 url={url}
-                title={title || 'Shared QR'}
+                title={title || t('share.sharedQr')}
                 size="lg"
                 bare
                 onDataUrl={setQrDataUrl}
@@ -156,7 +160,7 @@ export function SharePage() {
                   <AlertCircle className="size-3.5" />
                 )}
                 <span className="font-medium">
-                  {parsed.isValid ? 'Valid deep link' : 'Invalid URL'}
+                  {parsed.isValid ? t('share.validDeeplink') : t('share.invalidUrl')}
                 </span>
                 {parsed.scheme && (
                   <>
@@ -170,22 +174,23 @@ export function SharePage() {
             {/* Parsed details — bare content (no Card) */}
             <div className="space-y-4 lg:pt-2">
               <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
-                Parsed details
+                {t('share.parsedDetails')}
               </p>
               <div className="grid grid-cols-[70px_minmax(0,1fr)] gap-x-4 gap-y-2 text-xs">
-                <span className="text-muted-foreground font-mono">scheme</span>
+                <span className="text-muted-foreground font-mono">{t('common.scheme')}</span>
                 <span className="font-mono break-all">{parsed.scheme || '—'}</span>
-                <span className="text-muted-foreground font-mono">path</span>
+                <span className="text-muted-foreground font-mono">{t('common.path')}</span>
                 <span className="font-mono break-all">{parsed.path || '—'}</span>
               </div>
               {queryEntries.length > 0 && (
                 <div className="space-y-2 pt-2">
                   <div className="flex items-center justify-between">
                     <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
-                      Query params
+                      {t('common.queryParams')}
                     </p>
                     <span className="text-muted-foreground font-mono text-[10px]">
-                      {queryEntries.length} {queryEntries.length === 1 ? 'key' : 'keys'}
+                      {queryEntries.length}{' '}
+                      {queryEntries.length === 1 ? t('common.key') : t('common.keys')}
                     </span>
                   </div>
                   <div className="grid gap-1">
@@ -212,11 +217,11 @@ export function SharePage() {
           <div className="mx-auto w-full max-w-xl space-y-6">
             <div className="space-y-1.5">
               <span className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
-                Raw URL
+                {t('share.rawUrl')}
               </span>
               <div className="bg-muted/50 rounded-md border p-3.5">
                 <p className="font-mono text-xs leading-relaxed break-all">
-                  {url || 'No URL provided'}
+                  {url || t('share.noUrlProvided')}
                 </p>
               </div>
             </div>
@@ -230,7 +235,7 @@ export function SharePage() {
                   disabled={!parsed.isValid}
                   size="lg"
                 >
-                  <Save /> Save to local
+                  <Save /> {t('share.saveToLocal')}
                 </Button>
                 <Button
                   type="button"
@@ -240,15 +245,15 @@ export function SharePage() {
                   size="lg"
                 >
                   {pngDownloaded ? <Check /> : <Download />}
-                  {pngDownloaded ? 'Saved' : 'Download'}
+                  {pngDownloaded ? t('common.saved') : t('common.download')}
                 </Button>
                 <Button type="button" onClick={() => void copyUrl()} disabled={!url} size="lg">
                   {urlCopied ? <Check /> : <Copy />}
-                  {urlCopied ? 'Copied' : 'Copy URL'}
+                  {urlCopied ? t('common.copied') : t('common.copyUrl')}
                 </Button>
               </div>
               <p className="text-muted-foreground flex items-center justify-center gap-1.5 text-xs">
-                <ShieldCheck className="size-3" /> Stays on this device. Nothing is uploaded.
+                <ShieldCheck className="size-3" /> {t('share.staysLocal')}
               </p>
             </div>
           </div>
@@ -257,9 +262,9 @@ export function SharePage() {
 
       <footer className="border-t">
         <div className="text-muted-foreground mx-auto flex h-12 w-full max-w-4xl items-center justify-between px-6 text-xs">
-          <span className="font-mono">qr-vault · local · static</span>
+          <span className="font-mono">{t('app.footerTagline')}</span>
           <Link to="/" className="hover:text-foreground">
-            Open vault →
+            {t('common.openVault')}
           </Link>
         </div>
       </footer>

@@ -1,6 +1,7 @@
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { driver, type Driver } from 'driver.js'
 import { useCallback, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import 'driver.js/dist/driver.css'
 import { TOUR_SELECTORS, buildOnboardingSteps } from '@/app/onboarding/onboarding-steps'
@@ -13,7 +14,6 @@ import {
 const MAX_WAIT_FRAMES = 20
 const ONBOARDING_SAMPLE_URL = 'https://www.google.com'
 const ONBOARDING_SAMPLE_TITLE = 'Google'
-const ONBOARDING_SAMPLE_DESCRIPTION = 'Sample from onboarding — edit or save'
 
 /**
  * Wait for a selector to exist in the DOM, up to MAX_WAIT_FRAMES animation
@@ -43,33 +43,37 @@ function waitForElement(selector: string): Promise<boolean> {
 export function useOnboarding() {
   const navigate = useNavigate()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const { t } = useTranslation()
   const driverRef = useRef<Driver | null>(null)
   const pendingAdvanceRef = useRef(false)
   const autoStartedRef = useRef(false)
 
   // Build the driver instance once.
   useEffect(() => {
-    const steps = buildOnboardingSteps({
-      onStartNewQr: () => {
-        pendingAdvanceRef.current = true
-        void navigate({
-          to: '/new',
-          search: {
-            url: ONBOARDING_SAMPLE_URL,
-            title: ONBOARDING_SAMPLE_TITLE,
-            description: ONBOARDING_SAMPLE_DESCRIPTION,
-          },
-        })
+    const steps = buildOnboardingSteps(
+      {
+        onStartNewQr: () => {
+          pendingAdvanceRef.current = true
+          void navigate({
+            to: '/new',
+            search: {
+              url: ONBOARDING_SAMPLE_URL,
+              title: ONBOARDING_SAMPLE_TITLE,
+              description: t('onboarding.sampleDescription'),
+            },
+          })
+        },
       },
-    })
+      t,
+    )
 
     const instance = driver({
       showProgress: true,
       showButtons: ['next', 'previous', 'close'],
-      nextBtnText: 'Next',
-      prevBtnText: 'Back',
-      doneBtnText: 'Finish',
-      progressText: 'Step {{current}} of {{total}}',
+      nextBtnText: t('common.next'),
+      prevBtnText: t('common.back'),
+      doneBtnText: t('common.finish'),
+      progressText: t('common.stepProgress', { current: '{{current}}', total: '{{total}}' }),
       allowClose: true,
       onDestroyStarted: () => {
         // User clicked X / pressed ESC / clicked overlay. Decide done vs skipped.
@@ -92,7 +96,7 @@ export function useOnboarding() {
       }
       autoStartedRef.current = false
     }
-  }, [navigate])
+  }, [navigate, t])
 
   // Auto-start once, only on /, only if never seen.
   useEffect(() => {

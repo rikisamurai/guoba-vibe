@@ -1,5 +1,6 @@
 import { Check, Copy } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 
@@ -8,8 +9,9 @@ type CopyButtonProps = {
   label?: string
 }
 
-export function CopyButton({ value, label = 'Copy' }: CopyButtonProps) {
+export function CopyButton({ value, label }: CopyButtonProps) {
   const [isCopied, setIsCopied] = useState(false)
+  const { t } = useTranslation()
 
   async function copyValue() {
     await navigator.clipboard.writeText(value)
@@ -20,7 +22,7 @@ export function CopyButton({ value, label = 'Copy' }: CopyButtonProps) {
   return (
     <Button variant="outline" size="sm" type="button" onClick={copyValue} disabled={!value}>
       {isCopied ? <Check /> : <Copy />}
-      <span>{isCopied ? 'Copied' : label}</span>
+      <span>{isCopied ? t('common.copied') : (label ?? t('common.copy'))}</span>
     </Button>
   )
 }
