@@ -25,7 +25,7 @@ import { parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
 export function SharePage() {
-  const { updateVault } = useVault()
+  const { data, updateVault } = useVault()
   const navigate = useNavigate()
   const search = useRouterState({ select: (state) => state.location.search }) as {
     url?: string
@@ -46,8 +46,16 @@ export function SharePage() {
 
   function saveToLocal() {
     if (!parsed.isValid) return
+    const existingQr = data.qrs.find((qr) => qr.url === url)
+    if (existingQr) {
+      toast.success('Already in local vault')
+      void navigate({ to: '/q/$qrId', params: { qrId: existingQr.id } })
+      return
+    }
+
     const id = nanoid8()
     updateVault((current) => upsertQr(current, { id, title, description, url }))
+    toast.success('Saved to local vault')
     sessionStorage.setItem('qr-vault:focus-title', '1')
     void navigate({ to: '/q/$qrId', params: { qrId: id } })
   }
