@@ -73,7 +73,7 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
           onChange={(event) => onChange(event.target.value)}
           rows={3}
           className="font-mono text-xs"
-          placeholder="xhsdiscover://rn/wakanda/buyer-conversion?sku_id=1"
+          placeholder="https://www.google.com/search?q=qr+vault"
         />
       </div>
 
@@ -85,7 +85,7 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
             value={parsed.scheme}
             onChange={(event) => updateParts({ scheme: event.target.value })}
             className="font-mono text-xs"
-            placeholder="xhsdiscover"
+            placeholder="https"
           />
         </div>
         <div className="grid gap-1.5">
@@ -95,7 +95,7 @@ export function UrlEditor({ value, onChange }: UrlEditorProps) {
             value={parsed.path}
             onChange={(event) => updateParts({ path: event.target.value })}
             className="font-mono text-xs"
-            placeholder="rn/wakanda/buyer-conversion"
+            placeholder="www.google.com/search"
           />
         </div>
       </div>
