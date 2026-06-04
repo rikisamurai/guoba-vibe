@@ -5,7 +5,7 @@ import { QrForm } from '@/components/qr-form'
 import { listCollections } from '@/data/collections'
 import { getQrById, getQrCollections } from '@/data/qrs'
 import { createCollectionInline } from '@/server/collections'
-import { updateQr, deleteQr } from '@/server/qrs'
+import { createQr, updateQr, deleteQr } from '@/server/qrs'
 
 export default async function EditQrPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -27,6 +27,15 @@ export default async function EditQrPage({ params }: { params: Promise<{ id: str
     'use server'
     await deleteQr(id)
   }
+  async function duplicate(input: {
+    title: string
+    description: string | null
+    url: string
+    collectionIds: string[]
+  }) {
+    'use server'
+    await createQr(input)
+  }
   async function handleCreateCollection(input: { title: string; description: string | null }) {
     'use server'
     return createCollectionInline(input)
@@ -46,6 +55,8 @@ export default async function EditQrPage({ params }: { params: Promise<{ id: str
         onSubmit={update}
         onCreateCollection={handleCreateCollection}
         submitLabel="Save"
+        onSecondarySubmit={duplicate}
+        secondarySubmitLabel="Save as New"
       />
       <DeleteButton
         action={remove}

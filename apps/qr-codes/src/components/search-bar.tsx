@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 function SearchBarInner() {
@@ -24,12 +25,19 @@ function SearchBarInner() {
   }, [value, pathname, router])
 
   return (
-    <Input
-      placeholder="Search title, url, description…"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      className="max-w-md"
-    />
+    <div className="flex w-full max-w-md items-center gap-2">
+      <Input
+        placeholder="Search title, URL, query, description…"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        className="min-w-0"
+      />
+      {value && (
+        <Button type="button" variant="ghost" size="sm" onClick={() => setValue('')}>
+          Clear
+        </Button>
+      )}
+    </div>
   )
 }
 
