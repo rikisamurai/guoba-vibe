@@ -66,16 +66,21 @@ export function UrlEditor({ value, onChange, children }: UrlEditorProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-1.5">
-        <FieldLabel htmlFor="url-full">{t('urlEditor.fullUrl')}</FieldLabel>
+    <div className="space-y-3">
+      <div className="bg-card rounded-lg border p-3">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <FieldLabel htmlFor="url-full">{t('urlEditor.fullUrl')}</FieldLabel>
+          <span className="text-muted-foreground font-mono text-[10px]">
+            {rows.length} {rows.length === 1 ? t('common.key') : t('common.keys')}
+          </span>
+        </div>
         <Textarea
           id="url-full"
           data-tour="new-url-input"
           value={value}
           onChange={(event) => onChange(event.target.value)}
           rows={3}
-          className="font-mono text-xs"
+          className="min-h-24 resize-y font-mono text-xs leading-relaxed"
           placeholder={t('urlEditor.fullUrlPlaceholder')}
         />
         {children}
@@ -105,18 +110,26 @@ export function UrlEditor({ value, onChange, children }: UrlEditorProps) {
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <FieldLabel>{t('common.queryParams')}</FieldLabel>
+        <div className="flex items-end justify-between gap-3">
+          <div className="space-y-1">
+            <FieldLabel>{t('common.queryParams')}</FieldLabel>
+            <p className="text-muted-foreground text-xs">{t('urlEditor.queryDescription')}</p>
+          </div>
           <Button variant="ghost" size="xs" type="button" onClick={addRow}>
             <Plus /> {t('common.addParam')}
           </Button>
         </div>
         {rows.length ? (
-          <div className="grid gap-2">
+          <div className="bg-card overflow-hidden rounded-lg border">
+            <div className="bg-muted/30 text-muted-foreground grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_2.5rem] items-center gap-2 border-b px-3 py-2 text-[10px] font-medium tracking-wider uppercase">
+              <span>{t('urlEditor.keyColumn')}</span>
+              <span>{t('urlEditor.valueColumn')}</span>
+              <span className="sr-only">{t('urlEditor.actionsColumn')}</span>
+            </div>
             {rows.map((row, index) => (
               <div
                 key={`${row.key}:${index}`}
-                className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] items-center gap-2"
+                className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_2.5rem] items-center gap-2 border-b px-3 py-2 last:border-b-0"
               >
                 <Input
                   aria-label={t('common.queryKey', { index: index + 1 })}

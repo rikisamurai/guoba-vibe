@@ -23,23 +23,23 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
 
   if (!collections.length) {
     return (
-      <p className="text-muted-foreground rounded-md border border-dashed px-3 py-3 text-center text-xs italic">
+      <p className="text-muted-foreground rounded-md border border-dashed p-3 text-center text-xs italic">
         {t('collectionPicker.noCollections')}
       </p>
     )
   }
 
   return (
-    <div className="grid gap-1.5">
+    <div className="flex flex-wrap gap-2 overflow-visible">
       {collections.map((collection) => {
         const isChecked = selectedIds.includes(collection.id)
         return (
           <label
             key={collection.id}
             className={cn(
-              'group flex cursor-pointer items-center gap-3 rounded-md border px-3 py-2 transition-colors',
+              'group inline-flex max-w-full cursor-pointer items-center gap-2 rounded-md border px-3 py-2 transition-colors',
               isChecked
-                ? 'bg-accent text-accent-foreground'
+                ? 'border-foreground bg-card text-foreground shadow-[0_0_0_1px_var(--foreground)]'
                 : 'bg-card text-foreground hover:bg-muted/50',
             )}
           >
@@ -47,6 +47,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
               type="checkbox"
               checked={isChecked}
               onChange={() => toggleCollection(collection.id)}
+              aria-label={collection.title}
               className="sr-only"
             />
             <div
@@ -59,7 +60,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
             >
               {isChecked && <Check className="size-3" />}
             </div>
-            <span className="truncate text-sm font-medium">{collection.title}</span>
+            <span className="min-w-0 truncate text-sm font-medium">{collection.title}</span>
           </label>
         )
       })}

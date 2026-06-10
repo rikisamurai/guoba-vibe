@@ -173,9 +173,26 @@ export function WorkspacePage() {
 
   return (
     <div className="grid grid-cols-1 items-start gap-5 lg:h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1fr)_360px] lg:items-stretch lg:overflow-hidden xl:grid-cols-[minmax(500px,1fr)_480px] 2xl:grid-cols-[minmax(560px,1fr)_560px]">
-      <div className="flex min-h-0 flex-col gap-3 lg:h-full lg:overflow-hidden">
-        <h1 className="sr-only">QR Vault</h1>
-        <div className="shrink-0 space-y-3 border-b pb-4">
+      <div className="flex min-h-0 flex-col gap-4 lg:h-full lg:overflow-hidden">
+        <section className="shrink-0 space-y-4 border-b pb-4" aria-labelledby="workspace-title">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="min-w-0 space-y-1">
+              <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
+                {t('workspace.statusLine')}
+              </p>
+              <h1
+                id="workspace-title"
+                className="text-2xl leading-tight font-semibold tracking-tight sm:text-3xl"
+              >
+                {t('common.vault')}
+              </h1>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:auto-cols-fr sm:grid-flow-col sm:grid-cols-none">
+              <SummaryPill label={t('common.qrCodes')} value={data.qrs.length} />
+              <SummaryPill label={t('common.collections')} value={data.collections.length} />
+            </div>
+          </div>
+
           <CollectionChipRow
             data={data}
             uncategorizedCount={uncategorizedCount}
@@ -211,8 +228,6 @@ export function WorkspacePage() {
           </div>
 
           <div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-[10px] font-medium tracking-wider uppercase">
-            <span>{t('workspace.statusLine')}</span>
-            <span aria-hidden>·</span>
             <span>{t('workspace.resultCount', { count: visibleQrs.length })}</span>
             {search && (
               <Badge variant="outline" className="h-5 px-1.5 text-[10px] tracking-normal">
@@ -220,7 +235,7 @@ export function WorkspacePage() {
               </Badge>
             )}
           </div>
-        </div>
+        </section>
 
         <div className="min-h-0 space-y-2 lg:flex-1 lg:[scrollbar-gutter:stable] lg:overflow-y-auto lg:pr-3">
           {visibleQrs.length ? (
@@ -244,26 +259,28 @@ export function WorkspacePage() {
                       type="button"
                       onClick={() => setSelectedId(qr.id)}
                       className={cn(
-                        'w-full rounded-md border px-3 py-3 pr-32 text-left transition-colors sm:pr-24',
+                        'w-full rounded-lg border px-3.5 py-3.5 pr-32 text-left shadow-sm shadow-transparent transition-all duration-200 sm:pr-28',
                         isSelected
-                          ? 'border-foreground/25 bg-muted/45 shadow-[inset_2px_0_0_var(--foreground)]'
-                          : 'border-border bg-card hover:bg-muted/30',
+                          ? 'border-foreground bg-card shadow-[0_0_0_1px_var(--foreground)]'
+                          : 'border-border bg-card hover:border-foreground/25 hover:bg-muted/20 hover:shadow-foreground/5',
                       )}
                     >
-                      {isSelected && (
-                        <div className="bg-foreground absolute top-2.5 bottom-2.5 left-0 w-0.5 rounded-r-full" />
-                      )}
                       <div className="min-w-0">
-                        <div className="mb-1 flex items-center gap-2">
+                        <div className="mb-1.5 flex min-w-0 items-center gap-2">
                           <span
                             className={cn(
                               'size-1.5 rounded-full',
-                              parsed.isValid ? 'bg-foreground' : 'bg-muted-foreground',
+                              parsed.isValid ? 'bg-foreground' : 'bg-muted-foreground/50',
                             )}
                           />
-                          <strong className="truncate text-sm font-medium">
+                          <strong className="truncate text-sm font-semibold">
                             {qr.title || parsed.path || qr.url}
                           </strong>
+                          {parsed.scheme && (
+                            <span className="text-muted-foreground bg-background/70 rounded px-1.5 py-0.5 font-mono text-[10px]">
+                              {parsed.scheme}
+                            </span>
+                          )}
                         </div>
                         <p className="text-muted-foreground truncate pl-3.5 font-mono text-xs">
                           {parsed.path || qr.url}
@@ -275,7 +292,7 @@ export function WorkspacePage() {
                         )}
                       </div>
                     </button>
-                    <div className="absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center gap-0.5 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
+                    <div className="absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center gap-1 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
                       {armedDelete === qr.id ? (
                         <button
                           type="button"
@@ -303,7 +320,7 @@ export function WorkspacePage() {
                               aria-label={t('workspace.copyUrlFor', {
                                 name: qr.title || parsed.path || t('common.qrFallback'),
                               })}
-                              className="text-muted-foreground hover:text-foreground hover:bg-background hover:border-border flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
+                              className="text-muted-foreground hover:text-foreground hover:border-border bg-background/80 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-colors sm:size-8"
                             >
                               {copiedUrlId === qr.id ? (
                                 <Check className="size-4" />
@@ -319,7 +336,7 @@ export function WorkspacePage() {
                               aria-label={t('workspace.editQr', {
                                 name: qr.title || parsed.path || t('common.qrFallback'),
                               })}
-                              className="text-muted-foreground hover:text-foreground hover:bg-background hover:border-border flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
+                              className="text-muted-foreground hover:text-foreground hover:border-border bg-background/80 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-colors sm:size-8"
                             >
                               <SquarePen className="size-4" />
                             </Link>
@@ -335,7 +352,7 @@ export function WorkspacePage() {
                               aria-label={t('workspace.deleteQr', {
                                 name: qr.title || parsed.path || t('common.qrFallback'),
                               })}
-                              className="text-muted-foreground hover:text-destructive hover:bg-background hover:border-destructive/40 flex size-10 items-center justify-center rounded-md border border-transparent transition-colors sm:size-8"
+                              className="text-muted-foreground hover:text-destructive hover:border-destructive/40 bg-background/80 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-colors sm:size-8"
                             >
                               <Trash2 className="size-4" />
                             </button>
@@ -366,8 +383,8 @@ export function WorkspacePage() {
       <aside className="min-h-0 space-y-3 lg:h-full lg:[scrollbar-gutter:stable] lg:overflow-y-auto lg:pt-px lg:pr-3 lg:pb-1 lg:pl-px">
         {selectedQr ? (
           <>
-            <Card size="sm">
-              <CardHeader className="border-b">
+            <Card size="sm" className="shadow-foreground/5 shadow-sm">
+              <CardHeader className="bg-muted/20 border-b">
                 <div className="min-w-0 space-y-1">
                   <p className="text-muted-foreground mb-1 text-[10px] font-medium tracking-wider uppercase">
                     {t('common.selectedQr')}
@@ -432,26 +449,28 @@ export function WorkspacePage() {
                   <Link
                     to="/q/$qrId"
                     params={{ qrId: selectedQr.id }}
-                    className="text-muted-foreground hover:text-foreground flex shrink-0 items-center gap-1 text-xs font-medium"
+                    className="text-muted-foreground hover:text-foreground hover:bg-background/80 flex shrink-0 items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium transition-colors"
                   >
                     {t('common.edit')} <ArrowRight className="size-3" />
                   </Link>
                 </CardAction>
               </CardHeader>
-              <CardContent className="space-y-4 pt-3">
-                <QrPreview
-                  title={selectedQr.title}
-                  url={selectedQr.url}
-                  size="inspector"
-                  bare
-                  onDataUrl={setInspectorDataUrl}
-                />
+              <CardContent className="space-y-4 pt-4">
+                <div className="bg-background rounded-lg border p-6">
+                  <QrPreview
+                    title={selectedQr.title}
+                    url={selectedQr.url}
+                    size="inspector"
+                    bare
+                    onDataUrl={setInspectorDataUrl}
+                  />
+                </div>
                 {selectedQr.description && (
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {selectedQr.description}
                   </p>
                 )}
-                <div className="bg-muted/40 rounded-md border p-3">
+                <div className="bg-muted/40 rounded-lg border p-3">
                   <p className="text-muted-foreground font-mono text-xs leading-relaxed break-all">
                     {selectedQr.url}
                   </p>
@@ -481,6 +500,17 @@ export function WorkspacePage() {
           </Card>
         )}
       </aside>
+    </div>
+  )
+}
+
+function SummaryPill({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="bg-card text-card-foreground shadow-foreground/5 min-w-0 rounded-lg border px-3 py-2 shadow-sm">
+      <div className="font-mono text-lg leading-none font-semibold tabular-nums">{value}</div>
+      <div className="text-muted-foreground mt-1 truncate text-[10px] font-medium tracking-wider uppercase">
+        {label}
+      </div>
     </div>
   )
 }

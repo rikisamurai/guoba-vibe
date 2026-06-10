@@ -73,7 +73,7 @@ export function QrPreview({
     <img
       src={dataUrl}
       alt={altTitle}
-      className={cn('rounded-md border bg-white', dims.pad)}
+      className={cn('rounded-md bg-white', dims.pad, bare && size === 'inspector' ? '' : 'border')}
       style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
     />
   ) : size === 'compact' ? (
