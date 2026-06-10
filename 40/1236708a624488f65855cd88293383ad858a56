@@ -1,0 +1,49 @@
+apps/qr-vault/.oxlintrc.json
+  s_34dd0d694d0a40::t_0ffb2610c9c736 37
+  s_34dd0d694d0a40::t_667f7689edf045 29,31,33-36
+  s_34dd0d694d0a40::t_23b09f500f8fef 5,7,11-13,16-17,20-26,28,30,32,38-39,43
+  h_5d5a5826f18d67 3,6
+apps/qr-vault/src/app/collections-page.tsx
+  s_34dd0d694d0a40::t_d3d1f4c14a269c 47
+apps/qr-vault/src/i18n/i18n.ts
+  s_34dd0d694d0a40::t_c83b1ea9ead421 11
+apps/qr-vault/src/lib/storage.ts
+  s_34dd0d694d0a40::t_7ea7fcdeb33cb2 173
+apps/qr-vault/src/app/app-shell.tsx
+  s_34dd0d694d0a40::t_959a473d7a9cf5 73-74,81
+apps/qr-vault/src/tests/storage.test.ts
+  s_34dd0d694d0a40::t_7e33da4224b350 127
+  s_34dd0d694d0a40::t_b50e377efe0989 54
+  s_34dd0d694d0a40::t_397bbaebcb7277 56
+apps/qr-vault/src/app/workspace-page.tsx
+  s_34dd0d694d0a40::t_ff828675674b2e 34
+apps/qr-vault/src/lib/vault.ts
+  s_34dd0d694d0a40::t_d8ecac5759627d 43
+apps/qr-vault/tsconfig.app.json
+  s_34dd0d694d0a40::t_3386fa4dc1a42a 6
+apps/qr-vault/src/tests/i18n.test.ts
+  s_34dd0d694d0a40::t_813aa999f526c4 23
+apps/qr-vault/src/lib/theme.ts
+  s_34dd0d694d0a40::t_304459129e41d4 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "401236708a624488f65855cd88293383ad858a56",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_34dd0d694d0a40": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ab809cec-2561-4b5e-a59a-6bf461588b86",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
