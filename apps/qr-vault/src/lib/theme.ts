@@ -7,7 +7,7 @@ const STORAGE_KEY = 'qr-vault:theme'
 export function getInitialTheme(): Theme {
   if (typeof document === 'undefined') return 'light'
   if (document.documentElement.classList.contains('dark')) return 'dark'
-  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null
+  const stored = localStorage.getItem(STORAGE_KEY)
   if (stored === 'dark' || stored === 'light') return stored
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
   return 'light'

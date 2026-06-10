@@ -42,6 +42,7 @@ export async function getCollectionNav(): Promise<CollectionNav> {
   return {
     allCount: qrRows.length,
     uncategorizedCount: qrRows.filter((qr) => !assignedQrIds.has(qr.id)).length,
+    // oxlint-disable-next-line oxc/no-map-spread -- readable projection over a small collections list, not a hot path
     collections: cols.map((collection) => ({
       ...collection,
       count: countByCollection.get(collection.id) ?? 0,

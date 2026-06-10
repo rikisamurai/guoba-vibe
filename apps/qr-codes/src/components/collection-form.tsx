@@ -29,8 +29,11 @@ export function CollectionForm({
       onSubmit={(e) => {
         e.preventDefault()
         const fd = new FormData(e.currentTarget)
-        const title = ((fd.get('title') ?? '') as string).trim()
-        const description = ((fd.get('description') ?? '') as string).trim() || null
+        const titleValue = fd.get('title')
+        const descriptionValue = fd.get('description')
+        const title = (typeof titleValue === 'string' ? titleValue : '').trim()
+        const description =
+          (typeof descriptionValue === 'string' ? descriptionValue : '').trim() || null
         if (!title) {
           toast.error('Title is required')
           return

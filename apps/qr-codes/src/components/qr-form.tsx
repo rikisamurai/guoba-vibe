@@ -71,15 +71,18 @@ export function QrForm({
   }
 
   function submitNewCollection() {
-    const title = newTitle.trim()
-    if (!title) {
+    const trimmedTitle = newTitle.trim()
+    if (!trimmedTitle) {
       toast.error('Collection title is required')
       return
     }
-    const description = newDesc.trim() || null
+    const trimmedDescription = newDesc.trim() || null
     startCreating(async () => {
       try {
-        const created = await onCreateCollection({ title, description })
+        const created = await onCreateCollection({
+          title: trimmedTitle,
+          description: trimmedDescription,
+        })
         setCollectionsList((prev) => [...prev, created])
         setSelected((prev) => new Set(prev).add(created.id))
         resetNewCollection()

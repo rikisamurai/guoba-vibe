@@ -8,6 +8,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES, detectInitialLocale, normalizeLocale
 
 const initialLocale = detectInitialLocale()
 
+// oxlint-disable-next-line import/no-named-as-default-member -- i18next's documented API is i18n.use(...).init(...)
 void i18n.use(initReactI18next).init({
   fallbackLng: DEFAULT_LOCALE,
   interpolation: {
