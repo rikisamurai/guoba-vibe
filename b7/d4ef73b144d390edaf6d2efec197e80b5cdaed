@@ -1,0 +1,19 @@
+apps/qr-codes/package.json
+  s_4d2ae9b6a15140::t_16f905b94a4b18 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b7d4ef73b144d390edaf6d2efec197e80b5cdaed",
+  "prompts": {},
+  "sessions": {
+    "s_4d2ae9b6a15140": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb1d6-ff2b-7db3-838c-3a6786cf0796",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
