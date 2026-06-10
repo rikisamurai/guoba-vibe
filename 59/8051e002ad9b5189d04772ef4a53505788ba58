@@ -1,0 +1,19 @@
+.github/workflows/react-doctor.yml
+  s_4d2ae9b6a15140::t_209687bd9fbbee 12,19,22-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "598051e002ad9b5189d04772ef4a53505788ba58",
+  "prompts": {},
+  "sessions": {
+    "s_4d2ae9b6a15140": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb1d6-ff2b-7db3-838c-3a6786cf0796",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
