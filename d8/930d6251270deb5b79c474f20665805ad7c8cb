@@ -1,0 +1,22 @@
+docs/superpowers/plans/2026-06-11-eslint-to-oxlint-migration.md
+  s_ae47d6a5e7cec4::t_04a9e22877c997 412
+  s_ae47d6a5e7cec4::t_994200ed787822 371
+  s_ae47d6a5e7cec4::t_5e5c534473701f 220-231
+  s_ae47d6a5e7cec4::t_f9c9922388771d 413-459,472-473
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "d8930d6251270deb5b79c474f20665805ad7c8cb",
+  "prompts": {},
+  "sessions": {
+    "s_ae47d6a5e7cec4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "124d2895-1c19-43fe-9fa0-4fd64c8bce49",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
