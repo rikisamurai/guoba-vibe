@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 import { normalizeLocale, saveLocale, type SupportedLocale } from '@/i18n/language'
 
 export function LanguageToggle() {

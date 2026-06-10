@@ -60,7 +60,7 @@ For any non-trivial change to `lib/`, `server/`, or `auth/`:
 4. **Re-run**: `pnpm --filter qr-codes test`. Don't move on until the bar is green.
 5. **Refactor** with the test as your safety net.
 
-Skip TDD only for: UI tweaks, copy changes, config edits. For those, verify visually via `pnpm dev` + browser before pushing (see root `AGENTS.md` §4).
+Skip TDD only for: UI tweaks, copy changes, config edits. For those, verify visually via `pnpm dev` + browser before pushing.
 
 ### Existing tests as templates
 
@@ -86,3 +86,26 @@ Tests run in `node` environment — no DOM. If you need to test a React componen
 For UI / visual changes: `pnpm dev` (port 3000), drive with `agent-browser` against `http://localhost:3000`, then push. Don't use Vercel deploys as the iteration loop.
 
 The OAuth app is registered with `http://localhost:3000/api/auth/callback/github` so local sign-in works. Local writes hit the same Neon DB as prod — clean up test data when done.
+
+## Agent Browser auth session
+
+The admin UI (`/admin`) is gated by GitHub OAuth (`ADMIN_GITHUB_ID`). To avoid re-doing OAuth on every browser command, use a named session that persists cookies across daemon restarts.
+
+**Rule:** every `agent-browser` invocation for `qr-codes` must be prefixed with:
+
+```bash
+AGENT_BROWSER_SESSION_NAME=guoba agent-browser <cmd>
+```
+
+Cookies are saved to `~/.agent-browser/sessions/guoba-default.json` on daemon close and restored on next open. Do not export this env var globally; keep it per-command.
+
+**One-time bootstrap** (only if session file is missing or cookies expired):
+
+```bash
+AGENT_BROWSER_SESSION_NAME=guoba agent-browser close
+AGENT_BROWSER_SESSION_NAME=guoba agent-browser --headed open https://github.com
+# user logs into github.com manually in the headed window
+AGENT_BROWSER_SESSION_NAME=guoba agent-browser close
+```
+
+After bootstrap, opening `http://localhost:3000/admin` or `https://guoba-qr-codes.vercel.app/admin` should auto-complete the GitHub OAuth redirect. Do not try to reuse the user's real Chrome profile via `--profile Default`; agent-browser uses a different Chrome for Testing binary and its encrypted cookies will not decrypt.

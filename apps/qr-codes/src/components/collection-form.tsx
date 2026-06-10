@@ -6,10 +6,10 @@ import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/shadcn-ui/button'
+import { Input } from '@/components/shadcn-ui/input'
+import { Label } from '@/components/shadcn-ui/label'
+import { Textarea } from '@/components/shadcn-ui/textarea'
 
 export type CollectionInput = { title: string; description: string | null }
 

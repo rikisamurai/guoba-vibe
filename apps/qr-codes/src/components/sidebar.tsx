@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/shadcn-ui/button'
+import { Separator } from '@/components/shadcn-ui/separator'
 import type { CollectionNav } from '@/data/collections'
 
 function CountBadge({ count }: { count: number }) {

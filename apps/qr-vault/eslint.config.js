@@ -6,7 +6,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'src/components/shadcn-ui/**']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -27,6 +27,16 @@ export default defineConfig([
           allowExportNames: ['badgeVariants', 'buttonVariants', 'router', 'useSidebar'],
         },
       ],
+    },
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/**/*.test.{ts,tsx}', 'src/tests/**'],
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
+    rules: {
+      'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }],
     },
   },
 ])
