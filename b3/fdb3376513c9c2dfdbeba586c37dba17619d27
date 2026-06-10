@@ -1,0 +1,87 @@
+apps/qr-vault/.oxlintrc.json
+  s_ae47d6a5e7cec4::t_8cb692aa0aab50 8-10
+  s_ae47d6a5e7cec4::t_9d79db2cae4950 3,5-7
+  s_ae47d6a5e7cec4::t_1d6cb07aab1930 126-131
+  s_ae47d6a5e7cec4::t_1acdd2e7487b07 1-2,4,11-125,132-134
+.npmrc
+  s_ae47d6a5e7cec4::t_02e330f3c4f392 1
+docs/superpowers/plans/2026-06-11-eslint-to-oxlint-migration.md
+  s_ae47d6a5e7cec4::t_f9c9922388771d 413-459,472-473
+  s_ae47d6a5e7cec4::t_c82ed52a3eb30b 1-219,232-370,372-411,460-471,474-475
+  s_ae47d6a5e7cec4::t_994200ed787822 371
+  s_ae47d6a5e7cec4::t_5e5c534473701f 220-231
+  s_ae47d6a5e7cec4::t_04a9e22877c997 412
+package.json
+  s_ae47d6a5e7cec4::t_f413d94186c87b 31
+  s_ae47d6a5e7cec4::t_9f2ff582b449aa 35
+apps/qr-codes/package.json
+  s_ae47d6a5e7cec4::t_1bbe89f24b731a 46
+  s_ae47d6a5e7cec4::t_5d9025d329b8b4 47
+  s_ae47d6a5e7cec4::t_3b208d5253735b 9
+pnpm-lock.yaml
+  s_ae47d6a5e7cec4::t_e58ef3b81d5355 1487,1492-1493,1498-1499,1504-1505,1510-1511,1516-1517,1522-1523,1528-1529,1535-1536,1542-1543,1549-1550,1556-1557,1563-1564,1570-1571,1577-1578,1584-1585,1590-1591,1596-1597,1602-1603,2575-2577,2579-2586,2588-2589,2591-2592,2594-2600,2602-2603,3924-3929
+apps/qr-codes/src/components/back-to-admin-link.tsx
+  s_ae47d6a5e7cec4::t_d5687f38202185 30
+  s_ae47d6a5e7cec4::t_a7cc537d76b138 39
+apps/qr-vault/src/main.tsx
+  s_ae47d6a5e7cec4::t_ab594f27bd4fc6 2
+apps/qr-vault/src/app/workspace/types.ts
+  s_ae47d6a5e7cec4::t_0e90d7ce348e8e 3-4
+apps/qr-codes/.oxlintrc.json
+  s_ae47d6a5e7cec4::t_01ccd9454bbb13 8-10
+  s_ae47d6a5e7cec4::t_c087e3bdd29ea3 1-2,4,11-153,160-162
+  s_ae47d6a5e7cec4::t_78056529c9b9c1 154-159
+  s_ae47d6a5e7cec4::t_40520ae4d99031 3,5-7
+AGENTS.md
+  s_ae47d6a5e7cec4::t_874a5bba43bd6e 74
+  s_ae47d6a5e7cec4::t_b4db9b96dc8eef 88-89
+apps/qr-vault/README.md
+  s_6a3b7ffc0e140a::t_e41b8003660560 121
+apps/qr-vault/tsconfig.app.json
+  s_ae47d6a5e7cec4::t_e14d18523d679d 21
+docs/superpowers/specs/2026-06-11-eslint-to-oxlint-migration-design.md
+  s_ae47d6a5e7cec4::t_9b0b7a67e0f4b1 116-133,136-142
+  s_ae47d6a5e7cec4::t_5c932bf913912f 148-149
+  s_ae47d6a5e7cec4::t_def2574669c380 49
+  s_ae47d6a5e7cec4::t_cf1e053bc8b649 76
+  s_ae47d6a5e7cec4::t_b91bd106fde9a0 30
+  s_ae47d6a5e7cec4::t_d2c5191048c540 36-39
+  s_ae47d6a5e7cec4::t_e3a11f577ae8ab 1-29,31-35,40-48,50-75,77-83,86-109,111-112,114-115,134-135,143-147,150-156
+  s_6a3b7ffc0e140a::t_e41b8003660560 84-85,110,113
+apps/qr-codes/src/components/collection-form.tsx
+  s_ae47d6a5e7cec4::t_abe6b1c299c78a 32-33
+apps/qr-codes/src/components/qr-form-collections.tsx
+  s_ae47d6a5e7cec4::t_81c0a902128acb 128
+apps/qr-codes/src/app/q/[id]/opengraph-image.tsx
+  s_ae47d6a5e7cec4::t_3c02d7d9a48129 49
+README.md
+  s_6a3b7ffc0e140a::t_e41b8003660560 36
+apps/qr-vault/package.json
+  s_ae47d6a5e7cec4::t_7ea162ffa47cbd 9
+  s_ae47d6a5e7cec4::t_77efc8effaed26 43
+  s_ae47d6a5e7cec4::t_1bbe89f24b731a 42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b3fdb3376513c9c2dfdbeba586c37dba17619d27",
+  "prompts": {},
+  "sessions": {
+    "s_6a3b7ffc0e140a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb2cb-ada1-7b10-a889-df8f46e4fd24",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    },
+    "s_ae47d6a5e7cec4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "124d2895-1c19-43fe-9fa0-4fd64c8bce49",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
