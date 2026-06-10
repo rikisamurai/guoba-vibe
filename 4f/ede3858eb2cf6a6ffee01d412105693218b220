@@ -1,0 +1,19 @@
+package.json
+  s_34dd0d694d0a40::t_ac70b6b385408b 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "4fede3858eb2cf6a6ffee01d412105693218b220",
+  "prompts": {},
+  "sessions": {
+    "s_34dd0d694d0a40": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ab809cec-2561-4b5e-a59a-6bf461588b86",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
