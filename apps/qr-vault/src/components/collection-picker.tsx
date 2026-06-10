@@ -23,7 +23,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
 
   if (!collections.length) {
     return (
-      <p className="text-muted-foreground rounded-md border border-dashed px-3 py-3 text-center text-xs italic">
+      <p className="text-muted-foreground rounded-md border border-dashed p-3 text-center text-xs italic">
         {t('collectionPicker.noCollections')}
       </p>
     )
@@ -47,6 +47,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
               type="checkbox"
               checked={isChecked}
               onChange={() => toggleCollection(collection.id)}
+              aria-label={collection.title}
               className="sr-only"
             />
             <div
