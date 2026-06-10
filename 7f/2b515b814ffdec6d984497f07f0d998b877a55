@@ -1,0 +1,21 @@
+skills-lock.json
+  s_ae47d6a5e7cec4::t_c6682b4c9257db 34-39
+.agents/skills/migrate-oxlint/SKILL.md
+  s_ae47d6a5e7cec4::t_c6682b4c9257db 1-196
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "7f2b515b814ffdec6d984497f07f0d998b877a55",
+  "prompts": {},
+  "sessions": {
+    "s_ae47d6a5e7cec4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "124d2895-1c19-43fe-9fa0-4fd64c8bce49",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
