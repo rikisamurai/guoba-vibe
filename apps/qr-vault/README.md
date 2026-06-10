@@ -118,7 +118,7 @@ pnpm dev:qr-vault          # Vite dev server，默认 http://localhost:5173
 pnpm test:qr-vault         # 单测一次性
 pnpm build:qr-vault        # tsc -b && vite build
 pnpm preview:qr-vault      # 预览 dist 产物
-pnpm lint:qr-vault         # eslint
+pnpm lint:qr-vault         # oxlint
 ```
 
 > 仓库根 `pnpm dev` / `pnpm build` 默认指向同 monorepo 的 `qr-codes` 应用，本应用必须用带 `:qr-vault` 后缀的脚本。

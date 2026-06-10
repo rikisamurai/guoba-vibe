@@ -33,7 +33,7 @@ pnpm install
 pnpm dev          # next dev
 pnpm build        # next build
 pnpm start        # next start
-pnpm lint         # eslint
+pnpm lint         # oxlint
 pnpm test         # vitest run
 ```
 

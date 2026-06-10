@@ -125,6 +125,7 @@ function NewCollectionForm({
           value={title}
           onChange={(event) => onTitleChange(event.target.value)}
           placeholder="e.g. Travel"
+          // oxlint-disable-next-line jsx-a11y/no-autofocus -- intentional focus when the inline create-collection form opens
           autoFocus
         />
       </div>

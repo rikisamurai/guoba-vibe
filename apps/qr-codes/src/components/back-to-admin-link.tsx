@@ -27,7 +27,7 @@ export function BackToAdminLink({
   className?: string
   children: ReactNode
 }) {
-  const { back } = useRouter()
+  const router = useRouter()
   const enteredFromAdmin = useEnteredFromAdmin(qrId)
 
   if (!enteredFromAdmin) return null
@@ -36,7 +36,7 @@ export function BackToAdminLink({
     if (isModifiedClick(event)) return
     sessionStorage.removeItem(`qr:return:${qrId}`)
     event.preventDefault()
-    back()
+    router.back()
   }
 
   return (
