@@ -1,0 +1,19 @@
+apps/qr-vault/src/components/collection-picker.tsx
+  s_5617bc99df3a90::t_82d2936df6aaa5 26,50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "6f66c7002be60ab0710ef81b586a8310f3a118d9",
+  "prompts": {},
+  "sessions": {
+    "s_5617bc99df3a90": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead8b-5e31-7af3-97ea-c2bb40e7449b",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}

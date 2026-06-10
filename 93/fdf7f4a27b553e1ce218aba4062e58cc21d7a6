@@ -1,0 +1,19 @@
+apps/qr-vault/docs/README.md
+  s_5617bc99df3a90::t_8e4a94aee6d484 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "93fdf7f4a27b553e1ce218aba4062e58cc21d7a6",
+  "prompts": {},
+  "sessions": {
+    "s_5617bc99df3a90": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead8b-5e31-7af3-97ea-c2bb40e7449b",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
