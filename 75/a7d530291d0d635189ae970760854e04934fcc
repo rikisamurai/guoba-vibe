@@ -1,0 +1,21 @@
+.agents/skills/redesign-skill/SKILL.md
+  s_5617bc99df3a90::t_6058ea9f8495e6 1-178
+.agents/skills/imagegen-frontend-web/SKILL.md
+  s_5617bc99df3a90::t_6058ea9f8495e6 1-987
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "75a7d530291d0d635189ae970760854e04934fcc",
+  "prompts": {},
+  "sessions": {
+    "s_5617bc99df3a90": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead8b-5e31-7af3-97ea-c2bb40e7449b",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
