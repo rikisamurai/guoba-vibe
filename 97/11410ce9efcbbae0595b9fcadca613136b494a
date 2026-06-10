@@ -1,0 +1,27 @@
+apps/qr-vault/src/i18n/locales/zh-CN.json
+  s_5617bc99df3a90::t_3a7faf6411ab92 157
+apps/qr-vault/src/i18n/locales/en.json
+  s_5617bc99df3a90::t_3a7faf6411ab92 157
+apps/qr-vault/src/app/collections-page.tsx
+  s_5617bc99df3a90::t_648d0c5d7b875f 245
+  s_5617bc99df3a90::t_fee64f8fde1f57 52
+  s_5617bc99df3a90::t_893f03f2376205 10-15,17,162,237-243,276,279-282,286,288-325,327-329,331-333
+  s_5617bc99df3a90::t_d626b900d476c3 2-3,53-57,96-105,160-161,163-170,201-202,204,207,211,221,287
+  s_5617bc99df3a90::t_9e1afb3a8053a5 171-172,176-192,195-200,244,246-272
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "9711410ce9efcbbae0595b9fcadca613136b494a",
+  "prompts": {},
+  "sessions": {
+    "s_5617bc99df3a90": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ead8b-5e31-7af3-97ea-c2bb40e7449b",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
