@@ -4,7 +4,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/shadcn-ui/button'
 
 type ButtonVariant = VariantProps<typeof buttonVariants>['variant']
 type ButtonSize = VariantProps<typeof buttonVariants>['size']

@@ -1,9 +1,9 @@
 import { AlertCircle, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { Badge } from '@/components/ui/badge'
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/shadcn-ui/badge'
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
+import { Separator } from '@/components/shadcn-ui/separator'
 import { parseDeepLink } from '@/lib/url'
 
 type ParsedUrlPanelProps = {

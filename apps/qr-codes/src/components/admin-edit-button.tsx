@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useSyncExternalStore } from 'react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 
 const subscribe = () => () => {}
 

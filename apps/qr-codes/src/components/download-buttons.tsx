@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 
 export function DownloadButtons({ id, title }: { id: string; title: string }) {
   const safe =

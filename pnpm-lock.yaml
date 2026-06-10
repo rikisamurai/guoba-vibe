@@ -14,9 +14,6 @@ importers:
       oxfmt:
         specifier: ^0.52.0
         version: 0.52.0
-      react-doctor:
-        specifier: ^0.2.6
-        version: 0.2.6(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(eslint-plugin-react-hooks@7.1.1(eslint@10.4.0(jiti@2.7.0)))
       simple-git-hooks:
         specifier: ^2.13.1
         version: 2.13.1
@@ -5053,10 +5050,6 @@ packages:
       vite-plus:
         optional: true
 
-  oxlint-plugin-react-doctor@0.2.6:
-    resolution: {integrity: sha512-af0bMoHfVI3DawVJKmsi/tLTpigSK/AXs8HNpkV98Bj8T5jPqN+N9LJVuCIUt7qk4O7rpAXXh/9oMHyVEs9kNA==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-
   oxlint@1.66.0:
     resolution: {integrity: sha512-N4LLxYLd94KEBqXDMDM5f+2PUpItTjDLreXe2Gn5KhjhCK4Qp2YUXaBi8Yu325ryOgKwt22m45fpD7nPOn69Yw==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -5237,16 +5230,6 @@ packages:
   raw-body@3.0.2:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
-
-  react-doctor@0.2.6:
-    resolution: {integrity: sha512-Dwl6WY5wLCuy/i59rSK2veoJrTEw1hLzR7TXg5rjlvFR0JHsPW3kq2zFwHj/amtYESEmKCShIvAubzzy2b4nyw==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      eslint-plugin-react-hooks: ^6 || ^7
-    peerDependenciesMeta:
-      eslint-plugin-react-hooks:
-        optional: true
 
   react-dom@19.2.4:
     resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
@@ -10566,12 +10549,6 @@ snapshots:
       '@oxfmt/binding-win32-ia32-msvc': 0.52.0
       '@oxfmt/binding-win32-x64-msvc': 0.52.0
 
-  oxlint-plugin-react-doctor@0.2.6:
-    dependencies:
-      '@typescript-eslint/types': 8.60.0
-      eslint-scope: 9.1.2
-      eslint-visitor-keys: 5.0.1
-
   oxlint@1.66.0:
     optionalDependencies:
       '@oxlint/binding-android-arm-eabi': 1.66.0
@@ -10791,26 +10768,6 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.7.2
       unpipe: 1.0.0
-
-  react-doctor@0.2.6(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(eslint-plugin-react-hooks@7.1.1(eslint@10.4.0(jiti@2.7.0))):
-    dependencies:
-      '@effect/platform-node-shared': 4.0.0-beta.70(effect@4.0.0-beta.70)
-      agent-install: 0.0.5
-      conf: 15.1.0
-      deslop-js: 0.0.12(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
-      effect: 4.0.0-beta.70
-      oxlint: 1.66.0
-      oxlint-plugin-react-doctor: 0.2.6
-      prompts: 2.4.2
-      typescript: 5.9.3
-    optionalDependencies:
-      eslint-plugin-react-hooks: 7.1.1(eslint@10.4.0(jiti@2.7.0))
-    transitivePeerDependencies:
-      - '@emnapi/core'
-      - '@emnapi/runtime'
-      - bufferutil
-      - oxlint-tsgolint
-      - utf-8-validate
 
   react-dom@19.2.4(react@19.2.4):
     dependencies:

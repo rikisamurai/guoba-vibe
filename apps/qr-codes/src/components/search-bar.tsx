@@ -3,8 +3,8 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/shadcn-ui/button'
+import { Input } from '@/components/shadcn-ui/input'
 
 function SearchBarInner() {
   const router = useRouter()

@@ -3,16 +3,14 @@
 // NEXT 16.2.6: isRedirectError is not publicly exported from "next/navigation".
 // If this internal path breaks on a future minor, fall back to err.message === "NEXT_REDIRECT".
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
-import { type ReactNode, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
-import { QrLivePreview } from '@/components/qr-live-preview'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { QrFormActions } from '@/components/qr-form-actions'
+import { QrFormCollections } from '@/components/qr-form-collections'
+import { QrFormMetadataFields } from '@/components/qr-form-metadata-fields'
+import { QrFormPreviewAside } from '@/components/qr-form-preview-aside'
 import { UrlEditor } from '@/components/url-editor'
-import { UrlPreview } from '@/components/url-preview'
 import { parseUrl } from '@/lib/url-parse'
 
 export type QrInput = {
@@ -23,17 +21,6 @@ export type QrInput = {
 }
 
 export type CollectionOption = { id: string; title: string }
-
-function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: ReactNode }) {
-  return (
-    <Label
-      htmlFor={htmlFor}
-      className="text-muted-foreground text-xs font-medium tracking-wide uppercase"
-    >
-      {children}
-    </Label>
-  )
-}
 
 export function QrForm({
   collections,
@@ -146,26 +133,6 @@ export function QrForm({
     })
   }
 
-  function renderActionButtons(className = '') {
-    return (
-      <div className={`flex flex-wrap gap-2 ${className}`}>
-        <Button type="submit" disabled={pending || secondaryPending}>
-          {pending ? 'Saving…' : submitLabel}
-        </Button>
-        {onSecondarySubmit && secondarySubmitLabel && (
-          <Button
-            type="button"
-            variant="outline"
-            disabled={pending || secondaryPending}
-            onClick={() => runAction(onSecondarySubmit, startSecondary, 'Save as new failed')}
-          >
-            {secondaryPending ? 'Saving…' : secondarySubmitLabel}
-          </Button>
-        )}
-      </div>
-    )
-  }
-
   return (
     <form
       className="grid w-full items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(380px,420px)] xl:grid-cols-[minmax(0,1fr)_minmax(440px,480px)] xl:gap-7"
@@ -176,121 +143,46 @@ export function QrForm({
     >
       <div className="bg-card rounded-lg border">
         <div className="flex items-center justify-end border-b px-4 py-3 sm:px-5">
-          {renderActionButtons()}
+          <QrFormActions
+            pending={pending}
+            secondaryPending={secondaryPending}
+            submitLabel={submitLabel}
+            secondarySubmitLabel={secondarySubmitLabel}
+            onSecondarySubmit={
+              onSecondarySubmit
+                ? () => runAction(onSecondarySubmit, startSecondary, 'Save as new failed')
+                : undefined
+            }
+          />
         </div>
 
         <div className="space-y-6 p-4 sm:p-5">
-          <div className="grid gap-1.5">
-            <FieldLabel htmlFor="title">Title</FieldLabel>
-            <Input
-              id="title"
-              name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="grid gap-1.5">
-            <FieldLabel htmlFor="description">Description</FieldLabel>
-            <Textarea
-              id="description"
-              name="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-            />
-          </div>
+          <QrFormMetadataFields
+            title={title}
+            description={description}
+            onTitleChange={setTitle}
+            onDescriptionChange={setDescription}
+          />
 
           <UrlEditor name="url" value={url} onValueChange={setUrl} />
 
-          <div className="grid gap-2">
-            <FieldLabel>Collections</FieldLabel>
-            {collectionsList.length === 0 && !adding ? (
-              <p className="text-muted-foreground text-sm">
-                No collections yet — create one below.
-              </p>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {collectionsList.map((c) => {
-                  const active = selected.has(c.id)
-                  return (
-                    <button
-                      type="button"
-                      key={c.id}
-                      onClick={() => toggle(c.id)}
-                      className={`rounded-full border px-3 py-1 text-sm ${
-                        active
-                          ? 'bg-primary text-primary-foreground border-primary'
-                          : 'bg-background hover:bg-muted'
-                      }`}
-                    >
-                      {c.title}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-
-            {adding ? (
-              <div className="bg-muted/30 mt-1 space-y-3 rounded-md border p-3">
-                <div className="grid gap-1.5">
-                  <FieldLabel htmlFor="new-collection-title">New collection title</FieldLabel>
-                  <Input
-                    id="new-collection-title"
-                    value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
-                    placeholder="e.g. Travel"
-                    autoFocus
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <FieldLabel htmlFor="new-collection-description">
-                    Description (optional)
-                  </FieldLabel>
-                  <Textarea
-                    id="new-collection-description"
-                    value={newDesc}
-                    onChange={(e) => setNewDesc(e.target.value)}
-                    rows={2}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button type="button" size="sm" onClick={submitNewCollection} disabled={creating}>
-                    {creating ? 'Creating…' : 'Create'}
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    onClick={resetNewCollection}
-                    disabled={creating}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                className="mt-1 w-fit"
-                onClick={() => setAdding(true)}
-              >
-                + New collection
-              </Button>
-            )}
-          </div>
+          <QrFormCollections
+            collections={collectionsList}
+            selected={selected}
+            adding={adding}
+            newTitle={newTitle}
+            newDesc={newDesc}
+            creating={creating}
+            onToggle={toggle}
+            onStartAdding={() => setAdding(true)}
+            onNewTitleChange={setNewTitle}
+            onNewDescChange={setNewDesc}
+            onSubmitNewCollection={submitNewCollection}
+            onResetNewCollection={resetNewCollection}
+          />
         </div>
       </div>
-      <aside className="space-y-4 lg:sticky lg:top-6">
-        <QrLivePreview title={title} url={url} />
-        <section className="rounded-lg border p-4">
-          <h2 className="mb-3 text-sm font-medium">Parsed</h2>
-          <UrlPreview url={url} />
-        </section>
-      </aside>
+      <QrFormPreviewAside title={title} url={url} />
     </form>
   )
 }

@@ -5,7 +5,7 @@ import { Suspense, useState } from 'react'
 import { toast } from 'sonner'
 
 import { signIn, signOut } from '@/auth/client'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 
 function ForbiddenNotice() {
   const params = useSearchParams()

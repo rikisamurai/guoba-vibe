@@ -6,7 +6,7 @@ import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 
 export function DeleteButton({
   action,

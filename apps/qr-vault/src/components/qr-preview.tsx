@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/shadcn-ui/card'
 import { renderQrDataUrl } from '@/lib/qr'
 import { parseDeepLink } from '@/lib/url'
 import { cn } from '@/lib/utils'

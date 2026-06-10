@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useOnboarding } from '@/app/onboarding/use-onboarding'
 import { LanguageToggle } from '@/components/language-toggle'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 import {
   Sidebar,
   SidebarContent,
@@ -20,8 +19,9 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui/sidebar'
-import { TooltipProvider } from '@/components/ui/tooltip'
+} from '@/components/shadcn-ui/sidebar'
+import { TooltipProvider } from '@/components/shadcn-ui/tooltip'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 function OnboardingReplayButton() {
   const { restart } = useOnboarding()

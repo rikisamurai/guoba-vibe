@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { getAdminSession } from '@/auth/admin'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 
 export default async function HomePage() {
   const session = await getAdminSession()

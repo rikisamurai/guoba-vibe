@@ -69,31 +69,25 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
+## 5. File Size & Splitting (`max-lines`)
+
+ESLint enforces **max 200 lines** per source file (`error`; counts code only — blank lines and comments are skipped). Treat it as a **floor that prevents bloat, not a ceiling that proves good design** — a file under 200 can still be a mess. The limit's job is to make you _notice_ growth and decide how to decompose.
+
+Applies to **any** source file, not just React components: a `lib`/`utils` file with too many functions should be split by concern so things are findable from directory + filename.
+
+**When you hit 200, split by cohesion — never mechanically:**
+
+- Extract a **cohesive** unit (sub-component, helper) that stands on its own and is named for what it is. Don't slice into `thing-part1` / `thing-part2` to beat the counter.
+- Put **shared** pieces in a shared home (`components/`, `lib/`, … — the name isn't fixed) and import them. Copying the same code into two feature folders to pass the limit defeats the goal (reuse).
+- Group split files into a feature/function folder so structure reads from names alone.
+
+**Tests are exempt** (`*.test.*`, `tests/`) — they grow by case count, not complexity.
+
+**Escape hatches** (both greppable, both reviewed):
+
+1. One genuinely-cohesive long file → top-of-file directive **with a reason**: `/* eslint-disable max-lines -- <reason> */`. A reasonless disable gets bounced in review; a stale one is flagged automatically.
+2. A whole category (generated / vendored, e.g. shadcn `ui/`) → add it to `ignores` in that app's `eslint.config`.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
-
-## Project tooling: agent-browser session persistence
-
-The admin UI (`/admin`) is gated by GitHub OAuth (`ADMIN_GITHUB_ID`). To avoid re-doing OAuth on every browser command, use a named session that persists cookies across daemon restarts.
-
-**Rule:** every `agent-browser` invocation in this repo must be prefixed with:
-
-```bash
-AGENT_BROWSER_SESSION_NAME=guoba agent-browser <cmd>
-```
-
-Cookies are saved to `~/.agent-browser/sessions/guoba-default.json` on daemon close and restored on next open. Do NOT export this env var globally — keep it per-command.
-
-**One-time bootstrap** (only if session file is missing or cookies expired):
-
-```bash
-AGENT_BROWSER_SESSION_NAME=guoba agent-browser close          # drop any headless daemon
-AGENT_BROWSER_SESSION_NAME=guoba agent-browser --headed open https://github.com
-# user logs into github.com manually in the headed window
-AGENT_BROWSER_SESSION_NAME=guoba agent-browser close          # flushes cookies to disk
-```
-
-After bootstrap, opening `https://guoba-qr-codes.vercel.app/admin` (or any app OAuth target) auto-completes the GitHub OAuth redirect with zero clicks — github.com already trusts the session.
-
-**Do not** try to reuse the user's real Chrome profile via `--profile Default`. agent-browser ships its own Chrome for Testing binary with a different Keychain entry, so encrypted cookies from the real profile won't decrypt.

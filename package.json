@@ -8,7 +8,7 @@
     "fmt": "oxfmt .",
     "fmt:check": "oxfmt --check .",
     "start": "pnpm --filter qr-codes start",
-    "lint": "pnpm --filter qr-codes lint",
+    "lint": "pnpm --filter qr-codes lint && pnpm --filter qr-vault lint",
     "test": "pnpm --filter qr-codes test",
     "prepare": "simple-git-hooks",
     "dev:qr-vault": "pnpm --filter qr-vault dev",
@@ -20,14 +20,21 @@
   "devDependencies": {
     "lint-staged": "^17.0.5",
     "oxfmt": "^0.52.0",
-    "react-doctor": "^0.2.6",
     "simple-git-hooks": "^2.13.1"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,jsonc,json5,yml,yaml,css,scss,md,mdx,html}": "oxfmt --write --no-error-on-unmatched-pattern"
+    "apps/qr-codes/**/*.{js,jsx,ts,tsx}": [
+      "oxfmt --write --no-error-on-unmatched-pattern",
+      "pnpm --filter qr-codes exec eslint --no-warn-ignored"
+    ],
+    "apps/qr-vault/**/*.{ts,tsx}": [
+      "oxfmt --write --no-error-on-unmatched-pattern",
+      "pnpm --filter qr-vault exec eslint --no-warn-ignored"
+    ],
+    "*.{json,jsonc,json5,yml,yaml,css,scss,md,mdx,html}": "oxfmt --write --no-error-on-unmatched-pattern"
   },
   "engines": {
     "node": ">=24"

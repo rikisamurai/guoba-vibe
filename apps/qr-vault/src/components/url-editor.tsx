@@ -2,10 +2,10 @@ import { Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { FieldLabel } from '@/components/field-label'
+import { Button } from '@/components/shadcn-ui/button'
+import { Input } from '@/components/shadcn-ui/input'
+import { Textarea } from '@/components/shadcn-ui/textarea'
 import {
   buildUrlFromParts,
   normalizeQueryRows,
@@ -18,17 +18,6 @@ type UrlEditorProps = {
   value: string
   onChange: (value: string) => void
   children?: React.ReactNode
-}
-
-function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
-  return (
-    <Label
-      htmlFor={htmlFor}
-      className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase"
-    >
-      {children}
-    </Label>
-  )
 }
 
 export function UrlEditor({ value, onChange, children }: UrlEditorProps) {
