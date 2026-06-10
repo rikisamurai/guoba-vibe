@@ -170,6 +170,7 @@ function mergeCollectionItems(
 
 function isVaultData(value: unknown): value is VaultData {
   if (!value || typeof value !== 'object') return false
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- type-guard shape check: asserting to read fields, validated below
   const candidate = value as VaultData
   return (
     candidate.version === 1 &&

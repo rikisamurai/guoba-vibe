@@ -20,7 +20,7 @@ function flattenKeys(value: unknown, prefix = ''): string[] {
 
 describe('i18n resources', () => {
   it('keeps English and Simplified Chinese keys in sync', () => {
-    expect(flattenKeys(zhCN).sort()).toEqual(flattenKeys(en).sort())
+    expect(flattenKeys(zhCN).toSorted()).toEqual(flattenKeys(en).toSorted())
   })
 })
 

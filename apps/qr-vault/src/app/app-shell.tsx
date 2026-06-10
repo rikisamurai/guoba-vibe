@@ -70,13 +70,15 @@ function NavLink({ item }: { item: NavItem }) {
     ? pathname === item.to
     : pathname === item.to || pathname.startsWith(item.to + '/')
   const label = t(item.labelKey)
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- TanStack Router types Link's search per-route; NavItem carries a generic search bag
+  const search = item.search as never
 
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive} tooltip={label}>
         <Link
           to={item.to}
-          search={item.search as never}
+          search={search}
           {...(item.dataTour ? { 'data-tour': item.dataTour } : {})}
         >
           <item.icon />

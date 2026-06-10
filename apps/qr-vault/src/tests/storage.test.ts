@@ -51,9 +51,9 @@ describe('mergeVaultData', () => {
 
     const merged = mergeVaultData(local, incoming)
 
-    expect(merged.qrs.map((qr) => qr.id).sort()).toEqual(['local', 'same'])
+    expect(merged.qrs.map((qr) => qr.id).toSorted()).toEqual(['local', 'same'])
     expect(merged.qrs.find((qr) => qr.id === 'same')?.title).toBe('New')
-    expect(merged.collections.map((collection) => collection.id).sort()).toEqual(['c1', 'c2'])
+    expect(merged.collections.map((collection) => collection.id).toSorted()).toEqual(['c1', 'c2'])
     expect(merged.collectionItems).toEqual([
       { collectionId: 'c1', qrId: 'local' },
       { collectionId: 'c2', qrId: 'same' },
@@ -124,7 +124,7 @@ describe('deleteCollection', () => {
 
     expect(result.collections.map((collection) => collection.id)).toEqual(['keep'])
     expect(result.collectionItems).toEqual([{ collectionId: 'keep', qrId: 'q1' }])
-    expect(result.qrs.map((qr) => qr.id).sort()).toEqual(['q1', 'q2'])
+    expect(result.qrs.map((qr) => qr.id).toSorted()).toEqual(['q1', 'q2'])
   })
 })
 

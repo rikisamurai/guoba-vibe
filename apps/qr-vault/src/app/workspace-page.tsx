@@ -31,6 +31,7 @@ export function WorkspacePage() {
   useEffect(() => {
     if (!armedDelete) return
     function onDocClick(event: MouseEvent) {
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- DOM event target is EventTarget; narrowing to HTMLElement to call closest()
       const target = event.target as HTMLElement | null
       if (target?.closest(`[data-armed-for="${armedDelete}"]`)) return
       setArmedDelete('')

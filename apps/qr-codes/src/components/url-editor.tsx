@@ -65,15 +65,15 @@ export function UrlEditor({
     setRaw(buildUrl(next))
   }
 
-  function onRawChange(value: string) {
-    const sanitized = value.replace(/[\n\r\t]+/g, '')
+  function onRawChange(input: string) {
+    const sanitized = input.replace(/[\n\r\t]+/g, '')
     setRaw(sanitized)
     const parsed = parseUrl(sanitized)
     if (parsed.isValid) {
       setParts({
         scheme: parsed.scheme,
         path: parsed.path,
-        query: Object.entries(parsed.query).map(([key, value]) => makeRow(key, value)),
+        query: Object.entries(parsed.query).map(([key, val]) => makeRow(key, val)),
       })
     }
   }

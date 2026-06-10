@@ -40,7 +40,7 @@ export function sortQrsByRecent<T extends Pick<QRCodeItem, 'createdAt' | 'update
 ): T[] {
   return qrs
     .map((qr, index) => ({ qr, index }))
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const updatedDiff = timestamp(b.qr.updatedAt) - timestamp(a.qr.updatedAt)
       if (updatedDiff !== 0) return updatedDiff
 
