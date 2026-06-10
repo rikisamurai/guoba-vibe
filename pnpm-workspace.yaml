@@ -2,10 +2,6 @@ packages:
   - 'apps/*'
   - 'packages/*'
 
-peerDependencyRules:
-  allowedVersions:
-    eslint: '10'
-
 allowBuilds:
   esbuild: true
   msgpackr-extract: true

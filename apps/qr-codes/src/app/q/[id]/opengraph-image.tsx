@@ -46,6 +46,7 @@ export default async function OgImage({ params }: { params: Promise<{ id: string
         alignItems: 'center',
       }}
     >
+      {/* oxlint-disable-next-line nextjs/no-img-element -- OG image runtime (Satori) only supports native <img>, not next/image */}
       <img src={dataUrl} width={480} height={480} alt="QR" />
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 20 }}>
         <div style={{ fontSize: 56, fontWeight: 700, color: '#0a0a0a' }}>{row.title}</div>

@@ -13,6 +13,7 @@
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "claude-hud@claude-hud": true,
-    "context7@claude-plugins-official": true
+    "context7@claude-plugins-official": true,
+    "warp@claude-code-warp": true
   }
 }

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "oxlint",
     "test": "vitest run",
     "test:watch": "vitest",
     "db:generate": "dotenv -e .env.local -- drizzle-kit generate",
@@ -35,7 +35,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/compat": "2.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.12.4",
     "@types/qrcode": "^1.5.6",
@@ -44,8 +43,8 @@
     "@vitest/ui": "^4.1.7",
     "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.10",
-    "eslint": "^10.4.0",
-    "eslint-config-next": "16.2.6",
+    "oxlint": "^1.69.0",
+    "oxlint-tsgolint": "^0.23.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.7"

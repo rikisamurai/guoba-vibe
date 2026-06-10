@@ -71,7 +71,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ## 5. File Size & Splitting (`max-lines`)
 
-ESLint enforces **max 200 lines** per source file (`error`; counts code only — blank lines and comments are skipped). Treat it as a **floor that prevents bloat, not a ceiling that proves good design** — a file under 200 can still be a mess. The limit's job is to make you _notice_ growth and decide how to decompose.
+oxlint enforces **max 200 lines** per source file (`error`; counts code only — blank lines and comments are skipped). Treat it as a **floor that prevents bloat, not a ceiling that proves good design** — a file under 200 can still be a mess. The limit's job is to make you _notice_ growth and decide how to decompose.
 
 Applies to **any** source file, not just React components: a `lib`/`utils` file with too many functions should be split by concern so things are findable from directory + filename.
 
@@ -85,8 +85,8 @@ Applies to **any** source file, not just React components: a `lib`/`utils` file 
 
 **Escape hatches** (both greppable, both reviewed):
 
-1. One genuinely-cohesive long file → top-of-file directive **with a reason**: `/* eslint-disable max-lines -- <reason> */`. A reasonless disable gets bounced in review; a stale one is flagged automatically.
-2. A whole category (generated / vendored, e.g. shadcn `ui/`) → add it to `ignores` in that app's `eslint.config`.
+1. One genuinely-cohesive long file → top-of-file directive **with a reason**: `/* oxlint-disable max-lines -- <reason> */`. A reasonless disable gets bounced in review; a stale one is flagged automatically.
+2. A whole category (generated / vendored, e.g. shadcn `ui/`) → add it to `ignorePatterns` in that app's `.oxlintrc.json`.
 
 ---
 

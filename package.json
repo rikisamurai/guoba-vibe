@@ -28,11 +28,11 @@
   "lint-staged": {
     "apps/qr-codes/**/*.{js,jsx,ts,tsx}": [
       "oxfmt --write --no-error-on-unmatched-pattern",
-      "pnpm --filter qr-codes exec eslint --no-warn-ignored"
+      "pnpm --filter qr-codes exec oxlint ."
     ],
     "apps/qr-vault/**/*.{ts,tsx}": [
       "oxfmt --write --no-error-on-unmatched-pattern",
-      "pnpm --filter qr-vault exec eslint --no-warn-ignored"
+      "pnpm --filter qr-vault exec oxlint ."
     ],
     "*.{json,jsonc,json5,yml,yaml,css,scss,md,mdx,html}": "oxfmt --write --no-error-on-unmatched-pattern"
   },
