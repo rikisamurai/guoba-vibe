@@ -1,0 +1,33 @@
+apps/qr-vault/.oxlintrc.json
+  s_ae47d6a5e7cec4::t_1d6cb07aab1930 124-129
+  s_ae47d6a5e7cec4::t_9d79db2cae4950 3,5-8
+  s_ae47d6a5e7cec4::t_1acdd2e7487b07 1-2,4,9-123,130-132
+apps/qr-codes/src/components/qr-form-collections.tsx
+  s_ae47d6a5e7cec4::t_81c0a902128acb 128
+apps/qr-codes/package.json
+  s_ae47d6a5e7cec4::t_1bbe89f24b731a 49
+apps/qr-codes/.oxlintrc.json
+  s_ae47d6a5e7cec4::t_40520ae4d99031 3,5-8
+  s_ae47d6a5e7cec4::t_78056529c9b9c1 152-157
+  s_ae47d6a5e7cec4::t_c087e3bdd29ea3 1-2,4,9-151,158-160
+apps/qr-codes/src/app/q/[id]/opengraph-image.tsx
+  s_ae47d6a5e7cec4::t_3c02d7d9a48129 49
+apps/qr-vault/package.json
+  s_ae47d6a5e7cec4::t_1bbe89f24b731a 47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "33224ac066ef80b23a1b4b947fa4770fbe71ae2d",
+  "prompts": {},
+  "sessions": {
+    "s_ae47d6a5e7cec4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "124d2895-1c19-43fe-9fa0-4fd64c8bce49",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
