@@ -20,7 +20,6 @@
   "devDependencies": {
     "lint-staged": "^17.0.5",
     "oxfmt": "^0.52.0",
-    "react-doctor": "^0.2.6",
     "simple-git-hooks": "^2.13.1"
   },
   "simple-git-hooks": {
