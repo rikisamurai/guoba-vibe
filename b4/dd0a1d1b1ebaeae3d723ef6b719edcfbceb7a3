@@ -1,0 +1,21 @@
+docs/superpowers/specs/2026-06-11-eslint-to-oxlint-migration-design.md
+  s_ae47d6a5e7cec4::t_b91bd106fde9a0 30
+.claude/settings.json
+  h_64bbaa61ee70b1 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b4dd0a1d1b1ebaeae3d723ef6b719edcfbceb7a3",
+  "prompts": {},
+  "sessions": {
+    "s_ae47d6a5e7cec4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "124d2895-1c19-43fe-9fa0-4fd64c8bce49",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
