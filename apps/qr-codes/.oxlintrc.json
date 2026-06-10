@@ -18,6 +18,7 @@
   },
   "options": {
     "typeAware": true,
+    // Enable type checking to report TypeScript errors alongside lint results
     "typeCheck": true,
     "maxWarnings": 0,
     "reportUnusedDisableDirectives": "error"
