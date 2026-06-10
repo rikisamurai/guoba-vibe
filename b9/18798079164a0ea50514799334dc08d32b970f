@@ -1,0 +1,23 @@
+docs/superpowers/specs/2026-06-11-eslint-to-oxlint-migration-design.md
+  s_6a3b7ffc0e140a::t_e41b8003660560 84-85,110,113
+README.md
+  s_6a3b7ffc0e140a::t_e41b8003660560 36
+apps/qr-vault/README.md
+  s_6a3b7ffc0e140a::t_e41b8003660560 121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b918798079164a0ea50514799334dc08d32b970f",
+  "prompts": {},
+  "sessions": {
+    "s_6a3b7ffc0e140a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb2cb-ada1-7b10-a889-df8f46e4fd24",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
