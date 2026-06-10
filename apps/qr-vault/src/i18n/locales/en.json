@@ -144,7 +144,6 @@
     "eyebrow": "Workspace",
     "backToVault": "Back to vault",
     "allFolders": "All folders",
-    "deleteFolder": "Delete folder",
     "noCollections": "no collections yet",
     "edit": "Edit",
     "create": "Create",
@@ -155,6 +154,7 @@
     "qrsInCollection": "QRs in collection",
     "allQrCodes": "All QR codes",
     "noQrsInCollection": "no QR codes in this collection",
+    "saveBeforeAssigning": "Save this collection first, then assign QR codes from the QR editor.",
     "deletedToast": "Deleted collection",
     "confirmDelete": "Confirm delete {{name}}",
     "deleteCollection": "Delete {{name}}"

@@ -1,17 +1,23 @@
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
-import { ArrowRight, FolderOpen, Save, Trash2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { ArrowRight, FolderOpen, Plus, Save, Trash2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { useVault } from '@/app/use-vault'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type Collection, deleteCollection, upsertCollection } from '@/lib/storage'
 import { parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
@@ -43,7 +49,12 @@ export function CollectionsPage() {
       ? t('collections.documentDetail', { title: selectedCollection.title })
       : t('collections.documentTitle'),
   )
-  const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : data.qrs
+  const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : []
+  const collectionCounts = data.collectionItems.reduce<Record<string, number>>((counts, item) => {
+    counts[item.collectionId] = (counts[item.collectionId] ?? 0) + 1
+    return counts
+  }, {})
+  const titleRef = useRef<HTMLInputElement>(null)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [armedDeleteId, setArmedDeleteId] = useState('')
@@ -80,6 +91,16 @@ export function CollectionsPage() {
       setTitle('')
       setDescription('')
     }
+  }
+
+  function startNewCollection() {
+    setArmedDeleteId('')
+    setTitle('')
+    setDescription('')
+    if (collectionId) {
+      void navigate({ to: '/collections' })
+    }
+    window.setTimeout(() => titleRef.current?.focus(), 0)
   }
 
   function handleDelete(target: Collection) {
@@ -136,101 +157,58 @@ export function CollectionsPage() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[220px_minmax(0,1fr)_minmax(0,1fr)]">
-        <Card>
-          <CardHeader className="border-b">
-            <CardTitle>{t('collections.allFolders')}</CardTitle>
-            <CardAction>
-              <Badge variant="outline">{data.collections.length}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardContent className="space-y-1 pt-4">
-            <TooltipProvider delayDuration={400}>
+      <Card>
+        <CardHeader className="border-b">
+          <CardTitle>{t('collections.allFolders')}</CardTitle>
+          <CardAction className="flex items-center gap-2">
+            <Badge variant="outline">{data.collections.length}</Badge>
+            <Button type="button" size="sm" onClick={startNewCollection}>
+              <Plus /> {t('collections.newCollection')}
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent className="pt-4">
+          {data.collections.length ? (
+            <div className="flex flex-wrap gap-2 overflow-visible">
               {data.collections.map((collection) => {
                 const isActive = collection.id === collectionId
-                const isArmed = armedDeleteId === collection.id
                 return (
-                  <div key={collection.id} className="group relative">
-                    <Link
-                      to="/collections/$collectionId"
-                      params={{ collectionId: collection.id }}
-                      className={cn(
-                        'flex items-center gap-2.5 truncate rounded-md py-2 pl-3 text-sm font-medium transition-[padding,background-color,color] duration-150',
-                        isArmed ? 'pr-[92px]' : 'pr-3 group-focus-within:pr-9 group-hover:pr-9',
-                        isActive
-                          ? 'bg-accent text-accent-foreground'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
-                      )}
-                    >
-                      <FolderOpen className="size-3.5 shrink-0" />
-                      <span className="truncate">{collection.title}</span>
-                    </Link>
-                    <div
-                      className={cn(
-                        'absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center transition-opacity',
-                        isArmed
-                          ? 'opacity-100'
-                          : 'opacity-0 group-focus-within:opacity-100 group-hover:opacity-100',
-                      )}
-                    >
-                      {isArmed ? (
-                        <button
-                          type="button"
-                          data-armed-for={collection.id}
-                          onClick={(event) => {
-                            event.preventDefault()
-                            event.stopPropagation()
-                            handleDelete(collection)
-                          }}
-                          className="text-destructive bg-destructive/10 border-destructive/40 hover:bg-destructive/20 flex h-6 items-center gap-1.5 rounded-md border px-2 text-[11px] font-medium transition-colors"
-                          aria-label={t('collections.confirmDelete', { name: collection.title })}
-                        >
-                          <Trash2 className="size-3" /> {t('common.confirm')}
-                        </button>
-                      ) : (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button
-                              type="button"
-                              data-armed-for={collection.id}
-                              onClick={(event) => {
-                                event.preventDefault()
-                                event.stopPropagation()
-                                setArmedDeleteId(collection.id)
-                              }}
-                              aria-label={t('collections.deleteCollection', {
-                                name: collection.title,
-                              })}
-                              className="text-muted-foreground hover:text-destructive hover:border-destructive/40 hover:bg-background flex size-6 items-center justify-center rounded-md border border-transparent transition-colors"
-                            >
-                              <Trash2 className="size-3" />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent side="right">
-                            {t('collections.deleteFolder')}
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                    </div>
-                  </div>
+                  <Link
+                    key={collection.id}
+                    to="/collections/$collectionId"
+                    params={{ collectionId: collection.id }}
+                    className={cn(
+                      'group bg-card inline-flex max-w-full items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'border-foreground shadow-[0_0_0_1px_var(--foreground)]'
+                        : 'border-border hover:bg-muted/50',
+                    )}
+                  >
+                    <FolderOpen className="size-3.5 shrink-0" />
+                    <span className="min-w-0 truncate">{collection.title}</span>
+                    <span className="text-muted-foreground font-mono text-[10px]">
+                      {collectionCounts[collection.id] ?? 0}
+                    </span>
+                  </Link>
                 )
               })}
-            </TooltipProvider>
-            {!data.collections.length && (
-              <p className="text-muted-foreground rounded-md border border-dashed px-3 py-4 text-center text-xs italic">
-                {t('collections.noCollections')}
-              </p>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          ) : (
+            <p className="text-muted-foreground rounded-md border border-dashed px-3 py-4 text-center text-xs italic">
+              {t('collections.noCollections')}
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
+      <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
         <Card>
           <CardHeader className="border-b">
-            <div>
+            <div className="min-w-0">
               <p className="text-muted-foreground mb-1 text-[10px] font-medium tracking-wider uppercase">
                 {selectedCollection ? t('collections.edit') : t('collections.create')}
               </p>
-              <CardTitle>
+              <CardTitle className="truncate">
                 {selectedCollection ? selectedCollection.title : t('collections.newCollection')}
               </CardTitle>
             </div>
@@ -240,6 +218,7 @@ export function CollectionsPage() {
               <FieldLabel htmlFor="coll-title">{t('common.title')}</FieldLabel>
               <Input
                 id="coll-title"
+                ref={titleRef}
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 placeholder={t('collections.titlePlaceholder')}
@@ -255,61 +234,103 @@ export function CollectionsPage() {
                 placeholder={t('collections.descriptionPlaceholder')}
               />
             </div>
+          </CardContent>
+          <CardFooter
+            className={cn(
+              'flex-wrap gap-3 bg-transparent',
+              selectedCollection ? 'justify-between' : 'justify-end',
+            )}
+          >
+            {selectedCollection && (
+              <div className="flex items-center">
+                {armedDeleteId === selectedCollection.id ? (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    data-armed-for={selectedCollection.id}
+                    onClick={() => handleDelete(selectedCollection)}
+                    aria-label={t('collections.confirmDelete', {
+                      name: selectedCollection.title,
+                    })}
+                  >
+                    <Trash2 /> {t('common.confirm')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    data-armed-for={selectedCollection.id}
+                    onClick={() => setArmedDeleteId(selectedCollection.id)}
+                    aria-label={t('collections.deleteCollection', {
+                      name: selectedCollection.title,
+                    })}
+                  >
+                    <Trash2 /> {t('common.delete')}
+                  </Button>
+                )}
+              </div>
+            )}
             <Button type="button" onClick={saveCollection} disabled={!title.trim()}>
               <Save /> {t('collections.saveCollection')}
             </Button>
-          </CardContent>
+          </CardFooter>
         </Card>
 
-        <Card>
-          <CardHeader className="border-b">
-            <div>
-              {selectedCollection && (
+        {selectedCollection ? (
+          <Card>
+            <CardHeader className="border-b">
+              <div>
                 <p className="text-muted-foreground mb-1 text-[10px] font-medium tracking-wider uppercase">
                   {t('collections.qrsInCollection')}
                 </p>
+                <CardTitle>{selectedCollection.title}</CardTitle>
+              </div>
+              <CardAction>
+                <Badge variant="secondary">{qrs.length}</Badge>
+              </CardAction>
+            </CardHeader>
+            <CardContent className="pt-4">
+              {qrs.length ? (
+                <div className="grid gap-2 md:grid-cols-2">
+                  {qrs.map((qr) => {
+                    const parsed = parseDeepLink(qr.url)
+                    return (
+                      <Link
+                        key={qr.id}
+                        to="/q/$qrId"
+                        params={{ qrId: qr.id }}
+                        className="bg-card hover:bg-muted/50 group block rounded-md border p-3 transition-colors"
+                      >
+                        <div className="mb-1 flex items-center gap-2">
+                          <span
+                            className={cn(
+                              'size-1.5 shrink-0 rounded-full',
+                              parsed.isValid ? 'bg-foreground' : 'bg-muted-foreground',
+                            )}
+                          />
+                          <strong className="truncate text-sm font-medium group-hover:underline">
+                            {qr.title || parsed.path || qr.url}
+                          </strong>
+                        </div>
+                        <p className="text-muted-foreground truncate pl-3.5 font-mono text-xs">
+                          {parsed.path || qr.url}
+                        </p>
+                      </Link>
+                    )
+                  })}
+                </div>
+              ) : (
+                <p className="text-muted-foreground rounded-md border border-dashed px-3 py-6 text-center text-xs italic">
+                  {t('collections.noQrsInCollection')}
+                </p>
               )}
-              <CardTitle>{selectedCollection?.title ?? t('collections.allQrCodes')}</CardTitle>
-            </div>
-            <CardAction>
-              <Badge variant="secondary">{qrs.length}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardContent className="space-y-2 pt-4">
-            {qrs.length ? (
-              qrs.map((qr) => {
-                const parsed = parseDeepLink(qr.url)
-                return (
-                  <Link
-                    key={qr.id}
-                    to="/q/$qrId"
-                    params={{ qrId: qr.id }}
-                    className="bg-card hover:bg-muted/50 group block rounded-md border p-3 transition-colors"
-                  >
-                    <div className="mb-1 flex items-center gap-2">
-                      <span
-                        className={cn(
-                          'size-1.5 shrink-0 rounded-full',
-                          parsed.isValid ? 'bg-foreground' : 'bg-muted-foreground',
-                        )}
-                      />
-                      <strong className="truncate text-sm font-medium group-hover:underline">
-                        {qr.title || parsed.path || qr.url}
-                      </strong>
-                    </div>
-                    <p className="text-muted-foreground truncate pl-3.5 font-mono text-xs">
-                      {parsed.path || qr.url}
-                    </p>
-                  </Link>
-                )
-              })
-            ) : (
-              <p className="text-muted-foreground rounded-md border border-dashed px-3 py-6 text-center text-xs italic">
-                {t('collections.noQrsInCollection')}
-              </p>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="text-muted-foreground bg-muted/20 rounded-lg border border-dashed px-4 py-3 text-xs">
+            {t('collections.saveBeforeAssigning')}
+          </div>
+        )}
       </div>
     </div>
   )

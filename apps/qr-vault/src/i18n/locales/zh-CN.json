@@ -144,7 +144,6 @@
     "eyebrow": "工作区",
     "backToVault": "返回库",
     "allFolders": "全部合集",
-    "deleteFolder": "删除合集",
     "noCollections": "还没有合集",
     "edit": "编辑",
     "create": "创建",
@@ -155,6 +154,7 @@
     "qrsInCollection": "合集中的 QR",
     "allQrCodes": "全部 QR",
     "noQrsInCollection": "这个合集里还没有 QR",
+    "saveBeforeAssigning": "先保存这个合集，然后在 QR 编辑页里分配 QR。",
     "deletedToast": "已删除合集",
     "confirmDelete": "确认删除 {{name}}",
     "deleteCollection": "删除 {{name}}"
