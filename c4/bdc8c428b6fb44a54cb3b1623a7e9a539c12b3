@@ -1,0 +1,36 @@
+apps/qr-codes/package.json
+  s_ae47d6a5e7cec4::t_5d9025d329b8b4 47
+apps/qr-vault/tsconfig.app.json
+  s_ae47d6a5e7cec4::t_e14d18523d679d 21
+apps/qr-codes/.oxlintrc.json
+  s_ae47d6a5e7cec4::t_01ccd9454bbb13 8-10
+apps/qr-codes/src/components/collection-form.tsx
+  s_ae47d6a5e7cec4::t_abe6b1c299c78a 32-33
+apps/qr-vault/src/main.tsx
+  s_ae47d6a5e7cec4::t_ab594f27bd4fc6 2
+apps/qr-vault/.oxlintrc.json
+  s_ae47d6a5e7cec4::t_8cb692aa0aab50 8-10
+apps/qr-codes/src/components/back-to-admin-link.tsx
+  s_ae47d6a5e7cec4::t_a7cc537d76b138 39
+  s_ae47d6a5e7cec4::t_d5687f38202185 30
+apps/qr-vault/package.json
+  s_ae47d6a5e7cec4::t_77efc8effaed26 43
+apps/qr-vault/src/app/workspace/types.ts
+  s_ae47d6a5e7cec4::t_0e90d7ce348e8e 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "c4bdc8c428b6fb44a54cb3b1623a7e9a539c12b3",
+  "prompts": {},
+  "sessions": {
+    "s_ae47d6a5e7cec4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "124d2895-1c19-43fe-9fa0-4fd64c8bce49",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
