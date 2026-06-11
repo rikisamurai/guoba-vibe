@@ -1,0 +1,26 @@
+apps/rn-components/package.json
+  s_1c3631cba8a9c7::t_10e245769fa2d1 28
+apps/rn-components/.rnstorybook/index.tsx
+  s_1c3631cba8a9c7::t_38bd96b1ee3977 1-2,5-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "a312ec5268e7bd0fd8f99d7de8730945f464de56",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_1c3631cba8a9c7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb31e-cb4a-79f2-8910-59415c0f074f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
