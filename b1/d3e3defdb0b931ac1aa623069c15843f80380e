@@ -1,0 +1,26 @@
+apps/rn-components/package.json
+  s_079bcc6c50d433::t_fd5fd21f4bbf08 59
+pnpm-lock.yaml
+  s_079bcc6c50d433::t_68a46bf4b03de1 308-310
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b1d3e3defdb0b931ac1aa623069c15843f80380e",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_079bcc6c50d433": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9eaa6c0e-8518-4fa3-adf5-c5667445af91",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
