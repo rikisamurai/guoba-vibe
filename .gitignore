@@ -66,6 +66,8 @@ node_modules/
 .turbo/
 .vercel/
 apps/*/.expo/
+apps/*/ios/
+apps/*/android/
 apps/*/storybook-static/
 *.tsbuildinfo
 coverage/

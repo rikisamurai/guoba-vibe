@@ -8,7 +8,7 @@
     "userInterfaceStyle": "automatic",
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "bundleIdentifier": "guoba-story",
+      "bundleIdentifier": "com.rikisamurai.guobarncomponents",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -16,13 +16,14 @@
     },
     "android": {
       "edgeToEdgeEnabled": true,
-      "package": "com.riki_samurai.guobarncomponents"
+      "package": "com.rikisamurai.guobarncomponents"
     },
     "extra": {
       "eas": {
         "projectId": "d5189884-c45a-42bb-9713-1741da0e958b"
       }
     },
-    "owner": "riki_samurai"
+    "owner": "riki_samurai",
+    "plugins": ["@react-native-community/datetimepicker"]
   }
 }

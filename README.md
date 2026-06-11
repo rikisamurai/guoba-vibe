@@ -52,7 +52,9 @@ pnpm test:qr-vault
 
 ```bash
 pnpm dev:rn-components                 # web Storybook，默认 http://localhost:6006
-pnpm storybook:rn-components:native    # Expo 原生 Storybook，用 iOS / Android 真机或模拟器打开
+pnpm ios:rn-components                 # iOS development build（首次编译较久，需 Xcode + iOS 平台）
+pnpm android:rn-components             # Android development build
+pnpm storybook:rn-components:native    # Expo 原生 Storybook，用 dev build 在真机/模拟器打开
 pnpm test:rn-components                # Vitest 组件回归测试
 pnpm build:rn-components               # TypeScript no-emit 校验
 pnpm lint:rn-components

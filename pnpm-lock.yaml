@@ -226,6 +226,12 @@ importers:
       '@react-native-async-storage/async-storage':
         specifier: 2.2.0
         version: 2.2.0(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))
+      '@react-native-community/datetimepicker':
+        specifier: 8.4.4
+        version: 8.4.4(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@react-native-community/slider':
+        specifier: 5.0.1
+        version: 5.0.1
       '@storybook/addon-ondevice-actions':
         specifier: ^10.4.4
         version: 10.4.4(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(storybook@10.4.3(@testing-library/dom@10.4.1)(@types/react@19.1.17)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -234,7 +240,7 @@ importers:
         version: 10.4.4(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(storybook@10.4.3(@testing-library/dom@10.4.1)(@types/react@19.1.17)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
       '@storybook/addon-ondevice-controls':
         specifier: ^10.4.4
-        version: 10.4.4(261251b877d123e86c11afa1dacbfc14)
+        version: 10.4.4(e5e4828e90901a505a3fb98894f67c9e)
       '@storybook/react-native':
         specifier: ^10.4.4
         version: 10.4.4(4ac588921e61443a9a786d1ae16acfbb)
@@ -3217,8 +3223,8 @@ packages:
     peerDependencies:
       react-native: ^0.0.0-0 || >=0.65 <1.0
 
-  '@react-native-community/datetimepicker@9.1.0':
-    resolution: {integrity: sha512-eadbnk+I2vxvW30iTAsm/qlCnMMAadkifIMYNEB2lzhxN/SvlKc7S2V4k5DyrwjdCbqdcMk3t9K6fnUMcAV34w==}
+  '@react-native-community/datetimepicker@8.4.4':
+    resolution: {integrity: sha512-bc4ZixEHxZC9/qf5gbdYvIJiLZ5CLmEsC3j+Yhe1D1KC/3QhaIfGDVdUcid0PdlSoGOSEq4VlB93AWyetEyBSQ==}
     peerDependencies:
       expo: '>=52.0.0'
       react: '*'
@@ -3230,8 +3236,8 @@ packages:
       react-native-windows:
         optional: true
 
-  '@react-native-community/slider@5.2.0':
-    resolution: {integrity: sha512-484sH8aWEaSjxaZ7HT3YZ8CKDcNes2synko1vdEz5DFEdvKAduxKJTj22L/qBMD7rtIkfbX69DMzWDAGbOAV6w==}
+  '@react-native-community/slider@5.0.1':
+    resolution: {integrity: sha512-K3JRWkIW4wQ79YJ6+BPZzp1SamoikxfPRw7Yw4B4PElEQmqZFrmH9M5LxvIo460/3QSrZF/wCgi3qizJt7g/iw==}
 
   '@react-native/assets-registry@0.81.5':
     resolution: {integrity: sha512-705B6x/5Kxm1RKRvSv0ADYWm5JOnoiQ1ufW7h8uu2E6G9Of/eE6hP/Ivw3U5jI16ERqZxiKQwk34VJbB0niX9w==}
@@ -10459,7 +10465,7 @@ snapshots:
       merge-options: 3.0.4
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0)
 
-  '@react-native-community/datetimepicker@9.1.0(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)':
+  '@react-native-community/datetimepicker@8.4.4(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)':
     dependencies:
       invariant: 2.2.4
       react: 19.1.0
@@ -10467,7 +10473,7 @@ snapshots:
     optionalDependencies:
       expo: 54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
 
-  '@react-native-community/slider@5.2.0': {}
+  '@react-native-community/slider@5.0.1': {}
 
   '@react-native/assets-registry@0.81.5': {}
 
@@ -10680,17 +10686,17 @@ snapshots:
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0)
       storybook: 10.4.3(@testing-library/dom@10.4.1)(@types/react@19.1.17)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  '@storybook/addon-ondevice-controls@10.4.4(261251b877d123e86c11afa1dacbfc14)':
+  '@storybook/addon-ondevice-controls@10.4.4(e5e4828e90901a505a3fb98894f67c9e)':
     dependencies:
       '@gorhom/portal': 1.0.14(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      '@react-native-community/datetimepicker': 9.1.0(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      '@react-native-community/slider': 5.2.0
+      '@react-native-community/datetimepicker': 8.4.4(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@react-native-community/slider': 5.0.1
       '@storybook/react-native-theming': 10.4.4(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       '@storybook/react-native-ui-common': 10.4.4(@types/react-dom@19.2.3(@types/react@19.1.17))(@types/react@19.1.17)(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(storybook@10.4.3(@testing-library/dom@10.4.1)(@types/react@19.1.17)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3)
       polished: 4.3.1
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0)
-      react-native-modal-datetime-picker: 18.0.0(@react-native-community/datetimepicker@9.1.0(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))
+      react-native-modal-datetime-picker: 18.0.0(@react-native-community/datetimepicker@8.4.4(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))
       storybook: 10.4.3(@testing-library/dom@10.4.1)(@types/react@19.1.17)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       tinycolor2: 1.6.0
     optionalDependencies:
@@ -14044,9 +14050,9 @@ snapshots:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0)
 
-  react-native-modal-datetime-picker@18.0.0(@react-native-community/datetimepicker@9.1.0(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0)):
+  react-native-modal-datetime-picker@18.0.0(@react-native-community/datetimepicker@8.4.4(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0)):
     dependencies:
-      '@react-native-community/datetimepicker': 9.1.0(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@react-native-community/datetimepicker': 8.4.4(expo@54.0.35(@babel/core@7.29.7)(graphql@16.14.0)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       prop-types: 15.8.1
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0)
 

@@ -21,6 +21,8 @@
     "lint:rn-components": "pnpm --filter rn-components lint",
     "storybook:rn-components": "pnpm --filter rn-components storybook:web",
     "storybook:rn-components:native": "pnpm --filter rn-components storybook:native",
+    "ios:rn-components": "pnpm --filter rn-components ios",
+    "android:rn-components": "pnpm --filter rn-components android",
     "test:rn-components": "pnpm --filter rn-components test"
   },
   "devDependencies": {
