@@ -1,15 +1,16 @@
 # guoba-vibe
 
-围绕「二维码 / 移动端 deep link」的实验性 monorepo，目前包含两个独立的前端应用，分别对应两种使用场景：服务端持久化的个人 vault，以及完全跑在浏览器里的本地 vault。
+围绕「二维码 / 移动端 deep link / 移动端组件」的实验性 monorepo，目前包含三个独立的前端应用，分别对应服务端持久化 vault、本地浏览器 vault，以及 React Native 组件库工作台。
 
 ## 应用
 
-| 路径                             | 简介                                                                      | 技术栈                                                                                                    |
-| -------------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| [`apps/qr-codes`](apps/qr-codes) | 单管理员、公开只读的 deep link QR vault，部署在 Vercel 上                 | Next.js 16 (App Router) · React 19 · Drizzle + Vercel Postgres · better-auth + GitHub OAuth · Tailwind v4 |
-| [`apps/qr-vault`](apps/qr-vault) | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage` | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
+| 路径                                       | 简介                                                                        | 技术栈                                                                                                    |
+| ------------------------------------------ | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [`apps/qr-codes`](apps/qr-codes)           | 单管理员、公开只读的 deep link QR vault，部署在 Vercel 上                   | Next.js 16 (App Router) · React 19 · Drizzle + Vercel Postgres · better-auth + GitHub OAuth · Tailwind v4 |
+| [`apps/qr-vault`](apps/qr-vault)           | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage`   | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
+| [`apps/rn-components`](apps/rn-components) | React Native 组件库，提供 web Storybook、Expo 原生 Storybook 和组件回归测试 | React Native 0.85 · Expo 56 · Storybook 10 · Vitest                                                       |
 
-两个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
+三个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
 
 ## 环境要求
 
@@ -47,6 +48,16 @@ pnpm lint:qr-vault
 pnpm test:qr-vault
 ```
 
+### rn-components
+
+```bash
+pnpm dev:rn-components                 # web Storybook，默认 http://localhost:6006
+pnpm storybook:rn-components:native    # Expo 原生 Storybook，用 iOS / Android 真机或模拟器打开
+pnpm test:rn-components                # Vitest 组件回归测试
+pnpm build:rn-components               # TypeScript no-emit 校验
+pnpm lint:rn-components
+```
+
 ### 仓库级
 
 ```bash
@@ -62,7 +73,8 @@ pnpm fmt:check    # CI 检查
 .
 ├── apps/
 │   ├── qr-codes/   # Next.js 应用（服务端 + DB）
-│   └── qr-vault/   # Vite 应用（纯前端 + localStorage）
+│   ├── qr-vault/   # Vite 应用（纯前端 + localStorage）
+│   └── rn-components/ # React Native 组件库 + Storybook
 ├── docs/           # 跨应用文档
 ├── AGENTS.md       # 协作约定（CLAUDE.md 软链到此）
 ├── pnpm-workspace.yaml

@@ -65,6 +65,8 @@ node_modules/
 .next/
 .turbo/
 .vercel/
+apps/*/.expo/
+apps/*/storybook-static/
 *.tsbuildinfo
 coverage/
 apps/*/pnpm-lock.yaml

@@ -15,7 +15,13 @@
     "build:qr-vault": "pnpm --filter qr-vault build",
     "lint:qr-vault": "pnpm --filter qr-vault lint",
     "preview:qr-vault": "pnpm --filter qr-vault preview",
-    "test:qr-vault": "pnpm --filter qr-vault test"
+    "test:qr-vault": "pnpm --filter qr-vault test",
+    "dev:rn-components": "pnpm --filter rn-components storybook:web",
+    "build:rn-components": "pnpm --filter rn-components build",
+    "lint:rn-components": "pnpm --filter rn-components lint",
+    "storybook:rn-components": "pnpm --filter rn-components storybook:web",
+    "storybook:rn-components:native": "pnpm --filter rn-components storybook:native",
+    "test:rn-components": "pnpm --filter rn-components test"
   },
   "devDependencies": {
     "lint-staged": "^17.0.5",

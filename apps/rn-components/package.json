@@ -1,0 +1,58 @@
+{
+  "name": "rn-components",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "lint": "oxlint",
+    "start": "expo start --host lan",
+    "storybook:web": "storybook dev --config-dir .storybook --host 0.0.0.0 -p 6006",
+    "storybook:web:build": "storybook build --config-dir .storybook",
+    "storybook:generate": "sb-rn-get-stories --config-path .rnstorybook",
+    "storybook:native": "STORYBOOK_ENABLED=true EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --host lan",
+    "storybook:native:ios": "STORYBOOK_ENABLED=true EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --ios",
+    "storybook:native:android": "STORYBOOK_ENABLED=true EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --android",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@gorhom/bottom-sheet": "^5.2.14",
+    "@storybook/addon-ondevice-actions": "^10.4.4",
+    "@storybook/addon-ondevice-backgrounds": "^10.4.4",
+    "@storybook/addon-ondevice-controls": "^10.4.4",
+    "@storybook/react-native": "^10.4.4",
+    "expo": "~56.0.11",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.85.3",
+    "react-native-gesture-handler": "~2.31.1",
+    "react-native-reanimated": "4.3.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-web": "^0.21.2",
+    "react-native-worklets": "0.8.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@storybook/react": "^10.4.3",
+    "@storybook/react-native-web-vite": "^10.4.3",
+    "@testing-library/jest-dom": "^6.9.0",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^24.12.4",
+    "@types/react": "^19",
+    "@vitejs/plugin-react": "^6.0.2",
+    "jsdom": "^29.1.1",
+    "oxlint": "^1.69.0",
+    "storybook": "^10.4.3",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.14",
+    "vitest": "^4.1.8"
+  }
+}
