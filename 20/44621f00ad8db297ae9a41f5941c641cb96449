@@ -1,0 +1,122 @@
+apps/rn-components/.rnstorybook/storybook.requires.ts
+  s_1c3631cba8a9c7::t_a3f5477c867535 3-6,10-14,18,20-21,24-27,30,32,34,37,45,47,50
+  s_1c3631cba8a9c7::t_6c5820ec593243 1-2,7-9,15-17,19,22-23,28-29,31,33,35-36,38-44,46,48-49
+apps/rn-components/src/__tests__/status-chip.test.tsx
+  s_1c3631cba8a9c7::t_48eeeef2721047 3-6,8-11
+  s_1c3631cba8a9c7::t_99c2fd36e3f226 1-2,7
+apps/rn-components/src/components/theme.ts
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-28
+apps/rn-components/src/__tests__/gb-button.test.tsx
+  s_1c3631cba8a9c7::t_99c2fd36e3f226 1-2,7,9,11,17
+  s_1c3631cba8a9c7::t_48eeeef2721047 3-6,8,10,12-16,18-19,21
+  s_1c3631cba8a9c7::t_81b5405957b3a9 20
+apps/rn-components/src/App.tsx
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-83
+README.md
+  s_1c3631cba8a9c7::t_1e0bc84049a9b9 7-10
+  s_1c3631cba8a9c7::t_476534be78a6b8 3,76-77
+  s_1c3631cba8a9c7::t_4ef9f2ecde585a 11,13,51-58
+apps/rn-components/AGENTS.md
+  s_1c3631cba8a9c7::t_476534be78a6b8 1-23
+apps/rn-components/src/stories/insight-card.stories.tsx
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-33
+apps/rn-components/.oxlintrc.json
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-41
+apps/rn-components/src/stories/gb-button.stories.tsx
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-38
+apps/rn-components/babel.config.cjs
+  s_1c3631cba8a9c7::t_16bffba11e6a6a 1-8
+pnpm-workspace.yaml
+  s_1c3631cba8a9c7::t_2bd35011fc3b88 16-28
+apps/rn-components/.rnstorybook/index.tsx
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-5
+apps/rn-components/.rnstorybook/main.ts
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-16
+apps/rn-components/src/components/insight-card.tsx
+  s_1c3631cba8a9c7::t_8e63632ed8dfff 43-45
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-42,46-128
+apps/rn-components/app.json
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-17
+apps/rn-components/.rnstorybook/preview.tsx
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-20
+package.json
+  s_1c3631cba8a9c7::t_4ef9f2ecde585a 18-24
+apps/rn-components/.storybook/storybook-env.d.ts
+  s_1c3631cba8a9c7::t_bd79438a5be409 1
+apps/rn-components/package.json
+  s_1c3631cba8a9c7::t_146c992fe06ce7 33-38,40,54
+  s_1c3631cba8a9c7::t_1e0bc84049a9b9 39,46-47
+  s_1c3631cba8a9c7::t_7cfc75c6e41dfe 55
+  s_1c3631cba8a9c7::t_99c2fd36e3f226 23-24,50-51,56
+  s_1c3631cba8a9c7::t_0b7eaa3324a0e2 16,20
+  s_1c3631cba8a9c7::t_4ef9f2ecde585a 32
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-15,17-19,21-22,25-31,41-45,48-49,52-53,57-58
+apps/rn-components/src/components/feature-panel.tsx
+  s_1c3631cba8a9c7::t_81b5405957b3a9 11
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-10,12-188
+apps/rn-components/src/stories/story-data.ts
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-34
+apps/rn-components/vitest.config.ts
+  s_1c3631cba8a9c7::t_99c2fd36e3f226 1-16
+apps/rn-components/src/components/index.ts
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-8
+apps/rn-components/src/__tests__/insight-card.test.tsx
+  s_1c3631cba8a9c7::t_99c2fd36e3f226 1-2,7-8,23-24
+  s_1c3631cba8a9c7::t_48eeeef2721047 3-6,9-21,25-26
+  s_1c3631cba8a9c7::t_81b5405957b3a9 22
+apps/rn-components/src/stories/status-chip.stories.tsx
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-38
+apps/rn-components/src/components/gb-button.tsx
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-99
+apps/rn-components/vitest.setup.ts
+  s_1c3631cba8a9c7::t_99c2fd36e3f226 1
+apps/rn-components/metro.config.cjs
+  s_1c3631cba8a9c7::t_16bffba11e6a6a 1-9
+apps/rn-components/.storybook/preview.tsx
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-22
+apps/rn-components/README.md
+  s_1c3631cba8a9c7::t_476534be78a6b8 1-49
+apps/rn-components/.storybook/preview.css
+  s_1c3631cba8a9c7::t_1e0bc84049a9b9 5-9,18
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-4,10-17,19-23
+apps/rn-components/.storybook/main.ts
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-14
+apps/rn-components/tsconfig.json
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-8,10-15,18-21
+  s_1c3631cba8a9c7::t_99c2fd36e3f226 9,16-17
+apps/rn-components/index.js
+  s_1c3631cba8a9c7::t_48eeeef2721047 1-5
+apps/rn-components/src/components/status-chip.tsx
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1-63
+apps/rn-components/src/index.ts
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1
+apps/rn-components/src/stories/feature-panel.stories.tsx
+  s_1c3631cba8a9c7::t_1e0bc84049a9b9 2
+  s_1c3631cba8a9c7::t_f1b16e5cc3b73c 1,3-31
+apps/rn-components/src/__tests__/feature-panel.test.tsx
+  s_1c3631cba8a9c7::t_99c2fd36e3f226 1-2,30-31,35
+  s_1c3631cba8a9c7::t_48eeeef2721047 3-29,32-34,36-40
+.gitignore
+  s_1c3631cba8a9c7::t_bd79438a5be409 68-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "2044621f00ad8db297ae9a41f5941c641cb96449",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_1c3631cba8a9c7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb31e-cb4a-79f2-8910-59415c0f074f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
