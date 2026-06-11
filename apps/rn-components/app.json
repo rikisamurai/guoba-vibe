@@ -8,10 +8,21 @@
     "userInterfaceStyle": "automatic",
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "guoba-story",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
-      "edgeToEdgeEnabled": true
-    }
+      "edgeToEdgeEnabled": true,
+      "package": "com.riki_samurai.guobarncomponents"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d5189884-c45a-42bb-9713-1741da0e958b"
+      }
+    },
+    "owner": "riki_samurai"
   }
 }
