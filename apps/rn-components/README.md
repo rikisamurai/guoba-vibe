@@ -2,6 +2,9 @@
 
 React Native component library workspace for simple and complex cross-platform components.
 
+This app targets Expo SDK 54 so it can be opened by the current Expo Go app when
+Expo Go is capped at SDK 54.
+
 ## What Is Included
 
 - Reusable components in `src/components`.
