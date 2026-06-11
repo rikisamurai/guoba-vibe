@@ -1,0 +1,38 @@
+apps/rn-components/app.json
+  s_079bcc6c50d433::t_08dcae9b338ba5 11
+  s_079bcc6c50d433::t_bba1efa4f0a525 19
+  s_079bcc6c50d433::t_285b231c6b1eb5 26-27
+package.json
+  s_079bcc6c50d433::t_9ee3d252b46eb0 24-25
+apps/rn-components/README.md
+  s_079bcc6c50d433::t_7d80e4ac7af2af 33,39,49-50,52,58,60-63,71,82,91-92,100,102
+  s_079bcc6c50d433::t_666d6366daf1d7 3-4,6-8,10,12-15,17,19-22,24,26-28,31-32,36-38,40-44,47-48,51,53-57,59,64-65,69-70,72-74,76-79,81,83,85-90,93-95,101,103-104
+.gitignore
+  s_079bcc6c50d433::t_9a700e641ad08e 69-70
+apps/rn-components/package.json
+  s_079bcc6c50d433::t_c968deb650a23d 17-18
+  s_079bcc6c50d433::t_285b231c6b1eb5 31-32
+README.md
+  s_079bcc6c50d433::t_d5bf68fd7e14b4 55-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "c1cc28c432c3401d263f6d234981edcb839db118",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_079bcc6c50d433": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9eaa6c0e-8518-4fa3-adf5-c5667445af91",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
