@@ -1,15 +1,16 @@
 # guoba-vibe
 
-围绕「二维码 / 移动端 deep link」的实验性 monorepo，目前包含两个独立的前端应用，分别对应两种使用场景：服务端持久化的个人 vault，以及完全跑在浏览器里的本地 vault。
+围绕「二维码 / 移动端 deep link / 移动端组件」的实验性 monorepo，目前包含三个独立的前端应用，分别对应服务端持久化 vault、本地浏览器 vault，以及 React Native 组件库工作台。
 
 ## 应用
 
-| 路径                             | 简介                                                                      | 技术栈                                                                                                    |
-| -------------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| [`apps/qr-codes`](apps/qr-codes) | 单管理员、公开只读的 deep link QR vault，部署在 Vercel 上                 | Next.js 16 (App Router) · React 19 · Drizzle + Vercel Postgres · better-auth + GitHub OAuth · Tailwind v4 |
-| [`apps/qr-vault`](apps/qr-vault) | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage` | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
+| 路径                                       | 简介                                                                        | 技术栈                                                                                                    |
+| ------------------------------------------ | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [`apps/qr-codes`](apps/qr-codes)           | 单管理员、公开只读的 deep link QR vault，部署在 Vercel 上                   | Next.js 16 (App Router) · React 19 · Drizzle + Vercel Postgres · better-auth + GitHub OAuth · Tailwind v4 |
+| [`apps/qr-vault`](apps/qr-vault)           | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage`   | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
+| [`apps/rn-components`](apps/rn-components) | React Native 组件库，提供 web Storybook、Expo 原生 Storybook 和组件回归测试 | React Native 0.81 · Expo SDK 54 · Storybook 10 · Vitest                                                   |
 
-两个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
+三个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
 
 ## 环境要求
 
@@ -25,11 +26,12 @@ pnpm install
 
 ## 常用脚本
 
-根目录的 `package.json` 把两个应用的常用命令都做了 alias，按需选用。
+根目录只保留仓库级脚本。应用开发命令进入对应 app 目录后运行。
 
-### qr-codes（默认 `dev` / `build` / `start` 指向这里）
+### qr-codes
 
 ```bash
+cd apps/qr-codes
 pnpm dev          # next dev
 pnpm build        # next build
 pnpm start        # next start
@@ -40,11 +42,27 @@ pnpm test         # vitest run
 ### qr-vault
 
 ```bash
-pnpm dev:qr-vault       # vite dev server，默认 http://localhost:5173
-pnpm build:qr-vault     # tsc -b && vite build
-pnpm preview:qr-vault   # vite preview
-pnpm lint:qr-vault
-pnpm test:qr-vault
+cd apps/qr-vault
+pnpm dev       # vite dev server，默认 http://localhost:5173
+pnpm build     # tsc -b && vite build
+pnpm preview   # vite preview
+pnpm lint
+pnpm test
+```
+
+### rn-components
+
+```bash
+cd apps/rn-components
+pnpm dev:web          # web Storybook，默认 http://localhost:6006
+pnpm run:ios          # iOS Simulator development build，首次编译较久
+pnpm run:ios-device   # iOS 真机 development build，需 Xcode signing
+pnpm run:android      # Android development build
+pnpm start:ios        # 已安装 dev build 后启动 Metro + iOS
+pnpm start:android    # 已安装 dev build 后启动 Metro + Android
+pnpm test             # Vitest 组件回归测试
+pnpm build            # TypeScript no-emit 校验
+pnpm lint
 ```
 
 ### 仓库级
@@ -54,15 +72,14 @@ pnpm fmt          # oxfmt 全量格式化
 pnpm fmt:check    # CI 检查
 ```
 
-也可以直接使用 workspace filter，比如 `pnpm --filter qr-codes test -- url-parse` 只跑单个文件。
-
 ## 仓库布局
 
 ```
 .
 ├── apps/
 │   ├── qr-codes/   # Next.js 应用（服务端 + DB）
-│   └── qr-vault/   # Vite 应用（纯前端 + localStorage）
+│   ├── qr-vault/   # Vite 应用（纯前端 + localStorage）
+│   └── rn-components/ # React Native 组件库 + Storybook
 ├── docs/           # 跨应用文档
 ├── AGENTS.md       # 协作约定（CLAUDE.md 软链到此）
 ├── pnpm-workspace.yaml

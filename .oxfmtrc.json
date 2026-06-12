@@ -17,6 +17,7 @@
     "docs/superpowers/**",
     "apps/**/.agents/**",
     "apps/**/.claude/**",
-    "apps/qr-codes/drizzle/meta/**"
+    "apps/qr-codes/drizzle/meta/**",
+    "apps/**/.rnstorybook/storybook.requires.ts"
   ]
 }

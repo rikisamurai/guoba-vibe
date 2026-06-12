@@ -1,0 +1,41 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "unicorn", "oxc", "import", "promise", "jsdoc"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true,
+    "maxWarnings": 0,
+    "reportUnusedDisableDirectives": "error"
+  },
+  "env": {
+    "builtin": true,
+    "browser": true,
+    "node": true
+  },
+  "ignorePatterns": ["coverage", "storybook-static", ".expo", ".rnstorybook/storybook.requires.ts"],
+  "rules": {
+    "import/no-unassigned-import": "off",
+    "promise/always-return": "off",
+    "react/react-in-jsx-scope": "off",
+    "typescript/consistent-return": "off"
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}", ".rnstorybook/**/*.{ts,tsx}"],
+      "rules": {
+        "max-lines": ["error", { "max": 200, "skipBlankLines": true, "skipComments": true }]
+      }
+    },
+    {
+      "files": ["src/**/*.test.{ts,tsx}", "src/__tests__/**"],
+      "rules": {
+        "max-lines": "off"
+      }
+    }
+  ]
+}

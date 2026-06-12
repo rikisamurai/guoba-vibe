@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Guoba RN Components",
+    "slug": "guoba-rn-components",
+    "scheme": "guoba-rn-components",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.rikisamurai.guobarncomponents",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "package": "com.rikisamurai.guobarncomponents"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d5189884-c45a-42bb-9713-1741da0e958b"
+      }
+    },
+    "owner": "riki_samurai",
+    "plugins": ["@react-native-community/datetimepicker"]
+  }
+}

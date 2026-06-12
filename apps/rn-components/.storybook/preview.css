@@ -1,0 +1,23 @@
+:root {
+  color: #17201d;
+  background: #eef3ee;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(211, 232, 121, 0.32), transparent 34rem),
+    radial-gradient(circle at bottom right, rgba(27, 117, 90, 0.18), transparent 30rem), #eef3ee;
+}
+
+#storybook-root {
+  min-height: 100vh;
+}

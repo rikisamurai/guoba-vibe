@@ -43,8 +43,6 @@
     "@vitest/ui": "^4.1.7",
     "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.10",
-    "oxlint": "^1.69.0",
-    "oxlint-tsgolint": "^0.23.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.7"
