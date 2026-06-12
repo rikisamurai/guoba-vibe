@@ -3,31 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter qr-codes dev",
-    "build": "pnpm --filter qr-codes build",
     "fmt": "oxfmt .",
     "fmt:check": "oxfmt --check .",
-    "start": "pnpm --filter qr-codes start",
     "lint": "pnpm -r --parallel lint",
-    "test": "pnpm --filter qr-codes test",
-    "prepare": "simple-git-hooks",
-    "dev:qr-vault": "pnpm --filter qr-vault dev",
-    "build:qr-vault": "pnpm --filter qr-vault build",
-    "lint:qr-vault": "pnpm --filter qr-vault lint",
-    "preview:qr-vault": "pnpm --filter qr-vault preview",
-    "test:qr-vault": "pnpm --filter qr-vault test",
-    "dev:rn-components": "pnpm --filter rn-components storybook:web",
-    "build:rn-components": "pnpm --filter rn-components build",
-    "lint:rn-components": "pnpm --filter rn-components lint",
-    "storybook:rn-components": "pnpm --filter rn-components storybook:web",
-    "storybook:rn-components:native": "pnpm --filter rn-components storybook:native",
-    "ios:rn-components": "pnpm --filter rn-components ios",
-    "android:rn-components": "pnpm --filter rn-components android",
-    "test:rn-components": "pnpm --filter rn-components test"
+    "prepare": "simple-git-hooks"
   },
   "devDependencies": {
     "lint-staged": "^17.0.5",
     "oxfmt": "^0.52.0",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
     "simple-git-hooks": "^2.13.1"
   },
   "simple-git-hooks": {

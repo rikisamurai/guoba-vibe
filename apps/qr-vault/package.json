@@ -39,8 +39,6 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.2",
     "jsdom": "^29.1.1",
-    "oxlint": "^1.69.0",
-    "oxlint-tsgolint": "^0.23.0",
     "react-grab": "^0.1.37",
     "tailwindcss": "^4.3.0",
     "typescript": "^5",

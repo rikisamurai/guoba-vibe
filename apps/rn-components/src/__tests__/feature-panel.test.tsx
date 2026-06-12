@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { expect, test, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { afterEach, expect, test, vi } from 'vitest'
 
 import { FeaturePanel } from '../components/feature-panel'
 
@@ -26,6 +26,8 @@ const features = [
   },
 ] as const
 
+afterEach(cleanup)
+
 test('FeaturePanel switches the selected feature and reports the selected id', () => {
   const onSelect = vi.fn()
   render(<FeaturePanel features={features} onSelectFeature={onSelect} />)
@@ -37,4 +39,13 @@ test('FeaturePanel switches the selected feature and reports the selected id', (
   expect(screen.getByText('Compare component states across releases.')).toBeTruthy()
   expect(screen.getByText('Drift')).toBeTruthy()
   expect(onSelect).toHaveBeenCalledWith('audit')
+})
+
+test('FeaturePanel keeps the selected tab label visible on the dark selected background', () => {
+  render(<FeaturePanel features={features} />)
+
+  const activeTab = screen.getByRole('button', { name: 'Capture' })
+  const activeLabel = within(activeTab).getByText('Capture')
+
+  expect(globalThis.getComputedStyle(activeLabel).color).toBe('rgb(255, 255, 255)')
 })

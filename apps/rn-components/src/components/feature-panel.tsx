@@ -67,7 +67,9 @@ export function FeaturePanel({
               style={[styles.tab, isActive ? styles.activeTab : undefined]}
             >
               <View style={[styles.dot, { backgroundColor: toneColors[feature.tone] }]} />
-              <Text style={styles.tabText}>{feature.title}</Text>
+              <Text style={[styles.tabText, isActive ? styles.activeTabText : undefined]}>
+                {feature.title}
+              </Text>
             </Pressable>
           )
         })}
@@ -101,6 +103,9 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     backgroundColor: palette.ink,
+  },
+  activeTabText: {
+    color: palette.white,
   },
   body: {
     flexDirection: 'row',
