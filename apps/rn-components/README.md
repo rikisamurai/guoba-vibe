@@ -23,14 +23,13 @@ on-device Storybook(真机 iOS / Android)以及组件级回归测试。
 
 ## 开发流程
 
-同一套 stories 有两个载体:日常用 web 快速迭代,需要真机保真时用 native 构建。
+同一套 stories 有两个载体:日常用 web 快速迭代,需要真机保真时先安装 native dev
+build。native dev build 默认渲染 Storybook,没有额外的普通预览 fallback。
 
 ### 1. Web Storybook —— 日常开发(快)
 
 ```bash
-pnpm dev:rn-components          # 仓库根目录 → http://localhost:6006
-# 或在本 app 内:
-pnpm storybook:web
+pnpm dev:web   # http://localhost:6006
 ```
 
 Vite HMR 让它成为最快的循环 —— 最适合搭建和打磨组件结构、props、布局。它通过
@@ -41,11 +40,11 @@ Vite HMR 让它成为最快的循环 —— 最适合搭建和打磨组件结构
 
 原生 app 是 Expo **development build**(不是 Expo Go),会打包进你真实的原生模块,给出真机行为。
 
-首次构建(生成 `ios/` + `android/`、编译、安装):
+首次构建或原生依赖 / 原生配置变化时,用 `expo run:*` 生成、编译并安装 dev build:
 
 ```bash
-pnpm ios:rn-components          # expo run:ios     → iOS 模拟器(或真机)
-pnpm android:rn-components      # expo run:android → Android 模拟器(或真机)
+pnpm ios       # expo run:ios     → iOS 模拟器(或真机)
+pnpm android   # expo run:android → Android 模拟器(或真机)
 ```
 
 首次构建的前置条件:
@@ -56,18 +55,23 @@ pnpm android:rn-components      # expo run:android → Android 模拟器(或真�
 - `expo-dev-client` 已是依赖。`ios/` 和 `android/` 按需生成(CNG)且已 git-ignore ——
   改了 `app.json` 里的原生配置后,重跑 `expo prebuild --clean` 重新生成。
 
-dev build 装好后,改 JS 会热更新;只有改动原生依赖或原生配置时才需要重跑 `pnpm ios`/`android`。
+dev build 装好后,打开 app 就是 Storybook;改 JS 会热更新。只有改动原生依赖或原生配置时才需要重跑
+`pnpm ios` / `pnpm android`。
 
 ### 3. On-device Storybook
 
+dev build 已经装好后,Storybook 只需要启动 Metro,所以这里用 `expo start`,不是 `expo run`。
+`pnpm dev` 和 `pnpm dev:native` 都只启动 Metro;`ios:native` / `android:native` 会额外尝试打开对应设备:
+
 ```bash
-pnpm storybook:rn-components:native   # 仓库根目录
-# 或在本 app 内:
-pnpm storybook:native
+pnpm dev              # 只启动 Metro,真机扫码或手动打开 dev build
+pnpm dev:native       # 同上,语义更明确
+pnpm ios:native       # 启动 Metro,并打开 iOS Simulator
+pnpm android:native   # 启动 Metro,并打开 Android 设备 / 模拟器
 ```
 
-它会以 `STORYBOOK_ENABLED=true` 启动 Metro,于是 dev build 渲染 Storybook 界面而非静态目录。
-在模拟器或真机上打开 dev build,它会自动连上;用屏幕底部的 `☰` 菜单浏览 stories。
+也就是说,`expo run:*` 负责安装原生壳,`expo start` 负责给已安装的 dev build 提供 Storybook
+JS bundle。用屏幕底部的 `☰` 菜单浏览 stories。
 
 ### 校准说明(web vs native)
 
@@ -80,23 +84,19 @@ pnpm storybook:native
 
 ## 脚本速查
 
-| 命令(仓库根)                          | 本 app 内               | 作用                         |
-| ------------------------------------- | ----------------------- | ---------------------------- |
-| `pnpm dev:rn-components`              | `pnpm storybook:web`    | Web Storybook(浏览器)        |
-| `pnpm storybook:rn-components:native` | `pnpm storybook:native` | On-device Storybook(Metro)   |
-| `pnpm ios:rn-components`              | `pnpm ios`              | 构建并运行 iOS dev build     |
-| `pnpm android:rn-components`          | `pnpm android`          | 构建并运行 Android dev build |
-| `pnpm test:rn-components`             | `pnpm test`             | Vitest 回归测试              |
-| `pnpm build:rn-components`            | `pnpm build`            | TypeScript no-emit 校验      |
-| `pnpm lint:rn-components`             | `pnpm lint`             | oxlint                       |
-
-## 维护 On-device Storybook
-
-原生 story 索引在 `.rnstorybook/storybook.requires.ts`。增删 story 文件后,重新生成:
-
-```bash
-pnpm storybook:generate
-```
+| 命令                  | 作用                           |
+| --------------------- | ------------------------------ |
+| `pnpm dev:web`        | Web Storybook(浏览器)          |
+| `pnpm build:web`      | 构建 Web Storybook             |
+| `pnpm dev`            | 启动 Storybook Metro           |
+| `pnpm ios`            | 构建并运行 iOS dev build       |
+| `pnpm android`        | 构建并运行 Android dev build   |
+| `pnpm dev:native`     | 启动 Storybook Metro           |
+| `pnpm ios:native`     | 启动 Storybook Metro + iOS     |
+| `pnpm android:native` | 启动 Storybook Metro + Android |
+| `pnpm test`           | Vitest 回归测试                |
+| `pnpm build`          | TypeScript no-emit 校验        |
+| `pnpm lint`           | oxlint                         |
 
 ## 测试
 

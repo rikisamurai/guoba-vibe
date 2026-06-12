@@ -41,5 +41,4 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 
 module.exports = withStorybook(config, {
   configPath: './.rnstorybook',
-  enabled: process.env.STORYBOOK_ENABLED === 'true',
 })
