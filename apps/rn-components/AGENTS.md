@@ -20,4 +20,4 @@ React Native component library workspace with web Storybook, native Expo Storybo
 - Run `pnpm --filter rn-components test` after component behavior changes.
 - Run `pnpm --filter rn-components build` after TypeScript, export, Storybook, or app entry changes.
 - Run `pnpm --filter rn-components lint` before completion.
-- For visual Storybook changes, start `pnpm --filter rn-components storybook:web` and verify the local browser at `http://localhost:6006`.
+- For visual Storybook changes, start `pnpm --filter rn-components dev:web` and verify the local browser at `http://localhost:6006`.

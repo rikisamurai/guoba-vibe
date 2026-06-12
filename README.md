@@ -26,11 +26,12 @@ pnpm install
 
 ## 常用脚本
 
-根目录的 `package.json` 把两个应用的常用命令都做了 alias，按需选用。
+根目录只保留仓库级脚本。应用开发命令进入对应 app 目录后运行。
 
-### qr-codes（默认 `dev` / `build` / `start` 指向这里）
+### qr-codes
 
 ```bash
+cd apps/qr-codes
 pnpm dev          # next dev
 pnpm build        # next build
 pnpm start        # next start
@@ -41,23 +42,27 @@ pnpm test         # vitest run
 ### qr-vault
 
 ```bash
-pnpm dev:qr-vault       # vite dev server，默认 http://localhost:5173
-pnpm build:qr-vault     # tsc -b && vite build
-pnpm preview:qr-vault   # vite preview
-pnpm lint:qr-vault
-pnpm test:qr-vault
+cd apps/qr-vault
+pnpm dev       # vite dev server，默认 http://localhost:5173
+pnpm build     # tsc -b && vite build
+pnpm preview   # vite preview
+pnpm lint
+pnpm test
 ```
 
 ### rn-components
 
 ```bash
-pnpm dev:rn-components                 # web Storybook，默认 http://localhost:6006
-pnpm ios:rn-components                 # iOS development build（首次编译较久，需 Xcode + iOS 平台）
-pnpm android:rn-components             # Android development build
-pnpm storybook:rn-components:native    # Expo 原生 Storybook，用 dev build 在真机/模拟器打开
-pnpm test:rn-components                # Vitest 组件回归测试
-pnpm build:rn-components               # TypeScript no-emit 校验
-pnpm lint:rn-components
+cd apps/rn-components
+pnpm dev:web          # web Storybook，默认 http://localhost:6006
+pnpm run:ios          # iOS Simulator development build，首次编译较久
+pnpm run:ios-device   # iOS 真机 development build，需 Xcode signing
+pnpm run:android      # Android development build
+pnpm start:ios        # 已安装 dev build 后启动 Metro + iOS
+pnpm start:android    # 已安装 dev build 后启动 Metro + Android
+pnpm test             # Vitest 组件回归测试
+pnpm build            # TypeScript no-emit 校验
+pnpm lint
 ```
 
 ### 仓库级
@@ -66,8 +71,6 @@ pnpm lint:rn-components
 pnpm fmt          # oxfmt 全量格式化
 pnpm fmt:check    # CI 检查
 ```
-
-也可以直接使用 workspace filter，比如 `pnpm --filter qr-codes test -- url-parse` 只跑单个文件。
 
 ## 仓库布局
 
