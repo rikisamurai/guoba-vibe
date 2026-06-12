@@ -1,0 +1,26 @@
+README.md
+  s_5c103f4d1b024a::t_2dad55dea19d29 29,31,34,45-50,56-65
+apps/rn-components/AGENTS.md
+  s_5c103f4d1b024a::t_2dad55dea19d29 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "ff5634ac08652cb73dc839da63c47efa601ae1df",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_5c103f4d1b024a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb9d9-e5d7-7d92-b094-cc42624b1527",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
