@@ -1,0 +1,40 @@
+apps/rn-components/src/__tests__/app.test.tsx
+  s_5c103f4d1b024a::t_7b24fde2f82b8f 1-17
+apps/rn-components/src/App.tsx
+  s_5c103f4d1b024a::t_a25dd0eb6a7e52 4
+apps/rn-components/package.json
+  h_5d5a5826f18d67 16,19-23
+.oxfmtrc.json
+  s_5c103f4d1b024a::t_b4cbf2020d70bd 20-21
+apps/rn-components/AGENTS.md
+  s_5c103f4d1b024a::t_678d0a496b7c0d 10
+apps/rn-components/README.md
+  s_5c103f4d1b024a::t_8c6a08f81c2393 32,46-47,67-70
+  s_5c103f4d1b024a::t_4138a2f1fd98de 26,43,59
+  s_5c103f4d1b024a::t_30cc8725fb6ac6 87-99
+  s_5c103f4d1b024a::t_d9534d2f188a8d 64
+  s_5c103f4d1b024a::t_3856b983334797 27,58,63,73-74
+apps/rn-components/.rnstorybook/storybook.requires.ts
+  h_5d5a5826f18d67 3-6,12,21,26-27,30,37-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e78e4d3f62383bb0c1abd1b422492ec6ff39d80c",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_5c103f4d1b024a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb9d9-e5d7-7d92-b094-cc42624b1527",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
