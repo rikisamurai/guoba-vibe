@@ -1,0 +1,34 @@
+apps/qr-codes/.oxlintrc.json
+  s_079bcc6c50d433::t_a6c01b5086a5a7 2
+pnpm-workspace.yaml
+  s_079bcc6c50d433::t_20e52bc5b4ab41 5-8
+pnpm-lock.yaml
+  s_079bcc6c50d433::t_fc29ede1e1eed7 7-15,26-31
+apps/rn-components/.oxlintrc.json
+  s_079bcc6c50d433::t_8fc36f61062559 2
+package.json
+  s_079bcc6c50d433::t_c723ba3a7e83bd 31-32
+apps/qr-vault/.oxlintrc.json
+  s_079bcc6c50d433::t_16846d7b07fac3 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "ffc77fc42c727a9d8b2f16fe402290840df7ffc8",
+  "prompts": {},
+  "humans": {
+    "h_5d5a5826f18d67": {
+      "author": "riki <rikisamurai310@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_079bcc6c50d433": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9eaa6c0e-8518-4fa3-adf5-c5667445af91",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
