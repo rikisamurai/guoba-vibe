@@ -36,15 +36,17 @@ Vite HMR 让它成为最快的循环 —— 最适合搭建和打磨组件结构
 `react-native-web` 渲染,对纯 `View` / `Text` / `Pressable` + flexbox 是高保真投影,
 但**不等于**真机(见下方校准说明)。
 
-### 2. Native 预览 —— development build(真机 / 模拟器)
+### 2. Native 首次构建 —— development build(真机 / 模拟器)
 
 原生 app 是 Expo **development build**(不是 Expo Go),会打包进你真实的原生模块,给出真机行为。
 
-首次构建或原生依赖 / 原生配置变化时,用 `expo run:*` 生成、编译并安装 dev build:
+首次开发必须先跑一次 `expo run:*`,用来生成、编译并安装 dev build。之后只有改了原生依赖或原生配置时,
+才需要重新跑这些命令:
 
 ```bash
-pnpm ios       # expo run:ios     → iOS 模拟器(或真机)
-pnpm android   # expo run:android → Android 模拟器(或真机)
+pnpm run:ios          # expo run:ios          → iOS 模拟器
+pnpm run:ios-device   # expo run:ios --device → iOS 真机
+pnpm run:android      # expo run:android      → Android 设备 / 模拟器
 ```
 
 首次构建的前置条件:
@@ -55,20 +57,20 @@ pnpm android   # expo run:android → Android 模拟器(或真机)
 - `expo-dev-client` 已是依赖。`ios/` 和 `android/` 按需生成(CNG)且已 git-ignore ——
   改了 `app.json` 里的原生配置后,重跑 `expo prebuild --clean` 重新生成。
 
-dev build 装好后,打开 app 就是 Storybook;改 JS 会热更新。只有改动原生依赖或原生配置时才需要重跑
-`pnpm ios` / `pnpm android`。
+dev build 装好后,打开 app 就是 Storybook;改 JS 会热更新。日常开发不要反复跑
+`pnpm run:ios` / `pnpm run:ios-device` / `pnpm run:android`,直接进入下一步用 `start:*`。
 
-### 3. On-device Storybook
+### 3. Native 日常开发 —— 启动 Metro
 
 dev build 已经装好后,Storybook 只需要启动 Metro,所以这里用 `expo start`,不是 `expo run`。
-`pnpm dev` 和 `pnpm dev:native` 都只启动 Metro;`ios:native` / `android:native` 会额外尝试打开对应设备:
+后续 native 开发主要用这两个命令:
 
 ```bash
-pnpm dev              # 只启动 Metro,真机扫码或手动打开 dev build
-pnpm dev:native       # 同上,语义更明确
-pnpm ios:native       # 启动 Metro,并打开 iOS Simulator
-pnpm android:native   # 启动 Metro,并打开 Android 设备 / 模拟器
+pnpm start:ios       # expo start --ios     → 启动 Metro,并打开 iOS Simulator
+pnpm start:android   # expo start --android → 启动 Metro,并打开 Android 设备 / 模拟器
 ```
+
+如果只想启动 Metro,再自己扫码或手动打开已安装的 dev build,用 `pnpm dev`。
 
 也就是说,`expo run:*` 负责安装原生壳,`expo start` 负责给已安装的 dev build 提供 Storybook
 JS bundle。用屏幕底部的 `☰` 菜单浏览 stories。
@@ -84,19 +86,19 @@ JS bundle。用屏幕底部的 `☰` 菜单浏览 stories。
 
 ## 脚本速查
 
-| 命令                  | 作用                           |
-| --------------------- | ------------------------------ |
-| `pnpm dev:web`        | Web Storybook(浏览器)          |
-| `pnpm build:web`      | 构建 Web Storybook             |
-| `pnpm dev`            | 启动 Storybook Metro           |
-| `pnpm ios`            | 构建并运行 iOS dev build       |
-| `pnpm android`        | 构建并运行 Android dev build   |
-| `pnpm dev:native`     | 启动 Storybook Metro           |
-| `pnpm ios:native`     | 启动 Storybook Metro + iOS     |
-| `pnpm android:native` | 启动 Storybook Metro + Android |
-| `pnpm test`           | Vitest 回归测试                |
-| `pnpm build`          | TypeScript no-emit 校验        |
-| `pnpm lint`           | oxlint                         |
+| 命令                  | 作用                              |
+| --------------------- | --------------------------------- |
+| `pnpm dev:web`        | Web Storybook(浏览器)             |
+| `pnpm build:web`      | 构建 Web Storybook                |
+| `pnpm dev`            | 启动 Storybook Metro              |
+| `pnpm run:ios`        | 首次构建并运行 iOS dev build      |
+| `pnpm run:ios-device` | 首次构建并运行 iOS 真机 dev build |
+| `pnpm run:android`    | 首次构建并运行 Android dev build  |
+| `pnpm start:ios`      | 启动 Storybook Metro + iOS        |
+| `pnpm start:android`  | 启动 Storybook Metro + Android    |
+| `pnpm test`           | Vitest 回归测试                   |
+| `pnpm build`          | TypeScript no-emit 校验           |
+| `pnpm lint`           | oxlint                            |
 
 ## 测试
 
