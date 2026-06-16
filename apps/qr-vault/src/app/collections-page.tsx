@@ -8,6 +8,7 @@ import { CollectionFormCard } from '@/app/collections/collection-form-card'
 import { CollectionListCard } from '@/app/collections/collection-list-card'
 import { CollectionQrCard } from '@/app/collections/collection-qr-card'
 import { useVault } from '@/app/use-vault'
+import { useArmedAction } from '@/hooks/use-armed-action'
 import { type Collection, deleteCollection, upsertCollection } from '@/lib/storage'
 import { useDocumentTitle } from '@/lib/use-document-title'
 import { getQrsForCollection } from '@/lib/vault'
@@ -29,7 +30,12 @@ export function CollectionsPage() {
   const titleRef = useRef<HTMLInputElement>(null)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [armedDeleteId, setArmedDeleteId] = useState('')
+  const {
+    armedId: armedDeleteId,
+    progress: armedProgress,
+    arm: armDelete,
+    cancel: cancelArm,
+  } = useArmedAction()
   useDocumentTitle(
     selectedCollection
       ? t('collections.documentDetail', { title: selectedCollection.title })
@@ -40,23 +46,6 @@ export function CollectionsPage() {
     setTitle(selectedCollection?.title ?? '')
     setDescription(selectedCollection?.description ?? '')
   }, [selectedCollection?.id, selectedCollection?.title, selectedCollection?.description])
-
-  useEffect(() => {
-    if (!armedDeleteId) return
-    function onDocClick(event: MouseEvent) {
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- DOM event target is EventTarget; narrowing to HTMLElement to call closest()
-      const target = event.target as HTMLElement | null
-      if (target?.closest(`[data-armed-for="${armedDeleteId}"]`)) return
-      setArmedDeleteId('')
-    }
-    const attach = window.setTimeout(() => document.addEventListener('click', onDocClick), 0)
-    const autoCancel = window.setTimeout(() => setArmedDeleteId(''), 3000)
-    return () => {
-      window.clearTimeout(attach)
-      window.clearTimeout(autoCancel)
-      document.removeEventListener('click', onDocClick)
-    }
-  }, [armedDeleteId])
 
   function saveCollection() {
     if (!title.trim()) return
@@ -70,7 +59,7 @@ export function CollectionsPage() {
   }
 
   function startNewCollection() {
-    setArmedDeleteId('')
+    cancelArm()
     setTitle('')
     setDescription('')
     if (collectionId) void navigate({ to: '/collections' })
@@ -80,7 +69,7 @@ export function CollectionsPage() {
   function handleDelete(target: Collection) {
     const deletedItems = data.collectionItems.filter((item) => item.collectionId === target.id)
     updateVault((current) => deleteCollection(current, target.id))
-    setArmedDeleteId('')
+    cancelArm()
     if (collectionId === target.id) void navigate({ to: '/collections' })
 
     toast.success(t('collections.deletedToast'), {
@@ -139,10 +128,11 @@ export function CollectionsPage() {
           title={title}
           description={description}
           armedDeleteId={armedDeleteId}
+          armedProgress={armedProgress}
           titleRef={titleRef}
           onTitleChange={setTitle}
           onDescriptionChange={setDescription}
-          onArmDelete={setArmedDeleteId}
+          onArmDelete={armDelete}
           onDelete={handleDelete}
           onSave={saveCollection}
         />
