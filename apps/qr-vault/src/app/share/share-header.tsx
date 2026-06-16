@@ -15,7 +15,7 @@ export function ShareHeader() {
           <div className="bg-primary text-primary-foreground flex aspect-square size-7 items-center justify-center rounded-md">
             <QrCode className="size-3.5" />
           </div>
-          <span className="font-semibold tracking-tight">QR Vault</span>
+          <span className="font-semibold tracking-tight">{t('app.brand')}</span>
         </Link>
         <div className="flex items-center gap-3">
           <Link
