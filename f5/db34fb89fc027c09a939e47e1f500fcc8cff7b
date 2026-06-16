@@ -1,0 +1,34 @@
+apps/qr-vault/src/tests/url.test.ts
+  s_26f8a56044604c::t_af7999dca82dbd 18
+apps/qr-vault/src/app/qr-detail/preview-panel.tsx
+  s_26f8a56044604c::t_1acb42364ead9c 30
+  s_26f8a56044604c::t_401201e3060cc0 46-51
+apps/qr-vault/src/lib/url.ts
+  s_26f8a56044604c::t_25c1841e3ba6b2 25
+  s_26f8a56044604c::t_d8636b43035aa0 44
+  s_26f8a56044604c::t_37e12ddfc66faa 7
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_26f8a56044604c::t_9db5f3a51fa8b2 159
+  s_26f8a56044604c::t_353a1a0ad85828 19
+  s_26f8a56044604c::t_1707446805d16d 150
+apps/qr-vault/src/app/qr-detail/qr-detail-form-card.tsx
+  s_26f8a56044604c::t_0ee9090bfd8bd6 70,75
+  s_26f8a56044604c::t_6353b3b5cfcbfc 17
+  s_26f8a56044604c::t_b9075c90bfca49 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "f5db34fb89fc027c09a939e47e1f500fcc8cff7b",
+  "prompts": {},
+  "sessions": {
+    "s_26f8a56044604c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "827bc924-6f1f-4bbb-ae29-79469be2e1a8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
