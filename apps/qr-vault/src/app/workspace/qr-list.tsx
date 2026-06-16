@@ -13,6 +13,7 @@ type QrListProps = {
   selectedId?: string
   search: string
   armedDeleteId: string
+  armedProgress: number
   copiedUrlId: string
   itemRefs: MutableRefObject<Map<string, HTMLDivElement>>
   onSelect: (id: string) => void
@@ -26,6 +27,7 @@ export function QrList({
   selectedId,
   search,
   armedDeleteId,
+  armedProgress,
   copiedUrlId,
   itemRefs,
   onSelect,
@@ -59,6 +61,7 @@ export function QrList({
           qr={qr}
           isSelected={qr.id === selectedId}
           armedDeleteId={armedDeleteId}
+          armedProgress={armedProgress}
           copiedUrlId={copiedUrlId}
           itemRefs={itemRefs}
           onSelect={onSelect}
@@ -75,6 +78,7 @@ function QrListItem({
   qr,
   isSelected,
   armedDeleteId,
+  armedProgress,
   copiedUrlId,
   itemRefs,
   onSelect,
@@ -141,10 +145,14 @@ function QrListItem({
               event.stopPropagation()
               onDelete(qr.id)
             }}
-            className="text-destructive bg-destructive/10 border-destructive/40 hover:bg-destructive/20 flex h-10 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors sm:h-8"
+            className="text-destructive bg-destructive/10 border-destructive/40 hover:bg-destructive/20 relative flex h-10 items-center gap-1.5 overflow-hidden rounded-md border px-2.5 text-xs font-medium transition-colors sm:h-8"
             aria-label={t('workspace.confirmDelete', { name })}
           >
             <Trash2 className="size-3.5" /> {t('common.confirm')}
+            <span
+              className="bg-destructive/40 absolute bottom-0 left-0 h-0.5"
+              style={{ width: `${armedProgress * 100}%` }}
+            />
           </button>
         ) : (
           <QrRowActions

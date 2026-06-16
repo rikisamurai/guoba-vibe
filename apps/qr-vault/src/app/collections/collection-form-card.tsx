@@ -15,6 +15,7 @@ type CollectionFormCardProps = {
   title: string
   description: string
   armedDeleteId: string
+  armedProgress: number
   titleRef: RefObject<HTMLInputElement | null>
   onTitleChange: (next: string) => void
   onDescriptionChange: (next: string) => void
@@ -28,6 +29,7 @@ export function CollectionFormCard({
   title,
   description,
   armedDeleteId,
+  armedProgress,
   titleRef,
   onTitleChange,
   onDescriptionChange,
@@ -81,6 +83,7 @@ export function CollectionFormCard({
           <CollectionDeleteButton
             collection={collection}
             armedDeleteId={armedDeleteId}
+            armedProgress={armedProgress}
             onArmDelete={onArmDelete}
             onDelete={onDelete}
           />
@@ -96,9 +99,10 @@ export function CollectionFormCard({
 function CollectionDeleteButton({
   collection,
   armedDeleteId,
+  armedProgress,
   onArmDelete,
   onDelete,
-}: Pick<CollectionFormCardProps, 'armedDeleteId' | 'onArmDelete' | 'onDelete'> & {
+}: Pick<CollectionFormCardProps, 'armedDeleteId' | 'armedProgress' | 'onArmDelete' | 'onDelete'> & {
   collection: Collection
 }) {
   const { t } = useTranslation()
@@ -109,11 +113,16 @@ function CollectionDeleteButton({
         <Button
           type="button"
           variant="destructive"
+          className="relative overflow-hidden"
           data-armed-for={collection.id}
           onClick={() => onDelete(collection)}
           aria-label={t('collections.confirmDelete', { name: collection.title })}
         >
           <Trash2 /> {t('common.confirm')}
+          <span
+            className="absolute bottom-0 left-0 h-0.5 bg-white/50"
+            style={{ width: `${armedProgress * 100}%` }}
+          />
         </Button>
       ) : (
         <Button

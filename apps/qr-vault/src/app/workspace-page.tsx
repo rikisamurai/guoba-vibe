@@ -7,8 +7,9 @@ import { QrInspector } from '@/app/workspace/qr-inspector'
 import { QrList } from '@/app/workspace/qr-list'
 import type { ActiveFilter, WorkspaceQr } from '@/app/workspace/types'
 import { WorkspaceHeader } from '@/app/workspace/workspace-header'
+import { useArmedAction } from '@/hooks/use-armed-action'
 import { downloadDataUrl, qrFileName } from '@/lib/qr'
-import { deleteQr, LAST_SAVED_QR_ID_KEY } from '@/lib/storage'
+import { deleteQr, LAST_SAVED_QR_ID_KEY, restoreQr } from '@/lib/storage'
 import { buildShareUrl } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 import { getQrsForCollection, getUncategorizedQrs, searchQrs, sortQrsByRecent } from '@/lib/vault'
@@ -20,30 +21,18 @@ export function WorkspacePage() {
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState('')
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>('all')
-  const [armedDelete, setArmedDelete] = useState('')
+  const {
+    armedId: armedDelete,
+    progress: armedProgress,
+    arm: armDelete,
+    cancel: cancelArm,
+  } = useArmedAction()
   const [copiedUrlId, setCopiedUrlId] = useState('')
   const [copiedShareId, setCopiedShareId] = useState('')
   const [inspectorDataUrl, setInspectorDataUrl] = useState<string | null>(null)
   const [downloadedInspectorId, setDownloadedInspectorId] = useState('')
   const pendingSavedIdRef = useRef<string | null>(null)
   const listItemRefs = useRef(new Map<string, HTMLDivElement>())
-
-  useEffect(() => {
-    if (!armedDelete) return
-    function onDocClick(event: MouseEvent) {
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- DOM event target is EventTarget; narrowing to HTMLElement to call closest()
-      const target = event.target as HTMLElement | null
-      if (target?.closest(`[data-armed-for="${armedDelete}"]`)) return
-      setArmedDelete('')
-    }
-    const attach = window.setTimeout(() => document.addEventListener('click', onDocClick), 0)
-    const autoCancel = window.setTimeout(() => setArmedDelete(''), 3000)
-    return () => {
-      window.clearTimeout(attach)
-      window.clearTimeout(autoCancel)
-      document.removeEventListener('click', onDocClick)
-    }
-  }, [armedDelete])
 
   useEffect(() => {
     if (pendingSavedIdRef.current === null) {
@@ -69,18 +58,19 @@ export function WorkspacePage() {
   }, [data.qrs])
 
   function handleDelete(qrId: string) {
-    const deletedQr = data.qrs.find((qr) => qr.id === qrId)
+    const deletedIndex = data.qrs.findIndex((qr) => qr.id === qrId)
+    const deletedQr = data.qrs[deletedIndex]
     const deletedCollectionItems = data.collectionItems.filter((item) => item.qrId === qrId)
 
     updateVault((current) => deleteQr(current, qrId))
-    setArmedDelete('')
+    cancelArm()
     if (selectedId === qrId) setSelectedId('')
     if (!deletedQr) return
 
     toast.success(t('toast.deletedQr'), {
       action: {
         label: t('toast.undo'),
-        onClick: () => restoreDeletedQr(deletedQr, deletedCollectionItems),
+        onClick: () => restoreDeletedQr(deletedQr, deletedCollectionItems, deletedIndex),
       },
     })
   }
@@ -88,21 +78,9 @@ export function WorkspacePage() {
   function restoreDeletedQr(
     deletedQr: WorkspaceQr,
     deletedCollectionItems: typeof data.collectionItems,
+    index: number,
   ) {
-    updateVault((current) => {
-      if (current.qrs.some((qr) => qr.id === deletedQr.id)) return current
-      const existingItems = new Set(
-        current.collectionItems.map((item) => `${item.collectionId}:${item.qrId}`),
-      )
-      const restoredItems = deletedCollectionItems.filter(
-        (item) => !existingItems.has(`${item.collectionId}:${item.qrId}`),
-      )
-      return {
-        ...current,
-        qrs: [...current.qrs, deletedQr],
-        collectionItems: [...current.collectionItems, ...restoredItems],
-      }
-    })
+    updateVault((current) => restoreQr(current, deletedQr, deletedCollectionItems, index))
     setSelectedId(deletedQr.id)
   }
 
@@ -170,11 +148,12 @@ export function WorkspacePage() {
             selectedId={selectedQr?.id}
             search={search}
             armedDeleteId={armedDelete}
+            armedProgress={armedProgress}
             copiedUrlId={copiedUrlId}
             itemRefs={listItemRefs}
             onSelect={setSelectedId}
             onCopyUrl={(qr) => void copyUrl(qr)}
-            onArmDelete={setArmedDelete}
+            onArmDelete={armDelete}
             onDelete={handleDelete}
           />
         </div>

@@ -120,6 +120,20 @@ export function deleteQr(data: VaultData, qrId: string): VaultData {
   }
 }
 
+export function restoreQr(
+  data: VaultData,
+  qr: QRCodeItem,
+  items: CollectionItem[],
+  index: number,
+): VaultData {
+  if (data.qrs.some((existing) => existing.id === qr.id)) return data
+  const qrs = [...data.qrs]
+  qrs.splice(Math.max(0, Math.min(index, qrs.length)), 0, qr)
+  const keys = new Set(data.collectionItems.map((item) => `${item.collectionId}:${item.qrId}`))
+  const restored = items.filter((item) => !keys.has(`${item.collectionId}:${item.qrId}`))
+  return { ...data, qrs, collectionItems: [...data.collectionItems, ...restored] }
+}
+
 export function deleteCollection(data: VaultData, collectionId: string): VaultData {
   return {
     ...data,
