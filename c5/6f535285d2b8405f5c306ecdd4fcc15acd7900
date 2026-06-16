@@ -1,0 +1,34 @@
+apps/qr-vault/src/i18n/locales/en.json
+  s_26f8a56044604c::t_05dd978d030e13 36
+  s_26f8a56044604c::t_148a240775b95b 56
+apps/qr-vault/src/i18n/locales/zh-CN.json
+  s_26f8a56044604c::t_2b231f3bd446ac 56
+  s_26f8a56044604c::t_519b5f90ce65ed 36
+apps/qr-vault/src/app/workspace/collection-chip-row.tsx
+  s_26f8a56044604c::t_967f709cdb5fe8 104
+  s_26f8a56044604c::t_438c2d379938f6 70,73-74
+  s_26f8a56044604c::t_9b49a4e5a82bf5 36-37,40,42-45
+  s_26f8a56044604c::t_e332810fd17760 1-35,46-52,57-69,71-72,80,105-174
+  s_26f8a56044604c::t_94ced80a4adf30 38-39,41
+  s_26f8a56044604c::t_2ef7c6d19401b3 75-79,81-103
+  s_26f8a56044604c::t_74f2e762319177 56
+  s_26f8a56044604c::t_0bb6e666c429a8 53-55
+apps/qr-vault/src/app/workspace/workspace-header.tsx
+  s_26f8a56044604c::t_ad32e1bfb655ee 2,5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "c56f535285d2b8405f5c306ecdd4fcc15acd7900",
+  "prompts": {},
+  "sessions": {
+    "s_26f8a56044604c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "827bc924-6f1f-4bbb-ae29-79469be2e1a8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
