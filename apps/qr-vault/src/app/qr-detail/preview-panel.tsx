@@ -27,6 +27,7 @@ export function PreviewPanel({
   onDownloadPng,
 }: PreviewPanelProps) {
   const { t } = useTranslation()
+  const isEmpty = !url.trim()
 
   return (
     <section
@@ -42,10 +43,12 @@ export function PreviewPanel({
             {title || t('common.untitledQr')}
           </p>
         </div>
-        <Badge variant="outline" className="gap-1.5">
-          {isValid ? <Check className="size-3" /> : <AlertCircle className="size-3" />}
-          {isValid ? t('common.valid') : t('common.invalid')}
-        </Badge>
+        {!isEmpty && (
+          <Badge variant="outline" className="gap-1.5">
+            {isValid ? <Check className="size-3" /> : <AlertCircle className="size-3" />}
+            {isValid ? t('common.valid') : t('common.invalid')}
+          </Badge>
+        )}
       </div>
       <div className="flex min-h-[420px] items-center justify-center">
         <QrPreview

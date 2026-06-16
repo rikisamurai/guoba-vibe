@@ -16,6 +16,7 @@ import { downloadDataUrl, qrFileName } from '@/lib/qr'
 import { LAST_SAVED_QR_ID_KEY, upsertQr } from '@/lib/storage'
 import { buildShareUrl, parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
+import { cn } from '@/lib/utils'
 
 export function QrDetailPage() {
   const { t } = useTranslation()
@@ -146,7 +147,7 @@ export function QrDetailPage() {
         >
           <ArrowLeft className="size-3" /> {t('common.vault')}
         </Link>
-        <Badge variant="outline" className="gap-1.5">
+        <Badge variant="outline" className={cn('gap-1.5', parsed.isEmpty && 'hidden')}>
           {parsed.isValid ? <Check className="size-3" /> : <AlertCircle className="size-3" />}
           {parsed.isValid ? t('qrDetail.readyToSave') : t('qrDetail.invalidUrl')}
         </Badge>
@@ -155,6 +156,7 @@ export function QrDetailPage() {
       <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_440px] xl:grid-cols-[minmax(0,1fr)_460px]">
         <QrDetailFormCard
           isNew={isNew}
+          canSave={parsed.isValid}
           canSaveAsNew={!isNew && Boolean(existingQr)}
           title={title}
           description={description}
