@@ -14,6 +14,7 @@ import type { VaultData } from '@/lib/storage'
 
 type QrDetailFormCardProps = {
   isNew: boolean
+  canSave: boolean
   canSaveAsNew: boolean
   title: string
   description: string
@@ -34,6 +35,7 @@ type QrDetailFormCardProps = {
 
 export function QrDetailFormCard({
   isNew,
+  canSave,
   canSaveAsNew,
   title,
   description,
@@ -65,12 +67,12 @@ export function QrDetailFormCard({
           </CardTitle>
         </div>
         <CardAction className="flex items-center gap-2">
-          <Button onClick={onSave} type="button" data-tour="qr-save">
+          <Button onClick={onSave} type="button" data-tour="qr-save" disabled={!canSave}>
             {saved ? <Check /> : <Save />}
             {saved ? t('common.saved') : t('common.save')}
           </Button>
           {canSaveAsNew && (
-            <Button onClick={onSaveAsNew} type="button" variant="outline">
+            <Button onClick={onSaveAsNew} type="button" variant="outline" disabled={!canSave}>
               <CopyPlus />
               {t('qrDetail.saveAsNew')}
             </Button>

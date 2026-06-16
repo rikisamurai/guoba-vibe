@@ -4,6 +4,7 @@ export type ParsedDeepLink = {
   path: string
   query: Record<string, string>
   isValid: boolean
+  isEmpty: boolean
 }
 
 export type QueryRow = {
@@ -21,7 +22,7 @@ const SCHEME_SEPARATOR = '://'
 
 export function parseDeepLink(input: string): ParsedDeepLink {
   const raw = input.trim()
-  const empty = { raw, scheme: '', path: '', query: {}, isValid: false }
+  const empty = { raw, scheme: '', path: '', query: {}, isValid: false, isEmpty: !raw }
   if (!raw) return empty
 
   let parsed: URL
@@ -40,7 +41,7 @@ export function parseDeepLink(input: string): ParsedDeepLink {
     query[key] = value
   })
 
-  return { raw, scheme, path, query, isValid: true }
+  return { raw, scheme, path, query, isValid: true, isEmpty: false }
 }
 
 export function buildUrlFromParts(parts: UrlParts): string {

@@ -15,6 +15,7 @@ describe('parseDeepLink', () => {
     expect(result).toEqual({
       raw: 'xhsdiscover://rn/wakanda/buyer-conversion?sku_id=1&item_id=2',
       isValid: true,
+      isEmpty: false,
       scheme: 'xhsdiscover',
       path: 'rn/wakanda/buyer-conversion',
       query: { sku_id: '1', item_id: '2' },
