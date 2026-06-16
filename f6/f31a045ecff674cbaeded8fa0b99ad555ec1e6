@@ -1,0 +1,19 @@
+README.md
+  s_83774d7557e17a::t_260d988fe6d403 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "f6f31a045ecff674cbaeded8fa0b99ad555ec1e6",
+  "prompts": {},
+  "sessions": {
+    "s_83774d7557e17a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ec9f8-e272-76d3-bc64-b7d245dff500",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
