@@ -1,0 +1,27 @@
+apps/qr-vault/README.md
+  s_26f8a56044604c::t_950911b297d0f2 51
+  s_26f8a56044604c::t_1fb1e781ea7ff1 43
+  s_26f8a56044604c::t_6e90ff1443977b 25
+  s_26f8a56044604c::t_46e8acf32c12e9 99
+  s_26f8a56044604c::t_a8d35778517fb4 79,82,84
+  s_26f8a56044604c::t_bde1dcf1f615ed 67
+  s_26f8a56044604c::t_7864c4d54737fa 73
+  s_26f8a56044604c::t_79019322a9c912 114,117,120-123,126
+  s_26f8a56044604c::t_aad03a271cabf1 75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "6edf7742406b6d050097a9aa97634c505eda7656",
+  "prompts": {},
+  "sessions": {
+    "s_26f8a56044604c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "827bc924-6f1f-4bbb-ae29-79469be2e1a8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
