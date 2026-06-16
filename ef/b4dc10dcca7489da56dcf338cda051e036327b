@@ -1,0 +1,46 @@
+apps/qr-vault/src/lib/storage.ts
+  s_26f8a56044604c::t_cdfde2a25f0471 123-136
+apps/qr-vault/src/app/workspace-page.tsx
+  s_26f8a56044604c::t_fc81bd50c75e4d 151,156
+  s_26f8a56044604c::t_b57a8c10dacbda 10
+  s_26f8a56044604c::t_3ba10602ca6ebd 12
+  s_26f8a56044604c::t_592b8b0eefc43b 61-62,73,81,83
+  s_26f8a56044604c::t_c747b72f65cf5a 66
+  s_26f8a56044604c::t_09d21259469fd2 24-27,29
+apps/qr-vault/src/hooks/use-armed-action.ts
+  s_26f8a56044604c::t_f7f526467c88ae 1-48
+apps/qr-vault/src/app/collections-page.tsx
+  s_26f8a56044604c::t_ac7fb667fb3d98 72
+  s_26f8a56044604c::t_a99d38e1b4a273 33-36,38
+  s_26f8a56044604c::t_3081203d4ff150 131,135
+  s_26f8a56044604c::t_410aee48988093 62
+  s_26f8a56044604c::t_d5ab6460315503 11
+apps/qr-vault/src/app/workspace/qr-list.tsx
+  s_26f8a56044604c::t_d890a42c896479 148,152-155
+  s_26f8a56044604c::t_5e26383ec80146 16
+  s_26f8a56044604c::t_516646fbe0af6f 64
+  s_26f8a56044604c::t_23e3900bd635f8 30
+  s_26f8a56044604c::t_2e56c92b7fe6d3 81
+apps/qr-vault/src/app/collections/collection-form-card.tsx
+  s_26f8a56044604c::t_892c74efbc3fc7 18
+  s_26f8a56044604c::t_936a234b83ebc9 116,122-125
+  s_26f8a56044604c::t_fc596bb459f3ab 86
+  s_26f8a56044604c::t_7ff56ab19f2516 32
+  s_26f8a56044604c::t_ab7c312990627d 102,105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "efb4dc10dcca7489da56dcf338cda051e036327b",
+  "prompts": {},
+  "sessions": {
+    "s_26f8a56044604c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "827bc924-6f1f-4bbb-ae29-79469be2e1a8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
