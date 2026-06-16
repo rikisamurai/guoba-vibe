@@ -1,0 +1,23 @@
+apps/qr-vault/src/i18n/locales/zh-CN.json
+  s_26f8a56044604c::t_8072a72a0f83b1 41-42
+  s_26f8a56044604c::t_cc5db9cd5b59aa 45-47
+  s_26f8a56044604c::t_cb2cef8fa9a3ad 214-215
+apps/qr-vault/src/app/share/share-header.tsx
+  s_26f8a56044604c::t_1a5d847fce0de7 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "be84c9e99f65b3e57ecaaccf068072a35270422a",
+  "prompts": {},
+  "sessions": {
+    "s_26f8a56044604c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "827bc924-6f1f-4bbb-ae29-79469be2e1a8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
