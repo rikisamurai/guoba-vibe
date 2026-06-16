@@ -1,13 +1,12 @@
 import { Link } from '@tanstack/react-router'
-import { Inbox, LayoutGrid, Plus, Search, Settings2 } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { Plus, Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { CollectionChipRow } from '@/app/workspace/collection-chip-row'
 import type { ActiveFilter } from '@/app/workspace/types'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import type { VaultData } from '@/lib/storage'
-import { cn } from '@/lib/utils'
 
 type WorkspaceHeaderProps = {
   data: VaultData
@@ -104,97 +103,5 @@ function SummaryPill({ label, value }: { label: string; value: number }) {
         {label}
       </div>
     </div>
-  )
-}
-
-type CollectionChipRowProps = {
-  data: VaultData
-  uncategorizedCount: number
-  active: ActiveFilter
-  onChange: (next: ActiveFilter) => void
-}
-
-function CollectionChipRow({ data, uncategorizedCount, active, onChange }: CollectionChipRowProps) {
-  const { t } = useTranslation()
-
-  return (
-    <div className="flex flex-wrap items-center gap-2 px-1 pb-3 sm:-mx-1 sm:[scrollbar-gutter:stable] sm:flex-nowrap sm:overflow-x-auto">
-      <Chip
-        icon={<LayoutGrid className="size-3.5" />}
-        label={t('common.allQr')}
-        count={data.qrs.length}
-        active={active === 'all'}
-        onClick={() => onChange('all')}
-      />
-      {uncategorizedCount > 0 && (
-        <Chip
-          icon={<Inbox className="size-3.5" />}
-          label={t('workspace.uncategorized')}
-          count={uncategorizedCount}
-          active={active === 'uncategorized'}
-          onClick={() => onChange('uncategorized')}
-        />
-      )}
-      {data.collections.length > 0 && (
-        <span aria-hidden className="bg-border mx-1 h-5 w-px shrink-0" />
-      )}
-      {data.collections.map((collection) => (
-        <Chip
-          key={collection.id}
-          label={collection.title}
-          count={data.collectionItems.filter((item) => item.collectionId === collection.id).length}
-          active={active === collection.id}
-          onClick={() => onChange(collection.id)}
-        />
-      ))}
-      <div className="ml-auto shrink-0">
-        <Link
-          to="/collections"
-          aria-label={t('workspace.manageCollections')}
-          title={t('workspace.manageCollections')}
-          className="text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:border-border flex size-8 items-center justify-center rounded-md border border-transparent transition-colors"
-        >
-          <Settings2 className="size-4" />
-        </Link>
-      </div>
-    </div>
-  )
-}
-
-function Chip({
-  icon,
-  label,
-  count,
-  active,
-  onClick,
-}: {
-  icon?: ReactNode
-  label: string
-  count: number
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'inline-flex h-8 max-w-full shrink-0 items-center gap-1.5 rounded-full border pr-2.5 pl-3 text-sm font-medium transition-colors sm:max-w-none',
-        active
-          ? 'bg-foreground text-background border-foreground'
-          : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted/50',
-      )}
-    >
-      {icon && <span className="shrink-0">{icon}</span>}
-      <span className="truncate">{label}</span>
-      <span
-        className={cn(
-          'ml-0.5 font-mono text-[11px] tabular-nums',
-          active ? 'text-background/70' : 'text-muted-foreground/80',
-        )}
-      >
-        {count}
-      </span>
-    </button>
   )
 }
