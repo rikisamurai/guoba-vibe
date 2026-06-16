@@ -15,10 +15,9 @@
 ## 环境要求
 
 - Node.js `>= 24`（仓库根目录 `.nvmrc` 锁定到 24）
-- pnpm `11.3.0`（仓库 `packageManager` 已声明，建议用 corepack 自动启用）
+- pnpm `11.3.0`（仓库 `packageManager` 已声明）
 
 ```bash
-corepack enable
 pnpm install
 ```
 
