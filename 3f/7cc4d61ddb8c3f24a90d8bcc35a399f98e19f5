@@ -1,0 +1,124 @@
+apps/qr-vault/src/components/shadcn-ui/badge.tsx
+  s_943e1a365d8756::t_6c203b77967219 16-17
+  s_943e1a365d8756::t_e775f1ac4f22ea 8
+apps/qr-vault/src/app/share/share-hero.tsx
+  s_943e1a365d8756::t_17195cf4f8cf20 40
+apps/qr-vault/src/app/qr-detail/share-utility-panel.tsx
+  s_943e1a365d8756::t_66c257ec03fb1c 22,42,44
+apps/qr-vault/src/tests/setup.ts
+  s_943e1a365d8756::t_a0d40663b50701 1-17
+apps/qr-vault/DESIGN.md
+  s_943e1a365d8756::t_bae46892d2b526 1-80
+apps/qr-vault/src/app/workspace/workspace-header.tsx
+  s_943e1a365d8756::t_6680def3c116b6 43
+  s_943e1a365d8756::t_77cc98d7058776 33-36,39-42,45-46,68,108-111
+  s_943e1a365d8756::t_66c257ec03fb1c 44
+apps/qr-vault/src/app/workspace/qr-list.tsx
+  s_943e1a365d8756::t_77cc98d7058776 44,119,126,153
+  s_943e1a365d8756::t_6c203b77967219 110
+  s_943e1a365d8756::t_6680def3c116b6 111
+apps/qr-vault/src/components/shadcn-ui/button.tsx
+  s_943e1a365d8756::t_e775f1ac4f22ea 8,12-13,15
+apps/qr-vault/src/app/workspace/qr-inspector.tsx
+  s_943e1a365d8756::t_77cc98d7058776 40,90,96
+  s_943e1a365d8756::t_6c203b77967219 65
+apps/qr-vault/src/app/workspace/qr-row-actions.tsx
+  s_943e1a365d8756::t_6680def3c116b6 29,39
+apps/qr-vault/src/app/onboarding/onboarding-storage.ts
+  s_943e1a365d8756::t_2a19b1d6c09cf2 17
+  s_943e1a365d8756::t_01e557176928a1 5-12,18,21-22
+apps/qr-vault/src/app/share-page.tsx
+  s_943e1a365d8756::t_17195cf4f8cf20 87
+apps/qr-vault/src/app/workspace/collection-chip-row.tsx
+  s_943e1a365d8756::t_6680def3c116b6 158
+  s_943e1a365d8756::t_77cc98d7058776 156,159,167
+apps/qr-vault/src/app/app-shell.tsx
+  s_943e1a365d8756::t_1037e154e2f8be 98,104,140-141,145,147
+apps/qr-vault/src/app/share/share-header.tsx
+  s_943e1a365d8756::t_17195cf4f8cf20 12,15
+apps/qr-vault/src/app/share/share-qr-details.tsx
+  s_943e1a365d8756::t_e4efecf7685ea3 18,20-28,77
+apps/qr-vault/src/components/shadcn-ui/card.tsx
+  s_943e1a365d8756::t_e775f1ac4f22ea 15,28,84
+apps/qr-vault/src/app/workspace-page.tsx
+  s_943e1a365d8756::t_77cc98d7058776 134
+apps/qr-vault/src/app/qr-detail/mobile-url-preview.tsx
+  s_943e1a365d8756::t_66c257ec03fb1c 12,19-25
+apps/qr-vault/src/app/import-export/stat-tile.tsx
+  s_943e1a365d8756::t_0144560283fac1 3-6
+apps/qr-vault/src/styles/theme.css
+  s_943e1a365d8756::t_e775f1ac4f22ea 50-91,97-137
+apps/qr-vault/src/components/qr-preview.tsx
+  s_943e1a365d8756::t_66c257ec03fb1c 44,70,76,81,89
+  s_943e1a365d8756::t_6c203b77967219 108
+apps/qr-vault/src/components/url-editor.tsx
+  s_943e1a365d8756::t_66c257ec03fb1c 59,112-113,153
+apps/qr-vault/src/app/collections/collection-form-card.tsx
+  s_943e1a365d8756::t_0144560283fac1 123
+apps/qr-vault/src/app/qr-detail/preview-panel.tsx
+  s_943e1a365d8756::t_66c257ec03fb1c 35,53,67
+apps/qr-vault/src/tests/onboarding-storage.test.ts
+  s_943e1a365d8756::t_01e557176928a1 13,17,25,29-31,35-36,40-41,45-48
+apps/qr-vault/src/app/import-export/import-card.tsx
+  s_943e1a365d8756::t_0144560283fac1 86,90,112,121
+  s_943e1a365d8756::t_6c203b77967219 89
+apps/qr-vault/src/app/collections-page.tsx
+  s_943e1a365d8756::t_0144560283fac1 103
+apps/qr-vault/AGENTS.md
+  s_943e1a365d8756::t_bae46892d2b526 5-10
+apps/qr-vault/src/components/parsed-url-panel.tsx
+  s_943e1a365d8756::t_6680def3c116b6 59,71
+apps/qr-vault/src/styles.css
+  s_943e1a365d8756::t_e775f1ac4f22ea 27-40,73-86,88-99
+  s_943e1a365d8756::t_6c203b77967219 87
+apps/qr-vault/src/components/shadcn-ui/input.tsx
+  s_943e1a365d8756::t_e775f1ac4f22ea 11
+apps/qr-vault/src/tests/i18n.test.ts
+  s_943e1a365d8756::t_01e557176928a1 29,33,44,46-48,52-54,58,64,66
+apps/qr-vault/index.html
+  s_943e1a365d8756::t_e775f1ac4f22ea 6-7
+apps/qr-vault/src/app/qr-detail/qr-detail-form-card.tsx
+  s_943e1a365d8756::t_66c257ec03fb1c 85
+apps/qr-vault/src/i18n/locales/zh-CN.json
+  s_943e1a365d8756::t_66c257ec03fb1c 14
+apps/qr-vault/src/app/collections/collection-qr-card.tsx
+  s_943e1a365d8756::t_0144560283fac1 47,63,69
+apps/qr-vault/src/components/collection-picker.tsx
+  s_943e1a365d8756::t_6680def3c116b6 26,43
+  s_943e1a365d8756::t_6c203b77967219 42,57
+apps/qr-vault/vite.config.ts
+  s_943e1a365d8756::t_cb1dadd9b2f9e5 12
+  s_943e1a365d8756::t_a0d40663b50701 14
+apps/qr-vault/src/components/shadcn-ui/textarea.tsx
+  s_943e1a365d8756::t_e775f1ac4f22ea 10
+apps/qr-vault/src/i18n/locales/en.json
+  s_943e1a365d8756::t_66c257ec03fb1c 14
+apps/qr-vault/src/app/collections/collection-list-card.tsx
+  s_943e1a365d8756::t_0144560283fac1 46,48-49,61
+apps/qr-vault/src/components/shadcn-ui/sidebar.tsx
+  s_943e1a365d8756::t_6680def3c116b6 300
+apps/qr-vault/src/app/share/share-actions.tsx
+  s_943e1a365d8756::t_e4efecf7685ea3 35
+apps/qr-vault/src/app/import-export-page.tsx
+  s_943e1a365d8756::t_0144560283fac1 93
+apps/qr-vault/src/app/qr-detail/url-utilities-panel.tsx
+  s_943e1a365d8756::t_66c257ec03fb1c 23,60
+apps/qr-vault/src/app/share/share-footer.tsx
+  s_943e1a365d8756::t_17195cf4f8cf20 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "3f7cc4d61ddb8c3f24a90d8bcc35a399f98e19f5",
+  "prompts": {},
+  "sessions": {
+    "s_943e1a365d8756": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ef07b-deb8-7c30-984c-9ba95e0afd9a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
