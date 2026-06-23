@@ -41,7 +41,7 @@ export function QrPreview({
     async function render() {
       if (!parsed.isValid) {
         setDataUrl('')
-        setError(t('common.awaitingValidUrl'))
+        setError(parsed.isEmpty ? t('common.enterUrlToPreview') : t('common.awaitingValidUrl'))
         onDataUrl?.(null)
         return
       }
@@ -67,18 +67,18 @@ export function QrPreview({
     return () => {
       isActive = false
     }
-  }, [parsed.isValid, url, dims.qr, onDataUrl, t])
+  }, [parsed.isEmpty, parsed.isValid, url, dims.qr, onDataUrl, t])
 
   const inner = dataUrl ? (
     <img
       src={dataUrl}
       alt={altTitle}
-      className={cn('rounded-md bg-white', dims.pad, bare && size === 'inspector' ? '' : 'border')}
+      className={cn('rounded-lg bg-white', dims.pad, bare && size === 'inspector' ? '' : 'border')}
       style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
     />
   ) : size === 'compact' ? (
     <div
-      className="flex items-center justify-center rounded-md border border-dashed"
+      className="scan-plate flex items-center justify-center rounded-lg border border-dashed"
       style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
       aria-label={error || t('common.noQr')}
     >
@@ -86,7 +86,7 @@ export function QrPreview({
     </div>
   ) : (
     <div
-      className="text-muted-foreground flex flex-col items-center justify-center gap-2 rounded-md border border-dashed text-sm"
+      className="scan-plate text-muted-foreground flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed text-sm"
       style={{ width: `min(100%, ${dims.qr}px)`, aspectRatio: '1 / 1' }}
     >
       <div className="size-10 rounded-md border border-dashed" />
@@ -105,7 +105,7 @@ export function QrPreview({
   return (
     <Card aria-label={t('common.qrPreview')}>
       <CardContent
-        className="flex items-center justify-center py-6"
+        className="scan-plate flex items-center justify-center py-6"
         style={{ minHeight: dims.min }}
       >
         {inner}

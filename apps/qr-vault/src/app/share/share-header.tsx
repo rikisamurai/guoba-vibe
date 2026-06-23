@@ -9,10 +9,10 @@ export function ShareHeader() {
   const { t } = useTranslation()
 
   return (
-    <header className="border-b">
+    <header className="bg-background/82 border-b backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-4xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="bg-primary text-primary-foreground flex aspect-square size-7 items-center justify-center rounded-md">
+          <div className="scan-plate flex aspect-square size-7 items-center justify-center rounded-md border">
             <QrCode className="size-3.5" />
           </div>
           <span className="font-semibold tracking-tight">{t('app.brand')}</span>

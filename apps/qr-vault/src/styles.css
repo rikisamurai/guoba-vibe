@@ -26,6 +26,11 @@
     min-width: 320px;
   }
 
+  ::selection {
+    background: color-mix(in oklch, var(--signal) 34%, transparent);
+    color: var(--foreground);
+  }
+
   button,
   input,
   textarea,
@@ -55,5 +60,29 @@
   h3,
   p {
     margin: 0;
+  }
+
+  code {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .signal-panel {
+    box-shadow: var(--panel-shadow);
+  }
+
+  .scan-plate {
+    background: var(--scan-plate);
+    color: var(--scan-ink);
+  }
+
+  .signal-rule {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklch, var(--signal) 72%, transparent),
+      transparent
+    );
   }
 }

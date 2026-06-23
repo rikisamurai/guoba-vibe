@@ -37,7 +37,7 @@ export function QrInspector({
     return (
       <Card>
         <CardContent className="space-y-4 py-10 text-center">
-          <div className="inline-flex size-14 items-center justify-center rounded-md border">
+          <div className="scan-plate inline-flex size-14 items-center justify-center rounded-lg border">
             <Plus className="text-muted-foreground size-5" />
           </div>
           <div>
@@ -62,7 +62,7 @@ export function QrInspector({
   return (
     <>
       <Card size="sm" className="shadow-foreground/5 shadow-sm">
-        <CardHeader className="bg-muted/20 border-b">
+        <CardHeader className="bg-muted/30 border-b">
           <div className="min-w-0 space-y-1">
             <p className="text-muted-foreground mb-1 text-[10px] font-medium tracking-wider uppercase">
               {t('common.selectedQr')}
@@ -87,13 +87,13 @@ export function QrInspector({
           </CardAction>
         </CardHeader>
         <CardContent className="space-y-4 pt-4">
-          <div className="bg-background rounded-lg border p-6">
+          <div className="scan-plate rounded-lg border p-6 shadow-inner">
             <QrPreview title={qr.title} url={qr.url} size="inspector" bare onDataUrl={onDataUrl} />
           </div>
           {qr.description && (
             <p className="text-muted-foreground text-sm leading-relaxed">{qr.description}</p>
           )}
-          <div className="bg-muted/40 rounded-lg border p-3">
+          <div className="bg-background/70 rounded-lg border p-3">
             <p className="text-muted-foreground font-mono text-xs leading-relaxed break-all">
               {qr.url}
             </p>

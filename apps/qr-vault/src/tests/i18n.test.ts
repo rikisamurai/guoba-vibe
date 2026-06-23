@@ -26,11 +26,11 @@ describe('i18n resources', () => {
 
 describe('language detection', () => {
   beforeEach(() => {
-    localStorage.clear()
+    window.localStorage.clear()
   })
 
   afterEach(() => {
-    localStorage.clear()
+    window.localStorage.clear()
   })
 
   it('normalizes supported browser language tags', () => {
@@ -41,26 +41,28 @@ describe('language detection', () => {
   })
 
   it('uses stored manual language before navigator languages', () => {
-    localStorage.setItem(LOCALE_STORAGE_KEY, 'zh-CN')
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'zh-CN')
 
-    expect(detectInitialLocale({ storage: localStorage, languages: ['en-US'] })).toBe('zh-CN')
-  })
-
-  it('detects Chinese navigator languages before falling back to English', () => {
-    expect(detectInitialLocale({ storage: localStorage, languages: ['fr-FR', 'zh-HK'] })).toBe(
+    expect(detectInitialLocale({ storage: window.localStorage, languages: ['en-US'] })).toBe(
       'zh-CN',
     )
   })
 
+  it('detects Chinese navigator languages before falling back to English', () => {
+    expect(
+      detectInitialLocale({ storage: window.localStorage, languages: ['fr-FR', 'zh-HK'] }),
+    ).toBe('zh-CN')
+  })
+
   it('defaults to English when storage and navigator languages do not match', () => {
-    expect(detectInitialLocale({ storage: localStorage, languages: ['fr-FR'] })).toBe(
+    expect(detectInitialLocale({ storage: window.localStorage, languages: ['fr-FR'] })).toBe(
       DEFAULT_LOCALE,
     )
   })
 
   it('saves manual language selection to localStorage', () => {
-    saveLocale('en', localStorage)
+    saveLocale('en', window.localStorage)
 
-    expect(localStorage.getItem(LOCALE_STORAGE_KEY)).toBe('en')
+    expect(window.localStorage.getItem(LOCALE_STORAGE_KEY)).toBe('en')
   })
 })

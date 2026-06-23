@@ -32,7 +32,7 @@ export function ShareActions({
         <span className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
           {t('share.rawUrl')}
         </span>
-        <div className="bg-muted/50 rounded-md border p-3.5">
+        <div className="bg-card/80 rounded-lg border p-3.5 shadow-sm">
           <p className="font-mono text-xs leading-relaxed break-all">
             {url || t('share.noUrlProvided')}
           </p>

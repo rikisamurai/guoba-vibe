@@ -10,11 +10,11 @@ import {
 
 describe('onboarding-storage', () => {
   beforeEach(() => {
-    localStorage.clear()
+    window.localStorage.clear()
   })
 
   afterEach(() => {
-    localStorage.clear()
+    window.localStorage.clear()
   })
 
   it('uses a versioned storage key', () => {
@@ -22,29 +22,29 @@ describe('onboarding-storage', () => {
   })
 
   it('returns null when the key has never been written', () => {
-    expect(getOnboardingStatus()).toBeNull()
+    expect(getOnboardingStatus(window.localStorage)).toBeNull()
   })
 
   it("writes and reads the 'done' status", () => {
-    setOnboardingStatus('done')
-    expect(getOnboardingStatus()).toBe('done')
-    expect(localStorage.getItem(ONBOARDING_STORAGE_KEY)).toBe('done')
+    setOnboardingStatus('done', window.localStorage)
+    expect(getOnboardingStatus(window.localStorage)).toBe('done')
+    expect(window.localStorage.getItem(ONBOARDING_STORAGE_KEY)).toBe('done')
   })
 
   it("writes and reads the 'skipped' status", () => {
-    setOnboardingStatus('skipped')
-    expect(getOnboardingStatus()).toBe('skipped')
+    setOnboardingStatus('skipped', window.localStorage)
+    expect(getOnboardingStatus(window.localStorage)).toBe('skipped')
   })
 
   it('returns null for an unknown stored value', () => {
-    localStorage.setItem(ONBOARDING_STORAGE_KEY, 'weird')
-    expect(getOnboardingStatus()).toBeNull()
+    window.localStorage.setItem(ONBOARDING_STORAGE_KEY, 'weird')
+    expect(getOnboardingStatus(window.localStorage)).toBeNull()
   })
 
   it('clearOnboardingStatus removes the key', () => {
-    setOnboardingStatus('done')
-    clearOnboardingStatus()
-    expect(getOnboardingStatus()).toBeNull()
-    expect(localStorage.getItem(ONBOARDING_STORAGE_KEY)).toBeNull()
+    setOnboardingStatus('done', window.localStorage)
+    clearOnboardingStatus(window.localStorage)
+    expect(getOnboardingStatus(window.localStorage)).toBeNull()
+    expect(window.localStorage.getItem(ONBOARDING_STORAGE_KEY)).toBeNull()
   })
 })

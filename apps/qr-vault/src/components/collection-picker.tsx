@@ -23,7 +23,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
 
   if (!collections.length) {
     return (
-      <p className="text-muted-foreground rounded-md border border-dashed p-3 text-center text-xs italic">
+      <p className="text-muted-foreground rounded-lg border border-dashed p-3 text-center text-xs italic">
         {t('collectionPicker.noCollections')}
       </p>
     )
@@ -39,8 +39,8 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
             className={cn(
               'group inline-flex max-w-full cursor-pointer items-center gap-2 rounded-md border px-3 py-2 transition-colors',
               isChecked
-                ? 'border-foreground bg-card text-foreground shadow-[0_0_0_1px_var(--foreground)]'
-                : 'bg-card text-foreground hover:bg-muted/50',
+                ? 'bg-background/80 text-foreground border-[var(--signal)] shadow-[0_0_0_1px_var(--signal)]'
+                : 'bg-background/65 text-foreground hover:border-ring/60 hover:bg-muted/50',
             )}
           >
             <input
@@ -54,7 +54,7 @@ export function CollectionPicker({ collections, selectedIds, onChange }: Collect
               className={cn(
                 'flex size-4 shrink-0 items-center justify-center rounded-sm border transition-colors',
                 isChecked
-                  ? 'bg-primary border-primary text-primary-foreground'
+                  ? 'border-[var(--signal)] bg-[var(--signal)] text-[var(--signal-foreground)]'
                   : 'border-input bg-background',
               )}
             >

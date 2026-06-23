@@ -44,7 +44,7 @@ export function CollectionQrCard({ collection, qrs }: CollectionQrCardProps) {
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground rounded-md border border-dashed px-3 py-6 text-center text-xs italic">
+          <p className="text-muted-foreground rounded-lg border border-dashed px-3 py-6 text-center text-xs italic">
             {t('collections.noQrsInCollection')}
           </p>
         )}
@@ -60,13 +60,13 @@ function CollectionQrLink({ qr }: { qr: VaultData['qrs'][number] }) {
     <Link
       to="/q/$qrId"
       params={{ qrId: qr.id }}
-      className="bg-card hover:bg-muted/50 group block rounded-md border p-3 transition-colors"
+      className="bg-background/65 hover:border-ring/60 hover:bg-muted/50 group block rounded-lg border p-3 transition-colors"
     >
       <div className="mb-1 flex items-center gap-2">
         <span
           className={cn(
             'size-1.5 shrink-0 rounded-full',
-            parsed.isValid ? 'bg-foreground' : 'bg-muted-foreground',
+            parsed.isValid ? 'bg-[var(--success)]' : 'bg-destructive',
           )}
         />
         <strong className="truncate text-sm font-medium group-hover:underline">

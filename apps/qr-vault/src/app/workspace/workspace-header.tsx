@@ -30,12 +30,20 @@ export function WorkspaceHeader({
   const { t } = useTranslation()
 
   return (
-    <section className="shrink-0 space-y-4 border-b pb-4" aria-labelledby="workspace-title">
+    <section
+      className="bg-card/70 signal-panel shrink-0 space-y-4 rounded-lg border p-4 backdrop-blur-sm"
+      aria-labelledby="workspace-title"
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0 space-y-1">
-          <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
-            {t('workspace.statusLine')}
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
+              {t('workspace.statusLine')}
+            </p>
+            <Badge variant="outline" className="border-[var(--signal)] text-[10px]">
+              {t('app.footerTagline')}
+            </Badge>
+          </div>
           <h1
             id="workspace-title"
             className="text-2xl leading-tight font-semibold tracking-tight sm:text-3xl"
@@ -57,7 +65,7 @@ export function WorkspaceHeader({
       />
 
       <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-        <div className="focus-within:border-ring focus-within:ring-ring/50 bg-card flex h-10 min-w-0 flex-1 items-center gap-2 rounded-md border px-3 transition-colors focus-within:ring-3">
+        <div className="focus-within:border-ring focus-within:ring-ring/50 bg-background/75 flex h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border px-3 shadow-sm transition-colors focus-within:ring-3">
           <Search className="text-muted-foreground size-3.5 shrink-0" />
           <input
             value={search}
@@ -97,8 +105,10 @@ export function WorkspaceHeader({
 
 function SummaryPill({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-card text-card-foreground shadow-foreground/5 min-w-0 rounded-lg border px-3 py-2 shadow-sm">
-      <div className="font-mono text-lg leading-none font-semibold tabular-nums">{value}</div>
+    <div className="bg-background/70 text-card-foreground min-w-0 rounded-lg border px-3 py-2 shadow-sm">
+      <div className="font-mono text-lg leading-none font-semibold text-[var(--signal)] tabular-nums">
+        {value}
+      </div>
       <div className="text-muted-foreground mt-1 truncate text-[10px] font-medium tracking-wider uppercase">
         {label}
       </div>

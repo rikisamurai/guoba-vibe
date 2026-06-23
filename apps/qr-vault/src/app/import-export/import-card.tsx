@@ -83,11 +83,11 @@ function ImportDropzone({
   return (
     <label
       className={cn(
-        'relative block cursor-pointer rounded-md border-2 border-dashed transition-colors',
+        'relative block cursor-pointer rounded-lg border-2 border-dashed transition-colors',
         'px-4 py-6 text-center',
         hasPendingData
-          ? 'border-foreground/40 bg-muted/50'
-          : 'border-border bg-card hover:bg-muted/30',
+          ? 'bg-muted/50 border-[var(--signal)]'
+          : 'border-border bg-background/65 hover:border-ring/60 hover:bg-muted/30',
       )}
     >
       <input
@@ -109,7 +109,7 @@ function ImportDropzone({
 function ImportMessage({ message, error }: Pick<ImportCardProps, 'message' | 'error'>) {
   if (message) {
     return (
-      <div className="bg-muted/50 text-foreground flex items-start gap-2 rounded-md border px-3 py-2.5 text-xs">
+      <div className="bg-muted/50 text-foreground flex items-start gap-2 rounded-lg border px-3 py-2.5 text-xs">
         <Check className="mt-0.5 size-3.5 shrink-0" />
         <span>{message}</span>
       </div>
@@ -118,7 +118,7 @@ function ImportMessage({ message, error }: Pick<ImportCardProps, 'message' | 'er
 
   if (error) {
     return (
-      <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-3 py-2.5 text-xs">
+      <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2.5 text-xs">
         {error}
       </div>
     )

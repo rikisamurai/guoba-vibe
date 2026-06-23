@@ -82,7 +82,7 @@ export function QrDetailFormCard({
 
       <CardContent className="space-y-5 pt-4">
         {error && (
-          <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-3 py-2.5 text-sm">
+          <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2.5 text-sm">
             {error}
           </div>
         )}
