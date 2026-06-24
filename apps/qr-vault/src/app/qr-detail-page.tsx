@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import { useInlineCollectionCreate } from '@/app/qr-detail/inline-collection-create'
 import { NotFoundCard } from '@/app/qr-detail/not-found-card'
 import { PreviewPanel } from '@/app/qr-detail/preview-panel'
 import { QrDetailFormCard } from '@/app/qr-detail/qr-detail-form-card'
@@ -45,6 +46,11 @@ export function QrDetailPage() {
   const [saved, setSaved] = useState(false)
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
   const [pngDownloaded, setPngDownloaded] = useState(false)
+  const createCollection = useInlineCollectionCreate({
+    collections: data.collections,
+    setCollectionIds,
+    updateVault,
+  })
   const parsed = parseDeepLink(url)
   const shareUrl = buildShareUrl({
     origin: window.location.origin,
@@ -171,6 +177,7 @@ export function QrDetailPage() {
           onDescriptionChange={setDescription}
           onUrlChange={setUrl}
           onCollectionIdsChange={setCollectionIds}
+          onCreateCollection={createCollection}
           onSave={saveQr}
           onSaveAsNew={saveAsNew}
         />

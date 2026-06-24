@@ -225,7 +225,14 @@
     "noQueryParams": "no query params"
   },
   "collectionPicker": {
-    "noCollections": "no collections yet"
+    "noCollections": "no collections yet",
+    "newCollection": "New",
+    "collectionName": "Collection name",
+    "createCollection": "Create",
+    "cancelCreate": "Cancel",
+    "nameRequired": "Collection name is required",
+    "createdAndSelected": "Collection created and selected",
+    "existingSelected": "Existing collection selected"
   },
   "qrPreview": {
     "unableToRender": "Unable to render QR"

@@ -1,10 +1,10 @@
-import { Link } from '@tanstack/react-router'
-import { ArrowRight, Check, CopyPlus, Save } from 'lucide-react'
+import { Check, CopyPlus, Save } from 'lucide-react'
 import type { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { CollectionsSection } from '@/app/qr-detail/collections-section'
+import type { CreateCollectionResult } from '@/app/qr-detail/inline-collection-create'
 import { MobileUrlPreview } from '@/app/qr-detail/mobile-url-preview'
-import { CollectionPicker } from '@/components/collection-picker'
 import { FieldLabel } from '@/components/field-label'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
@@ -29,6 +29,7 @@ type QrDetailFormCardProps = {
   onDescriptionChange: (next: string) => void
   onUrlChange: (next: string) => void
   onCollectionIdsChange: (next: string[]) => void
+  onCreateCollection: (title: string) => CreateCollectionResult
   onSave: () => void
   onSaveAsNew: () => void
 }
@@ -50,6 +51,7 @@ export function QrDetailFormCard({
   onDescriptionChange,
   onUrlChange,
   onCollectionIdsChange,
+  onCreateCollection,
   onSave,
   onSaveAsNew,
 }: QrDetailFormCardProps) {
@@ -107,29 +109,12 @@ export function QrDetailFormCard({
             <MobileUrlPreview title={title} url={url} />
           </UrlEditor>
         </section>
-        <section className="space-y-3">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
-                {t('common.collections')}
-              </p>
-              <p className="text-muted-foreground mt-1 text-xs">
-                {t('qrDetail.assignCollections')}
-              </p>
-            </div>
-            <Link
-              to="/collections"
-              className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs font-medium"
-            >
-              {t('common.manage')} <ArrowRight className="size-3" />
-            </Link>
-          </div>
-          <CollectionPicker
-            collections={collections}
-            selectedIds={collectionIds}
-            onChange={onCollectionIdsChange}
-          />
-        </section>
+        <CollectionsSection
+          collections={collections}
+          collectionIds={collectionIds}
+          onCollectionIdsChange={onCollectionIdsChange}
+          onCreateCollection={onCreateCollection}
+        />
       </CardContent>
     </Card>
   )
