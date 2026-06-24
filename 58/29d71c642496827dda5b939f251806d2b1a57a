@@ -1,0 +1,19 @@
+docs/superpowers/specs/2026-06-24-qr-vault-inline-collection-create-design.md
+  s_943e1a365d8756::t_39f4a30f790e91 1-142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "5829d71c642496827dda5b939f251806d2b1a57a",
+  "prompts": {},
+  "sessions": {
+    "s_943e1a365d8756": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ef07b-deb8-7c30-984c-9ba95e0afd9a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
