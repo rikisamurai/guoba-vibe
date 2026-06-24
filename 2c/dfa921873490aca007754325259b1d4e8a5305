@@ -1,0 +1,21 @@
+apps/qr-vault/src/components/shadcn-ui/input.tsx
+  s_943e1a365d8756::t_439eae111bc998 11
+apps/qr-vault/src/components/shadcn-ui/textarea.tsx
+  s_943e1a365d8756::t_04cec6dcbd15d5 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "2cdfa921873490aca007754325259b1d4e8a5305",
+  "prompts": {},
+  "sessions": {
+    "s_943e1a365d8756": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ef07b-deb8-7c30-984c-9ba95e0afd9a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
