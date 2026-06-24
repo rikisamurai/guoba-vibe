@@ -1,0 +1,23 @@
+apps/qr-vault/src/components/shadcn-ui/button.tsx
+  s_943e1a365d8756::t_917b0824430dda 8
+apps/qr-vault/src/components/shadcn-ui/badge.tsx
+  s_943e1a365d8756::t_ad22f0a5eda593 8
+apps/qr-vault/src/app/workspace/workspace-header.tsx
+  s_943e1a365d8756::t_efb1b2ca38c18f 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "e1e2751c488ce41ca8d2d6dd7e44120eb96b7286",
+  "prompts": {},
+  "sessions": {
+    "s_943e1a365d8756": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ef07b-deb8-7c30-984c-9ba95e0afd9a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
