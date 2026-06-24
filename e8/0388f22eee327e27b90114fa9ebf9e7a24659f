@@ -1,0 +1,36 @@
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_943e1a365d8756::t_0edeeca734851e 49-53,180
+apps/qr-vault/src/app/qr-detail/inline-collection-create.ts
+  s_943e1a365d8756::t_6c5e4fd586b2fe 1-25,27-64
+  s_943e1a365d8756::t_2179fc4ee7b53f 26
+apps/qr-vault/src/app/qr-detail/collections-section.tsx
+  s_943e1a365d8756::t_3b18359b3f3edb 1-65
+docs/superpowers/plans/2026-06-24-qr-vault-inline-collection-create.md
+  s_943e1a365d8756::t_2122b6fab8c2b9 1-588
+apps/qr-vault/src/components/collection-picker.tsx
+  s_943e1a365d8756::t_22146b0ce279c2 2,5-6,12,14,16,19-26,28-34,44-58,62-85,87-93,95-140
+apps/qr-vault/src/i18n/locales/en.json
+  s_943e1a365d8756::t_0b3b72a9a04764 228-235
+apps/qr-vault/src/i18n/locales/zh-CN.json
+  s_943e1a365d8756::t_97550098a7325f 228-235
+apps/qr-vault/src/app/qr-detail/qr-detail-form-card.tsx
+  s_943e1a365d8756::t_a146029326a620 1,5-6,32,54,112-117
+apps/qr-vault/src/tests/inline-collection-create.test.ts
+  s_943e1a365d8756::t_3377a949ab8920 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "e80388f22eee327e27b90114fa9ebf9e7a24659f",
+  "prompts": {},
+  "sessions": {
+    "s_943e1a365d8756": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ef07b-deb8-7c30-984c-9ba95e0afd9a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
