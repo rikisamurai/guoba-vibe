@@ -95,13 +95,13 @@ export function AppShell() {
   return (
     <TooltipProvider delayDuration={200}>
       <SidebarProvider>
-        <Sidebar collapsible="icon">
+        <Sidebar collapsible="icon" className="border-sidebar-border/80">
           <SidebarHeader>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild size="lg" tooltip={t('app.brand')}>
                   <Link to="/">
-                    <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md">
+                    <div className="scan-plate flex aspect-square size-8 items-center justify-center rounded-md border">
                       <QrCode className="size-4" />
                     </div>
                     <div className="grid flex-1 text-left leading-tight">
@@ -137,13 +137,14 @@ export function AppShell() {
           </SidebarFooter>
         </Sidebar>
 
-        <SidebarInset>
-          <header className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
+        <SidebarInset className="bg-transparent">
+          <header className="bg-background/82 flex h-12 shrink-0 items-center gap-2 border-b px-3 backdrop-blur">
             <SidebarTrigger />
             <div aria-hidden className="bg-border h-4 w-px shrink-0" />
             <span className="text-muted-foreground font-mono text-xs">{t('app.shortName')}</span>
+            <div aria-hidden className="signal-rule ml-auto h-px w-24" />
           </header>
-          <div className="flex-1 overflow-auto p-5">
+          <div className="flex-1 overflow-auto p-4 sm:p-5">
             <Outlet />
           </div>
         </SidebarInset>

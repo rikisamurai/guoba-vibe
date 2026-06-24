@@ -41,7 +41,7 @@ export function QrList({
     return (
       <Card>
         <CardContent className="py-10 text-center">
-          <div className="mb-3 inline-flex size-12 items-center justify-center rounded-md border">
+          <div className="scan-plate mb-3 inline-flex size-12 items-center justify-center rounded-lg border">
             <Search className="text-muted-foreground size-4" />
           </div>
           <p className="mb-1 text-sm">{t('workspace.noMatches')}</p>
@@ -107,8 +107,8 @@ function QrListItem({
         className={cn(
           'w-full rounded-lg border px-3.5 py-3.5 pr-32 text-left shadow-sm shadow-transparent transition-all duration-200 sm:pr-28',
           isSelected
-            ? 'border-foreground bg-card shadow-[0_0_0_1px_var(--foreground)]'
-            : 'border-border bg-card hover:border-foreground/25 hover:bg-muted/20 hover:shadow-foreground/5',
+            ? 'bg-card border-[var(--signal)] shadow-[0_0_0_1px_var(--signal)]'
+            : 'border-border bg-card/80 hover:border-ring/60 hover:bg-card hover:shadow-foreground/5',
         )}
       >
         <div className="min-w-0">
@@ -116,14 +116,14 @@ function QrListItem({
             <span
               className={cn(
                 'size-1.5 rounded-full',
-                parsed.isValid ? 'bg-foreground' : 'bg-muted-foreground/50',
+                parsed.isValid ? 'bg-[var(--success)]' : 'bg-destructive',
               )}
             />
             <strong className="truncate text-sm font-semibold">
               {qr.title || parsed.path || qr.url}
             </strong>
             {parsed.scheme && (
-              <span className="text-muted-foreground bg-background/70 rounded px-1.5 py-0.5 font-mono text-[10px]">
+              <span className="text-muted-foreground bg-background/70 rounded-md border px-1.5 py-0.5 font-mono text-[10px]">
                 {parsed.scheme}
               </span>
             )}
@@ -150,7 +150,7 @@ function QrListItem({
           >
             <Trash2 className="size-3.5" /> {t('common.confirm')}
             <span
-              className="bg-destructive/40 absolute bottom-0 left-0 h-0.5"
+              className="absolute bottom-0 left-0 h-0.5 bg-[var(--warning)]"
               style={{ width: `${armedProgress * 100}%` }}
             />
           </button>

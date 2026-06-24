@@ -56,7 +56,7 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
               {queryEntries.map(([key, value]) => (
                 <div
                   key={key}
-                  className="bg-muted/50 grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 rounded-md px-2 py-1.5 text-xs"
+                  className="bg-background/65 grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 rounded-md border px-2 py-1.5 text-xs"
                 >
                   <code className="text-foreground truncate font-mono" title={key}>
                     {key}
@@ -68,7 +68,7 @@ export function ParsedUrlPanel({ url }: ParsedUrlPanelProps) {
               ))}
             </div>
           ) : (
-            <p className="text-muted-foreground rounded-md border border-dashed px-2 py-3 text-center text-xs italic">
+            <p className="text-muted-foreground rounded-lg border border-dashed px-2 py-3 text-center text-xs italic">
               {t('parsedUrl.noQueryParams')}
             </p>
           )}

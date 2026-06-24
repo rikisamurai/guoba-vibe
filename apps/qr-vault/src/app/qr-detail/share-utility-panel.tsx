@@ -19,7 +19,7 @@ export function ShareUtilityPanel({
   const { t } = useTranslation()
 
   return (
-    <section className="bg-card text-card-foreground rounded-xl border p-4">
+    <section className="bg-card text-card-foreground rounded-lg border p-4">
       <div className="mb-3 flex items-center justify-between gap-4">
         <div>
           <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
@@ -39,9 +39,9 @@ export function ShareUtilityPanel({
           {shareCopied ? <Check /> : <Share2 />}
         </Button>
       </div>
-      <div className="bg-muted/40 rounded-md border p-3">
+      <div className="bg-background/65 rounded-lg border p-3">
         <p className="text-foreground font-mono text-[10px] leading-relaxed break-all">
-          {shareUrl || t('common.notReady')}
+          {canCopy ? shareUrl : t('common.notReady')}
         </p>
       </div>
       <p className="text-muted-foreground mt-2 text-xs">{t('qrDetail.shareDescription')}</p>

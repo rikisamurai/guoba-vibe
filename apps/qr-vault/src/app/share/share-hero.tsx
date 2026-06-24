@@ -37,6 +37,7 @@ export function ShareHero({
       <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
         {title || fallbackTitle || t('share.untitledQr')}
       </h1>
+      <div aria-hidden className="signal-rule mx-auto h-px w-40" />
       {description && (
         <p className="text-muted-foreground mx-auto max-w-md text-base text-balance">
           {description}

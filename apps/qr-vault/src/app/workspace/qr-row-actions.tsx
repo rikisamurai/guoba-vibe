@@ -26,7 +26,7 @@ export function QrRowActions({ qr, name, copiedUrlId, onCopyUrl, onArmDelete }: 
             onCopyUrl(qr)
           }}
           aria-label={t('workspace.copyUrlFor', { name })}
-          className="text-muted-foreground hover:text-foreground hover:border-border bg-background/80 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-colors sm:size-8"
+          className="text-muted-foreground hover:text-foreground hover:border-ring/60 bg-background/80 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-colors sm:size-8"
         >
           {copiedUrlId === qr.id ? <Check className="size-4" /> : <Copy className="size-4" />}
         </button>
@@ -36,7 +36,7 @@ export function QrRowActions({ qr, name, copiedUrlId, onCopyUrl, onArmDelete }: 
           to="/q/$qrId"
           params={{ qrId: qr.id }}
           aria-label={t('workspace.editQr', { name })}
-          className="text-muted-foreground hover:text-foreground hover:border-border bg-background/80 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-colors sm:size-8"
+          className="text-muted-foreground hover:text-foreground hover:border-ring/60 bg-background/80 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-colors sm:size-8"
         >
           <SquarePen className="size-4" />
         </Link>

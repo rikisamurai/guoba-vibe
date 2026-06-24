@@ -131,7 +131,7 @@ export function WorkspacePage() {
   const selectedQr = data.qrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0]
 
   return (
-    <div className="grid grid-cols-1 items-start gap-5 lg:h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1fr)_360px] lg:items-stretch lg:overflow-hidden xl:grid-cols-[minmax(500px,1fr)_480px] 2xl:grid-cols-[minmax(560px,1fr)_560px]">
+    <div className="grid grid-cols-1 items-start gap-5 lg:h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1fr)_380px] lg:items-stretch lg:overflow-hidden xl:grid-cols-[minmax(520px,1fr)_500px] 2xl:grid-cols-[minmax(600px,1fr)_560px]">
       <div className="flex min-h-0 flex-col gap-4 lg:h-full lg:overflow-hidden">
         <WorkspaceHeader
           data={data}

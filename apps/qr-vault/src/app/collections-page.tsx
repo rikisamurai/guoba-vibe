@@ -100,7 +100,7 @@ export function CollectionsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-end justify-between gap-4">
+      <div className="bg-card/70 signal-panel flex items-end justify-between gap-4 rounded-lg border p-4 backdrop-blur-sm">
         <div>
           <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
             {t('collections.eyebrow')}

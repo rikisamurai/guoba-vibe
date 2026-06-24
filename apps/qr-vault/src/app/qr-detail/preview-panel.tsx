@@ -32,7 +32,7 @@ export function PreviewPanel({
   return (
     <section
       data-tour="qr-preview"
-      className="bg-card text-card-foreground hidden rounded-xl border p-5 lg:block"
+      className="bg-card text-card-foreground signal-panel hidden rounded-lg border p-5 lg:block"
     >
       <div className="mb-4 flex items-center justify-between gap-4">
         <div>
@@ -50,7 +50,7 @@ export function PreviewPanel({
           </Badge>
         )}
       </div>
-      <div className="flex min-h-[420px] items-center justify-center">
+      <div className="scan-plate flex min-h-[420px] items-center justify-center rounded-lg border p-5">
         <QrPreview
           title={title || t('common.qrCode')}
           url={url}
@@ -64,7 +64,7 @@ export function PreviewPanel({
           {urlCopied ? <Check /> : <Copy />}
           {urlCopied ? t('common.copied') : t('common.copyUrl')}
         </Button>
-        <Button onClick={onDownloadPng} type="button" variant="outline" disabled={!url}>
+        <Button onClick={onDownloadPng} type="button" variant="outline" disabled={!isValid}>
           {pngDownloaded ? <Check /> : <Download />}
           {pngDownloaded ? t('common.saved') : t('common.downloadPng')}
         </Button>

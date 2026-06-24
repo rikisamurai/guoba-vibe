@@ -153,10 +153,10 @@ function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        'inline-flex h-8 max-w-full shrink-0 items-center gap-1.5 rounded-full border pr-2.5 pl-3 text-sm font-medium transition-colors sm:max-w-none',
+        'inline-flex h-8 max-w-full shrink-0 items-center gap-1.5 rounded-lg border pr-2.5 pl-3 text-sm font-medium transition-colors sm:max-w-none',
         active
-          ? 'bg-foreground text-background border-foreground'
-          : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted/50',
+          ? 'border-[var(--signal)] bg-[var(--signal)] text-[var(--signal-foreground)] shadow-sm'
+          : 'bg-background/70 text-muted-foreground border-border hover:text-foreground hover:border-ring/60 hover:bg-muted/60',
       )}
     >
       {icon && <span className="shrink-0">{icon}</span>}
@@ -164,7 +164,7 @@ function Chip({
       <span
         className={cn(
           'ml-0.5 font-mono text-[11px] tabular-nums',
-          active ? 'text-background/70' : 'text-muted-foreground/80',
+          active ? 'text-[var(--signal-foreground)]/70' : 'text-muted-foreground/80',
         )}
       >
         {count}

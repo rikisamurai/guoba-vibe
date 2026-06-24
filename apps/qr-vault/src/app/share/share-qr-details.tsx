@@ -15,15 +15,17 @@ export function ShareQrDetails({ title, url, parsed, onDataUrl }: ShareQrDetails
   const { t } = useTranslation()
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start lg:gap-12">
+    <div className="bg-card/80 signal-panel grid gap-8 rounded-lg border p-5 backdrop-blur-sm lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start lg:gap-12">
       <div className="flex flex-col items-center gap-3">
-        <QrPreview
-          url={url}
-          title={title || t('share.sharedQr')}
-          size="lg"
-          bare
-          onDataUrl={onDataUrl}
-        />
+        <div className="scan-plate rounded-lg border p-5">
+          <QrPreview
+            url={url}
+            title={title || t('share.sharedQr')}
+            size="lg"
+            bare
+            onDataUrl={onDataUrl}
+          />
+        </div>
         <div className="flex items-center gap-2 text-xs">
           {parsed.isValid ? <Check className="size-3.5" /> : <AlertCircle className="size-3.5" />}
           <span className="font-medium">
@@ -72,7 +74,7 @@ function QueryDetails({ entries }: { entries: [string, string][] }) {
         {entries.map(([key, value]) => (
           <div
             key={key}
-            className="bg-muted/50 grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 rounded-md px-2.5 py-1.5 text-xs"
+            className="bg-background/65 grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 rounded-md border px-2.5 py-1.5 text-xs"
           >
             <code className="text-foreground truncate font-mono" title={key}>
               {key}

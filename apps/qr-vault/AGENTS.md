@@ -2,6 +2,12 @@
 
 Local-first QR vault built with Vite, React Router, React 19, Tailwind v4, shadcn/Radix primitives, and Vitest.
 
+## Design
+
+- Read `DESIGN.md` before any UI, CSS, component, layout, or visual copy change.
+- Preserve the "private signal console" direction: compact, precise, local-first, scan-safe, and tool-focused.
+- Do not turn app routes into marketing/hero pages; the first screen is the usable vault.
+
 ## Development
 
 - Start locally with `pnpm --filter qr-vault dev`; Vite may choose the next free port if `5173` is busy.

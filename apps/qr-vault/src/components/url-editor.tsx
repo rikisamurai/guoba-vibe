@@ -56,7 +56,7 @@ export function UrlEditor({ value, onChange, children }: UrlEditorProps) {
 
   return (
     <div className="space-y-3">
-      <div className="bg-card rounded-lg border p-3">
+      <div className="bg-background/65 rounded-lg border p-3 shadow-sm">
         <div className="mb-2 flex items-center justify-between gap-3">
           <FieldLabel htmlFor="url-full">{t('urlEditor.fullUrl')}</FieldLabel>
           <span className="text-muted-foreground font-mono text-[10px]">
@@ -109,15 +109,15 @@ export function UrlEditor({ value, onChange, children }: UrlEditorProps) {
           </Button>
         </div>
         {rows.length ? (
-          <div className="bg-card overflow-hidden rounded-lg border">
-            <div className="bg-muted/30 text-muted-foreground grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_2.5rem] items-center gap-2 border-b px-3 py-2 text-[10px] font-medium tracking-wider uppercase">
+          <div className="bg-background/65 overflow-hidden rounded-lg border shadow-sm">
+            <div className="bg-muted/50 text-muted-foreground grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_2.5rem] items-center gap-2 border-b px-3 py-2 text-[10px] font-medium tracking-wider uppercase">
               <span>{t('urlEditor.keyColumn')}</span>
               <span>{t('urlEditor.valueColumn')}</span>
               <span className="sr-only">{t('urlEditor.actionsColumn')}</span>
             </div>
             {rows.map((row, index) => (
               <div
-                key={`${row.key}:${index}`}
+                key={index}
                 className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_2.5rem] items-center gap-2 border-b px-3 py-2 last:border-b-0"
               >
                 <Input
@@ -150,7 +150,7 @@ export function UrlEditor({ value, onChange, children }: UrlEditorProps) {
           <button
             type="button"
             onClick={addRow}
-            className="text-muted-foreground hover:text-foreground hover:bg-muted/50 w-full rounded-md border border-dashed py-3 text-xs transition-colors"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted/50 w-full rounded-lg border border-dashed py-3 text-xs transition-colors"
           >
             {t('common.addQueryParam')}
           </button>

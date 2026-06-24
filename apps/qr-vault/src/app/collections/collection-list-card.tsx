@@ -43,10 +43,10 @@ export function CollectionListCard({
                 to="/collections/$collectionId"
                 params={{ collectionId: collection.id }}
                 className={cn(
-                  'group bg-card inline-flex max-w-full items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors',
+                  'group bg-background/65 inline-flex max-w-full items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
                   collection.id === activeId
-                    ? 'border-foreground shadow-[0_0_0_1px_var(--foreground)]'
-                    : 'border-border hover:bg-muted/50',
+                    ? 'border-[var(--signal)] shadow-[0_0_0_1px_var(--signal)]'
+                    : 'border-border hover:border-ring/60 hover:bg-muted/50',
                 )}
               >
                 <FolderOpen className="size-3.5 shrink-0" />
@@ -58,7 +58,7 @@ export function CollectionListCard({
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground rounded-md border border-dashed px-3 py-4 text-center text-xs italic">
+          <p className="text-muted-foreground rounded-lg border border-dashed px-3 py-4 text-center text-xs italic">
             {t('collections.noCollections')}
           </p>
         )}
