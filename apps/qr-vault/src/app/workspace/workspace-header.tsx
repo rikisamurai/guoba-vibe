@@ -65,7 +65,7 @@ export function WorkspaceHeader({
       />
 
       <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-        <div className="focus-within:border-ring focus-within:ring-ring/50 bg-background/75 flex h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border px-3 shadow-sm transition-colors focus-within:ring-3">
+        <div className="focus-within:border-ring/70 focus-within:ring-ring/30 bg-background/75 flex h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border px-3 shadow-sm transition-colors focus-within:ring-2">
           <Search className="text-muted-foreground size-3.5 shrink-0" />
           <input
             value={search}
