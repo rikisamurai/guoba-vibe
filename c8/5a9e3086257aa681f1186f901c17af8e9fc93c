@@ -1,0 +1,19 @@
+apps/qr-vault/src/styles/driver.css
+  s_35c07cdcdd8df5::t_baa29aa79d75cc 61-62,64,70-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "c85a9e3086257aa681f1186f901c17af8e9fc93c",
+  "prompts": {},
+  "sessions": {
+    "s_35c07cdcdd8df5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019efec9-61c0-7112-89ad-56307b793d88",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
