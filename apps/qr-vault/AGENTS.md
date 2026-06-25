@@ -29,6 +29,7 @@ Local-first QR vault built with Vite, React Router, React 19, Tailwind v4, shadc
 - Run `pnpm --filter qr-vault test` for logic/storage/url changes.
 - Run `pnpm --filter qr-vault build` before completion when imports, routing, or component structure changes.
 - Any UI, CSS, component, shadcn alias, or frontend import-path change must be verified with Agent Browser against the local dev server, then reported with an actual screenshot of the resulting UI so Riki can review the real pixels. If Agent Browser is unavailable, use an equivalent real-browser workflow and state the fallback explicitly.
+- When a PR includes visible UI changes, the PR description must include real before/after screenshots, following the format used in `rikisamurai/guoba-vibe#32`: put `Before:` and `After:` image links under `## Result`, and list the Agent Browser or equivalent real-browser verification steps under `## Verification`. Proposal/mock images are not a substitute for these final PR screenshots.
 
 ```bash
 AGENT_BROWSER_SESSION_NAME=guoba agent-browser open http://localhost:<port>/
