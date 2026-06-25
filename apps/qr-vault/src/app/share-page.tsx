@@ -84,7 +84,7 @@ export function SharePage() {
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <ShareHeader />
       <main className="flex flex-1 flex-col">
-        <div className="mx-auto w-full max-w-xl space-y-8 px-6 py-10 sm:py-14 lg:max-w-4xl">
+        <div className="mx-auto w-full max-w-xl space-y-8 px-6 py-10 sm:py-14 lg:max-w-5xl">
           <ShareHero
             title={title}
             fallbackTitle={parsed.path}

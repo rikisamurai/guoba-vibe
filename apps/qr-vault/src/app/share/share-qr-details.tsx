@@ -15,28 +15,20 @@ export function ShareQrDetails({ title, url, parsed, onDataUrl }: ShareQrDetails
   const { t } = useTranslation()
 
   return (
-    <div className="bg-card/80 signal-panel grid gap-8 rounded-lg border p-5 backdrop-blur-sm lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start lg:gap-12">
+    <div className="bg-card/80 signal-panel grid gap-8 rounded-lg border p-5 backdrop-blur-sm lg:grid-cols-[minmax(320px,420px)_minmax(520px,1fr)] lg:items-start lg:gap-14">
       <div className="flex flex-col items-center gap-3">
-        <div className="scan-plate rounded-lg border p-5">
-          <QrPreview
-            url={url}
-            title={title || t('share.sharedQr')}
-            size="lg"
-            bare
-            onDataUrl={onDataUrl}
-          />
-        </div>
+        <QrPreview
+          url={url}
+          title={title || t('share.sharedQr')}
+          size="lg"
+          bare
+          onDataUrl={onDataUrl}
+        />
         <div className="flex items-center gap-2 text-xs">
           {parsed.isValid ? <Check className="size-3.5" /> : <AlertCircle className="size-3.5" />}
           <span className="font-medium">
             {parsed.isValid ? t('share.validDeeplink') : t('share.invalidUrl')}
           </span>
-          {parsed.scheme && (
-            <>
-              <span className="text-muted-foreground">·</span>
-              <span className="text-muted-foreground font-mono">{parsed.scheme}://</span>
-            </>
-          )}
         </div>
       </div>
 
@@ -74,12 +66,12 @@ function QueryDetails({ entries }: { entries: [string, string][] }) {
         {entries.map(([key, value]) => (
           <div
             key={key}
-            className="bg-background/65 grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 rounded-md border px-2.5 py-1.5 text-xs"
+            className="bg-background/65 grid grid-cols-[minmax(18ch,0.9fr)_minmax(16ch,1fr)] gap-3 rounded-md border px-2.5 py-1.5 text-xs"
           >
-            <code className="text-foreground truncate font-mono" title={key}>
+            <code className="text-foreground min-w-0 font-mono break-all" title={key}>
               {key}
             </code>
-            <code className="text-muted-foreground truncate font-mono" title={value}>
+            <code className="text-muted-foreground min-w-0 font-mono break-all" title={value}>
               {value || '""'}
             </code>
           </div>
