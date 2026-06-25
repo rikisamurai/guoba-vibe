@@ -22,7 +22,7 @@ export function UrlStatusStrip({ url, canSave }: { url: string; canSave: boolean
     >
       <div className="flex min-w-44 flex-1 items-center gap-2">
         {canSave ? (
-          <Check className="size-3 text-green-600 dark:text-green-400" />
+          <Check className="size-3.5 text-green-600 dark:text-green-400" strokeWidth={2.4} />
         ) : (
           <AlertCircle className="size-3.5" />
         )}
