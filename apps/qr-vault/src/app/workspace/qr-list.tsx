@@ -15,6 +15,7 @@ type QrListProps = {
   armedDeleteId: string
   armedProgress: number
   copiedUrlId: string
+  collectionNamesByQrId: Record<string, string[]>
   itemRefs: MutableRefObject<Map<string, HTMLDivElement>>
   onSelect: (id: string) => void
   onCopyUrl: (qr: WorkspaceQr) => void
@@ -29,6 +30,7 @@ export function QrList({
   armedDeleteId,
   armedProgress,
   copiedUrlId,
+  collectionNamesByQrId,
   itemRefs,
   onSelect,
   onCopyUrl,
@@ -63,6 +65,7 @@ export function QrList({
           armedDeleteId={armedDeleteId}
           armedProgress={armedProgress}
           copiedUrlId={copiedUrlId}
+          collectionNames={collectionNamesByQrId[qr.id] ?? []}
           itemRefs={itemRefs}
           onSelect={onSelect}
           onCopyUrl={onCopyUrl}
@@ -85,9 +88,11 @@ function QrListItem({
   onCopyUrl,
   onArmDelete,
   onDelete,
-}: Omit<QrListProps, 'qrs' | 'search' | 'selectedId'> & {
+  collectionNames,
+}: Omit<QrListProps, 'qrs' | 'search' | 'selectedId' | 'collectionNamesByQrId'> & {
   qr: WorkspaceQr
   isSelected: boolean
+  collectionNames: string[]
 }) {
   const { t } = useTranslation()
   const parsed = parseDeepLink(qr.url)
@@ -133,6 +138,26 @@ function QrListItem({
           </p>
           {qr.description && (
             <p className="text-muted-foreground mt-0.5 truncate pl-3.5 text-xs">{qr.description}</p>
+          )}
+          {collectionNames.length > 0 && (
+            <div className="mt-2 flex min-w-0 flex-wrap gap-1 pl-3.5">
+              {collectionNames.slice(0, 2).map((collectionName) => (
+                <span
+                  key={collectionName}
+                  className="bg-muted/55 text-muted-foreground max-w-36 truncate rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
+                >
+                  {collectionName}
+                </span>
+              ))}
+              {collectionNames.length > 2 && (
+                <span
+                  className="text-muted-foreground rounded-md border px-1.5 py-0.5 font-mono text-[10px]"
+                  title={collectionNames.slice(2).join(', ')}
+                >
+                  {t('common.moreCount', { count: collectionNames.length - 2 })}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </button>
