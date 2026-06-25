@@ -1,3 +1,5 @@
+import { nanoid8 } from '@/lib/ids'
+
 export type ParsedDeepLink = {
   raw: string
   scheme: string
@@ -8,14 +10,22 @@ export type ParsedDeepLink = {
 }
 
 export type QueryRow = {
+  id: string
   key: string
   value: string
+  enabled: boolean
 }
 
 export type UrlParts = {
   scheme: string
   path: string
   query: Record<string, string>
+}
+
+export type UrlRowsParts = {
+  scheme: string
+  path: string
+  rows: QueryRow[]
 }
 
 const SCHEME_SEPARATOR = '://'
@@ -61,6 +71,7 @@ export function buildUrlFromParts(parts: UrlParts): string {
 export function normalizeQueryRows(rows: QueryRow[]): Record<string, string> {
   const query: Record<string, string> = {}
   rows.forEach((row) => {
+    if (!row.enabled) return
     const key = row.key.trim()
     if (key) query[key] = row.value
   })
@@ -68,7 +79,32 @@ export function normalizeQueryRows(rows: QueryRow[]): Record<string, string> {
 }
 
 export function queryToRows(query: Record<string, string>): QueryRow[] {
-  return Object.entries(query).map(([key, value]) => ({ key, value }))
+  return Object.entries(query).map(([key, value]) => createQueryRow({ key, value }))
+}
+
+export function createQueryRow(input: Partial<QueryRow> = {}): QueryRow {
+  return {
+    id: input.id ?? nanoid8(),
+    key: input.key ?? '',
+    value: input.value ?? '',
+    enabled: input.enabled ?? true,
+  }
+}
+
+export function buildUrlFromQueryRows(parts: UrlRowsParts): string {
+  return buildUrlFromParts({
+    scheme: parts.scheme,
+    path: parts.path,
+    query: normalizeQueryRows(parts.rows),
+  })
+}
+
+export function compactQueryRows(rows: QueryRow[]): QueryRow[] {
+  return rows.flatMap((row) => {
+    const key = row.key.trim()
+    if (!key) return []
+    return [{ ...row, key }]
+  })
 }
 
 export function buildSharePath(input: {

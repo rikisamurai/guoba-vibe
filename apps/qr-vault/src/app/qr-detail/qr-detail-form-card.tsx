@@ -10,8 +10,9 @@ import { FieldLabel } from '@/components/field-label'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
 import { Input } from '@/components/shadcn-ui/input'
-import { UrlEditor } from '@/components/url-editor'
+import { UrlEditor, type UrlEditorChange } from '@/components/url-editor'
 import type { VaultData } from '@/lib/storage'
+import type { QueryRow } from '@/lib/url'
 
 type QrDetailFormCardProps = {
   isNew: boolean
@@ -20,6 +21,7 @@ type QrDetailFormCardProps = {
   title: string
   description: string
   url: string
+  queryRows: QueryRow[]
   collectionIds: string[]
   collections: VaultData['collections']
   error: string
@@ -28,7 +30,7 @@ type QrDetailFormCardProps = {
   titleRef: RefObject<HTMLInputElement | null>
   onTitleChange: (next: string) => void
   onDescriptionChange: (next: string) => void
-  onUrlChange: (next: string) => void
+  onUrlEditorChange: (next: UrlEditorChange) => void
   onCollectionIdsChange: (next: string[]) => void
   onCreateCollection: (title: string) => CreateCollectionResult
   onSave: () => void
@@ -42,6 +44,7 @@ export function QrDetailFormCard({
   title,
   description,
   url,
+  queryRows,
   collectionIds,
   collections,
   error,
@@ -50,7 +53,7 @@ export function QrDetailFormCard({
   titleRef,
   onTitleChange,
   onDescriptionChange,
-  onUrlChange,
+  onUrlEditorChange,
   onCollectionIdsChange,
   onCreateCollection,
   onSave,
@@ -107,7 +110,7 @@ export function QrDetailFormCard({
             </p>
           </div>
           <UrlStatusStrip url={url} canSave={canSave} />
-          <UrlEditor value={url} onChange={onUrlChange}>
+          <UrlEditor value={url} queryRows={queryRows} onChange={onUrlEditorChange}>
             <MobileUrlPreview title={title} url={url} />
           </UrlEditor>
         </section>

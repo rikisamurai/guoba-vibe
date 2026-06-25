@@ -213,10 +213,12 @@
     "schemePlaceholder": "https",
     "path": "Path",
     "pathPlaceholder": "www.google.com/search",
-    "queryDescription": "Edit key/value pairs. Changes rebuild the full URL automatically.",
+    "queryDescription": "Toggle params without deleting them. Enabled rows rebuild the full URL.",
+    "statusColumn": "Status",
     "keyColumn": "Key",
     "valueColumn": "Value",
     "actionsColumn": "Actions",
+    "toggleQueryRow": "Toggle {{label}}",
     "keyPlaceholder": "key",
     "valuePlaceholder": "value"
   },

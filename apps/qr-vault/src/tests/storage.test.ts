@@ -17,6 +17,26 @@ describe('parseVaultData', () => {
     expect(parseVaultData(JSON.stringify(baseVault))).toEqual(baseVault)
   })
 
+  it('accepts persisted query param row state', () => {
+    const vault = {
+      ...baseVault,
+      qrs: [
+        {
+          id: 'qr',
+          url: 'xhsdiscover://rn/page?mode=RN',
+          queryParams: [
+            { id: 'mode', key: 'mode', value: 'RN', enabled: true },
+            { id: 'host', key: 'hostId', value: '600982ae0000000001000ee4', enabled: false },
+          ],
+          createdAt: '1',
+          updatedAt: '1',
+        },
+      ],
+    }
+
+    expect(parseVaultData(JSON.stringify(vault))).toEqual(vault)
+  })
+
   it('returns null for invalid JSON or invalid shape', () => {
     expect(parseVaultData('{')).toBeNull()
     expect(parseVaultData(JSON.stringify({ version: 2 }))).toBeNull()
@@ -97,6 +117,29 @@ describe('upsertQr', () => {
       { collectionId: 'a', qrId: result.qrs[0].id },
       { collectionId: 'b', qrId: result.qrs[0].id },
     ])
+  })
+
+  it('persists query param row state separately from the effective URL', () => {
+    const result = upsertQr(
+      baseVault,
+      {
+        title: 'Buyer',
+        url: 'xhsdiscover://rn/page?mode=RN',
+        queryParams: [
+          { id: 'mode', key: 'mode', value: 'RN', enabled: true },
+          { id: 'host', key: 'hostId', value: '600982ae0000000001000ee4', enabled: false },
+        ],
+      },
+      'now',
+    )
+
+    expect(result.qrs[0]).toMatchObject({
+      url: 'xhsdiscover://rn/page?mode=RN',
+      queryParams: [
+        { id: 'mode', key: 'mode', value: 'RN', enabled: true },
+        { id: 'host', key: 'hostId', value: '600982ae0000000001000ee4', enabled: false },
+      ],
+    })
   })
 })
 

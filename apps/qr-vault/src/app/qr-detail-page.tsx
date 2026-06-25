@@ -1,23 +1,25 @@
-import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
-import { AlertCircle, ArrowLeft, Check } from 'lucide-react'
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { useInlineCollectionCreate } from '@/app/qr-detail/inline-collection-create'
 import { NotFoundCard } from '@/app/qr-detail/not-found-card'
-import { PreviewPanel } from '@/app/qr-detail/preview-panel'
+import { QrDetailAside } from '@/app/qr-detail/qr-detail-aside'
 import { QrDetailFormCard } from '@/app/qr-detail/qr-detail-form-card'
-import { ShareUtilityPanel } from '@/app/qr-detail/share-utility-panel'
-import { UrlUtilitiesPanel } from '@/app/qr-detail/url-utilities-panel'
+import { QrDetailHeader } from '@/app/qr-detail/qr-detail-header'
 import { useVault } from '@/app/use-vault'
-import { Badge } from '@/components/shadcn-ui/badge'
 import { nanoid8 } from '@/lib/ids'
 import { downloadDataUrl, qrFileName } from '@/lib/qr'
 import { LAST_SAVED_QR_ID_KEY, upsertQr } from '@/lib/storage'
-import { buildShareUrl, parseDeepLink } from '@/lib/url'
+import {
+  buildShareUrl,
+  compactQueryRows,
+  parseDeepLink,
+  queryToRows,
+  type QueryRow,
+} from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
-import { cn } from '@/lib/utils'
 
 export function QrDetailPage() {
   const { t } = useTranslation()
@@ -39,6 +41,7 @@ export function QrDetailPage() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [url, setUrl] = useState('')
+  const [queryRows, setQueryRows] = useState<QueryRow[]>([])
   const [collectionIds, setCollectionIds] = useState<string[]>([])
   const [error, setError] = useState('')
   const [shareCopied, setShareCopied] = useState(false)
@@ -52,6 +55,9 @@ export function QrDetailPage() {
     updateVault,
   })
   const parsed = parseDeepLink(url)
+  const documentTitle = isNew
+    ? t('qrDetail.documentNew')
+    : title || existingQr?.title || t('qrDetail.documentFallback')
   const shareUrl = buildShareUrl({
     origin: window.location.origin,
     pathname: window.location.pathname,
@@ -59,16 +65,14 @@ export function QrDetailPage() {
     title,
     description,
   })
-  useDocumentTitle(
-    isNew
-      ? t('qrDetail.documentNew')
-      : title || existingQr?.title || t('qrDetail.documentFallback'),
-  )
+  useDocumentTitle(documentTitle)
 
   useEffect(() => {
+    const nextUrl = existingQr?.url ?? search.url ?? ''
     setTitle(existingQr?.title ?? search.title ?? '')
     setDescription(existingQr?.description ?? search.description ?? '')
-    setUrl(existingQr?.url ?? search.url ?? '')
+    setUrl(nextUrl)
+    setQueryRows(existingQr?.queryParams ?? queryToRows(parseDeepLink(nextUrl).query))
     setCollectionIds(
       existingQr
         ? data.collectionItems.reduce<string[]>((ids, item) => {
@@ -84,13 +88,24 @@ export function QrDetailPage() {
     if (autoFocusTitle) titleRef.current?.focus()
   }, [autoFocusTitle])
 
+  function qrInput(id: string) {
+    return {
+      id,
+      title,
+      description,
+      url,
+      queryParams: compactQueryRows(queryRows),
+      collectionIds,
+    }
+  }
+
   function saveQr() {
     if (!parsed.isValid) {
       setError(t('qrDetail.validUrlRequired'))
       return
     }
     const id = existingQr?.id ?? (isNew ? nanoid8() : qrId)
-    updateVault((current) => upsertQr(current, { id, title, description, url, collectionIds }))
+    updateVault((current) => upsertQr(current, qrInput(id)))
     setSaved(true)
     sessionStorage.setItem(LAST_SAVED_QR_ID_KEY, id)
     window.setTimeout(() => setSaved(false), 1200)
@@ -103,9 +118,7 @@ export function QrDetailPage() {
       return
     }
     const newId = nanoid8()
-    updateVault((current) =>
-      upsertQr(current, { id: newId, title, description, url, collectionIds }),
-    )
+    updateVault((current) => upsertQr(current, qrInput(newId)))
     sessionStorage.setItem(LAST_SAVED_QR_ID_KEY, newId)
     toast.success(t('qrDetail.savedAsNewToast'))
     void navigate({ to: '/q/$qrId', params: { qrId: newId } })
@@ -142,26 +155,16 @@ export function QrDetailPage() {
     window.setTimeout(() => setPngDownloaded(false), 1200)
   }
 
+  function updateUrlEditor(next: { url: string; queryRows: QueryRow[] }) {
+    setUrl(next.url)
+    setQueryRows(next.queryRows)
+  }
+
   if (!isNew && !existingQr) return <NotFoundCard />
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <Link
-          to="/"
-          className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs font-medium"
-        >
-          <ArrowLeft className="size-3" /> {t('common.vault')}
-        </Link>
-        <Badge variant="outline" className={cn('gap-1.5', parsed.isEmpty && 'hidden')}>
-          {parsed.isValid ? (
-            <Check className="size-3.5 text-green-600 dark:text-green-400" strokeWidth={2.4} />
-          ) : (
-            <AlertCircle className="size-3" />
-          )}
-          {parsed.isValid ? t('qrDetail.readyToSave') : t('qrDetail.invalidUrl')}
-        </Badge>
-      </div>
+      <QrDetailHeader isEmpty={parsed.isEmpty} isValid={parsed.isValid} />
 
       <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_440px] xl:grid-cols-[minmax(0,1fr)_460px]">
         <QrDetailFormCard
@@ -171,6 +174,7 @@ export function QrDetailPage() {
           title={title}
           description={description}
           url={url}
+          queryRows={queryRows}
           collectionIds={collectionIds}
           collections={data.collections}
           error={error}
@@ -179,31 +183,25 @@ export function QrDetailPage() {
           titleRef={titleRef}
           onTitleChange={setTitle}
           onDescriptionChange={setDescription}
-          onUrlChange={setUrl}
+          onUrlEditorChange={updateUrlEditor}
           onCollectionIdsChange={setCollectionIds}
           onCreateCollection={createCollection}
           onSave={saveQr}
           onSaveAsNew={saveAsNew}
         />
-        <aside className="space-y-3 lg:sticky lg:top-0">
-          <PreviewPanel
-            title={title}
-            url={url}
-            isValid={parsed.isValid}
-            urlCopied={urlCopied}
-            pngDownloaded={pngDownloaded}
-            onDataUrl={setQrDataUrl}
-            onCopyUrl={() => void copyUrl()}
-            onDownloadPng={downloadPng}
-          />
-          <UrlUtilitiesPanel parsed={parsed} />
-          <ShareUtilityPanel
-            shareUrl={shareUrl}
-            canCopy={Boolean(shareUrl && parsed.isValid)}
-            shareCopied={shareCopied}
-            onCopyShareUrl={() => void copyShareUrl()}
-          />
-        </aside>
+        <QrDetailAside
+          title={title}
+          url={url}
+          parsed={parsed}
+          urlCopied={urlCopied}
+          shareUrl={shareUrl}
+          shareCopied={shareCopied}
+          pngDownloaded={pngDownloaded}
+          onDataUrl={setQrDataUrl}
+          onCopyUrl={() => void copyUrl()}
+          onCopyShareUrl={() => void copyShareUrl()}
+          onDownloadPng={downloadPng}
+        />
       </div>
     </div>
   )

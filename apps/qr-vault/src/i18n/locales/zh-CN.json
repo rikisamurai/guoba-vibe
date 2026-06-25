@@ -213,10 +213,12 @@
     "schemePlaceholder": "https",
     "path": "Path",
     "pathPlaceholder": "www.google.com/search",
-    "queryDescription": "编辑 key/value 参数；修改后会自动回写完整 URL。",
+    "queryDescription": "可临时关闭参数而不删除；开启的行会回写完整 URL。",
+    "statusColumn": "状态",
     "keyColumn": "键",
     "valueColumn": "值",
     "actionsColumn": "操作",
+    "toggleQueryRow": "切换 {{label}}",
     "keyPlaceholder": "key",
     "valuePlaceholder": "value"
   },

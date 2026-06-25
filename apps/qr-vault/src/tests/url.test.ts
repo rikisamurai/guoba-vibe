@@ -4,8 +4,10 @@ import {
   buildSharePath,
   buildShareUrl,
   buildUrlFromParts,
+  buildUrlFromQueryRows,
   normalizeQueryRows,
   parseDeepLink,
+  queryToRows,
 } from '@/lib/url'
 
 describe('parseDeepLink', () => {
@@ -58,11 +60,42 @@ describe('normalizeQueryRows', () => {
   it('turns rows into a key-value map and drops empty keys', () => {
     expect(
       normalizeQueryRows([
-        { key: 'sku_id', value: '1' },
-        { key: '', value: 'ignored' },
-        { key: 'item_id', value: '2' },
+        { id: 'sku', key: 'sku_id', value: '1', enabled: true },
+        { id: 'empty', key: '', value: 'ignored', enabled: true },
+        { id: 'item', key: 'item_id', value: '2', enabled: true },
       ]),
     ).toEqual({ sku_id: '1', item_id: '2' })
+  })
+
+  it('keeps disabled rows out of the normalized query map', () => {
+    expect(
+      normalizeQueryRows([
+        { id: 'scene', key: 'scene', value: 'common', enabled: true },
+        { id: 'host', key: 'hostId', value: '600982ae0000000001000ee4', enabled: false },
+      ]),
+    ).toEqual({ scene: 'common' })
+  })
+})
+
+describe('query rows', () => {
+  it('creates enabled rows from parsed query params', () => {
+    expect(queryToRows({ mode: 'RN', scene: 'common' })).toEqual([
+      expect.objectContaining({ key: 'mode', value: 'RN', enabled: true }),
+      expect.objectContaining({ key: 'scene', value: 'common', enabled: true }),
+    ])
+  })
+
+  it('rebuilds the effective URL from enabled query rows only', () => {
+    expect(
+      buildUrlFromQueryRows({
+        scheme: 'xhsdiscover',
+        path: 'rn/page',
+        rows: [
+          { id: 'mode', key: 'mode', value: 'RN', enabled: true },
+          { id: 'host', key: 'hostId', value: '600982ae0000000001000ee4', enabled: false },
+        ],
+      }),
+    ).toBe('xhsdiscover://rn/page?mode=RN')
   })
 })
 
