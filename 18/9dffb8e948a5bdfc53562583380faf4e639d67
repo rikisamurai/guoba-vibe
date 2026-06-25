@@ -1,0 +1,21 @@
+apps/qr-vault/src/app/workspace-page.tsx
+  s_c002fcb1ded58e::t_00b92d48849223 12,132,154,179-190
+apps/qr-vault/src/app/workspace/qr-list.tsx
+  s_c002fcb1ded58e::t_fb133075c33a59 18,33,68,91-92,95,142-160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "189dffb8e948a5bdfc53562583380faf4e639d67",
+  "prompts": {},
+  "sessions": {
+    "s_c002fcb1ded58e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019efc9f-ce00-7f93-8ad5-747108c11193",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
