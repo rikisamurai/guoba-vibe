@@ -1,0 +1,21 @@
+apps/qr-vault/src/app/share-page.tsx
+  s_6d4d04737fa1dd::t_087a1f5b20607c 87
+apps/qr-vault/src/app/share/share-qr-details.tsx
+  s_6d4d04737fa1dd::t_087a1f5b20607c 18,20-26,69,71,74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "4a9079aa64d2f3877004268224af3109bc1c7a9d",
+  "prompts": {},
+  "sessions": {
+    "s_6d4d04737fa1dd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019efeaa-a19f-7002-ad19-d5d81175da5d",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
