@@ -45,7 +45,11 @@ export function PreviewPanel({
         </div>
         {!isEmpty && (
           <Badge variant="outline" className="gap-1.5">
-            {isValid ? <Check className="size-3" /> : <AlertCircle className="size-3" />}
+            {isValid ? (
+              <Check className="size-3 text-green-600 dark:text-green-400" />
+            ) : (
+              <AlertCircle className="size-3" />
+            )}
             {isValid ? t('common.valid') : t('common.invalid')}
           </Badge>
         )}

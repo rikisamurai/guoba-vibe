@@ -21,7 +21,11 @@ export function UrlStatusStrip({ url, canSave }: { url: string; canSave: boolean
       )}
     >
       <div className="flex min-w-44 flex-1 items-center gap-2">
-        {canSave ? <Check className="size-3.5" /> : <AlertCircle className="size-3.5" />}
+        {canSave ? (
+          <Check className="size-3 text-green-600 dark:text-green-400" />
+        ) : (
+          <AlertCircle className="size-3.5" />
+        )}
         <span className="truncate text-xs font-medium">
           {canSave
             ? t('qrDetail.readyToSave')
