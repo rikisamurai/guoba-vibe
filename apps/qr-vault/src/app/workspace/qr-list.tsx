@@ -133,31 +133,14 @@ function QrListItem({
               </span>
             )}
           </div>
-          <p className="text-muted-foreground truncate pl-3.5 font-mono text-xs">
-            {parsed.path || qr.url}
-          </p>
+          <div className="flex min-w-0 items-center gap-2 pl-3.5">
+            <p className="text-muted-foreground min-w-0 flex-1 truncate font-mono text-xs">
+              {parsed.path || qr.url}
+            </p>
+            <CollectionInlineBadge collectionNames={collectionNames} />
+          </div>
           {qr.description && (
             <p className="text-muted-foreground mt-0.5 truncate pl-3.5 text-xs">{qr.description}</p>
-          )}
-          {collectionNames.length > 0 && (
-            <div className="mt-2 flex min-w-0 flex-wrap gap-1 pl-3.5">
-              {collectionNames.slice(0, 2).map((collectionName) => (
-                <span
-                  key={collectionName}
-                  className="bg-muted/55 text-muted-foreground max-w-36 truncate rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
-                >
-                  {collectionName}
-                </span>
-              ))}
-              {collectionNames.length > 2 && (
-                <span
-                  className="text-muted-foreground rounded-md border px-1.5 py-0.5 font-mono text-[10px]"
-                  title={collectionNames.slice(2).join(', ')}
-                >
-                  {t('common.moreCount', { count: collectionNames.length - 2 })}
-                </span>
-              )}
-            </div>
           )}
         </div>
       </button>
@@ -190,5 +173,24 @@ function QrListItem({
         )}
       </div>
     </div>
+  )
+}
+
+function CollectionInlineBadge({ collectionNames }: { collectionNames: string[] }) {
+  const { t } = useTranslation()
+  if (!collectionNames.length) return null
+
+  return (
+    <span
+      className="bg-muted/45 text-muted-foreground inline-flex max-w-32 shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
+      title={collectionNames.join(', ')}
+    >
+      <span className="truncate">{collectionNames[0]}</span>
+      {collectionNames.length > 1 && (
+        <span className="font-mono">
+          {t('common.moreCount', { count: collectionNames.length - 1 })}
+        </span>
+      )}
+    </span>
   )
 }
