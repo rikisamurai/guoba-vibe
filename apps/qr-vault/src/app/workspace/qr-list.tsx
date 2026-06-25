@@ -2,6 +2,7 @@ import { Search, Trash2 } from 'lucide-react'
 import type { MutableRefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { CollectionMetaBadge } from '@/app/workspace/collection-meta-badge'
 import { QrRowActions } from '@/app/workspace/qr-row-actions'
 import type { WorkspaceQr } from '@/app/workspace/types'
 import { Card, CardContent } from '@/components/shadcn-ui/card'
@@ -132,19 +133,20 @@ function QrListItem({
                 {parsed.scheme}
               </span>
             )}
+            <CollectionMetaBadge
+              collectionNames={collectionNames}
+              showSeparator={Boolean(parsed.scheme)}
+            />
           </div>
-          <div className="flex min-w-0 items-center gap-2 pl-3.5">
-            <p className="text-muted-foreground min-w-0 flex-1 truncate font-mono text-xs">
-              {parsed.path || qr.url}
-            </p>
-            <CollectionInlineBadge collectionNames={collectionNames} />
-          </div>
+          <p className="text-muted-foreground truncate pl-3.5 font-mono text-xs">
+            {parsed.path || qr.url}
+          </p>
           {qr.description && (
             <p className="text-muted-foreground mt-0.5 truncate pl-3.5 text-xs">{qr.description}</p>
           )}
         </div>
       </button>
-      <div className="absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center gap-1 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
+      <div className="border-border/70 absolute top-1/2 right-1.5 flex h-11 -translate-y-1/2 items-center gap-1 border-l pl-3 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
         {armedDeleteId === qr.id ? (
           <button
             type="button"
@@ -173,24 +175,5 @@ function QrListItem({
         )}
       </div>
     </div>
-  )
-}
-
-function CollectionInlineBadge({ collectionNames }: { collectionNames: string[] }) {
-  const { t } = useTranslation()
-  if (!collectionNames.length) return null
-
-  return (
-    <span
-      className="bg-muted/45 text-muted-foreground inline-flex max-w-32 shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
-      title={collectionNames.join(', ')}
-    >
-      <span className="truncate">{collectionNames[0]}</span>
-      {collectionNames.length > 1 && (
-        <span className="font-mono">
-          {t('common.moreCount', { count: collectionNames.length - 1 })}
-        </span>
-      )}
-    </span>
   )
 }
