@@ -58,15 +58,17 @@
   width: 2rem;
   height: 2rem;
   border-radius: calc(var(--radius) - 2px);
-  background: var(--muted);
+  background: transparent;
+  border: 0;
   color: var(--popover-foreground);
+  box-shadow: none;
   opacity: 1;
   text-shadow: none;
 }
 
 .driver-popover .driver-popover-close-btn:hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: transparent;
+  color: var(--popover-foreground);
 }
 
 .driver-popover .driver-popover-close-btn:focus-visible {
