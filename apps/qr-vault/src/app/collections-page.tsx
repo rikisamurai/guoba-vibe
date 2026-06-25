@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import { CollectionCoverageRow } from '@/app/collections/collection-coverage-row'
 import { CollectionFormCard } from '@/app/collections/collection-form-card'
 import { CollectionListCard } from '@/app/collections/collection-list-card'
 import { CollectionQrCard } from '@/app/collections/collection-qr-card'
@@ -11,7 +12,7 @@ import { useVault } from '@/app/use-vault'
 import { useArmedAction } from '@/hooks/use-armed-action'
 import { type Collection, deleteCollection, upsertCollection } from '@/lib/storage'
 import { useDocumentTitle } from '@/lib/use-document-title'
-import { getQrsForCollection } from '@/lib/vault'
+import { getQrsForCollection, getUncategorizedQrs } from '@/lib/vault'
 
 export function CollectionsPage() {
   const { t } = useTranslation()
@@ -23,6 +24,7 @@ export function CollectionsPage() {
     : ''
   const selectedCollection = data.collections.find((collection) => collection.id === collectionId)
   const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : []
+  const uncategorizedCount = getUncategorizedQrs(data).length
   const collectionCounts = data.collectionItems.reduce<Record<string, number>>((counts, item) => {
     counts[item.collectionId] = (counts[item.collectionId] ?? 0) + 1
     return counts
@@ -114,6 +116,12 @@ export function CollectionsPage() {
           {t('collections.backToVault')} <ArrowRight className="size-3" />
         </Link>
       </div>
+
+      <CollectionCoverageRow
+        collectionCount={data.collections.length}
+        assignmentCount={data.collectionItems.length}
+        uncategorizedCount={uncategorizedCount}
+      />
 
       <CollectionListCard
         collections={data.collections}
