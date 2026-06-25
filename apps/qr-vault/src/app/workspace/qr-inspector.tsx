@@ -3,6 +3,7 @@ import { ArrowRight, Check, Download, ExternalLink, Plus, Share2 } from 'lucide-
 import { useTranslation } from 'react-i18next'
 
 import { ActionTooltip } from '@/app/workspace/action-tooltip'
+import { ScanFactRow } from '@/app/workspace/scan-fact-row'
 import type { WorkspaceQr } from '@/app/workspace/types'
 import { ParsedUrlPanel } from '@/components/parsed-url-panel'
 import { QrPreview } from '@/components/qr-preview'
@@ -13,6 +14,7 @@ import { parseDeepLink } from '@/lib/url'
 type QrInspectorProps = {
   qr?: WorkspaceQr
   search: string
+  collectionCount: number
   inspectorDataUrl: string | null
   downloadedInspectorId: string
   copiedShareId: string
@@ -24,6 +26,7 @@ type QrInspectorProps = {
 export function QrInspector({
   qr,
   search,
+  collectionCount,
   inspectorDataUrl,
   downloadedInspectorId,
   copiedShareId,
@@ -58,6 +61,7 @@ export function QrInspector({
 
   const parsed = parseDeepLink(qr.url)
   const name = qr.title || parsed.path || t('common.qrFallback')
+  const queryCount = Object.keys(parsed.query).length
 
   return (
     <>
@@ -90,6 +94,13 @@ export function QrInspector({
           <div className="scan-plate rounded-lg border p-6 shadow-inner">
             <QrPreview title={qr.title} url={qr.url} size="inspector" bare onDataUrl={onDataUrl} />
           </div>
+          <ScanFactRow
+            facts={[
+              { label: t('common.scheme'), value: parsed.scheme || '-' },
+              { label: t('common.queryParams'), value: queryCount },
+              { label: t('common.collections'), value: collectionCount },
+            ]}
+          />
           {qr.description && (
             <p className="text-muted-foreground text-sm leading-relaxed">{qr.description}</p>
           )}

@@ -129,6 +129,9 @@ export function WorkspacePage() {
         : getQrsForCollection(data, activeFilter)
   const visibleQrs = sortQrsByRecent(searchQrs({ ...data, qrs: baseQrs }, search))
   const selectedQr = data.qrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0]
+  const selectedCollectionCount = selectedQr
+    ? data.collectionItems.filter((item) => item.qrId === selectedQr.id).length
+    : 0
 
   return (
     <div className="grid grid-cols-1 items-start gap-5 lg:h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1fr)_380px] lg:items-stretch lg:overflow-hidden xl:grid-cols-[minmax(520px,1fr)_500px] 2xl:grid-cols-[minmax(600px,1fr)_560px]">
@@ -163,6 +166,7 @@ export function WorkspacePage() {
         <QrInspector
           qr={selectedQr}
           search={search}
+          collectionCount={selectedCollectionCount}
           inspectorDataUrl={inspectorDataUrl}
           downloadedInspectorId={downloadedInspectorId}
           copiedShareId={copiedShareId}
