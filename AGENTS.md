@@ -19,7 +19,18 @@ Before implementing:
 - If a simpler approach exists, say so. Push back when warranted.
 - If something is unclear, stop. Name what's confusing. Ask.
 
-## 2. Simplicity First
+## 2. UI Changes Need Visual Approval First
+
+**For UI layout, visual hierarchy, or information-placement changes, show the design before coding.**
+
+Before changing UI code:
+
+- Generate a screenshot, mock image, or visual proposal that shows the intended result.
+- Let Riki choose or approve the direction before editing implementation files.
+- Keep display areas, metadata, and action controls visually distinct unless the approved design says otherwise.
+- Do not use code changes as the first draft for subjective UI placement decisions.
+
+## 3. Simplicity First
 
 **Minimum code that solves the problem. Nothing speculative.**
 
@@ -31,7 +42,7 @@ Before implementing:
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
-## 3. Surgical Changes
+## 4. Surgical Changes
 
 **Touch only what you must. Clean up only your own mess.**
 
@@ -49,7 +60,7 @@ When your changes create orphans:
 
 The test: Every changed line should trace directly to the user's request.
 
-## 4. Goal-Driven Execution
+## 5. Goal-Driven Execution
 
 **Define success criteria. Loop until verified.**
 
@@ -69,7 +80,7 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-## 5. File Size & Splitting (`max-lines`)
+## 6. File Size & Splitting (`max-lines`)
 
 oxlint enforces **max 200 lines** per source file (`error`; counts code only — blank lines and comments are skipped). Treat it as a **floor that prevents bloat, not a ceiling that proves good design** — a file under 200 can still be a mess. The limit's job is to make you _notice_ growth and decide how to decompose.
 

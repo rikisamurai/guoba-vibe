@@ -2,6 +2,7 @@ import { Search, Trash2 } from 'lucide-react'
 import type { MutableRefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { CollectionMetaBadge } from '@/app/workspace/collection-meta-badge'
 import { QrRowActions } from '@/app/workspace/qr-row-actions'
 import type { WorkspaceQr } from '@/app/workspace/types'
 import { Card, CardContent } from '@/components/shadcn-ui/card'
@@ -15,6 +16,7 @@ type QrListProps = {
   armedDeleteId: string
   armedProgress: number
   copiedUrlId: string
+  collectionNamesByQrId: Record<string, string[]>
   itemRefs: MutableRefObject<Map<string, HTMLDivElement>>
   onSelect: (id: string) => void
   onCopyUrl: (qr: WorkspaceQr) => void
@@ -29,6 +31,7 @@ export function QrList({
   armedDeleteId,
   armedProgress,
   copiedUrlId,
+  collectionNamesByQrId,
   itemRefs,
   onSelect,
   onCopyUrl,
@@ -63,6 +66,7 @@ export function QrList({
           armedDeleteId={armedDeleteId}
           armedProgress={armedProgress}
           copiedUrlId={copiedUrlId}
+          collectionNames={collectionNamesByQrId[qr.id] ?? []}
           itemRefs={itemRefs}
           onSelect={onSelect}
           onCopyUrl={onCopyUrl}
@@ -85,9 +89,11 @@ function QrListItem({
   onCopyUrl,
   onArmDelete,
   onDelete,
-}: Omit<QrListProps, 'qrs' | 'search' | 'selectedId'> & {
+  collectionNames,
+}: Omit<QrListProps, 'qrs' | 'search' | 'selectedId' | 'collectionNamesByQrId'> & {
   qr: WorkspaceQr
   isSelected: boolean
+  collectionNames: string[]
 }) {
   const { t } = useTranslation()
   const parsed = parseDeepLink(qr.url)
@@ -127,6 +133,10 @@ function QrListItem({
                 {parsed.scheme}
               </span>
             )}
+            <CollectionMetaBadge
+              collectionNames={collectionNames}
+              showSeparator={Boolean(parsed.scheme)}
+            />
           </div>
           <p className="text-muted-foreground truncate pl-3.5 font-mono text-xs">
             {parsed.path || qr.url}
@@ -136,7 +146,7 @@ function QrListItem({
           )}
         </div>
       </button>
-      <div className="absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center gap-1 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
+      <div className="border-border/70 absolute top-1/2 right-1.5 flex h-11 -translate-y-1/2 items-center gap-1 border-l pl-3 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
         {armedDeleteId === qr.id ? (
           <button
             type="button"

@@ -5,6 +5,9 @@ Local-first QR vault built with Vite, React Router, React 19, Tailwind v4, shadc
 ## Design
 
 - Read `DESIGN.md` before any UI, CSS, component, layout, or visual copy change.
+- Before changing UI layout, visual hierarchy, or information placement, produce a screenshot/mock/proposal image first and wait for Riki to approve the direction.
+- For vault rows, cards, detail panels, and toolbars, keep content display, metadata, and action controls visually separated unless the approved proposal intentionally combines them.
+- Do not use implementation code as the first draft for subjective placement decisions, such as where collection labels, row metadata, or actions should live.
 - Preserve the "private signal console" direction: compact, precise, local-first, scan-safe, and tool-focused.
 - Do not turn app routes into marketing/hero pages; the first screen is the usable vault.
 
