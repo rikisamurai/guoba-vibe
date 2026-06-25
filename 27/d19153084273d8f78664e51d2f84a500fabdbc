@@ -1,0 +1,19 @@
+apps/qr-vault/AGENTS.md
+  s_35c07cdcdd8df5::t_5a10b6d6cf37af 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "27d19153084273d8f78664e51d2f84a500fabdbc",
+  "prompts": {},
+  "sessions": {
+    "s_35c07cdcdd8df5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019efec9-61c0-7112-89ad-56307b793d88",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
