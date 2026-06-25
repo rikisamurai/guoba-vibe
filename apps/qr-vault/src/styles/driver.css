@@ -54,8 +54,24 @@
   filter: brightness(0.95);
 }
 
-.driver-popover-close-btn {
-  color: var(--muted-foreground);
+.driver-popover .driver-popover-close-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--muted);
+  color: var(--popover-foreground);
+  opacity: 1;
+  text-shadow: none;
+}
+
+.driver-popover .driver-popover-close-btn:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.driver-popover .driver-popover-close-btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 .driver-popover-arrow-side-top.driver-popover-arrow {
