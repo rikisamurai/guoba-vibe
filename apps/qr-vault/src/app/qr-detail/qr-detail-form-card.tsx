@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { CollectionsSection } from '@/app/qr-detail/collections-section'
 import type { CreateCollectionResult } from '@/app/qr-detail/inline-collection-create'
 import { MobileUrlPreview } from '@/app/qr-detail/mobile-url-preview'
+import { UrlStatusStrip } from '@/app/qr-detail/url-status-strip'
 import { FieldLabel } from '@/components/field-label'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
@@ -105,6 +106,7 @@ export function QrDetailFormCard({
               {t('qrDetail.urlEditorDescription')}
             </p>
           </div>
+          <UrlStatusStrip url={url} canSave={canSave} />
           <UrlEditor value={url} onChange={onUrlChange}>
             <MobileUrlPreview title={title} url={url} />
           </UrlEditor>

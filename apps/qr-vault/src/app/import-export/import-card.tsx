@@ -1,12 +1,14 @@
 import { Check, FileUp, Replace } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { StatTile } from '@/app/import-export/stat-tile'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
 import { cn } from '@/lib/utils'
 
 type ImportCardProps = {
   hasPendingData: boolean
+  pendingCounts: ImportCounts | null
   fileName: string
   message: string
   error: string
@@ -16,8 +18,15 @@ type ImportCardProps = {
   onReplace: () => void
 }
 
+type ImportCounts = {
+  qrs: number
+  collections: number
+  assignments: number
+}
+
 export function ImportCard({
   hasPendingData,
+  pendingCounts,
   fileName,
   message,
   error,
@@ -43,6 +52,7 @@ export function ImportCard({
           onFileChange={onFileChange}
         />
         <ImportMessage message={message} error={error} />
+        {pendingCounts && <ImportPreflight counts={pendingCounts} />}
         <div className="grid grid-cols-2 gap-2">
           <Button type="button" onClick={onMerge} disabled={!hasPendingData}>
             {t('importExport.mergeIntoLocal')}
@@ -70,6 +80,18 @@ export function ImportCard({
         </p>
       </CardContent>
     </Card>
+  )
+}
+
+function ImportPreflight({ counts }: { counts: ImportCounts }) {
+  const { t } = useTranslation()
+
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      <StatTile value={counts.qrs} label={t('common.qrCodes')} />
+      <StatTile value={counts.collections} label={t('common.collections')} />
+      <StatTile value={counts.assignments} label={t('common.assignments')} />
+    </div>
   )
 }
 

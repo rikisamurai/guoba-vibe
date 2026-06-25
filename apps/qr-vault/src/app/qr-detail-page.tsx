@@ -154,7 +154,11 @@ export function QrDetailPage() {
           <ArrowLeft className="size-3" /> {t('common.vault')}
         </Link>
         <Badge variant="outline" className={cn('gap-1.5', parsed.isEmpty && 'hidden')}>
-          {parsed.isValid ? <Check className="size-3" /> : <AlertCircle className="size-3" />}
+          {parsed.isValid ? (
+            <Check className="size-3.5 text-green-600 dark:text-green-400" strokeWidth={2.4} />
+          ) : (
+            <AlertCircle className="size-3" />
+          )}
           {parsed.isValid ? t('qrDetail.readyToSave') : t('qrDetail.invalidUrl')}
         </Badge>
       </div>

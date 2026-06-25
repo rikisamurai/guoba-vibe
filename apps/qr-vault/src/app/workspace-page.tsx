@@ -9,7 +9,7 @@ import type { ActiveFilter, WorkspaceQr } from '@/app/workspace/types'
 import { WorkspaceHeader } from '@/app/workspace/workspace-header'
 import { useArmedAction } from '@/hooks/use-armed-action'
 import { downloadDataUrl, qrFileName } from '@/lib/qr'
-import { deleteQr, LAST_SAVED_QR_ID_KEY, restoreQr } from '@/lib/storage'
+import { deleteQr, LAST_SAVED_QR_ID_KEY, restoreQr, type VaultData } from '@/lib/storage'
 import { buildShareUrl } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 import { getQrsForCollection, getUncategorizedQrs, searchQrs, sortQrsByRecent } from '@/lib/vault'
@@ -132,6 +132,7 @@ export function WorkspacePage() {
   const selectedCollectionCount = selectedQr
     ? data.collectionItems.filter((item) => item.qrId === selectedQr.id).length
     : 0
+  const collectionNamesByQrId = getCollectionNamesByQrId(data)
 
   return (
     <div className="grid grid-cols-1 items-start gap-5 lg:h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1fr)_380px] lg:items-stretch lg:overflow-hidden xl:grid-cols-[minmax(520px,1fr)_500px] 2xl:grid-cols-[minmax(600px,1fr)_560px]">
@@ -153,6 +154,7 @@ export function WorkspacePage() {
             armedDeleteId={armedDelete}
             armedProgress={armedProgress}
             copiedUrlId={copiedUrlId}
+            collectionNamesByQrId={collectionNamesByQrId}
             itemRefs={listItemRefs}
             onSelect={setSelectedId}
             onCopyUrl={(qr) => void copyUrl(qr)}
@@ -177,4 +179,17 @@ export function WorkspacePage() {
       </aside>
     </div>
   )
+}
+
+function getCollectionNamesByQrId(data: VaultData) {
+  const collectionTitleById = new Map(
+    data.collections.map((collection) => [collection.id, collection.title]),
+  )
+
+  return data.collectionItems.reduce<Record<string, string[]>>((namesByQrId, item) => {
+    const title = collectionTitleById.get(item.collectionId)
+    if (!title) return namesByQrId
+    namesByQrId[item.qrId] = [...(namesByQrId[item.qrId] ?? []), title]
+    return namesByQrId
+  }, {})
 }

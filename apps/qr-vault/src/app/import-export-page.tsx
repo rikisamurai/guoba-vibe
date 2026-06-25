@@ -24,6 +24,13 @@ export function ImportExportPage() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [replaceArmed, setReplaceArmed] = useState(false)
+  const pendingCounts = pendingData
+    ? {
+        qrs: pendingData.qrs.length,
+        collections: pendingData.collections.length,
+        assignments: pendingData.collectionItems.length,
+      }
+    : null
 
   useEffect(() => {
     if (!replaceArmed) return
@@ -106,6 +113,7 @@ export function ImportExportPage() {
         <SnapshotCard data={data} onExport={exportVault} />
         <ImportCard
           hasPendingData={Boolean(pendingData)}
+          pendingCounts={pendingCounts}
           fileName={fileName}
           message={message}
           error={error}
