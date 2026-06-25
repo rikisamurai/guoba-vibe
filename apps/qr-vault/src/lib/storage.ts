@@ -1,5 +1,6 @@
 import { buildDemoVault } from '@/lib/demo-seed'
 import { nanoid8 } from '@/lib/ids'
+import type { QueryRow } from '@/lib/url'
 
 export const VAULT_STORAGE_KEY = 'qr-vault:data'
 export const LAST_SAVED_QR_ID_KEY = 'qr-vault:last-saved-id'
@@ -9,6 +10,7 @@ export type QRCodeItem = {
   title?: string
   description?: string
   url: string
+  queryParams?: QueryRow[]
   createdAt: string
   updatedAt: string
 }
@@ -38,6 +40,7 @@ export type SaveQrInput = {
   title?: string
   description?: string
   url: string
+  queryParams?: QueryRow[]
   collectionIds?: string[]
 }
 
@@ -97,6 +100,7 @@ export function upsertQr(
     title: input.title?.trim() || undefined,
     description: input.description?.trim() || undefined,
     url: input.url,
+    queryParams: input.queryParams?.length ? input.queryParams : undefined,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   }
@@ -191,12 +195,30 @@ function isVaultData(value: unknown): value is VaultData {
     Array.isArray(candidate.qrs) &&
     Array.isArray(candidate.collections) &&
     Array.isArray(candidate.collectionItems) &&
-    candidate.qrs.every((qr) => typeof qr.id === 'string' && typeof qr.url === 'string') &&
+    candidate.qrs.every(
+      (qr) =>
+        typeof qr.id === 'string' &&
+        typeof qr.url === 'string' &&
+        (qr.queryParams === undefined || isQueryRows(qr.queryParams)),
+    ) &&
     candidate.collections.every(
       (collection) => typeof collection.id === 'string' && typeof collection.title === 'string',
     ) &&
     candidate.collectionItems.every(
       (item) => typeof item.collectionId === 'string' && typeof item.qrId === 'string',
+    )
+  )
+}
+
+function isQueryRows(value: unknown): value is QueryRow[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (row) =>
+        typeof row.id === 'string' &&
+        typeof row.key === 'string' &&
+        typeof row.value === 'string' &&
+        typeof row.enabled === 'boolean',
     )
   )
 }
