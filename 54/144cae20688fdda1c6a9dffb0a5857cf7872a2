@@ -1,0 +1,43 @@
+apps/qr-vault/src/app/import-export/import-card.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 4,11,21-26,29,55,86-94,96
+apps/qr-vault/src/app/qr-detail/url-status-strip.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 1-64
+AGENTS.md
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 22-33,45,63,83
+apps/qr-vault/src/app/qr-detail/qr-detail-form-card.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 8,109
+apps/qr-vault/src/app/qr-detail/preview-panel.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 48-52
+apps/qr-vault/src/app/collections-page.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 7,15,27,120-124
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 157-161
+apps/qr-vault/src/app/import-export-page.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 27-33,116
+apps/qr-vault/src/app/workspace-page.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 12,135,157,183-194
+apps/qr-vault/src/app/workspace/qr-list.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 5,19,34,69,92-93,96,136-139,149
+apps/qr-vault/src/app/workspace/collection-meta-badge.tsx
+  s_c002fcb1ded58e::t_5c2e802a8c753c 1-36
+apps/qr-vault/AGENTS.md
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 8-10
+apps/qr-vault/src/app/collections/collection-coverage-row.tsx
+  s_c002fcb1ded58e::t_2d88c12dc54cc9 1-62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "54144cae20688fdda1c6a9dffb0a5857cf7872a2",
+  "prompts": {},
+  "sessions": {
+    "s_c002fcb1ded58e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019efc9f-ce00-7f93-8ad5-747108c11193",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
