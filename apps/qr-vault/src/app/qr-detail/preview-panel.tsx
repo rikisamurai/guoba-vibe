@@ -1,8 +1,7 @@
-import { AlertCircle, Check, Copy, Download } from 'lucide-react'
+import { Check, Copy, Download } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { QrPreview } from '@/components/qr-preview'
-import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 
 type PreviewPanelProps = {
@@ -27,7 +26,6 @@ export function PreviewPanel({
   onDownloadPng,
 }: PreviewPanelProps) {
   const { t } = useTranslation()
-  const isEmpty = !url.trim()
 
   return (
     <section
@@ -43,16 +41,6 @@ export function PreviewPanel({
             {title || t('common.untitledQr')}
           </p>
         </div>
-        {!isEmpty && (
-          <Badge variant="outline" className="gap-1.5">
-            {isValid ? (
-              <Check className="size-3.5 text-green-600 dark:text-green-400" strokeWidth={2.4} />
-            ) : (
-              <AlertCircle className="size-3" />
-            )}
-            {isValid ? t('common.valid') : t('common.invalid')}
-          </Badge>
-        )}
       </div>
       <div className="scan-plate flex min-h-[420px] items-center justify-center rounded-lg border p-5">
         <QrPreview

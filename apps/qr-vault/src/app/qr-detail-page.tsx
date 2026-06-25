@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { useInlineCollectionCreate } from '@/app/qr-detail/inline-collection-create'
 import { NotFoundCard } from '@/app/qr-detail/not-found-card'
 import { QrDetailAside } from '@/app/qr-detail/qr-detail-aside'
+import { collectionIdsForQr, isQrDraftDirty, qrItemToDraft } from '@/app/qr-detail/qr-detail-draft'
 import { QrDetailFormCard } from '@/app/qr-detail/qr-detail-form-card'
 import { QrDetailHeader } from '@/app/qr-detail/qr-detail-header'
 import { useVault } from '@/app/use-vault'
@@ -55,6 +56,10 @@ export function QrDetailPage() {
     updateVault,
   })
   const parsed = parseDeepLink(url)
+  const savedDraft = existingQr
+    ? qrItemToDraft(existingQr, collectionIdsForQr(data.collectionItems, existingQr.id))
+    : undefined
+  const isDirty = isQrDraftDirty({ title, description, url, queryRows, collectionIds }, savedDraft)
   const documentTitle = isNew
     ? t('qrDetail.documentNew')
     : title || existingQr?.title || t('qrDetail.documentFallback')
@@ -73,14 +78,7 @@ export function QrDetailPage() {
     setDescription(existingQr?.description ?? search.description ?? '')
     setUrl(nextUrl)
     setQueryRows(existingQr?.queryParams ?? queryToRows(parseDeepLink(nextUrl).query))
-    setCollectionIds(
-      existingQr
-        ? data.collectionItems.reduce<string[]>((ids, item) => {
-            if (item.qrId === existingQr.id) ids.push(item.collectionId)
-            return ids
-          }, [])
-        : [],
-    )
+    setCollectionIds(existingQr ? collectionIdsForQr(data.collectionItems, existingQr.id) : [])
     setError('')
   }, [data.collectionItems, existingQr, search.url, search.title, search.description])
 
@@ -164,11 +162,14 @@ export function QrDetailPage() {
 
   return (
     <div className="space-y-4">
-      <QrDetailHeader isEmpty={parsed.isEmpty} isValid={parsed.isValid} />
+      <QrDetailHeader />
 
       <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_440px] xl:grid-cols-[minmax(0,1fr)_460px]">
         <QrDetailFormCard
           isNew={isNew}
+          isEmpty={parsed.isEmpty}
+          isValid={parsed.isValid}
+          isDirty={isDirty}
           canSave={parsed.isValid}
           canSaveAsNew={!isNew && Boolean(existingQr)}
           title={title}

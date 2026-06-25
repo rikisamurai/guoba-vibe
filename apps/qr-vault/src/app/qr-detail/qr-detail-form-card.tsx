@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { CollectionsSection } from '@/app/qr-detail/collections-section'
 import type { CreateCollectionResult } from '@/app/qr-detail/inline-collection-create'
 import { MobileUrlPreview } from '@/app/qr-detail/mobile-url-preview'
-import { UrlStatusStrip } from '@/app/qr-detail/url-status-strip'
+import { QrStatusChips } from '@/app/qr-detail/qr-status-chips'
 import { FieldLabel } from '@/components/field-label'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
@@ -16,6 +16,9 @@ import type { QueryRow } from '@/lib/url'
 
 type QrDetailFormCardProps = {
   isNew: boolean
+  isEmpty: boolean
+  isValid: boolean
+  isDirty: boolean
   canSave: boolean
   canSaveAsNew: boolean
   title: string
@@ -39,6 +42,9 @@ type QrDetailFormCardProps = {
 
 export function QrDetailFormCard({
   isNew,
+  isEmpty,
+  isValid,
+  isDirty,
   canSave,
   canSaveAsNew,
   title,
@@ -65,9 +71,12 @@ export function QrDetailFormCard({
     <Card>
       <CardHeader className="border-b">
         <div className="min-w-0">
-          <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
-            {isNew ? t('qrDetail.newQr') : t('qrDetail.savedQr')}
-          </p>
+          <div className="mb-1 flex flex-wrap items-center gap-1.5">
+            <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+              {isNew ? t('qrDetail.newQr') : t('qrDetail.savedQr')}
+            </p>
+            <QrStatusChips isEmpty={isEmpty} isValid={isValid} isDirty={isDirty} />
+          </div>
           <CardTitle className="truncate text-2xl font-semibold tracking-tight">
             {title || t('common.untitledQr')}
           </CardTitle>
@@ -109,7 +118,6 @@ export function QrDetailFormCard({
               {t('qrDetail.urlEditorDescription')}
             </p>
           </div>
-          <UrlStatusStrip url={url} canSave={canSave} />
           <UrlEditor value={url} queryRows={queryRows} onChange={onUrlEditorChange}>
             <MobileUrlPreview title={title} url={url} />
           </UrlEditor>
