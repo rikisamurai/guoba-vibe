@@ -1,0 +1,39 @@
+apps/qr-vault/package.json
+  s_59298eeca64eb0::t_3b31f9cdeb080d 36
+  s_59298eeca64eb0::t_e73c81463d3dc3 12
+apps/qr-vault/e2e/create-qr.spec.ts
+  s_59298eeca64eb0::t_23825c72a4b441 1-20,23-35,42-46
+  s_59298eeca64eb0::t_4734a1cd157f2e 36-41
+  s_59298eeca64eb0::t_75283f93f2e76e 21-22
+.gitignore
+  s_59298eeca64eb0::t_23825c72a4b441 74-75
+apps/qr-vault/playwright.config.ts
+  s_59298eeca64eb0::t_024c3a056f118e 2-3
+  s_59298eeca64eb0::t_23825c72a4b441 4-6,8-11,16-30,32,34-35
+  s_59298eeca64eb0::t_0faa58832972e4 7,12-15,33
+  s_59298eeca64eb0::t_4668211688db02 1
+  s_59298eeca64eb0::t_e73c81463d3dc3 31
+apps/qr-vault/tsconfig.node.json
+  s_59298eeca64eb0::t_4668211688db02 19
+.github/workflows/qr-vault-e2e.yml
+  s_59298eeca64eb0::t_23825c72a4b441 1-8,12-22,24,26-31,33-40
+  s_59298eeca64eb0::t_4668211688db02 9-11,23,25,32
+pnpm-lock.yaml
+  s_59298eeca64eb0::t_9bfbdf876c645a 40,58,187-189,2527-2531,5214-5218,6349-6358,7238,9726-9729,11595,11617,12599-12601,13473,13492,13823-13830
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "fff977b95879e6ce02309706a87e753e941529d2",
+  "prompts": {},
+  "sessions": {
+    "s_59298eeca64eb0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f02fe-049b-7510-b43f-d1105408ffde",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
