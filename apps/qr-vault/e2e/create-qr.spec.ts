@@ -1,16 +1,13 @@
 import { expect, test } from '@playwright/test'
 
+import { escapeRegExp, prepareEnglishVault, uniqueName } from './helpers'
+
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    window.localStorage.clear()
-    window.sessionStorage.clear()
-    window.localStorage.setItem('qr-vault:locale', 'en')
-    window.localStorage.setItem('qr-vault:onboarding-v1', 'skipped')
-  })
+  await prepareEnglishVault(page)
 })
 
 test('creates a QR code through the primary UI flow', async ({ page }) => {
-  const title = `Playwright QR ${Date.now()}`
+  const title = uniqueName('Playwright QR')
   const description = 'Created by qr-vault e2e'
   const url = 'https://example.com/products/qr-vault?source=e2e'
 
@@ -40,7 +37,3 @@ test('creates a QR code through the primary UI flow', async ({ page }) => {
   ).toBeVisible()
   await expect(page.getByText(description).first()).toBeVisible()
 })
-
-function escapeRegExp(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-}
