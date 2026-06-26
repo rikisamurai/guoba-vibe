@@ -1,0 +1,43 @@
+apps/qr-vault/src/app/workspace/workspace-filter.ts
+  s_4f48746b1834c0::t_7f284826e257f1 1-7,9-22
+  s_4f48746b1834c0::t_b925918ad03291 8
+apps/qr-vault/src/app/workspace-page.tsx
+  s_4f48746b1834c0::t_5f7a0fd0bf5be2 1,10-14,27-28,130-134,136,144,167,182
+apps/qr-vault/src/app/workspace/qr-list.tsx
+  s_4f48746b1834c0::t_3ca5c57d07da17 7,16,32,71,90,176
+apps/qr-vault/src/app/workspace/qr-row-actions.tsx
+  s_4f48746b1834c0::t_51a8f6f8205b15 6-7,13,18-25,47
+apps/qr-vault/src/app/qr-detail/qr-detail-header.tsx
+  s_4f48746b1834c0::t_dc44e0d5008bd7 5-12,19
+apps/qr-vault/src/app/qr-detail/qr-detail-navigation.ts
+  s_4f48746b1834c0::t_cef0b044e3d4d2 19-25
+  s_4f48746b1834c0::t_d1f83a6ebf6755 1-18,26-36
+apps/qr-vault/src/tests/workspace-filter.test.ts
+  s_4f48746b1834c0::t_908fe5e8fff0ca 1-52
+apps/qr-vault/src/app/workspace/qr-inspector.tsx
+  s_4f48746b1834c0::t_8b2521f5733d40 6-7,17,29,52-55,90,121,130,176
+apps/qr-vault/src/app/qr-detail-page.tsx
+  s_4f48746b1834c0::t_d52c479fc891ca 14,44
+  s_4f48746b1834c0::t_15068c1dfbab7a 12-13,15-17,36-37,114,126
+  s_4f48746b1834c0::t_784e5cc4f52cdd 169
+apps/qr-vault/src/router.tsx
+  s_4f48746b1834c0::t_f157bc390f01fa 17,37-38,57-58,69
+apps/qr-vault/src/app/workspace/workspace-header.tsx
+  s_4f48746b1834c0::t_a083ddb163d17d 7,89-92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "695e2c5ef55e24ada1701791f9712e91b22ed881",
+  "prompts": {},
+  "sessions": {
+    "s_4f48746b1834c0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f01e8-0149-7c82-a42c-c0f49e55235c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
