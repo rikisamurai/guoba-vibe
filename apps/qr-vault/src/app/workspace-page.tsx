@@ -1,3 +1,4 @@
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -6,6 +7,11 @@ import { useVault } from '@/app/use-vault'
 import { QrInspector } from '@/app/workspace/qr-inspector'
 import { QrList } from '@/app/workspace/qr-list'
 import type { ActiveFilter, WorkspaceQr } from '@/app/workspace/types'
+import {
+  parseWorkspaceFilterSearch,
+  resolveWorkspaceFilter,
+  workspaceFilterSearch,
+} from '@/app/workspace/workspace-filter'
 import { WorkspaceHeader } from '@/app/workspace/workspace-header'
 import { useArmedAction } from '@/hooks/use-armed-action'
 import { downloadDataUrl, qrFileName } from '@/lib/qr'
@@ -18,9 +24,10 @@ export function WorkspacePage() {
   const { t } = useTranslation()
   useDocumentTitle(t('workspace.documentTitle'))
   const { data, updateVault } = useVault()
+  const navigate = useNavigate()
+  const routeSearch = useRouterState({ select: (state) => state.location.search })
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState('')
-  const [activeFilter, setActiveFilter] = useState<ActiveFilter>('all')
   const {
     armedId: armedDelete,
     progress: armedProgress,
@@ -120,7 +127,13 @@ export function WorkspacePage() {
     window.setTimeout(() => setDownloadedInspectorId(''), 1200)
   }
 
+  function setActiveFilter(next: ActiveFilter) {
+    setSelectedId('')
+    void navigate({ to: '/', search: workspaceFilterSearch(next), replace: true })
+  }
+
   const uncategorizedCount = getUncategorizedQrs(data).length
+  const activeFilter = resolveWorkspaceFilter(parseWorkspaceFilterSearch(routeSearch), data)
   const baseQrs =
     activeFilter === 'all'
       ? data.qrs
@@ -128,7 +141,7 @@ export function WorkspacePage() {
         ? getUncategorizedQrs(data)
         : getQrsForCollection(data, activeFilter)
   const visibleQrs = sortQrsByRecent(searchQrs({ ...data, qrs: baseQrs }, search))
-  const selectedQr = data.qrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0]
+  const selectedQr = visibleQrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0]
   const collectionNamesByQrId = getCollectionNamesByQrId(data)
 
   return (
@@ -151,6 +164,7 @@ export function WorkspacePage() {
             armedDeleteId={armedDelete}
             armedProgress={armedProgress}
             copiedUrlId={copiedUrlId}
+            activeFilter={activeFilter}
             collectionNamesByQrId={collectionNamesByQrId}
             itemRefs={listItemRefs}
             onSelect={setSelectedId}
@@ -165,6 +179,7 @@ export function WorkspacePage() {
         <QrInspector
           qr={selectedQr}
           search={search}
+          activeFilter={activeFilter}
           inspectorDataUrl={inspectorDataUrl}
           downloadedInspectorId={downloadedInspectorId}
           copiedShareId={copiedShareId}

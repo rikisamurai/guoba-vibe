@@ -9,6 +9,12 @@ import { QrDetailAside } from '@/app/qr-detail/qr-detail-aside'
 import { collectionIdsForQr, isQrDraftDirty, qrItemToDraft } from '@/app/qr-detail/qr-detail-draft'
 import { QrDetailFormCard } from '@/app/qr-detail/qr-detail-form-card'
 import { QrDetailHeader } from '@/app/qr-detail/qr-detail-header'
+import {
+  getQrDetailReturnFilter,
+  getQrDetailRouteState,
+  navigateToSavedQr,
+  type QrDetailSearch,
+} from '@/app/qr-detail/qr-detail-navigation'
 import { useVault } from '@/app/use-vault'
 import { nanoid8 } from '@/lib/ids'
 import { downloadDataUrl, qrFileName } from '@/lib/qr'
@@ -27,17 +33,15 @@ export function QrDetailPage() {
   const { data, updateVault } = useVault()
   const navigate = useNavigate()
   const location = useRouterState({ select: (state) => state.location })
-  const search = location.search as { url?: string; title?: string; description?: string }
+  const search = location.search as QrDetailSearch
+  const returnFilter = getQrDetailReturnFilter(search)
   const titleRef = useRef<HTMLInputElement>(null)
   const [autoFocusTitle] = useState(() => {
     const flag = sessionStorage.getItem('qr-vault:focus-title') === '1'
     if (flag) sessionStorage.removeItem('qr-vault:focus-title')
     return flag
   })
-  const isNew = location.pathname === '/new'
-  const qrId = location.pathname.startsWith('/q/')
-    ? decodeURIComponent(location.pathname.slice('/q/'.length))
-    : ''
+  const { isNew, qrId } = getQrDetailRouteState(location.pathname)
   const existingQr = data.qrs.find((qr) => qr.id === qrId)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -107,7 +111,7 @@ export function QrDetailPage() {
     setSaved(true)
     sessionStorage.setItem(LAST_SAVED_QR_ID_KEY, id)
     window.setTimeout(() => setSaved(false), 1200)
-    void navigate({ to: '/q/$qrId', params: { qrId: id } })
+    navigateToSavedQr(navigate, id, returnFilter)
   }
 
   function saveAsNew() {
@@ -119,7 +123,7 @@ export function QrDetailPage() {
     updateVault((current) => upsertQr(current, qrInput(newId)))
     sessionStorage.setItem(LAST_SAVED_QR_ID_KEY, newId)
     toast.success(t('qrDetail.savedAsNewToast'))
-    void navigate({ to: '/q/$qrId', params: { qrId: newId } })
+    navigateToSavedQr(navigate, newId, returnFilter)
   }
 
   async function copyUrl() {
@@ -162,7 +166,7 @@ export function QrDetailPage() {
 
   return (
     <div className="space-y-4">
-      <QrDetailHeader />
+      <QrDetailHeader returnFilter={returnFilter} />
 
       <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_440px] xl:grid-cols-[minmax(0,1fr)_460px]">
         <QrDetailFormCard

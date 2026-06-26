@@ -14,6 +14,7 @@ import { ImportExportPage } from '@/app/import-export-page'
 import { QrDetailPage } from '@/app/qr-detail-page'
 import { SharePage } from '@/app/share-page'
 import { WorkspacePage } from '@/app/workspace-page'
+import { parseWorkspaceFilterSearch, workspaceFilterSearch } from '@/app/workspace/workspace-filter'
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -33,6 +34,8 @@ const shellRoute = createRoute({
 const indexRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/',
+  validateSearch: (search: Record<string, unknown>) =>
+    workspaceFilterSearch(parseWorkspaceFilterSearch(search)),
   component: WorkspacePage,
 })
 
@@ -51,6 +54,8 @@ const collectionDetailRoute = createRoute({
 const qrDetailRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/q/$qrId',
+  validateSearch: (search: Record<string, unknown>) =>
+    workspaceFilterSearch(parseWorkspaceFilterSearch(search)),
   component: QrDetailPage,
 })
 
@@ -61,6 +66,7 @@ const newRoute = createRoute({
     url: typeof search.url === 'string' ? search.url : '',
     title: typeof search.title === 'string' ? search.title : '',
     description: typeof search.description === 'string' ? search.description : '',
+    ...workspaceFilterSearch(parseWorkspaceFilterSearch(search)),
   }),
   component: QrDetailPage,
 })

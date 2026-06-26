@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { CollectionChipRow } from '@/app/workspace/collection-chip-row'
 import type { ActiveFilter } from '@/app/workspace/types'
+import { workspaceFilterSearch } from '@/app/workspace/workspace-filter'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import type { VaultData } from '@/lib/storage'
@@ -85,7 +86,10 @@ export function WorkspaceHeader({
           )}
         </div>
         <Button asChild className="shrink-0 lg:w-auto">
-          <Link to="/new" search={{ url: '', title: '', description: '' }}>
+          <Link
+            to="/new"
+            search={{ url: '', title: '', description: '', ...workspaceFilterSearch(activeFilter) }}
+          >
             <Plus /> {t('nav.newQr')}
           </Link>
         </Button>

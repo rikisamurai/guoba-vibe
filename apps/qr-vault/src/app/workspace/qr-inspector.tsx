@@ -3,7 +3,8 @@ import { ArrowRight, Check, Download, ExternalLink, Plus, Share2 } from 'lucide-
 import { useTranslation } from 'react-i18next'
 
 import { ActionTooltip } from '@/app/workspace/action-tooltip'
-import type { WorkspaceQr } from '@/app/workspace/types'
+import type { ActiveFilter, WorkspaceQr } from '@/app/workspace/types'
+import { workspaceFilterSearch } from '@/app/workspace/workspace-filter'
 import { ParsedUrlPanel } from '@/components/parsed-url-panel'
 import { QrPreview } from '@/components/qr-preview'
 import { Button } from '@/components/shadcn-ui/button'
@@ -13,6 +14,7 @@ import { parseDeepLink } from '@/lib/url'
 type QrInspectorProps = {
   qr?: WorkspaceQr
   search: string
+  activeFilter: ActiveFilter
   inspectorDataUrl: string | null
   downloadedInspectorId: string
   copiedShareId: string
@@ -24,6 +26,7 @@ type QrInspectorProps = {
 export function QrInspector({
   qr,
   search,
+  activeFilter,
   inspectorDataUrl,
   downloadedInspectorId,
   copiedShareId,
@@ -46,7 +49,10 @@ export function QrInspector({
               {search ? t('workspace.noMatchingQr') : t('workspace.createFirstDeeplinkQr')}
             </p>
           </div>
-          <Link to="/new" search={{ url: '', title: '', description: '' }}>
+          <Link
+            to="/new"
+            search={{ url: '', title: '', description: '', ...workspaceFilterSearch(activeFilter) }}
+          >
             <Button type="button">
               <Plus /> {t('workspace.createQr')}
             </Button>
@@ -81,6 +87,7 @@ export function QrInspector({
               canDownload={Boolean(inspectorDataUrl)}
               downloadedInspectorId={downloadedInspectorId}
               copiedShareId={copiedShareId}
+              activeFilter={activeFilter}
               onDownloadPng={onDownloadPng}
               onCopyShareUrl={onCopyShareUrl}
             />
@@ -111,6 +118,7 @@ function InspectorActions({
   canDownload,
   downloadedInspectorId,
   copiedShareId,
+  activeFilter,
   onDownloadPng,
   onCopyShareUrl,
 }: {
@@ -119,6 +127,7 @@ function InspectorActions({
   canDownload: boolean
   downloadedInspectorId: string
   copiedShareId: string
+  activeFilter: ActiveFilter
   onDownloadPng: (qr: WorkspaceQr) => void
   onCopyShareUrl: (qr: WorkspaceQr) => void
 }) {
@@ -164,6 +173,7 @@ function InspectorActions({
       <Link
         to="/q/$qrId"
         params={{ qrId: qr.id }}
+        search={workspaceFilterSearch(activeFilter)}
         className="text-muted-foreground hover:text-foreground hover:bg-background/80 flex shrink-0 items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium transition-colors"
       >
         {t('common.edit')} <ArrowRight className="size-3" />

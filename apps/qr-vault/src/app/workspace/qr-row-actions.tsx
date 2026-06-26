@@ -3,17 +3,26 @@ import { Check, Copy, SquarePen, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { ActionTooltip } from '@/app/workspace/action-tooltip'
-import type { WorkspaceQr } from '@/app/workspace/types'
+import type { ActiveFilter, WorkspaceQr } from '@/app/workspace/types'
+import { workspaceFilterSearch } from '@/app/workspace/workspace-filter'
 
 type QrRowActionsProps = {
   qr: WorkspaceQr
   name: string
   copiedUrlId: string
+  activeFilter: ActiveFilter
   onCopyUrl: (qr: WorkspaceQr) => void
   onArmDelete: (id: string) => void
 }
 
-export function QrRowActions({ qr, name, copiedUrlId, onCopyUrl, onArmDelete }: QrRowActionsProps) {
+export function QrRowActions({
+  qr,
+  name,
+  copiedUrlId,
+  activeFilter,
+  onCopyUrl,
+  onArmDelete,
+}: QrRowActionsProps) {
   const { t } = useTranslation()
 
   return (
@@ -35,6 +44,7 @@ export function QrRowActions({ qr, name, copiedUrlId, onCopyUrl, onArmDelete }: 
         <Link
           to="/q/$qrId"
           params={{ qrId: qr.id }}
+          search={workspaceFilterSearch(activeFilter)}
           aria-label={t('workspace.editQr', { name })}
           className="text-muted-foreground hover:text-foreground hover:border-ring/60 bg-background/80 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-colors sm:size-8"
         >
