@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { CollectionMetaBadge } from '@/app/workspace/collection-meta-badge'
 import { QrRowActions } from '@/app/workspace/qr-row-actions'
-import type { WorkspaceQr } from '@/app/workspace/types'
+import type { ActiveFilter, WorkspaceQr } from '@/app/workspace/types'
 import { Card, CardContent } from '@/components/shadcn-ui/card'
 import { parseDeepLink } from '@/lib/url'
 import { cn } from '@/lib/utils'
@@ -13,6 +13,7 @@ type QrListProps = {
   qrs: WorkspaceQr[]
   selectedId?: string
   search: string
+  activeFilter: ActiveFilter
   armedDeleteId: string
   armedProgress: number
   copiedUrlId: string
@@ -28,6 +29,7 @@ export function QrList({
   qrs,
   selectedId,
   search,
+  activeFilter,
   armedDeleteId,
   armedProgress,
   copiedUrlId,
@@ -66,6 +68,7 @@ export function QrList({
           armedDeleteId={armedDeleteId}
           armedProgress={armedProgress}
           copiedUrlId={copiedUrlId}
+          activeFilter={activeFilter}
           collectionNames={collectionNamesByQrId[qr.id] ?? []}
           itemRefs={itemRefs}
           onSelect={onSelect}
@@ -84,6 +87,7 @@ function QrListItem({
   armedDeleteId,
   armedProgress,
   copiedUrlId,
+  activeFilter,
   itemRefs,
   onSelect,
   onCopyUrl,
@@ -169,6 +173,7 @@ function QrListItem({
             qr={qr}
             name={name}
             copiedUrlId={copiedUrlId}
+            activeFilter={activeFilter}
             onCopyUrl={onCopyUrl}
             onArmDelete={onArmDelete}
           />
