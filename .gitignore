@@ -71,4 +71,6 @@ apps/*/android/
 apps/*/storybook-static/
 *.tsbuildinfo
 coverage/
+apps/*/playwright-report/
+apps/*/test-results/
 apps/*/pnpm-lock.yaml

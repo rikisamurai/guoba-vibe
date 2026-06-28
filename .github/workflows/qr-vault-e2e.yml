@@ -1,0 +1,40 @@
+name: QR Vault E2E
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/qr-vault-e2e.yml'
+      - 'apps/qr-vault/**'
+      - '.npmrc'
+      - '.nvmrc'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter qr-vault exec playwright install --with-deps chromium
+      - run: pnpm --filter qr-vault test:e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: qr-vault-playwright-report
+          path: |
+            apps/qr-vault/playwright-report/
+            apps/qr-vault/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
