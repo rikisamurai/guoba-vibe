@@ -1,0 +1,43 @@
+apps/prompt-eval-harness/tsconfig.json
+  s_a5aaaa868acd6f::t_a7fc35f68e0129 1-4
+apps/prompt-eval-harness/tsconfig.app.json
+  s_a5aaaa868acd6f::t_a7fc35f68e0129 1-22
+apps/prompt-eval-harness/package.json
+  s_a5aaaa868acd6f::t_a7fc35f68e0129 1-28
+apps/prompt-eval-harness/tsconfig.node.json
+  s_a5aaaa868acd6f::t_a7fc35f68e0129 1-20
+apps/prompt-eval-harness/index.html
+  s_a5aaaa868acd6f::t_a7fc35f68e0129 1-13
+apps/prompt-eval-harness/src/styles.css
+  s_a5aaaa868acd6f::t_41d9014dd20142 1-181
+  s_a5aaaa868acd6f::t_658ef97bb2623d 182-187
+apps/prompt-eval-harness/src/lib/prompt-eval.ts
+  s_a5aaaa868acd6f::t_a7fc35f68e0129 1-12,34
+  s_a5aaaa868acd6f::t_41d9014dd20142 13-33
+apps/prompt-eval-harness/vite.config.ts
+  s_a5aaaa868acd6f::t_a7fc35f68e0129 1-11
+apps/prompt-eval-harness/src/main.tsx
+  s_a5aaaa868acd6f::t_41d9014dd20142 1-12
+apps/prompt-eval-harness/src/lib/prompt-eval.test.ts
+  s_a5aaaa868acd6f::t_a7fc35f68e0129 1-22
+apps/prompt-eval-harness/src/app.tsx
+  s_a5aaaa868acd6f::t_41d9014dd20142 1-80
+pnpm-lock.yaml
+  s_a5aaaa868acd6f::t_a891e6780f5b74 36-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "6b48c40189458b65990d8a557a0d8196bf28ddfb",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
