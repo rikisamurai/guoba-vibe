@@ -1,0 +1,44 @@
+apps/api-diff-lab/index.html
+  s_a5aaaa868acd6f::t_e88f59f4e8e2de 1-13
+apps/api-diff-lab/src/app.tsx
+  s_a5aaaa868acd6f::t_f1472ad054cb84 1-91
+  s_a5aaaa868acd6f::t_99ddef44aefcc0 92-95
+apps/api-diff-lab/src/main.tsx
+  s_a5aaaa868acd6f::t_f1472ad054cb84 1-12
+apps/api-diff-lab/tsconfig.node.json
+  s_a5aaaa868acd6f::t_e88f59f4e8e2de 1-20
+apps/api-diff-lab/tsconfig.app.json
+  s_a5aaaa868acd6f::t_e88f59f4e8e2de 1-22
+apps/api-diff-lab/src/lib/api-diff.test.ts
+  s_a5aaaa868acd6f::t_e88f59f4e8e2de 1-18
+apps/api-diff-lab/src/lib/api-diff.ts
+  s_a5aaaa868acd6f::t_e88f59f4e8e2de 1-6,59
+  s_a5aaaa868acd6f::t_f1472ad054cb84 7-58
+apps/api-diff-lab/tsconfig.json
+  s_a5aaaa868acd6f::t_e88f59f4e8e2de 1-4
+apps/api-diff-lab/src/styles.css
+  s_a5aaaa868acd6f::t_f1472ad054cb84 1-185
+  s_a5aaaa868acd6f::t_18208872d93ee6 186-191
+apps/api-diff-lab/vite.config.ts
+  s_a5aaaa868acd6f::t_e88f59f4e8e2de 1-11
+apps/api-diff-lab/package.json
+  s_a5aaaa868acd6f::t_e88f59f4e8e2de 1-28
+pnpm-lock.yaml
+  s_a5aaaa868acd6f::t_330eacaf6d1ded 36-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "f35c974d7b807a2f5e69104e8e3b2eedac4932ec",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
