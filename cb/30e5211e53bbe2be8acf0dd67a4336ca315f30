@@ -1,0 +1,44 @@
+apps/run-journal/package.json
+  s_a5aaaa868acd6f::t_92486f19bbc395 1-28
+apps/run-journal/src/styles.css
+  s_a5aaaa868acd6f::t_cdc777ca55d0a2 1-190
+  s_a5aaaa868acd6f::t_2ac601fed5f3e0 191-196
+apps/run-journal/tsconfig.node.json
+  s_a5aaaa868acd6f::t_92486f19bbc395 1-20
+apps/run-journal/index.html
+  s_a5aaaa868acd6f::t_92486f19bbc395 1-13
+apps/run-journal/vite.config.ts
+  s_a5aaaa868acd6f::t_92486f19bbc395 1-11
+apps/run-journal/tsconfig.json
+  s_a5aaaa868acd6f::t_92486f19bbc395 1-4
+apps/run-journal/src/lib/run-journal.ts
+  s_a5aaaa868acd6f::t_cdc777ca55d0a2 11-34
+  s_a5aaaa868acd6f::t_92486f19bbc395 1-10,35
+apps/run-journal/src/main.tsx
+  s_a5aaaa868acd6f::t_cdc777ca55d0a2 1-12
+apps/run-journal/src/lib/run-journal.test.ts
+  s_a5aaaa868acd6f::t_92486f19bbc395 1-26
+apps/run-journal/src/app.tsx
+  s_a5aaaa868acd6f::t_cdc777ca55d0a2 1-104
+  s_a5aaaa868acd6f::t_c23df43d8525f8 105-106
+apps/run-journal/tsconfig.app.json
+  s_a5aaaa868acd6f::t_92486f19bbc395 1-22
+pnpm-lock.yaml
+  s_a5aaaa868acd6f::t_01de97c7007d51 324-357
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "cb30e5211e53bbe2be8acf0dd67a4336ca315f30",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
