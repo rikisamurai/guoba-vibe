@@ -1,0 +1,43 @@
+apps/screenshot-qa-board/src/app.tsx
+  s_a5aaaa868acd6f::t_6bef0880a04892 1-89
+apps/screenshot-qa-board/src/main.tsx
+  s_a5aaaa868acd6f::t_6bef0880a04892 1-12
+apps/screenshot-qa-board/tsconfig.node.json
+  s_a5aaaa868acd6f::t_5d23179a4c15ac 1-20
+apps/screenshot-qa-board/vite.config.ts
+  s_a5aaaa868acd6f::t_5d23179a4c15ac 1-11
+apps/screenshot-qa-board/src/lib/qa-board.ts
+  s_a5aaaa868acd6f::t_5d23179a4c15ac 1-10,24
+  s_a5aaaa868acd6f::t_6bef0880a04892 11-23
+apps/screenshot-qa-board/package.json
+  s_a5aaaa868acd6f::t_5d23179a4c15ac 1-28
+apps/screenshot-qa-board/tsconfig.json
+  s_a5aaaa868acd6f::t_5d23179a4c15ac 1-4
+apps/screenshot-qa-board/tsconfig.app.json
+  s_a5aaaa868acd6f::t_5d23179a4c15ac 1-22
+apps/screenshot-qa-board/src/styles.css
+  s_a5aaaa868acd6f::t_6bef0880a04892 1-211
+  s_a5aaaa868acd6f::t_11121db585b53e 212-217
+apps/screenshot-qa-board/src/lib/qa-board.test.ts
+  s_a5aaaa868acd6f::t_5d23179a4c15ac 1-21
+apps/screenshot-qa-board/index.html
+  s_a5aaaa868acd6f::t_5d23179a4c15ac 1-13
+pnpm-lock.yaml
+  s_a5aaaa868acd6f::t_5ac5149a9af870 324-357
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "bcfafbbe2779fe6fbdc86d15829c790087314744",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
