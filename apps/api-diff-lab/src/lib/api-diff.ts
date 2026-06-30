@@ -4,6 +4,11 @@ export type ApiShapeDiff = {
   changed: string[]
 }
 
+export type DiffRow =
+  | { kind: 'added'; path: string; afterType: string }
+  | { kind: 'removed'; path: string; beforeType: string }
+  | { kind: 'changed'; path: string; beforeType: string; afterType: string }
+
 export function diffJsonShapes(before: unknown, after: unknown): ApiShapeDiff {
   const beforeShape = flattenShape(before)
   const afterShape = flattenShape(after)
@@ -18,6 +23,34 @@ export function diffJsonShapes(before: unknown, after: unknown): ApiShapeDiff {
       .map((path) => `${path}:${beforeShape.get(path)}->${afterShape.get(path)}`)
       .sort(),
   }
+}
+
+export function buildDiffRows(before: unknown, after: unknown): DiffRow[] {
+  const beforeShape = flattenShape(before)
+  const afterShape = flattenShape(after)
+  const paths = [...new Set([...beforeShape.keys(), ...afterShape.keys()])].sort()
+  const rows: DiffRow[] = []
+
+  for (const path of paths) {
+    const beforeType = beforeShape.get(path)
+    const afterType = afterShape.get(path)
+
+    if (!beforeType && afterType) {
+      rows.push({ kind: 'added', path, afterType })
+      continue
+    }
+
+    if (beforeType && !afterType) {
+      rows.push({ kind: 'removed', path, beforeType })
+      continue
+    }
+
+    if (beforeType && afterType && beforeType !== afterType) {
+      rows.push({ kind: 'changed', path, beforeType, afterType })
+    }
+  }
+
+  return rows
 }
 
 function flattenShape(value: unknown, prefix = ''): Map<string, string> {

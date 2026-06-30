@@ -1,36 +1,70 @@
-import { Braces, GitCompareArrows, ListChecks } from 'lucide-react'
+import { AlertTriangle, GitCompareArrows, ListChecks, RotateCcw } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { diffJsonShapes, type ApiShapeDiff } from './lib/api-diff'
+import { DiffGroup, DiffInspector, JsonEditor } from './diff-components'
+import { samples } from './diff-samples'
+import { buildDiffRows, type DiffRow } from './lib/api-diff'
 
-const beforeSample = JSON.stringify({ user: { id: 7, name: 'Riki' }, tags: ['qr'] }, null, 2)
-const afterSample = JSON.stringify({ user: { id: '7', handle: 'riki' }, tags: ['qr'] }, null, 2)
+const diffKinds: DiffRow['kind'][] = ['added', 'removed', 'changed']
 
 export function App() {
-  const [before, setBefore] = useState(beforeSample)
-  const [after, setAfter] = useState(afterSample)
+  const [before, setBefore] = useState(samples[0].before)
+  const [after, setAfter] = useState(samples[0].after)
+  const [activeSample, setActiveSample] = useState(samples[0].id)
+  const [selectedPath, setSelectedPath] = useState('')
 
   const result = useMemo(() => {
     try {
-      return { diff: diffJsonShapes(JSON.parse(before), JSON.parse(after)), error: '' }
+      const rows = buildDiffRows(JSON.parse(before), JSON.parse(after))
+      return { rows, error: '' }
     } catch {
-      return { diff: { added: [], removed: [], changed: [] }, error: 'Invalid JSON' }
+      return {
+        rows: [],
+        error: 'Invalid JSON. Fix the editor payload before reading the contract delta.',
+      }
     }
   }, [before, after])
+
+  const selectedRow = result.rows.find((row) => row.path === selectedPath) ?? result.rows[0]
+
+  function loadSample(sampleId: string) {
+    const sample = samples.find((item) => item.id === sampleId) ?? samples[0]
+    setBefore(sample.before)
+    setAfter(sample.after)
+    setActiveSample(sample.id)
+    setSelectedPath('')
+  }
 
   return (
     <main className="page">
       <section className="lab" aria-label="API Diff Lab">
         <header className="topbar">
           <div>
-            <p className="eyebrow">contract delta</p>
+            <p className="eyebrow">contract forensics</p>
             <h1>API Diff Lab</h1>
           </div>
           <div className="status">
             <ListChecks size={17} aria-hidden="true" />
-            {readTotal(result.diff)} changes
+            {result.rows.length} changes
           </div>
         </header>
+
+        <nav className="sample-bar" aria-label="Diff samples">
+          {samples.map((sample) => (
+            <button
+              key={sample.id}
+              type="button"
+              className={activeSample === sample.id ? 'active' : ''}
+              onClick={() => loadSample(sample.id)}
+            >
+              {sample.label}
+            </button>
+          ))}
+          <button type="button" onClick={() => loadSample(activeSample)}>
+            <RotateCcw size={15} aria-hidden="true" />
+            Reset
+          </button>
+        </nav>
 
         <section className="editors">
           <JsonEditor label="Before" value={before} onChange={setBefore} />
@@ -43,53 +77,28 @@ export function App() {
             <h2>Shape diff</h2>
           </div>
           {result.error ? (
-            <p className="error">{result.error}</p>
+            <p className="error">
+              <AlertTriangle size={16} aria-hidden="true" />
+              {result.error}
+            </p>
           ) : (
-            <div className="diff-grid">
-              <DiffList title="Added" items={result.diff.added} tone="added" />
-              <DiffList title="Removed" items={result.diff.removed} tone="removed" />
-              <DiffList title="Changed" items={result.diff.changed} tone="changed" />
+            <div className="diff-workspace">
+              <div className="row-list">
+                {diffKinds.map((kind) => (
+                  <DiffGroup
+                    key={kind}
+                    kind={kind}
+                    rows={result.rows.filter((row) => row.kind === kind)}
+                    selectedPath={selectedRow?.path ?? ''}
+                    onSelect={setSelectedPath}
+                  />
+                ))}
+              </div>
+              <DiffInspector row={selectedRow} />
             </div>
           )}
         </section>
       </section>
     </main>
   )
-}
-
-function JsonEditor({
-  label,
-  value,
-  onChange,
-}: {
-  label: string
-  value: string
-  onChange: (value: string) => void
-}) {
-  return (
-    <label className="editor">
-      <span>
-        <Braces size={16} aria-hidden="true" />
-        {label}
-      </span>
-      <textarea
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        spellCheck={false}
-      />
-    </label>
-  )
-}
-
-function DiffList({ title, items, tone }: { title: string; items: string[]; tone: string }) {
-  return (
-    <article className={`diff-list ${tone}`}>
-      <h3>{title}</h3>
-      {items.length > 0 ? items.map((item) => <code key={item}>{item}</code>) : <p>none</p>}
-    </article>
-  )
-}
-
-function readTotal(diff: ApiShapeDiff) {
-  return diff.added.length + diff.removed.length + diff.changed.length
 }
