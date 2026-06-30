@@ -1,0 +1,30 @@
+apps/qr-vault/docs/index.html
+  s_36726f2a8e89cb::t_c8c152e5f1abc2 649-650,796-797
+  s_36726f2a8e89cb::t_e46b43f36ec814 633
+  s_36726f2a8e89cb::t_43fdbf40629556 593
+  s_36726f2a8e89cb::t_9e9929ee843471 640-641,674-675,883-884
+  s_36726f2a8e89cb::t_dcf89ade153d01 595,632,655,658,749,947-948
+  s_36726f2a8e89cb::t_5305c12c4563e8 852,854
+  s_36726f2a8e89cb::t_5aa9e4d2779210 596
+  s_36726f2a8e89cb::t_c6361dbdd9f7c1 6,602,620,638,647,671,673,702,732,739-748,750-756,758-764,790,792-793,801,819,916,918-919
+  s_36726f2a8e89cb::t_9746d82379b9c6 657
+  s_36726f2a8e89cb::t_80bbd148b36cf8 863,874
+  s_36726f2a8e89cb::t_7a929612ee8947 903
+  s_36726f2a8e89cb::t_bb84a7f9e702b4 757
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "0dfd4051380720c46906bff6e9b7327044918ab8",
+  "prompts": {},
+  "sessions": {
+    "s_36726f2a8e89cb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f1365-92fa-7b21-a1d2-6894021fbeed",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
