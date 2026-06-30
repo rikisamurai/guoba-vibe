@@ -1,0 +1,35 @@
+apps/api-diff-lab/src/app.tsx
+  s_a5aaaa868acd6f::t_2d90294c13e682 1,4-6,8,11-14,18-19,21-24,28-37,43,48,52-68,80-83,85-96
+  s_a5aaaa868acd6f::t_de7366988af365 97
+apps/api-diff-lab/src/lib/api-diff.ts
+  s_a5aaaa868acd6f::t_479869e66181b6 32,34,39-40,44-45,49,51,53
+  s_a5aaaa868acd6f::t_2e480963f5e754 7-11,28-31,33,35-38,41-43,46-48,50,52
+  s_a5aaaa868acd6f::t_25a2374b1b1eb2 54-55
+apps/api-diff-lab/src/diff-samples.ts
+  s_a5aaaa868acd6f::t_b0ea225278529f 1-31
+apps/api-diff-lab/src/styles.css
+  s_a5aaaa868acd6f::t_1d3c8e50e82d7f 2-4,22,24-26,30,36,40-42,47,49-50,55-59,72-73,79,81-109,113-114,122,124,134-135,139-140,148,150-152,160-161,166-167,169-174,176-177,180-181,184-185,188-189,192-195,199,201-203,205-220,222-225,229-294,296-297,299-300,303,310-311,314-318,321
+  s_a5aaaa868acd6f::t_e784ab55619740 319-320
+apps/api-diff-lab/src/lib/api-diff.test.ts
+  s_a5aaaa868acd6f::t_3abb3a6320fb57 3,18-25
+  s_a5aaaa868acd6f::t_3073c45e1d25f0 26
+apps/api-diff-lab/src/diff-components.tsx
+  s_a5aaaa868acd6f::t_c3426f0f8db19c 1-108
+  s_a5aaaa868acd6f::t_87c0383a296637 109-114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "4fb6ff7a14ad8d7e6047bd83a9285d0088865289",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
