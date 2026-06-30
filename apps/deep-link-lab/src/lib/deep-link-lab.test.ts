@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildEnvironmentLinks } from './deep-link-lab'
+import { buildEnvironmentLinks, removeQueryParam, upsertQueryParam } from './deep-link-lab'
 
 describe('buildEnvironmentLinks', () => {
   it('keeps a custom scheme deep link while applying each environment params', () => {
@@ -31,5 +31,13 @@ describe('buildEnvironmentLinks', () => {
         queryCount: 3,
       },
     ])
+  })
+
+  it('edits custom scheme query params without losing the source route', () => {
+    const updated = upsertQueryParam('xhsdiscover://item/detail?id=42', 'source', 'lab')
+    const removed = removeQueryParam(updated, 'id')
+
+    expect(updated).toBe('xhsdiscover://item/detail?id=42&source=lab')
+    expect(removed).toBe('xhsdiscover://item/detail?source=lab')
   })
 })

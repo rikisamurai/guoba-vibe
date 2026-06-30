@@ -43,3 +43,15 @@ export function readDeepLinkParts(rawUrl: string) {
     query: Array.from(url.searchParams.entries()).map(([key, value]) => ({ key, value })),
   }
 }
+
+export function upsertQueryParam(rawUrl: string, key: string, value: string) {
+  const target = new URL(rawUrl)
+  target.searchParams.set(key, value)
+  return target.href
+}
+
+export function removeQueryParam(rawUrl: string, key: string) {
+  const target = new URL(rawUrl)
+  target.searchParams.delete(key)
+  return target.href
+}
