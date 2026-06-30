@@ -19,6 +19,10 @@ export function summarizeBoard(cards: QaCard[]) {
   }
 }
 
+export function transitionCardStatus(cards: QaCard[], id: string, status: QaStatus): QaCard[] {
+  return cards.map((card) => (card.id === id ? { ...card, status } : card))
+}
+
 function countByStatus(cards: QaCard[], status: QaStatus) {
   return cards.filter((card) => card.status === status).length
 }
