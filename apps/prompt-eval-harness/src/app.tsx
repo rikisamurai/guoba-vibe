@@ -1,80 +1,184 @@
-import { BarChart3, CheckCircle2, ClipboardList } from 'lucide-react'
-import type { CSSProperties } from 'react'
+import { BarChart3, CheckCircle2, ClipboardList, ListFilter, SlidersHorizontal } from 'lucide-react'
+import { useMemo, useState, type CSSProperties } from 'react'
 
-import { scoreAttempt, type EvalAttempt, type RubricCriterion } from './lib/prompt-eval'
+import { attempts, initialRubric, type HarnessAttempt } from './eval-data'
+import {
+  scoreAttempt,
+  updateCriterionWeight,
+  type AttemptScore,
+  type RubricCriterion,
+} from './lib/prompt-eval'
 
-const rubric: RubricCriterion[] = [
-  { id: 'correctness', label: 'Correctness', weight: 0.5 },
-  { id: 'verification', label: 'Verification', weight: 0.3 },
-  { id: 'scope', label: 'Scope control', weight: 0.2 },
-]
-
-const attempts: EvalAttempt[] = [
-  {
-    id: 'agent-a',
-    title: 'Agent A',
-    ratings: { correctness: 5, verification: 4, scope: 3 },
-  },
-  {
-    id: 'agent-b',
-    title: 'Agent B',
-    ratings: { correctness: 4, verification: 5, scope: 5 },
-  },
-  {
-    id: 'agent-c',
-    title: 'Agent C',
-    ratings: { correctness: 3, verification: 3, scope: 4 },
-  },
-]
+const initialLeaderId = attempts
+  .map((attempt) => scoreAttempt(initialRubric, attempt))
+  .sort((left, right) => right.score - left.score)[0].id
 
 export function App() {
-  const scores = attempts
-    .map((attempt) => scoreAttempt(rubric, attempt))
-    .sort((left, right) => right.score - left.score)
+  const [rubric, setRubric] = useState(initialRubric)
+  const [selectedId, setSelectedId] = useState(initialLeaderId)
+  const scores = useMemo(
+    () =>
+      attempts
+        .map((attempt) => scoreAttempt(rubric, attempt))
+        .sort((left, right) => right.score - left.score),
+    [rubric],
+  )
+  const selectedAttempt = attempts.find((attempt) => attempt.id === selectedId) ?? attempts[0]
+  const selectedScore = scoreAttempt(rubric, selectedAttempt)
+  const leader = scores[0]
+
+  function setWeight(id: string, weight: number) {
+    setRubric((current) => updateCriterionWeight(current, id, weight))
+  }
 
   return (
     <main className="page">
       <section className="harness" aria-label="Prompt Eval Harness">
         <header className="topbar">
           <div>
-            <p className="eyebrow">business-code eval</p>
+            <p className="eyebrow">eval control room</p>
             <h1>Prompt Eval Harness</h1>
           </div>
           <div className="leader">
             <CheckCircle2 size={17} aria-hidden="true" />
-            {scores[0].title} leads
+            {leader.title} leads
           </div>
         </header>
 
-        <section className="rubric">
-          {rubric.map((criterion) => (
-            <article key={criterion.id}>
-              <ClipboardList size={18} aria-hidden="true" />
-              <span>{criterion.label}</span>
-              <strong>{Math.round(criterion.weight * 100)}%</strong>
-            </article>
-          ))}
-        </section>
+        <div className="workspace">
+          <section className="rubric-panel" aria-label="Rubric weights">
+            <div className="panel-title">
+              <SlidersHorizontal size={18} aria-hidden="true" />
+              <h2>Rubric weights</h2>
+            </div>
+            {rubric.map((criterion) => (
+              <CriterionControl
+                key={criterion.id}
+                criterion={criterion}
+                onWeightChange={setWeight}
+              />
+            ))}
+          </section>
 
-        <section className="scoreboard">
-          <div className="panel-title">
-            <BarChart3 size={18} aria-hidden="true" />
-            <h2>Attempt scores</h2>
-          </div>
-          {scores.map((score) => (
-            <article key={score.id} className={`score-row ${score.band}`}>
-              <div>
-                <h3>{score.title}</h3>
-                <span>{score.band}</span>
-              </div>
-              <div className="bar" style={{ '--score': `${score.score}%` } as CSSProperties}>
-                <span />
-              </div>
-              <strong>{score.score}</strong>
-            </article>
-          ))}
-        </section>
+          <section className="scoreboard" aria-label="Attempt scores">
+            <div className="panel-title">
+              <BarChart3 size={18} aria-hidden="true" />
+              <h2>Attempt scores</h2>
+            </div>
+            {scores.map((score) => (
+              <ScoreRow
+                key={score.id}
+                score={score}
+                selected={score.id === selectedAttempt.id}
+                onSelect={() => setSelectedId(score.id)}
+              />
+            ))}
+          </section>
+
+          <AttemptInspector attempt={selectedAttempt} score={selectedScore} rubric={rubric} />
+        </div>
       </section>
     </main>
+  )
+}
+
+function CriterionControl({
+  criterion,
+  onWeightChange,
+}: {
+  criterion: RubricCriterion
+  onWeightChange: (id: string, weight: number) => void
+}) {
+  return (
+    <label className="criterion">
+      <span>
+        <ClipboardList size={17} aria-hidden="true" />
+        {criterion.label}
+      </span>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.05"
+        value={criterion.weight}
+        onChange={(event) => onWeightChange(criterion.id, Number(event.currentTarget.value))}
+      />
+      <strong>{Math.round(criterion.weight * 100)}%</strong>
+    </label>
+  )
+}
+
+function ScoreRow({
+  score,
+  selected,
+  onSelect,
+}: {
+  score: AttemptScore
+  selected: boolean
+  onSelect: () => void
+}) {
+  return (
+    <button
+      type="button"
+      className={`score-row ${score.band} ${selected ? 'selected' : ''}`}
+      onClick={onSelect}
+    >
+      <div>
+        <h3>{score.title}</h3>
+        <span>{score.band}</span>
+      </div>
+      <div className="bar" style={{ '--score': `${score.score}%` } as CSSProperties}>
+        <span />
+      </div>
+      <strong>{score.score}</strong>
+    </button>
+  )
+}
+
+function AttemptInspector({
+  attempt,
+  score,
+  rubric,
+}: {
+  attempt: HarnessAttempt
+  score: AttemptScore
+  rubric: RubricCriterion[]
+}) {
+  return (
+    <aside className={`inspector ${score.band}`}>
+      <div className="panel-title">
+        <ListFilter size={18} aria-hidden="true" />
+        <h2>{attempt.title}</h2>
+      </div>
+      <p className="brief">{attempt.brief}</p>
+      <blockquote>{attempt.output}</blockquote>
+      <div className="matrix">
+        {rubric.map((criterion) => (
+          <CriterionEvidence key={criterion.id} criterion={criterion} attempt={attempt} />
+        ))}
+      </div>
+    </aside>
+  )
+}
+
+function CriterionEvidence({
+  criterion,
+  attempt,
+}: {
+  criterion: RubricCriterion
+  attempt: HarnessAttempt
+}) {
+  const rating = attempt.ratings[criterion.id] ?? 0
+
+  return (
+    <article className="evidence">
+      <div>
+        <strong>{criterion.label}</strong>
+        <span>
+          {rating}/5 · {Math.round(criterion.weight * 100)}%
+        </span>
+      </div>
+      <p>{attempt.evidence[criterion.id]}</p>
+    </article>
   )
 }

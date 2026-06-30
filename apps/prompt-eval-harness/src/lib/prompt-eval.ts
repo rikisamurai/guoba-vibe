@@ -32,3 +32,11 @@ export function scoreAttempt(rubric: RubricCriterion[], attempt: EvalAttempt): A
     band: score >= 85 ? 'ship' : score >= 70 ? 'inspect' : 'hold',
   }
 }
+
+export function updateCriterionWeight(
+  rubric: RubricCriterion[],
+  id: string,
+  weight: number,
+): RubricCriterion[] {
+  return rubric.map((criterion) => (criterion.id === id ? { ...criterion, weight } : criterion))
+}
