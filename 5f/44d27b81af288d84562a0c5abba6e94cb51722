@@ -1,0 +1,31 @@
+apps/prompt-eval-harness/src/lib/prompt-eval.ts
+  s_a5aaaa868acd6f::t_2e480963f5e754 35-42
+apps/prompt-eval-harness/src/lib/prompt-eval.test.ts
+  s_a5aaaa868acd6f::t_3abb3a6320fb57 3,22-32
+  s_a5aaaa868acd6f::t_5d3b32bfb5f13b 33
+apps/prompt-eval-harness/src/styles.css
+  s_a5aaaa868acd6f::t_4ffc5b3582cc5b 2-4,15-19,22,24-26,30,36,38-40,45,47-48,53-57,63-64,70-71,77,79-82,85-86,90-93,96,99-103,106,108-109,112-114,120,128-154,157-172,176,183,187,191,193,198,200,202,209,213,217-251,254-272,278,283-285
+  s_a5aaaa868acd6f::t_cd2ede7cc655ce 286-287
+apps/prompt-eval-harness/src/eval-data.ts
+  s_a5aaaa868acd6f::t_2a70195a720f38 1-52
+apps/prompt-eval-harness/src/app.tsx
+  s_a5aaaa868acd6f::t_6bbf6c8d046b1d 1-2,4-10,12-14,22,24-32,39,44,48-61,63-79,84-181,183-184
+  s_a5aaaa868acd6f::t_e987a13459c016 17-20,23
+  s_a5aaaa868acd6f::t_7cac925634b339 21,182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "5f44d27b81af288d84562a0c5abba6e94cb51722",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
