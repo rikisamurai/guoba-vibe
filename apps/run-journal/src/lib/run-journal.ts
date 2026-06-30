@@ -17,6 +17,8 @@ export type RunSummary = {
   failedLabels: string[]
 }
 
+export type RunStatusFilter = RunSummary['status'] | 'all'
+
 export function summarizeRun(run: RunRecord): RunSummary {
   const executableEvents = run.events.filter((event) => event.kind !== 'artifact')
   const failedLabels = executableEvents
@@ -32,4 +34,12 @@ export function summarizeRun(run: RunRecord): RunSummary {
     artifactCount: run.events.filter((event) => event.kind === 'artifact').length,
     failedLabels,
   }
+}
+
+export function filterRunsByStatus(runs: RunRecord[], status: RunStatusFilter): RunRecord[] {
+  if (status === 'all') {
+    return runs
+  }
+
+  return runs.filter((run) => summarizeRun(run).status === status)
 }
