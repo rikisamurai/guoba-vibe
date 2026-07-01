@@ -1,0 +1,29 @@
+apps/api-diff-lab/src/lib/api-diff.test.ts
+  s_a5aaaa868acd6f::t_b23e42444701e4 3-9,33-59
+  s_a5aaaa868acd6f::t_0a4d274401f288 60-65
+apps/api-diff-lab/src/lib/api-diff.ts
+  s_a5aaaa868acd6f::t_14b6c2bff4f33f 12-18,63-99,137-156
+  s_a5aaaa868acd6f::t_1a617569a53bc3 157-162
+apps/api-diff-lab/src/app.tsx
+  s_a5aaaa868acd6f::t_a6a0e4ff63b52f 2,6-12,15-24,27-30,32-33,49-53,56,60-88,107,123-142,174-181,187-193
+  s_a5aaaa868acd6f::t_8a7c0d1b9e2b66 31
+apps/api-diff-lab/src/styles.css
+  s_a5aaaa868acd6f::t_1c0a962076b389 16-17,43-44,114-165,357-371,380-381,385-386
+  s_a5aaaa868acd6f::t_cc1b63d307bb36 387-388
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "b7a0fe90d0e224ad869a06fae69323acfc9c928c",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
