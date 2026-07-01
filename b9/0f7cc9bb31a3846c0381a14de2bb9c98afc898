@@ -1,0 +1,35 @@
+apps/run-journal/src/run-detail.tsx
+  s_a5aaaa868acd6f::t_faa92f80c64e97 1-74
+apps/run-journal/src/styles.css
+  s_a5aaaa868acd6f::t_b00bca24b1aa3f 15-17,43-44,113,116-169,323-346,358
+apps/run-journal/src/lib/run-journal.ts
+  s_a5aaaa868acd6f::t_1cbcb9ab9d5e82 46-81,91-95,128
+  s_a5aaaa868acd6f::t_8b54b8812209eb 82-90,96-127
+apps/run-journal/src/app.tsx
+  s_a5aaaa868acd6f::t_1463cb1027a99c 1-2,6,11-15,17-20,22-24,27,30,34-43,74-78,80-83,85-86,88,95-105,107-109
+  s_a5aaaa868acd6f::t_c40a1622750b29 110-118
+apps/run-journal/src/run-data.ts
+  s_a5aaaa868acd6f::t_516f2386750d9e 1-32
+apps/run-journal/src/run-composer.tsx
+  s_a5aaaa868acd6f::t_982b4013cc7be1 1-44
+apps/run-journal/src/lib/run-journal.test.ts
+  s_a5aaaa868acd6f::t_ae279b04af85a1 3-9,84-95
+  s_a5aaaa868acd6f::t_f9d49af4d9c9db 55-83
+  s_a5aaaa868acd6f::t_a801827ea520ee 96-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "b90f7cc9bb31a3846c0381a14de2bb9c98afc898",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
