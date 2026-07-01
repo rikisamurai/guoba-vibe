@@ -87,6 +87,7 @@ h1 {
   gap: 12px;
 }
 
+.suite-panel,
 .rubric-panel,
 .scoreboard,
 .inspector {
@@ -94,6 +95,80 @@ h1 {
   border-radius: 8px;
   background: rgba(255, 253, 248, 0.94);
   box-shadow: 6px 6px 0 #ddd3bf;
+}
+
+.suite-panel {
+  display: grid;
+  width: 280px;
+  gap: 11px;
+  padding: 15px;
+}
+
+.suite-panel ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+  color: #405047;
+  font-weight: 800;
+}
+
+.suite-panel button {
+  border: 1px solid #151b18;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #151b18;
+  color: #fffdf8;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.prompt {
+  border: 1px solid #bfd4c5;
+  border-radius: 8px;
+  margin-bottom: 0;
+  padding: 10px;
+  background: #f3f8ef;
+  color: #26342c;
+  font-weight: 900;
+}
+
+.suite-status {
+  border: 1px solid #bfd4c5;
+  border-radius: 999px;
+  padding: 8px 10px;
+  color: #1e6845;
+  background: #f3f8ef;
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.suite-status.invalid {
+  border-color: #deb9aa;
+  color: #9c372c;
+  background: #fff4ee;
+}
+
+.suite-error {
+  margin-bottom: 0;
+  color: #9c372c;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.cli-command {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  border: 1px solid #d6cab6;
+  border-radius: 8px;
+  padding: 9px;
+  background: #f2eadb;
+  color: #26342c;
+  font-family: 'SF Mono', ui-monospace, monospace;
+  font-size: 12px;
 }
 
 .rubric-panel {
@@ -280,6 +355,7 @@ blockquote {
     display: grid;
   }
 
+  .suite-panel,
   .rubric-panel,
   .inspector {
     width: auto;

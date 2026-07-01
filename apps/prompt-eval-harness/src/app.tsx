@@ -1,31 +1,28 @@
 import { BarChart3, CheckCircle2, ClipboardList, ListFilter, SlidersHorizontal } from 'lucide-react'
 import { useMemo, useState, type CSSProperties } from 'react'
 
-import { attempts, initialRubric, type HarnessAttempt } from './eval-data'
+import { attempts, initialRubric, suite, type HarnessAttempt } from './eval-data'
 import {
+  normalizeRubricWeights,
   scoreAttempt,
+  scoreAttempts,
   updateCriterionWeight,
+  validateEvalSuite,
   type AttemptScore,
   type RubricCriterion,
 } from './lib/prompt-eval'
+import { SuitePanel } from './suite-panel'
 
-const initialLeaderId = attempts
-  .map((attempt) => scoreAttempt(initialRubric, attempt))
-  .sort((left, right) => right.score - left.score)[0].id
+const initialLeaderId = scoreAttempts(initialRubric, attempts)[0].id
 
 export function App() {
   const [rubric, setRubric] = useState(initialRubric)
   const [selectedId, setSelectedId] = useState(initialLeaderId)
-  const scores = useMemo(
-    () =>
-      attempts
-        .map((attempt) => scoreAttempt(rubric, attempt))
-        .sort((left, right) => right.score - left.score),
-    [rubric],
-  )
+  const scores = useMemo(() => scoreAttempts(rubric, attempts), [rubric])
   const selectedAttempt = attempts.find((attempt) => attempt.id === selectedId) ?? attempts[0]
   const selectedScore = scoreAttempt(rubric, selectedAttempt)
   const leader = scores[0]
+  const validation = validateEvalSuite({ ...suite, rubric, attempts })
 
   function setWeight(id: string, weight: number) {
     setRubric((current) => updateCriterionWeight(current, id, weight))
@@ -37,7 +34,8 @@ export function App() {
         <header className="topbar">
           <div>
             <p className="eyebrow">eval control room</p>
-            <h1>Prompt Eval Harness</h1>
+            <h1>{suite.title}</h1>
+            <p className="brief">{suite.description}</p>
           </div>
           <div className="leader">
             <CheckCircle2 size={17} aria-hidden="true" />
@@ -46,6 +44,12 @@ export function App() {
         </header>
 
         <div className="workspace">
+          <SuitePanel
+            suite={suite}
+            errors={validation.errors}
+            onNormalize={() => setRubric((current) => normalizeRubricWeights(current))}
+          />
+
           <section className="rubric-panel" aria-label="Rubric weights">
             <div className="panel-title">
               <SlidersHorizontal size={18} aria-hidden="true" />
@@ -95,6 +99,7 @@ function CriterionControl({
         <ClipboardList size={17} aria-hidden="true" />
         {criterion.label}
       </span>
+      {criterion.description ? <small>{criterion.description}</small> : null}
       <input
         type="range"
         min="0"

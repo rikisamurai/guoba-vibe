@@ -1,0 +1,96 @@
+{
+  "id": "qr-vault-import-roundtrip",
+  "title": "QR Vault import regression eval",
+  "description": "Ranks three agent attempts for one concrete repo task: keep QR Vault import/export collection membership correct, verified, and scoped.",
+  "task": {
+    "prompt": "In apps/qr-vault, fix import/export so collection membership survives both Merge and Replace. Add focused regression coverage and report the commands used to verify the fix.",
+    "expectedOutcome": [
+      "Imported QR entries keep their collection memberships after Merge and Replace.",
+      "Malformed import payloads are rejected without overwriting local vault data.",
+      "Regression tests cover import/export round trips with collections.",
+      "The response includes fresh test/build evidence or clearly explains any skipped check."
+    ]
+  },
+  "rubric": [
+    {
+      "id": "correctness",
+      "label": "Correctness",
+      "description": "Does the attempt satisfy the task contract and handle the important edge cases?",
+      "weight": 0.45
+    },
+    {
+      "id": "verification",
+      "label": "Verification",
+      "description": "Does it include focused regression tests and fresh command evidence?",
+      "weight": 0.25
+    },
+    {
+      "id": "repo_fit",
+      "label": "Repo fit",
+      "description": "Does it use existing QR Vault data shapes and project commands?",
+      "weight": 0.2
+    },
+    {
+      "id": "scope",
+      "label": "Scope control",
+      "description": "Does it avoid unrelated rewrites, styling churn, and speculative features?",
+      "weight": 0.1
+    }
+  ],
+  "attempts": [
+    {
+      "id": "attempt-a",
+      "title": "Attempt A - parser-only patch",
+      "brief": "Touches the import parser and reports one manual smoke check.",
+      "output": "Adds a fallback when collectionIds are missing, but does not test Replace and does not prove malformed payload safety.",
+      "ratings": {
+        "correctness": 3,
+        "verification": 2,
+        "repo_fit": 4,
+        "scope": 4
+      },
+      "evidence": {
+        "correctness": "Preserves some imported memberships, but misses Replace and invalid payload behavior.",
+        "verification": "Only mentions a manual browser check; no regression test or build output.",
+        "repo_fit": "Uses the existing import parser and vault shape.",
+        "scope": "Patch stays local to import code."
+      }
+    },
+    {
+      "id": "attempt-b",
+      "title": "Attempt B - test-first round trip",
+      "brief": "Adds round-trip coverage, fixes Merge and Replace, and keeps changes inside QR Vault import logic.",
+      "output": "Introduces a focused collection-membership regression test, fixes the serializer/importer mismatch, and verifies test plus build.",
+      "ratings": {
+        "correctness": 5,
+        "verification": 5,
+        "repo_fit": 5,
+        "scope": 5
+      },
+      "evidence": {
+        "correctness": "Covers Merge, Replace, and malformed payload behavior from the task.",
+        "verification": "Includes focused Vitest coverage and fresh build evidence.",
+        "repo_fit": "Reuses the existing vault model and app-level pnpm filter commands.",
+        "scope": "No unrelated UI, dependency, or formatting churn."
+      }
+    },
+    {
+      "id": "attempt-c",
+      "title": "Attempt C - import wizard rewrite",
+      "brief": "Reworks the import screen while fixing the happy path.",
+      "output": "Makes the flow clearer and fixes the sample export, but changes layout and copy without covering invalid payloads.",
+      "ratings": {
+        "correctness": 4,
+        "verification": 3,
+        "repo_fit": 4,
+        "scope": 3
+      },
+      "evidence": {
+        "correctness": "Happy-path membership survives, but malformed payload handling is still unclear.",
+        "verification": "Adds one UI-oriented test and skips build.",
+        "repo_fit": "Mostly follows existing components, but adds a new flow for a data bug.",
+        "scope": "Visual rewrite is larger than the reported regression needs."
+      }
+    }
+  ]
+}
