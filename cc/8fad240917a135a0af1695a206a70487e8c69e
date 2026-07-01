@@ -1,0 +1,57 @@
+apps/prompt-eval-harness/package.json
+  s_f9dd5a1cbb7987::t_40c9dfd77c7fb2 9
+apps/prompt-eval-harness/src/lib/prompt-eval.test.ts
+  s_f9dd5a1cbb7987::t_d794e94ee9bddc 40-54
+  s_a5aaaa868acd6f::t_2d9e99731c9fb9 3-9,55-96
+apps/prompt-eval-harness/scripts/evaluate.mjs
+  s_f9dd5a1cbb7987::t_4f078262037a89 1-58
+  s_f9dd5a1cbb7987::t_7184863ea375df 59-60
+apps/prompt-eval-harness/src/styles.css
+  s_a5aaaa868acd6f::t_dc275c7e7e8f25 90,100-173,358
+apps/prompt-eval-harness/src/eval-data.ts
+  s_f9dd5a1cbb7987::t_c65d1bd9e71173 2,4
+  s_f9dd5a1cbb7987::t_0b97929f6aed77 1,6-8
+apps/prompt-eval-harness/src/lib/prompt-eval.ts
+  s_f9dd5a1cbb7987::t_055d71b1b74ab7 14-19,29
+  s_f9dd5a1cbb7987::t_0537cd3af06f1e 4,20-28,30-31,55-58
+  s_a5aaaa868acd6f::t_6312aeb95d68c7 59,68-106
+  s_a5aaaa868acd6f::t_9604274335d839 60,107-108
+apps/prompt-eval-harness/src/suite-panel.tsx
+  s_a5aaaa868acd6f::t_f9816a43c481ca 1-39
+  s_a5aaaa868acd6f::t_a39f7b7e9d17aa 40-45
+apps/prompt-eval-harness/README.md
+  s_f9dd5a1cbb7987::t_f50500c1786a99 1-87
+README.md
+  s_f9dd5a1cbb7987::t_25f85c868f20a2 3,7-12,14,68-78,93-94
+apps/prompt-eval-harness/src/eval-suite.json
+  s_f9dd5a1cbb7987::t_9c4e967fc3a61d 1-84,87-90,93-96
+  s_f9dd5a1cbb7987::t_492ee95b3ba18e 85-86,91-92
+apps/prompt-eval-harness/src/app.tsx
+  s_f9dd5a1cbb7987::t_145f15b57f6db1 4,8,16,37,102
+  s_a5aaaa868acd6f::t_352b640bbe3f7c 6,10,14,21,25,47-52
+  s_f9dd5a1cbb7987::t_7076d54796c566 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "cc8fad240917a135a0af1695a206a70487e8c69e",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    },
+    "s_f9dd5a1cbb7987": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f1926-6703-7411-a5e8-5b971de09416",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
