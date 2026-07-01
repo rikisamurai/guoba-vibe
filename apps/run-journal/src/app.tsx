@@ -1,58 +1,45 @@
-import {
-  Camera,
-  CheckCircle2,
-  CircleAlert,
-  ClipboardCheck,
-  GitPullRequest,
-  TerminalSquare,
-} from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { CheckCircle2, GitPullRequest } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 
 import {
   filterRunsByStatus,
+  parseRunRecords,
   summarizeRun,
   type RunRecord,
   type RunStatusFilter,
 } from './lib/run-journal'
+import { RunComposer } from './run-composer'
+import { filters, initialRuns } from './run-data'
+import { RunDetail } from './run-detail'
 
-const runs: RunRecord[] = [
-  {
-    id: 'deep-link-lab',
-    title: 'Deep Link Lab PR',
-    events: [
-      { kind: 'command', label: 'pnpm --filter deep-link-lab test', exitCode: 0 },
-      { kind: 'check', label: 'pnpm --filter deep-link-lab build', exitCode: 0 },
-      { kind: 'artifact', label: 'browser screenshot', href: '#deep-link-lab' },
-    ],
-  },
-  {
-    id: 'qa-board',
-    title: 'Screenshot QA Board PR',
-    events: [
-      { kind: 'command', label: 'pnpm --filter screenshot-qa-board test', exitCode: 0 },
-      { kind: 'check', label: 'agent-browser smoke', exitCode: 0 },
-      { kind: 'artifact', label: 'before/after capture', href: '#qa-board' },
-    ],
-  },
-  {
-    id: 'api-diff',
-    title: 'API Diff Lab PR',
-    events: [
-      { kind: 'command', label: 'pnpm --filter api-diff-lab test', exitCode: 1 },
-      { kind: 'artifact', label: 'failure log', href: '#api-diff' },
-    ],
-  },
-]
+const storageKey = 'run-journal-records-v1'
 
-const filters: RunStatusFilter[] = ['all', 'verified', 'needs-attention', 'draft']
+function readInitialRuns() {
+  if (typeof window === 'undefined') {
+    return initialRuns
+  }
+
+  const stored = window.localStorage.getItem(storageKey)
+  return stored ? (parseRunRecords(stored) ?? initialRuns) : initialRuns
+}
 
 export function App() {
+  const [runs, setRuns] = useState(readInitialRuns)
   const [filter, setFilter] = useState<RunStatusFilter>('all')
   const [selectedId, setSelectedId] = useState(runs[0].id)
-  const visibleRuns = useMemo(() => filterRunsByStatus(runs, filter), [filter])
+  const visibleRuns = useMemo(() => filterRunsByStatus(runs, filter), [filter, runs])
   const selectedRun = runs.find((run) => run.id === selectedId) ?? visibleRuns[0] ?? runs[0]
-  const selectedSummary = summarizeRun(selectedRun)
   const verified = runs.filter((run) => summarizeRun(run).status === 'verified').length
+
+  useEffect(() => {
+    window.localStorage.setItem(storageKey, JSON.stringify(runs))
+  }, [runs])
+
+  function addRun(run: RunRecord) {
+    setRuns((current) => [run, ...current.filter((item) => item.id !== run.id)])
+    setSelectedId(run.id)
+    setFilter('all')
+  }
 
   return (
     <main className="page">
@@ -84,86 +71,50 @@ export function App() {
         </nav>
 
         <div className="content">
-          <section className="run-list">
-            {visibleRuns.map((run) => {
-              const summary = summarizeRun(run)
-              return (
-                <button
+          <aside className="sidebar">
+            <RunComposer onCreate={addRun} />
+            <section className="run-list">
+              {visibleRuns.map((run) => (
+                <RunCard
                   key={run.id}
-                  type="button"
-                  className={`run-card ${summary.status} ${run.id === selectedRun.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedId(run.id)}
-                >
-                  <GitPullRequest size={18} aria-hidden="true" />
-                  <span>
-                    <strong>{run.title}</strong>
-                    <small>{summary.status}</small>
-                  </span>
-                  <em>{summary.checkCount} checks</em>
-                </button>
-              )
-            })}
-          </section>
-
-          <section className="run-detail" aria-label="Selected run evidence">
-            <div className="detail-head">
-              <div>
-                <p className="eyebrow">selected run</p>
-                <h2>{selectedRun.title}</h2>
-              </div>
-              <span className={`status-chip ${selectedSummary.status}`}>
-                {selectedSummary.status}
-              </span>
-            </div>
-
-            <div className="evidence-grid">
-              <Metric label="Checks" value={selectedSummary.checkCount} />
-              <Metric label="Artifacts" value={selectedSummary.artifactCount} />
-              <Metric label="Failures" value={selectedSummary.failedLabels.length} />
-            </div>
-
-            <div className="timeline">
-              {selectedRun.events.map((event, index) => (
-                <article key={`${event.kind}-${event.label}`} className={`event-row ${event.kind}`}>
-                  {event.kind === 'artifact' ? (
-                    <Camera size={17} aria-hidden="true" />
-                  ) : event.exitCode === 0 ? (
-                    <TerminalSquare size={17} aria-hidden="true" />
-                  ) : (
-                    <CircleAlert size={17} aria-hidden="true" />
-                  )}
-                  <div>
-                    <span>{event.label}</span>
-                    <small>step {index + 1}</small>
-                  </div>
-                  <strong>{event.kind === 'artifact' ? 'file' : event.exitCode}</strong>
-                </article>
+                  run={run}
+                  selected={run.id === selectedRun.id}
+                  onSelect={() => setSelectedId(run.id)}
+                />
               ))}
-            </div>
+            </section>
+          </aside>
 
-            <aside className="checklist">
-              <ClipboardCheck size={18} aria-hidden="true" />
-              <div>
-                <strong>PR note readiness</strong>
-                <p>
-                  {selectedSummary.failedLabels.length
-                    ? selectedSummary.failedLabels.join(', ')
-                    : 'Verification evidence is ready to cite.'}
-                </p>
-              </div>
-            </aside>
-          </section>
+          <RunDetail run={selectedRun} />
         </div>
       </section>
     </main>
   )
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
+function RunCard({
+  run,
+  selected,
+  onSelect,
+}: {
+  run: RunRecord
+  selected: boolean
+  onSelect: () => void
+}) {
+  const summary = summarizeRun(run)
+
   return (
-    <div className="metric">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
+    <button
+      type="button"
+      className={`run-card ${summary.status} ${selected ? 'selected' : ''}`}
+      onClick={onSelect}
+    >
+      <GitPullRequest size={18} aria-hidden="true" />
+      <span>
+        <strong>{run.title}</strong>
+        <small>{summary.status}</small>
+      </span>
+      <em>{summary.checkCount} checks</em>
+    </button>
   )
 }
