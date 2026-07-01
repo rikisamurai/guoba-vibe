@@ -4,6 +4,8 @@ export type ReviewCard = QaCard & {
   route: string
   viewport: string
   note: string
+  beforeImage?: string
+  afterImage?: string
 }
 
 export type SeverityFilter = QaSeverity | 'all'

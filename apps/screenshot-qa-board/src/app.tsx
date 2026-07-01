@@ -1,7 +1,9 @@
-import { AlertTriangle, CheckCircle2, Eye, Image, PanelTop, SlidersHorizontal } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { AlertTriangle, PanelTop, SlidersHorizontal } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { summarizeBoard, transitionCardStatus, type QaStatus } from './lib/qa-board'
+import { parseQaCards, summarizeBoard, transitionCardStatus, type QaStatus } from './lib/qa-board'
+import { QaComposer } from './qa-composer'
+import { QaInspector } from './qa-inspector'
 import {
   initialCards,
   severities,
@@ -10,8 +12,19 @@ import {
   type SeverityFilter,
 } from './review-data'
 
+const storageKey = 'screenshot-qa-board-cards-v1'
+
+function readInitialCards() {
+  if (typeof window === 'undefined') {
+    return initialCards
+  }
+
+  const stored = window.localStorage.getItem(storageKey)
+  return stored ? ((parseQaCards(stored) as ReviewCard[] | null) ?? initialCards) : initialCards
+}
+
 export function App() {
-  const [cards, setCards] = useState(initialCards)
+  const [cards, setCards] = useState(readInitialCards)
   const [filter, setFilter] = useState<SeverityFilter>('all')
   const [selectedId, setSelectedId] = useState(cards[0].id)
   const summary = summarizeBoard(cards)
@@ -24,6 +37,16 @@ export function App() {
   function moveSelected(status: QaStatus) {
     setCards((current) => transitionCardStatus(current, selectedCard.id, status) as ReviewCard[])
   }
+
+  function addCard(card: ReviewCard) {
+    setCards((current) => [card, ...current.filter((item) => item.id !== card.id)])
+    setSelectedId(card.id)
+    setFilter('all')
+  }
+
+  useEffect(() => {
+    window.localStorage.setItem(storageKey, JSON.stringify(cards))
+  }, [cards])
 
   return (
     <main className="page">
@@ -60,6 +83,8 @@ export function App() {
           ))}
         </nav>
 
+        <QaComposer onCreate={addCard} />
+
         <div className="workspace">
           <section className="columns" aria-label="Review lanes">
             {statuses.map((status) => (
@@ -81,45 +106,12 @@ export function App() {
             ))}
           </section>
 
-          <section className="inspector" aria-label="Selected screenshot review">
-            <div className="inspector-head">
-              <div>
-                <p className="eyebrow">selected capture</p>
-                <h2>{selectedCard.title}</h2>
-              </div>
-              <span className={`status-chip ${selectedCard.status}`}>{selectedCard.status}</span>
-            </div>
-
-            <div className="actions" aria-label="Status actions">
-              {statuses.map((status) => (
-                <button
-                  key={status}
-                  type="button"
-                  className={selectedCard.status === status ? 'active' : ''}
-                  onClick={() => moveSelected(status)}
-                >
-                  {status === 'accepted' ? <CheckCircle2 size={16} /> : <Eye size={16} />}
-                  {status}
-                </button>
-              ))}
-            </div>
-
-            <div className="compare">
-              <ShotFrame title="Before" tone="before" card={selectedCard} />
-              <ShotFrame title="After" tone="after" card={selectedCard} />
-            </div>
-
-            <aside className="review-note">
-              <Image size={17} aria-hidden="true" />
-              <div>
-                <strong>{selectedCard.route}</strong>
-                <p>{selectedCard.note}</p>
-                <span>
-                  {selectedCard.viewport} · {selectedCard.severity}
-                </span>
-              </div>
-            </aside>
-          </section>
+          <QaInspector
+            card={selectedCard}
+            cards={cards}
+            statuses={statuses}
+            onMove={moveSelected}
+          />
         </div>
       </section>
     </main>
@@ -166,22 +158,5 @@ function ShotMini({ card }: { card: ReviewCard }) {
       <i />
       <b />
     </div>
-  )
-}
-
-function ShotFrame({ title, tone, card }: { title: string; tone: string; card: ReviewCard }) {
-  return (
-    <article className={`shot-frame ${tone} ${card.severity}`}>
-      <header>
-        <span>{title}</span>
-        <small>{card.viewport}</small>
-      </header>
-      <div className="mock-screen">
-        <span />
-        <span />
-        <span />
-        <b />
-      </div>
-    </article>
   )
 }
