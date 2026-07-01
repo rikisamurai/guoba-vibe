@@ -1,35 +1,98 @@
-import { Check, Copy, ExternalLink, FlaskConical, Link2, Plus, Trash2 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { Check } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { initialUrl, profiles } from './deep-link-data'
 import {
   buildEnvironmentLinks,
-  removeQueryParam,
+  exportWorkspace,
+  importWorkspace,
   readDeepLinkParts,
-  upsertQueryParam,
+  validateDeepLink,
 } from './lib/deep-link-lab'
-import { ProfileList } from './profile-list'
+import { MatrixPanel } from './matrix-panel'
+import { SourcePanel } from './source-panel'
+import { WorkspaceActions } from './workspace-actions'
+
+const storageKey = 'deep-link-lab-workspace-v1'
+
+const sampleWorkspace = {
+  name: 'Shopping launch links',
+  sourceUrl: initialUrl,
+  profiles,
+}
+
+function readInitialWorkspace() {
+  if (typeof window === 'undefined') {
+    return sampleWorkspace
+  }
+
+  const stored = window.localStorage.getItem(storageKey)
+  return stored ? (importWorkspace(stored) ?? sampleWorkspace) : sampleWorkspace
+}
 
 export function App() {
-  const [rawUrl, setRawUrl] = useState(initialUrl)
-  const [activeProfileId, setActiveProfileId] = useState(profiles[1].id)
-  const [profileDrafts, setProfileDrafts] = useState(profiles)
-  const [newParam, setNewParam] = useState({ key: '', value: '' })
+  const initialWorkspace = useMemo(() => readInitialWorkspace(), [])
+  const [workspaceName, setWorkspaceName] = useState(initialWorkspace.name)
+  const [rawUrl, setRawUrl] = useState(initialWorkspace.sourceUrl)
+  const [activeProfileId, setActiveProfileId] = useState(
+    initialWorkspace.profiles[1]?.id ?? initialWorkspace.profiles[0].id,
+  )
+  const [profileDrafts, setProfileDrafts] = useState(initialWorkspace.profiles)
   const [copiedId, setCopiedId] = useState('')
+  const [workspaceText, setWorkspaceText] = useState('')
+  const [workspaceMessage, setWorkspaceMessage] = useState('')
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      storageKey,
+      exportWorkspace({ name: workspaceName, sourceUrl: rawUrl, profiles: profileDrafts }),
+    )
+  }, [profileDrafts, rawUrl, workspaceName])
 
   const result = useMemo(() => {
-    try {
+    const validation = validateDeepLink(rawUrl)
+
+    if (validation.ok) {
       return {
         links: buildEnvironmentLinks(rawUrl, profileDrafts),
         parts: readDeepLinkParts(rawUrl),
         error: '',
       }
-    } catch {
-      return { links: [], parts: null, error: 'Invalid URL' }
     }
+
+    return { links: [], parts: null, error: validation.message }
   }, [profileDrafts, rawUrl])
 
   const activeLink = result.links.find((link) => link.id === activeProfileId) ?? result.links[0]
+  const exportedWorkspace = exportWorkspace({
+    name: workspaceName,
+    sourceUrl: rawUrl,
+    profiles: profileDrafts,
+  })
+
+  function applyWorkspaceImport() {
+    const imported = importWorkspace(workspaceText)
+
+    if (!imported) {
+      setWorkspaceMessage('Import failed. Paste a valid Deep Link Lab workspace JSON.')
+      return
+    }
+
+    setWorkspaceName(imported.name)
+    setRawUrl(imported.sourceUrl)
+    setProfileDrafts(imported.profiles)
+    setActiveProfileId(imported.profiles[0].id)
+    setWorkspaceMessage('Workspace imported.')
+  }
+
+  function restoreSampleWorkspace() {
+    setWorkspaceName(sampleWorkspace.name)
+    setRawUrl(sampleWorkspace.sourceUrl)
+    setProfileDrafts(sampleWorkspace.profiles)
+    setActiveProfileId(sampleWorkspace.profiles[1].id)
+    setWorkspaceText('')
+    setWorkspaceMessage('Sample workspace restored.')
+  }
 
   return (
     <main className="shell">
@@ -45,152 +108,42 @@ export function App() {
           </div>
         </header>
 
+        <WorkspaceActions
+          name={workspaceName}
+          importText={workspaceText}
+          exportText={exportedWorkspace}
+          message={workspaceMessage}
+          onNameChange={setWorkspaceName}
+          onImportTextChange={setWorkspaceText}
+          onExport={() => {
+            setWorkspaceText(exportedWorkspace)
+            setWorkspaceMessage('Workspace JSON is ready to copy.')
+          }}
+          onImport={applyWorkspaceImport}
+          onReset={restoreSampleWorkspace}
+        />
+
         <div className="layout">
-          <section className="panel source-panel">
-            <div className="panel-title">
-              <Link2 size={18} aria-hidden="true" />
-              <h2>Source URL</h2>
-            </div>
-            <label className="field">
-              <span>Deep link</span>
-              <textarea value={rawUrl} onChange={(event) => setRawUrl(event.target.value)} />
-            </label>
-
-            <div className="query-editor" aria-label="Query parameter editor">
-              <div className="section-label">Query controls</div>
-              {result.parts?.query.map((param) => (
-                <div className="query-row" key={param.key}>
-                  <input aria-label={`${param.key} key`} value={param.key} readOnly />
-                  <input
-                    aria-label={`${param.key} value`}
-                    value={param.value}
-                    onChange={(event) =>
-                      setRawUrl(upsertQueryParam(rawUrl, param.key, event.target.value))
-                    }
-                  />
-                  <button
-                    type="button"
-                    aria-label={`Remove ${param.key}`}
-                    onClick={() => setRawUrl(removeQueryParam(rawUrl, param.key))}
-                  >
-                    <Trash2 size={15} aria-hidden="true" />
-                  </button>
-                </div>
-              ))}
-              <form
-                className="query-row add-row"
-                onSubmit={(event) => {
-                  event.preventDefault()
-                  if (!newParam.key.trim()) return
-                  setRawUrl(upsertQueryParam(rawUrl, newParam.key.trim(), newParam.value))
-                  setNewParam({ key: '', value: '' })
-                }}
-              >
-                <input
-                  aria-label="New query key"
-                  placeholder="key"
-                  value={newParam.key}
-                  onChange={(event) => setNewParam({ ...newParam, key: event.target.value })}
-                />
-                <input
-                  aria-label="New query value"
-                  placeholder="value"
-                  value={newParam.value}
-                  onChange={(event) => setNewParam({ ...newParam, value: event.target.value })}
-                />
-                <button type="submit" aria-label="Add query param">
-                  <Plus size={15} aria-hidden="true" />
-                </button>
-              </form>
-            </div>
-
-            <div className="parts-grid" aria-label="Parsed deep link">
-              <Metric label="Scheme" value={result.parts?.scheme ?? '-'} />
-              <Metric label="Path" value={result.parts?.path ?? '-'} />
-              <Metric label="Query keys" value={String(result.parts?.query.length ?? 0)} />
-            </div>
-
-            <ProfileList
-              profiles={profileDrafts}
-              activeProfileId={activeProfileId}
-              onActiveProfileChange={setActiveProfileId}
-              onProfilesChange={setProfileDrafts}
-            />
-          </section>
-
-          <section className="panel matrix-panel">
-            <div className="panel-title">
-              <FlaskConical size={18} aria-hidden="true" />
-              <h2>Environment Matrix</h2>
-            </div>
-
-            {result.error ? (
-              <p className="empty-state">{result.error}</p>
-            ) : (
-              <>
-                <div className="preview-tile">
-                  <div className="qr-mark" aria-hidden="true">
-                    {Array.from({ length: 36 }, (_, index) => (
-                      <span
-                        key={index}
-                        className={index % 4 === 0 || index % 7 === 0 ? 'on' : ''}
-                      />
-                    ))}
-                  </div>
-                  <div>
-                    <span>Selected target</span>
-                    <strong>{activeLink?.name}</strong>
-                    <code>{activeLink?.url}</code>
-                  </div>
-                </div>
-                <div className="matrix">
-                  {result.links.map((link) => (
-                    <article
-                      key={link.id}
-                      className={`matrix-row ${link.id === activeProfileId ? 'active' : ''}`}
-                    >
-                      <button
-                        type="button"
-                        className="link-meta"
-                        onClick={() => setActiveProfileId(link.id)}
-                      >
-                        <span>{link.name}</span>
-                        <small>{link.queryCount} params</small>
-                      </button>
-                      <code>{link.url}</code>
-                      <div className="row-actions">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setCopiedId(link.id)
-                            void navigator.clipboard?.writeText(link.url)
-                          }}
-                        >
-                          <Copy size={16} aria-hidden="true" />
-                          {copiedId === link.id ? 'Copied' : 'Copy'}
-                        </button>
-                        <a href={link.url}>
-                          <ExternalLink size={16} aria-hidden="true" />
-                          Open
-                        </a>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </>
-            )}
-          </section>
+          <SourcePanel
+            rawUrl={rawUrl}
+            parts={result.parts}
+            profiles={profileDrafts}
+            activeProfileId={activeProfileId}
+            onRawUrlChange={setRawUrl}
+            onActiveProfileChange={setActiveProfileId}
+            onProfilesChange={setProfileDrafts}
+          />
+          <MatrixPanel
+            error={result.error}
+            links={result.links}
+            activeLink={activeLink}
+            activeProfileId={activeProfileId}
+            copiedId={copiedId}
+            onActiveProfileChange={setActiveProfileId}
+            onCopiedChange={setCopiedId}
+          />
         </div>
       </section>
     </main>
-  )
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="metric">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
   )
 }

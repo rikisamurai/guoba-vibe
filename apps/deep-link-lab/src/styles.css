@@ -38,7 +38,9 @@ input {
 .status-pill,
 .row-actions,
 .profile-inputs,
-.preview-tile {
+.preview-tile,
+.workspace-actions,
+.workspace-buttons {
   display: flex;
 }
 
@@ -88,6 +90,55 @@ h1 {
   display: grid;
   grid-template-columns: minmax(360px, 0.92fr) minmax(0, 1.18fr);
   gap: 14px;
+}
+
+.workspace-actions {
+  align-items: stretch;
+  gap: 10px;
+  border: 1px solid #bac4ab;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  padding: 12px;
+  background: rgba(255, 254, 248, 0.9);
+}
+
+.workspace-name {
+  display: grid;
+  width: 230px;
+  gap: 6px;
+  color: #465447;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.workspace-buttons {
+  flex-wrap: wrap;
+  gap: 7px;
+  width: 245px;
+}
+
+.workspace-buttons button {
+  border: 1px solid #1b251d;
+  border-radius: 999px;
+  padding: 0 11px;
+  background: #111914;
+  color: #f7ffe9;
+  cursor: pointer;
+}
+
+.workspace-actions textarea {
+  flex: 1;
+  min-height: 72px;
+  font-family: 'SF Mono', ui-monospace, monospace;
+  font-size: 12px;
+}
+
+.workspace-message {
+  width: 190px;
+  margin: 0;
+  color: #2d5a11;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .panel {
@@ -326,9 +377,16 @@ code {
 
   .topbar,
   .layout,
-  .matrix-row {
+  .matrix-row,
+  .workspace-actions {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .workspace-name,
+  .workspace-buttons,
+  .workspace-message {
+    width: auto;
   }
 
   .parts-grid,
