@@ -9,6 +9,13 @@ export type DiffRow =
   | { kind: 'removed'; path: string; beforeType: string }
   | { kind: 'changed'; path: string; beforeType: string; afterType: string }
 
+export type DiffCase = {
+  id: string
+  label: string
+  before: string
+  after: string
+}
+
 export function diffJsonShapes(before: unknown, after: unknown): ApiShapeDiff {
   const beforeShape = flattenShape(before)
   const afterShape = flattenShape(after)
@@ -53,6 +60,43 @@ export function buildDiffRows(before: unknown, after: unknown): DiffRow[] {
   return rows
 }
 
+export function classifyDiffRows(rows: DiffRow[]) {
+  return {
+    breaking: rows.filter((row) => row.kind === 'removed' || row.kind === 'changed'),
+    nonBreaking: rows.filter((row) => row.kind === 'added'),
+  }
+}
+
+export function buildDiffReport(title: string, rows: DiffRow[]) {
+  const grouped = classifyDiffRows(rows)
+  const lines = [
+    `## ${title}`,
+    '',
+    `Breaking changes: ${grouped.breaking.length}`,
+    `Non-breaking changes: ${grouped.nonBreaking.length}`,
+    '',
+  ]
+
+  for (const row of grouped.breaking) {
+    lines.push(`- breaking: ${readRow(row)}`)
+  }
+
+  for (const row of grouped.nonBreaking) {
+    lines.push(`- non-breaking: ${readRow(row)}`)
+  }
+
+  return lines.join('\n')
+}
+
+export function parseDiffCases(payload: string): DiffCase[] | null {
+  try {
+    const parsed = JSON.parse(payload)
+    return Array.isArray(parsed) && parsed.every(isDiffCase) ? parsed : null
+  } catch {
+    return null
+  }
+}
+
 function flattenShape(value: unknown, prefix = ''): Map<string, string> {
   if (!isPlainObject(value)) {
     return prefix ? new Map([[prefix, readType(value)]]) : new Map()
@@ -89,4 +133,30 @@ function readType(value: unknown) {
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value))
+}
+
+function readRow(row: DiffRow) {
+  if (row.kind === 'added') {
+    return `${row.path} missing -> ${row.afterType}`
+  }
+
+  if (row.kind === 'removed') {
+    return `${row.path} ${row.beforeType} -> missing`
+  }
+
+  return `${row.path} ${row.beforeType} -> ${row.afterType}`
+}
+
+function isDiffCase(value: unknown): value is DiffCase {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+
+  const candidate = value as DiffCase
+  return (
+    typeof candidate.id === 'string' &&
+    typeof candidate.label === 'string' &&
+    typeof candidate.before === 'string' &&
+    typeof candidate.after === 'string'
+  )
 }
