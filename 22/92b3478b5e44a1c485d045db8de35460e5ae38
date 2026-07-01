@@ -1,0 +1,38 @@
+apps/deep-link-lab/src/lib/deep-link-lab.test.ts
+  s_a5aaaa868acd6f::t_b920cceb7efb8a 3-10,50-67
+apps/deep-link-lab/src/workspace-actions.tsx
+  s_a5aaaa868acd6f::t_0a0c33d0c0838f 1-48
+apps/deep-link-lab/src/matrix-panel.tsx
+  s_a5aaaa868acd6f::t_35c6980110bbcb 1-82
+  s_a5aaaa868acd6f::t_31c987d87c6204 83-89
+apps/deep-link-lab/src/app.tsx
+  s_a5aaaa868acd6f::t_41e1a8fd7eb3fb 2,7-8,10,14-29,31,34-36,40,42-50,53-55,62-63,67-95,111-124
+  s_a5aaaa868acd6f::t_5a66d03de4289f 1,12-13,30,127-144
+  s_a5aaaa868acd6f::t_2064d45dce9b1f 37-39
+  s_a5aaaa868acd6f::t_35b495561b0e37 125
+apps/deep-link-lab/src/lib/deep-link-lab.ts
+  s_a5aaaa868acd6f::t_5eabebbedd4a8f 7-12,64-111
+  s_a5aaaa868acd6f::t_82e9659b110528 112-115
+apps/deep-link-lab/src/source-panel.tsx
+  s_a5aaaa868acd6f::t_17116ef2956ded 1-122
+  s_a5aaaa868acd6f::t_6705cae0dd0d14 123-128
+apps/deep-link-lab/src/styles.css
+  s_a5aaaa868acd6f::t_9a9628c0f86866 41-43,95-143,380-381,386-389
+  s_a5aaaa868acd6f::t_cc7b83fbb81e17 390-391
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "2292b3478b5e44a1c485d045db8de35460e5ae38",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
