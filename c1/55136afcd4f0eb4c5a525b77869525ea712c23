@@ -1,0 +1,35 @@
+apps/screenshot-qa-board/src/qa-composer.tsx
+  s_a5aaaa868acd6f::t_a362bafd15da0e 1-40
+  s_a5aaaa868acd6f::t_cfb6f1863fe64e 41-61
+apps/screenshot-qa-board/src/styles.css
+  s_a5aaaa868acd6f::t_88e296b93f75ce 15-21,46-48,143-197,464-499,508-509
+apps/screenshot-qa-board/src/lib/qa-board.ts
+  s_a5aaaa868acd6f::t_dbfe9dcc021fc1 9-13,31-64,68-88
+apps/screenshot-qa-board/src/app.tsx
+  s_a5aaaa868acd6f::t_15d1448625db92 1-2,4-6,15-25,27,41-50,86-87,109,114
+  s_a5aaaa868acd6f::t_5c3711048443c7 110-113
+apps/screenshot-qa-board/src/review-data.ts
+  s_a5aaaa868acd6f::t_91b5309311e4f9 7-8
+apps/screenshot-qa-board/src/qa-inspector.tsx
+  s_a5aaaa868acd6f::t_f311bf24c3f8a1 1-94
+  s_a5aaaa868acd6f::t_fdc8f5ab7fff6a 95-99
+apps/screenshot-qa-board/src/lib/qa-board.test.ts
+  s_a5aaaa868acd6f::t_ebc0ea745022cf 3-9,43-71
+  s_a5aaaa868acd6f::t_fec8aa2de49396 72-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "c155136afcd4f0eb4c5a525b77869525ea712c23",
+  "prompts": {},
+  "sessions": {
+    "s_a5aaaa868acd6f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f141a-7882-7453-8f66-4c83ecac3772",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
