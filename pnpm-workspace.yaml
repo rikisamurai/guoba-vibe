@@ -13,6 +13,7 @@ allowBuilds:
   sharp: false
   simple-git-hooks: true
   unrs-resolver: false
+  youtube-dl-exec: true
 
 ignoredBuiltDependencies:
   - sharp
@@ -30,3 +31,4 @@ minimumReleaseAgeExclude:
   - expo-modules-core@56.0.16
   - expo-modules-jsi@56.0.9
   - expo@56.0.11
+  - youtube-dl-exec@3.1.9

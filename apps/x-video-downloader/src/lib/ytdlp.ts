@@ -1,11 +1,25 @@
 import 'server-only'
 import { execFile } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { promisify } from 'node:util'
 
 import { isRecord } from './json'
 import type { TweetVideo, VideoVariant } from './media'
 
 const execFileAsync = promisify(execFile)
+const packagedYtDlpPaths = [
+  join(process.cwd(), 'node_modules', 'youtube-dl-exec', 'bin', 'yt-dlp'),
+  join(
+    process.cwd(),
+    'apps',
+    'x-video-downloader',
+    'node_modules',
+    'youtube-dl-exec',
+    'bin',
+    'yt-dlp',
+  ),
+]
 
 type RawInfo = {
   duration?: number
@@ -32,13 +46,17 @@ type RawFormat = {
 }
 
 export async function getYtDlpInfo(url: string): Promise<unknown> {
-  const binary = process.env.XVD_YTDLP_PATH || 'yt-dlp'
+  const binary = process.env.XVD_YTDLP_PATH || resolvePackagedYtDlpPath()
   const { stdout } = await execFileAsync(
     binary,
     ['--dump-single-json', '--no-playlist', '--no-warnings', url],
     { maxBuffer: 20 * 1024 * 1024, timeout: 45_000 },
   )
   return JSON.parse(stdout)
+}
+
+function resolvePackagedYtDlpPath(): string {
+  return packagedYtDlpPaths.find(existsSync) ?? packagedYtDlpPaths[0]
 }
 
 export function normalizeYtDlpInfo(info: unknown, fallbackTitle = 'X video'): TweetVideo[] {

@@ -16,7 +16,7 @@ XVD_INVITE_CODES=riki-local,friend-code
 XVD_SESSION_SECRET=replace-with-a-long-random-secret
 ```
 
-`yt-dlp` must be available on `PATH`, or set:
+Vercel deployments use the packaged `youtube-dl-exec` binary by default. Set this only to override it:
 
 ```bash
 XVD_YTDLP_PATH=/absolute/path/to/yt-dlp
