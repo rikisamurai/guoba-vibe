@@ -21,6 +21,6 @@ Query strings and hash fragments are stripped before parsing.
 
 ## Notes
 
-- Vercel deployments use the packaged `youtube-dl-exec` binary by default; set `XVD_YTDLP_PATH` to override it.
+- Vercel deployments download a standalone `yt-dlp` binary during build; set `XVD_YTDLP_PATH` to override it.
 - Downloads stream through the app server with `Content-Disposition: attachment`, because X CDN rejects some direct browser requests from a local/private tool.
 - Multiple selected videos are triggered as separate browser downloads.

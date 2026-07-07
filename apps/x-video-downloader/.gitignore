@@ -1,6 +1,7 @@
 .env
 .env.*
 !.env.example
+bin/
 .next/
 node_modules/
 *.tsbuildinfo

@@ -9,16 +9,8 @@ import type { TweetVideo, VideoVariant } from './media'
 
 const execFileAsync = promisify(execFile)
 const packagedYtDlpPaths = [
-  join(process.cwd(), 'node_modules', 'youtube-dl-exec', 'bin', 'yt-dlp'),
-  join(
-    process.cwd(),
-    'apps',
-    'x-video-downloader',
-    'node_modules',
-    'youtube-dl-exec',
-    'bin',
-    'yt-dlp',
-  ),
+  join(process.cwd(), 'bin', 'yt-dlp'),
+  join(process.cwd(), 'apps', 'x-video-downloader', 'bin', 'yt-dlp'),
 ]
 
 type RawInfo = {
@@ -56,7 +48,7 @@ export async function getYtDlpInfo(url: string): Promise<unknown> {
 }
 
 function resolvePackagedYtDlpPath(): string {
-  return packagedYtDlpPaths.find(existsSync) ?? packagedYtDlpPaths[0]
+  return packagedYtDlpPaths.find(existsSync) ?? 'yt-dlp'
 }
 
 export function normalizeYtDlpInfo(info: unknown, fallbackTitle = 'X video'): TweetVideo[] {
