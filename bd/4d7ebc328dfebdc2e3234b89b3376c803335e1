@@ -1,0 +1,114 @@
+apps/x-video-downloader/.oxlintrc.json
+  s_f2d0e050a7ff06::t_d4deb077b10261 3
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-2,4-39
+apps/x-video-downloader/public/favicon.svg
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-5
+apps/x-video-downloader/src/lib/auth.ts
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 49-50,87-99
+  s_f2d0e050a7ff06::t_48971a0c853ae2 1-48,51-86,100
+apps/x-video-downloader/next.config.ts
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-5
+apps/x-video-downloader/.gitignore
+  s_f2d0e050a7ff06::t_c24348245f2b7a 1-6
+apps/x-video-downloader/tsconfig.json
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-34
+apps/x-video-downloader/src/lib/media.ts
+  s_f2d0e050a7ff06::t_48971a0c853ae2 1-29
+apps/x-video-downloader/src/app/globals.css
+  s_f2d0e050a7ff06::t_a3d803af7bfe37 1-254,257-321,323,328-361
+  s_f2d0e050a7ff06::t_78ea2c1fd3970c 322,324
+  s_f2d0e050a7ff06::t_58d9400f18dc08 325-327
+  s_f2d0e050a7ff06::t_8de79321ee4e47 255-256
+apps/x-video-downloader/src/app/api/download/route.ts
+  s_f2d0e050a7ff06::t_82afee871449f6 40
+  s_f2d0e050a7ff06::t_73fa8449eb5b76 1-9,18-27,35,58
+  s_f2d0e050a7ff06::t_a0ce1abdf66c83 10-17,28-34,36-39,41-57
+apps/x-video-downloader/README.md
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-24,26
+  s_f2d0e050a7ff06::t_a0ce1abdf66c83 25
+apps/x-video-downloader/AGENTS.md
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-28,30-41
+  s_f2d0e050a7ff06::t_a0ce1abdf66c83 29
+apps/x-video-downloader/src/lib/json.ts
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 1-12
+apps/x-video-downloader/src/app/layout.tsx
+  s_f2d0e050a7ff06::t_5d0f9e4bdf21ad 1-7,9-17
+  s_f2d0e050a7ff06::t_834908bf5c8de6 8
+apps/x-video-downloader/src/components/video-list.tsx
+  s_f2d0e050a7ff06::t_18d09e7a81cd3d 51-55
+  s_f2d0e050a7ff06::t_8de79321ee4e47 48-50,56-57
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 39
+  s_f2d0e050a7ff06::t_5d0f9e4bdf21ad 1-38,40-47,58-88
+apps/x-video-downloader/src/lib/api.ts
+  s_f2d0e050a7ff06::t_73fa8449eb5b76 1-25
+apps/x-video-downloader/next-env.d.ts
+  s_f2d0e050a7ff06::t_5156d6ea2f677e 3
+  s_f2d0e050a7ff06::t_64760d083c4fff 5-6
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-2,4
+apps/x-video-downloader/vitest.config.ts
+  s_f2d0e050a7ff06::t_dc586fd4ffef2c 11-14
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-10,15-16
+apps/x-video-downloader/src/app/api/session/route.ts
+  s_f2d0e050a7ff06::t_73fa8449eb5b76 1-9,11-19,21-48
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 10,20
+apps/x-video-downloader/src/components/downloader-app.tsx
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 6,11-15,39,42-43,98,156-159
+  s_f2d0e050a7ff06::t_d4deb077b10261 7-8,49-54,64-66,106-110,135-140
+  s_f2d0e050a7ff06::t_a0ce1abdf66c83 74-76
+  s_f2d0e050a7ff06::t_5d0f9e4bdf21ad 1-5,9-10,16-38,40-41,44-48,55-63,67-73,77-97,99-105,111-134,141-155,160
+apps/x-video-downloader/src/app/api/parse/route.ts
+  s_f2d0e050a7ff06::t_73fa8449eb5b76 1-3,5-28,30-41
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 4,29
+README.md
+  s_f2d0e050a7ff06::t_ed7d59e147128e 3,14,68-77,92
+  s_f2d0e050a7ff06::t_d4deb077b10261 7-12
+apps/x-video-downloader/src/lib/rate-limit.ts
+  s_f2d0e050a7ff06::t_48971a0c853ae2 1-28
+apps/x-video-downloader/src/lib/ytdlp.ts
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 5,45-47,68,126-133
+  s_f2d0e050a7ff06::t_d4deb077b10261 6,81-82
+  s_f2d0e050a7ff06::t_48971a0c853ae2 1-4,7-44,48-67,69-74,76-80,83-102,108-109,111-112,116-117,122-125,134
+  s_f2d0e050a7ff06::t_82afee871449f6 75,103-107,110,113-115,118-121
+apps/x-video-downloader/package.json
+  s_f2d0e050a7ff06::t_c873a205fe925d 1-29
+apps/x-video-downloader/src/tests/ytdlp.test.ts
+  s_f2d0e050a7ff06::t_b105501549cd4a 98-102
+  s_f2d0e050a7ff06::t_82afee871449f6 72-97,103-104
+  s_f2d0e050a7ff06::t_e904c975a664f6 1-71,105
+apps/x-video-downloader/src/tests/server-only.ts
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 1-3
+apps/x-video-downloader/src/components/login-form.tsx
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 6-7,23,27,47
+  s_f2d0e050a7ff06::t_5d0f9e4bdf21ad 1-5,8-22,24-26,28-46,48-54,60-68
+  s_f2d0e050a7ff06::t_d4deb077b10261 55-59
+apps/x-video-downloader/src/lib/url.ts
+  s_f2d0e050a7ff06::t_48971a0c853ae2 1-58
+apps/x-video-downloader/src/tests/url.test.ts
+  s_f2d0e050a7ff06::t_e904c975a664f6 1-40
+apps/x-video-downloader/src/tests/auth.test.ts
+  s_f2d0e050a7ff06::t_34d1b822394015 37
+  s_f2d0e050a7ff06::t_e904c975a664f6 1-36,38-41
+apps/x-video-downloader/src/types/fontsource.d.ts
+  s_f2d0e050a7ff06::t_bbb5594e4439cf 1
+apps/x-video-downloader/src/app/page.tsx
+  s_f2d0e050a7ff06::t_d4deb077b10261 14-16
+  s_f2d0e050a7ff06::t_5d0f9e4bdf21ad 1-13,17-19
+pnpm-lock.yaml
+  s_f2d0e050a7ff06::t_c9eb65deeecad7 324-360
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bd4d7ebc328dfebdc2e3234b89b3376c803335e1",
+  "prompts": {},
+  "sessions": {
+    "s_f2d0e050a7ff06": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3b29-a445-7ae1-a565-6572280eef39",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
