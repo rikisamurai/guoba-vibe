@@ -38,6 +38,11 @@ describe('GET /api/resolve', () => {
     expect((await GET(makeRequest('?ping=1', KEY))).status).toBe(204)
   })
 
+  it('answers ping even when the signing secret is missing', async () => {
+    vi.stubEnv('DOWNLOAD_SIGNING_SECRET', '')
+    expect((await GET(makeRequest('?ping=1', KEY))).status).toBe(204)
+  })
+
   it('rejects non-tweet urls with invalid_link', async () => {
     const res = await GET(makeRequest(`?url=${encodeURIComponent('https://example.com/x')}`, KEY))
     expect(res.status).toBe(400)
@@ -79,14 +84,12 @@ describe('GET /api/resolve', () => {
   it('maps malformed upstream payloads to upstream', async () => {
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn()
-        .mockResolvedValue(
-          Response.json({
-            __typename: 'Tweet',
-            mediaDetails: [{ type: 'video', media_url_https: 'x', video_info: {} }],
-          }),
-        ),
+      vi.fn().mockResolvedValue(
+        Response.json({
+          __typename: 'Tweet',
+          mediaDetails: [{ type: 'video', media_url_https: 'x', video_info: {} }],
+        }),
+      ),
     )
     const res = await GET(
       makeRequest(`?url=${encodeURIComponent('https://x.com/a/status/1')}`, KEY),

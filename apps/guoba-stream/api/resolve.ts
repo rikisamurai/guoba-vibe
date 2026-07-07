@@ -41,6 +41,8 @@ export async function GET(request: Request): Promise<Response> {
   } catch {
     return jsonError('upstream', 502)
   }
+  // Syndication 400 = malformed id, 404 = well-formed but nonexistent id — both mean "check your
+  // link". Deleted/restricted tweets arrive as 200 + TweetTombstone, handled below as 'restricted'.
   if (upstream.status === 400 || upstream.status === 404) return jsonError('invalid_link', 400)
   if (!upstream.ok) return jsonError('upstream', 502)
 
