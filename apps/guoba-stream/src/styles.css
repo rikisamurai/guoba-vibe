@@ -1,0 +1,32 @@
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import 'tailwindcss';
+
+@theme {
+  --color-coal: #191412;
+  --color-pan: #221b17;
+  --color-pan-deep: #100c0a;
+  --color-crust: #33241b;
+  --color-seam: #3a2e26;
+  --color-seam-strong: #5a4636;
+  --color-rice: #f4eae0;
+  --color-husk: #b5a192;
+  --color-bran: #8a7666;
+  --color-faint: #5f4f42;
+  --color-ember: #e07a3f;
+  --color-ember-soft: #e8a06b;
+  --color-ember-ink: #2a1408;
+  --font-display: 'Bricolage Grotesque Variable', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+html {
+  background: var(--color-coal);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-mono);
+  color: var(--color-rice);
+}
