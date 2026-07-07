@@ -1,0 +1,26 @@
+apps/x-video-downloader/src/lib/ytdlp.ts
+  s_f2d0e050a7ff06::t_b6b4cb8b68790f 50
+  s_f2d0e050a7ff06::t_b57ec65bbebca3 42-49,51,58-79
+  s_f2d0e050a7ff06::t_dcc5f84160982b 80
+apps/x-video-downloader/src/tests/ytdlp.test.ts
+  s_f2d0e050a7ff06::t_b57ec65bbebca3 3,105-121
+  s_f2d0e050a7ff06::t_e58a921515b748 122
+apps/x-video-downloader/src/app/api/parse/route.ts
+  s_f2d0e050a7ff06::t_b57ec65bbebca3 33-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "158954ae4be31a51ea06be6b61e7f5e9bcd2832c",
+  "prompts": {},
+  "sessions": {
+    "s_f2d0e050a7ff06": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3b29-a445-7ae1-a565-6572280eef39",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
