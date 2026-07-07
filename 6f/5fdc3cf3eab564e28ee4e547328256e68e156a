@@ -1,0 +1,31 @@
+apps/guoba-stream/lib/sign.ts
+  s_b78bbb7514823d::t_4760208cfaece2 1-8,10-19,21-26,28-55
+  s_b78bbb7514823d::t_96c648e1e33992 9,20,27
+apps/guoba-stream/lib/auth.ts
+  s_b78bbb7514823d::t_afe84c584f37cd 1-2,4-13
+  s_b78bbb7514823d::t_46fea2e445d954 3
+apps/guoba-stream/lib/auth.test.ts
+  s_b78bbb7514823d::t_5d86deb1a8aa0b 1-22
+apps/guoba-stream/tsconfig.app.json
+  s_b78bbb7514823d::t_3081530ccc80a7 19
+  s_b78bbb7514823d::t_34fd7db50fefaf 21-22
+apps/guoba-stream/lib/sign.test.ts
+  s_b78bbb7514823d::t_32766f21f27175 1-16,19-57
+  s_b78bbb7514823d::t_98ecd21802f723 17-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6f5fdc3cf3eab564e28ee4e547328256e68e156a",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
