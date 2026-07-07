@@ -1,0 +1,25 @@
+apps/guoba-stream/src/components/error-banner.tsx
+  s_b78bbb7514823d::t_a2a9e322bf12f2 1-19
+apps/guoba-stream/src/app.tsx
+  s_b78bbb7514823d::t_ed586e0a975cce 4-5,7-9,13-15,28-45,54-55
+  s_b78bbb7514823d::t_fa7b7bb18ee98b 56-58
+apps/guoba-stream/src/components/url-form.tsx
+  s_b78bbb7514823d::t_ef7297b852a6c8 1-41
+  s_b78bbb7514823d::t_d61410ce78eb8c 42-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f550ed55c8ff2130d2a27b5aa5cdb39366f0ccc3",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
