@@ -1,6 +1,7 @@
 'use client'
 
 import { Download, Play } from 'lucide-react'
+import Image from 'next/image'
 
 import type { TweetVideo } from '@/lib/media'
 
@@ -45,16 +46,23 @@ export function VideoList({
                 {(selectedById[video.id] ?? false) ? '✓' : ''}
               </button>
 
-              <div
-                aria-label={`视频预览 ${index + 1}`}
-                className="preview-box"
-                style={
-                  video.thumbnail
-                    ? { backgroundImage: `url("${video.thumbnail.replaceAll('"', '%22')}")` }
-                    : undefined
-                }
-              >
-                {!video.thumbnail && <Play aria-hidden="true" />}
+              <div aria-label={`视频预览 ${index + 1}`} className="preview-box">
+                <Play aria-hidden="true" className="preview-fallback" />
+                {video.thumbnail && (
+                  <Image
+                    alt=""
+                    className="preview-image"
+                    fill
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.hidden = true
+                    }}
+                    referrerPolicy="no-referrer"
+                    sizes="(min-width: 64rem) 10rem, 8rem"
+                    src={video.thumbnail}
+                    unoptimized
+                  />
+                )}
               </div>
 
               <div className="video-meta">

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { normalizeYtDlpInfo } from '@/lib/ytdlp'
+import { normalizeYtDlpInfo, toYtDlpErrorMessage } from '@/lib/ytdlp'
 
 describe('normalizeYtDlpInfo', () => {
   it('normalizes multiple entries and sorts variants by quality', () => {
@@ -101,5 +101,23 @@ describe('normalizeYtDlpInfo', () => {
         url: 'https://video.twimg.com/a/720.mp4',
       }),
     ])
+  })
+
+  it('maps yt-dlp twitter errors to product messages', () => {
+    expect(
+      toYtDlpErrorMessage(
+        Object.assign(new Error('Command failed'), {
+          stderr: 'ERROR: [twitter] 123: No video could be found in this tweet',
+        }),
+      ),
+    ).toBe('解析器未识别到视频，请确认这条推文包含可公开访问的视频')
+
+    expect(
+      toYtDlpErrorMessage(
+        Object.assign(new Error('Command failed'), {
+          stderr: 'ERROR: [twitter] 123: Error(s) while querying API: Bad guest token',
+        }),
+      ),
+    ).toBe('X 临时拒绝公开视频解析请求，请稍后重试或换一个可公开访问的视频推文')
   })
 })

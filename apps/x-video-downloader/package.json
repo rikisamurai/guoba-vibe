@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/install-ytdlp.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

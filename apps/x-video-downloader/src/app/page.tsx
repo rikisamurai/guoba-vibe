@@ -11,7 +11,7 @@ export default async function HomePage() {
 
   return (
     <main className="app-shell">
-      <section className="phone-frame">
+      <section className="app-frame">
         {session ? <DownloaderApp /> : <LoginForm ready={configured} />}
       </section>
     </main>
