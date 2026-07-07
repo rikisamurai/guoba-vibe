@@ -1,0 +1,32 @@
+apps/x-video-downloader/src/lib/ytdlp.ts
+  s_f2d0e050a7ff06::t_764a134ce18d16 12-13,51
+apps/x-video-downloader/AGENTS.md
+  s_f2d0e050a7ff06::t_764a134ce18d16 19
+apps/x-video-downloader/package.json
+  s_f2d0e050a7ff06::t_b7676eda401678 21
+  s_f2d0e050a7ff06::t_764a134ce18d16 7
+apps/x-video-downloader/next.config.ts
+  s_f2d0e050a7ff06::t_764a134ce18d16 5
+apps/x-video-downloader/.gitignore
+  s_f2d0e050a7ff06::t_764a134ce18d16 4
+apps/x-video-downloader/scripts/install-ytdlp.mjs
+  s_f2d0e050a7ff06::t_764a134ce18d16 1-49
+apps/x-video-downloader/README.md
+  s_f2d0e050a7ff06::t_764a134ce18d16 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8b7010c16f9369f39cbe2863a5d49827c2cfe218",
+  "prompts": {},
+  "sessions": {
+    "s_f2d0e050a7ff06": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3b29-a445-7ae1-a565-6572280eef39",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
