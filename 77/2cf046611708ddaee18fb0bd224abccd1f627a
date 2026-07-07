@@ -1,0 +1,19 @@
+apps/guoba-stream/tsconfig.app.json
+  s_b78bbb7514823d::t_02a2ffe4a81440 19,21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "772cf046611708ddaee18fb0bd224abccd1f627a",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
