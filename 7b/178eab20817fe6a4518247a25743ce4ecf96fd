@@ -1,0 +1,23 @@
+apps/guoba-stream/dev-api-plugin.ts
+  s_b78bbb7514823d::t_ba2fec6486a064 1-24,29-41,46-54
+  s_b78bbb7514823d::t_540b958955e909 25-28
+  s_b78bbb7514823d::t_1854b6fa3fcc79 42-45
+apps/guoba-stream/vite.config.ts
+  s_b78bbb7514823d::t_2c1f82f114cb4e 1-2,5,8-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7b178eab20817fe6a4518247a25743ce4ecf96fd",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
