@@ -1,0 +1,29 @@
+apps/guoba-stream/lib/syndication.ts
+  s_b78bbb7514823d::t_a44d9a842aaf94 43
+  s_b78bbb7514823d::t_2ab0de466afec6 64
+  s_b78bbb7514823d::t_227f7694ee7378 1-42,44-63,65-86
+  s_b78bbb7514823d::t_47743e33799ed6 87-88
+apps/guoba-stream/lib/fixtures/gif-tweet.json
+  s_b78bbb7514823d::t_aaf0b27ec1122c 1-30
+apps/guoba-stream/lib/fixtures/video-tweet.json
+  s_b78bbb7514823d::t_7ecb1bc440bb0d 1-41
+apps/guoba-stream/lib/syndication.test.ts
+  s_b78bbb7514823d::t_61e00b8b33db76 1-69
+  s_b78bbb7514823d::t_df1fe30b2233a0 70-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4e1e2f5da9802812237db29df304fe5d15091d6e",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
