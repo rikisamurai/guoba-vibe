@@ -1,0 +1,26 @@
+apps/guoba-stream/api/resolve.test.ts
+  s_b78bbb7514823d::t_1b728017ab34f8 136-145
+  s_b78bbb7514823d::t_0b4193c011742a 146-147
+apps/guoba-stream/api/resolve.ts
+  s_b78bbb7514823d::t_2aee61f50dba39 63-64
+apps/guoba-stream/api/download.ts
+  s_b78bbb7514823d::t_1ad39bbdcdb6fa 11-13
+apps/guoba-stream/api/download.test.ts
+  s_b78bbb7514823d::t_9d941ea7dcf081 24-28,68-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6bffcb61a6afae3fcfc7d16fa8fee4b7b8b28beb",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
