@@ -66,6 +66,14 @@ export function DownloaderApp() {
     )
   }
 
+  function submitOnEnter(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key !== 'Enter') return
+    event.preventDefault()
+
+    if (!url.trim() || submitting) return
+    event.currentTarget.form?.requestSubmit()
+  }
+
   function downloadVideos(videos: TweetVideo[]) {
     videos
       .map((video) => selectedVariant(video))
@@ -78,7 +86,7 @@ export function DownloaderApp() {
   }
 
   return (
-    <div className="tool-view">
+    <div className={`tool-view ${data ? 'has-results' : ''}`}>
       <header className="topbar">
         <div>
           <p className="eyebrow">Private</p>
@@ -89,47 +97,58 @@ export function DownloaderApp() {
         </button>
       </header>
 
-      <form className="parse-panel" onSubmit={parse}>
-        <label htmlFor="post-url">粘贴推文链接</label>
-        <div className="input-row">
-          <Link2 aria-hidden="true" />
-          <input
-            id="post-url"
-            aria-label="粘贴推文链接"
-            onChange={(event) => setUrl(event.target.value)}
-            placeholder="https://x.com/user/status/..."
-            type="url"
-            value={url}
-          />
-        </div>
-        <button className="primary-button" disabled={submitting || !url.trim()} type="submit">
-          {submitting ? (
-            <Loader2 aria-hidden="true" className="spin" />
-          ) : (
-            <Search aria-hidden="true" />
-          )}
-          解析
-        </button>
-        <div className="status-line">
-          <span>{message}</span>
-          {data && <code>{data.post.normalizedUrl}</code>}
-        </div>
-      </form>
+      <div className="tool-layout">
+        <section className="primary-column" aria-label="解析推文视频">
+          <form className="parse-panel" onSubmit={parse}>
+            <label htmlFor="post-url">粘贴推文链接</label>
+            <div className="input-row">
+              <Link2 aria-hidden="true" />
+              <textarea
+                id="post-url"
+                aria-describedby="parse-status"
+                aria-label="粘贴推文链接"
+                inputMode="url"
+                onChange={(event) => setUrl(event.target.value)}
+                onKeyDown={submitOnEnter}
+                placeholder="https://x.com/user/status/..."
+                rows={2}
+                spellCheck={false}
+                value={url}
+                wrap="soft"
+              />
+            </div>
+            <button className="primary-button" disabled={submitting || !url.trim()} type="submit">
+              {submitting ? (
+                <Loader2 aria-hidden="true" className="spin" />
+              ) : (
+                <Search aria-hidden="true" />
+              )}
+              解析
+            </button>
+            <div className="status-line" id="parse-status">
+              <span>{message}</span>
+              {data && <code>{data.post.normalizedUrl}</code>}
+            </div>
+          </form>
+        </section>
 
-      {data && (
-        <VideoList
-          onDownload={(video) => downloadVideos([video])}
-          onQualityChange={(videoId, variantId) =>
-            setQualityById((current) => ({ ...current, [videoId]: variantId }))
-          }
-          onToggle={(videoId) =>
-            setSelectedById((current) => ({ ...current, [videoId]: !current[videoId] }))
-          }
-          qualityById={qualityById}
-          selectedById={selectedById}
-          videos={data.videos}
-        />
-      )}
+        {data && (
+          <section className="results-column" aria-label="视频选择">
+            <VideoList
+              onDownload={(video) => downloadVideos([video])}
+              onQualityChange={(videoId, variantId) =>
+                setQualityById((current) => ({ ...current, [videoId]: variantId }))
+              }
+              onToggle={(videoId) =>
+                setSelectedById((current) => ({ ...current, [videoId]: !current[videoId] }))
+              }
+              qualityById={qualityById}
+              selectedById={selectedById}
+              videos={data.videos}
+            />
+          </section>
+        )}
+      </div>
 
       <footer className="download-bar">
         <button
