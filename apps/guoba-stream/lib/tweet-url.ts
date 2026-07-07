@@ -7,7 +7,7 @@ const TWEET_HOSTS = new Set([
   'mobile.twitter.com',
 ])
 
-const STATUS_PATH = /^\/(?:i\/web\/status|i\/status|[A-Za-z0-9_]{1,15}\/status)\/(\d{1,25})/
+const STATUS_PATH = /^\/(?:i\/web\/status|i\/status|[A-Za-z0-9_]{1,15}\/status)\/(\d{1,25})(?=$|\/)/
 
 export type ParsedTweetUrl =
   | { ok: true; tweetId: string }

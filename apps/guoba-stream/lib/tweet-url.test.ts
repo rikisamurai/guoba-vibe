@@ -22,6 +22,7 @@ describe('parseTweetUrl', () => {
     'https://example.com/vercel/status/123',
     'https://x.com/vercel',
     'https://x.com/vercel/status/abc',
+    'https://x.com/vercel/status/123abc',
     'ftp://x.com/vercel/status/123',
     '',
   ])('rejects %s', (input) => {
@@ -43,14 +44,12 @@ describe('resolveTweetId', () => {
   })
 
   it('follows one t.co redirect', async () => {
-    const fetchImpl = vi
-      .fn()
-      .mockResolvedValue(
-        new Response(null, {
-          status: 301,
-          headers: { location: 'https://x.com/a/status/42?s=20' },
-        }),
-      )
+    const fetchImpl = vi.fn().mockResolvedValue(
+      new Response(null, {
+        status: 301,
+        headers: { location: 'https://x.com/a/status/42?s=20' },
+      }),
+    )
     await expect(resolveTweetId('https://t.co/abc', fetchImpl)).resolves.toBe('42')
     expect(fetchImpl).toHaveBeenCalledWith('https://t.co/abc', {
       method: 'HEAD',
@@ -74,5 +73,10 @@ describe('resolveTweetId', () => {
 
   it('returns null for garbage', async () => {
     await expect(resolveTweetId('nope')).resolves.toBeNull()
+  })
+
+  it('propagates network errors from the redirect hop', async () => {
+    const fetchImpl = vi.fn().mockRejectedValue(new TypeError('fetch failed'))
+    await expect(resolveTweetId('https://t.co/abc', fetchImpl)).rejects.toThrow()
   })
 })
