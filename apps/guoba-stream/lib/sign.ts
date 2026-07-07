@@ -9,7 +9,7 @@ export function signDownload(
   secret: string,
 ): string {
   const mac = createHmac('sha256', secret)
-  mac.update(`${rawUrl}\n${filename}\n${expiresAtSec}`)
+  mac.update(JSON.stringify([rawUrl, filename, expiresAtSec]))
   return mac.digest('hex')
 }
 

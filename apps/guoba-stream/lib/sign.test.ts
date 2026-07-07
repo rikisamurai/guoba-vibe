@@ -54,4 +54,10 @@ describe('sign/verify', () => {
     expect(params.get('exp')).toBe('1000')
     expect(verifyDownload(URL_OK, 'a_1.mp4', 1000, params.get('sig')!, SECRET, 999)).toBe('ok')
   })
+
+  it('does not collide across field boundaries', () => {
+    const a = signDownload('https://video.twimg.com/a\nb.mp4', 'c.mp4', 1000, SECRET)
+    const b = signDownload('https://video.twimg.com/a', 'b.mp4\nc.mp4', 1000, SECRET)
+    expect(a).not.toBe(b)
+  })
 })
