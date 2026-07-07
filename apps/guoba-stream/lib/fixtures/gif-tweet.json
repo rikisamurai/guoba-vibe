@@ -1,0 +1,30 @@
+{
+  "__typename": "Tweet",
+  "id_str": "1111",
+  "text": "gif tweet",
+  "user": {
+    "name": "Gif Person",
+    "screen_name": "gifperson",
+    "profile_image_url_https": "https://pbs.twimg.com/profile_images/g_normal.jpg"
+  },
+  "mediaDetails": [
+    {
+      "type": "animated_gif",
+      "media_url_https": "https://pbs.twimg.com/tweet_video_thumb/AbCdEf.jpg",
+      "video_info": {
+        "aspect_ratio": [1, 1],
+        "variants": [
+          {
+            "bitrate": 0,
+            "content_type": "video/mp4",
+            "url": "https://video.twimg.com/tweet_video/AbCdEf.mp4"
+          }
+        ]
+      }
+    },
+    {
+      "type": "photo",
+      "media_url_https": "https://pbs.twimg.com/media/photo.jpg"
+    }
+  ]
+}
