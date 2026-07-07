@@ -1,0 +1,361 @@
+:root {
+  color-scheme: dark;
+  --accent: #70f0a7;
+  --amber: #f1c96b;
+  --bg: #080a09;
+  --border: rgba(255, 255, 255, 0.1);
+  --card: #101312;
+  --muted: #9ba6a0;
+  --panel: #151918;
+  --text: #f4f7f5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(112, 240, 167, 0.12), transparent 32rem),
+    linear-gradient(180deg, #0c100f 0%, var(--bg) 100%);
+  color: var(--text);
+  font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-shell {
+  min-height: 100dvh;
+  padding: 0;
+}
+
+.phone-frame {
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: rgba(8, 10, 9, 0.78);
+}
+
+.login-view,
+.tool-view {
+  min-height: 100dvh;
+  padding: 1rem 1rem 6rem;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0 1rem;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.55rem;
+  letter-spacing: 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.2rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.topbar-icon,
+.icon-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.icon-button,
+.video-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.login-panel,
+.parse-panel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.22);
+}
+
+label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 2.85rem;
+  border: 1px solid var(--border);
+  border-radius: 0.55rem;
+  background: #0b0e0d;
+  color: var(--text);
+}
+
+input {
+  padding: 0 0.85rem;
+}
+
+select {
+  padding: 0 0.55rem;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+  background: #0b0e0d;
+}
+
+.input-row input {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 3rem;
+  border: 0;
+  border-radius: 0.65rem;
+  background: var(--accent);
+  color: #08100c;
+  font-weight: 800;
+}
+
+.primary-button:disabled,
+.link-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.primary-button svg,
+.link-button svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.compact {
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+}
+
+.status-line {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--amber);
+  font-size: 0.82rem;
+}
+
+.status-line code {
+  overflow: hidden;
+  color: var(--muted);
+  font-family: 'Geist Mono Variable', ui-monospace, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.video-section {
+  padding: 1rem 0;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.section-heading span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.video-stack {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.video-row {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(6.75rem, 8rem) 1fr;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--panel);
+}
+
+.check-button {
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--accent);
+  font-weight: 900;
+}
+
+.check-button[aria-pressed='true'] {
+  border-color: rgba(112, 240, 167, 0.58);
+  background: rgba(112, 240, 167, 0.14);
+}
+
+.preview-box {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
+  border-radius: 0.55rem;
+  background: #050706;
+}
+
+.video-meta {
+  min-width: 0;
+}
+
+.video-title {
+  overflow: hidden;
+  margin: 0 0 0.55rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.video-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: end;
+}
+
+.video-actions label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.video-actions span {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.error-text {
+  margin: 0;
+  color: var(--amber);
+  font-size: 0.86rem;
+}
+
+.download-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: rgba(10, 13, 12, 0.94);
+  backdrop-filter: blur(18px);
+}
+
+.download-bar span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.link-button {
+  min-width: 4.2rem;
+  min-height: 2.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 40rem) {
+  .app-shell {
+    padding: 2rem;
+  }
+
+  .phone-frame {
+    max-width: 32rem;
+    min-height: calc(100dvh - 4rem);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    box-shadow: 0 2rem 8rem rgba(0, 0, 0, 0.28);
+  }
+
+  .download-bar {
+    right: auto;
+    left: 50%;
+    width: min(32rem, calc(100vw - 4rem));
+    transform: translateX(-50%);
+  }
+}
