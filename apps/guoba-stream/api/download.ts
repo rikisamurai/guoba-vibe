@@ -8,6 +8,9 @@ export async function GET(request: Request): Promise<Response> {
   const name = params.get('name') ?? 'video.mp4'
   const exp = Number(params.get('exp') ?? '0')
   const sig = params.get('sig') ?? ''
+  // Signed names are already sanitized by resolve; this guards the Headers constructor
+  // against anything else (quotes/CRLF in filename would throw or inject parameters).
+  if (!/^[\w.-]+$/.test(name)) return new Response('Invalid download link', { status: 403 })
   const secret = process.env.DOWNLOAD_SIGNING_SECRET
   if (!secret) return new Response('Server misconfigured', { status: 500 })
 

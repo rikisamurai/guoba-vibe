@@ -60,7 +60,8 @@ export async function GET(request: Request): Promise<Response> {
   const { tweet } = mapped
   for (const media of tweet.media) {
     const suffix = tweet.media.length > 1 ? `_${media.index + 1}` : ''
-    const filename = `${tweet.authorHandle}_${tweet.id}${suffix}.mp4`
+    // Handle/id come from unvalidated upstream JSON; keep filenames header-safe.
+    const filename = `${tweet.authorHandle}_${tweet.id}${suffix}.mp4`.replaceAll(/[^\w.-]/g, '')
     for (const variant of media.variants) {
       variant.downloadUrl = buildDownloadPath(variant.rawUrl, filename, expiresAtSec, secret)
     }

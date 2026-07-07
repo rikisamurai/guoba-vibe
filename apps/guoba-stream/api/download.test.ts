@@ -21,13 +21,11 @@ describe('GET /api/download', () => {
   it('streams the upstream body with attachment and length headers', async () => {
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response('video-bytes', {
-            headers: { 'content-type': 'video/mp4', 'content-length': '11' },
-          }),
-        ),
+      vi.fn().mockResolvedValue(
+        new Response('video-bytes', {
+          headers: { 'content-type': 'video/mp4', 'content-length': '11' },
+        }),
+      ),
     )
     const path = buildDownloadPath(RAW, 'a_1.mp4', futureExp(), SECRET)
     const res = await GET(new Request(`http://localhost${path}`))
@@ -66,5 +64,14 @@ describe('GET /api/download', () => {
     const path = buildDownloadPath(RAW, 'a_1.mp4', futureExp(), SECRET)
     const res = await GET(new Request(`http://localhost${path}`))
     expect(res.status).toBe(502)
+  })
+
+  it('rejects header-breaking filenames even with a valid signature', async () => {
+    const fetchSpy = vi.fn()
+    vi.stubGlobal('fetch', fetchSpy)
+    const path = buildDownloadPath(RAW, 'a".mp4', futureExp(), SECRET)
+    const res = await GET(new Request(`http://localhost${path}`))
+    expect(res.status).toBe(403)
+    expect(fetchSpy).not.toHaveBeenCalled()
   })
 })

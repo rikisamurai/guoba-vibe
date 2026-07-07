@@ -133,4 +133,16 @@ describe('GET /api/resolve', () => {
       ),
     ).toBe('ok')
   })
+
+  it('sanitizes hostile author handles out of filenames', async () => {
+    const hostile = { ...videoTweet, user: { ...videoTweet.user, screen_name: 'evil"\r\n;handle' } }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json(hostile)))
+    const res = await GET(
+      makeRequest(`?url=${encodeURIComponent('https://x.com/a/status/1585341984679469056')}`, KEY),
+    )
+    const body = await res.json()
+    if (!hasTweet(body)) throw new Error('expected tweet in response body')
+    const params = new URL(`http://x${body.tweet.media[0].variants[0].downloadUrl}`).searchParams
+    expect(params.get('name')).toBe('evilhandle_1585341984679469056.mp4')
+  })
 })
