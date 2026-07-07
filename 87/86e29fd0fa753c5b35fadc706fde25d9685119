@@ -1,0 +1,21 @@
+apps/guoba-stream/lib/sign.test.ts
+  s_b78bbb7514823d::t_7b7707d4913e22 57-62
+apps/guoba-stream/lib/sign.ts
+  s_b78bbb7514823d::t_6ec1abff265e68 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8786e29fd0fa753c5b35fadc706fde25d9685119",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}

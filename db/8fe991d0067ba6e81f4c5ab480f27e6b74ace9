@@ -1,0 +1,19 @@
+apps/guoba-stream/src/components/media-card.tsx
+  s_b78bbb7514823d::t_e89aaa0f52a189 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "db8fe991d0067ba6e81f4c5ab480f27e6b74ace9",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+apps/qr-vault/docs/index.html
+  s_36726f2a8e89cb::t_c8c152e5f1abc2 649-650,796-797
+  s_36726f2a8e89cb::t_e46b43f36ec814 633
+  s_36726f2a8e89cb::t_43fdbf40629556 593
+  s_36726f2a8e89cb::t_9e9929ee843471 640-641,674-675,883-884
+  s_36726f2a8e89cb::t_dcf89ade153d01 595,632,655,658,749,947-948
+  s_36726f2a8e89cb::t_5305c12c4563e8 852,854
+  s_36726f2a8e89cb::t_5aa9e4d2779210 596
+  s_36726f2a8e89cb::t_c6361dbdd9f7c1 6,602,620,638,647,671,673,702,732,739-748,750-756,758-764,790,792-793,801,819,916,918-919
+  s_36726f2a8e89cb::t_9746d82379b9c6 657
+  s_36726f2a8e89cb::t_80bbd148b36cf8 863,874
+  s_36726f2a8e89cb::t_7a929612ee8947 903
+  s_36726f2a8e89cb::t_bb84a7f9e702b4 757
+apps/guoba-stream/tsconfig.app.json
+  s_b78bbb7514823d::t_53becb35a5be9e 1-22
+apps/guoba-stream/src/main.tsx
+  s_b78bbb7514823d::t_86e3d9136e8ff0 1-11
+apps/guoba-stream/.oxlintrc.json
+  s_b78bbb7514823d::t_e53c05fbd2fc92 1-40
+apps/guoba-stream/.env.example
+  s_b78bbb7514823d::t_9a6c58274812d2 1-2
+apps/guoba-stream/vite.config.ts
+  s_b78bbb7514823d::t_08fa38a8a7a2e1 1-11
+apps/guoba-stream/src/styles.css
+  s_b78bbb7514823d::t_84d02de502a537 1-3
+  s_b78bbb7514823d::t_95cc5b8df1a2b8 4-32
+apps/guoba-stream/tsconfig.json
+  s_b78bbb7514823d::t_20afdf35a29aea 1-4
+apps/guoba-stream/src/app.tsx
+  s_b78bbb7514823d::t_92c11493465373 1-3
+apps/guoba-stream/src/vite-env.d.ts
+  s_b78bbb7514823d::t_7f9daf8c8c917e 1
+apps/guoba-stream/package.json
+  s_b78bbb7514823d::t_ac52dae1a3fe17 1-34
+apps/guoba-stream/index.html
+  s_b78bbb7514823d::t_8ef3c57c0676d5 1-13
+apps/guoba-stream/tsconfig.node.json
+  s_b78bbb7514823d::t_38e21e762c4aa8 1-17
+pnpm-lock.yaml
+  s_b78bbb7514823d::t_f9822982aa2153 36-84,1688-1690,1697-1699,9197-9198,9203-9204
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "929e659dec6af144ba76024cda222bba8c8978e8",
+  "prompts": {},
+  "sessions": {
+    "s_36726f2a8e89cb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f1365-92fa-7b21-a1d2-6894021fbeed",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    },
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}

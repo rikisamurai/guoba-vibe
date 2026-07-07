@@ -1,0 +1,36 @@
+apps/guoba-stream/src/components/tweet-card.tsx
+  s_b78bbb7514823d::t_39c132042e90fe 1-17
+  s_b78bbb7514823d::t_848403b221a749 18-22
+apps/guoba-stream/src/lib/download.ts
+  s_b78bbb7514823d::t_7c5195d7bbfd34 1-11,13-16
+  s_b78bbb7514823d::t_399c95bb608961 12
+apps/guoba-stream/src/lib/format.test.ts
+  s_b78bbb7514823d::t_d7cb925985bfee 1-11
+apps/guoba-stream/src/lib/format.ts
+  s_b78bbb7514823d::t_428115a36c7da1 1-6
+apps/guoba-stream/src/components/download-bar.tsx
+  s_b78bbb7514823d::t_d7fcddd4e9fddc 1-28
+apps/guoba-stream/src/app.tsx
+  s_b78bbb7514823d::t_388ae61fd37e90 97
+  s_b78bbb7514823d::t_226a8f992375f7 5,8-9,13,20-21,50-68,82-96
+  s_b78bbb7514823d::t_cf13f4d9461ddc 98-103
+apps/guoba-stream/src/components/media-card.tsx
+  s_b78bbb7514823d::t_7e1ad999942c47 1-100
+  s_b78bbb7514823d::t_726b4885c19c53 101-116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0cdfe2031d3d5f67bbcea60225a18f96f3ca0707",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}

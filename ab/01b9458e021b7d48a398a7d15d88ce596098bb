@@ -1,0 +1,25 @@
+apps/guoba-stream/lib/types.ts
+  s_b78bbb7514823d::t_42d3da98330082 1-29
+apps/guoba-stream/lib/tweet-url.test.ts
+  s_b78bbb7514823d::t_e67e3a493759b0 1-68
+  s_b78bbb7514823d::t_6af67b11148441 69-78
+apps/guoba-stream/lib/tweet-url.ts
+  s_b78bbb7514823d::t_c201fd2a4e791c 1-42
+  s_b78bbb7514823d::t_61bd1bf433a725 43-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ab01b9458e021b7d48a398a7d15d88ce596098bb",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}

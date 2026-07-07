@@ -1,0 +1,23 @@
+apps/guoba-stream/README.md
+  s_b78bbb7514823d::t_312499953f3fb4 1-39
+.github/workflows/guoba-stream-e2e.yml
+  s_b78bbb7514823d::t_a64c0ff940c38d 1-41
+apps/guoba-stream/DESIGN.md
+  s_b78bbb7514823d::t_5845b12c4367be 1-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "80fb5653f742ecbae32c3571e8b93c3b76d0ff85",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
