@@ -27,6 +27,7 @@ export function MediaCard({
       <div className="bg-pan-deep relative aspect-video">
         {playing ? (
           <video
+            key={variant.rawUrl}
             src={variant.rawUrl}
             poster={media.thumbnailUrl}
             controls
