@@ -1,0 +1,25 @@
+apps/guoba-stream/e2e/fixtures.ts
+  s_b78bbb7514823d::t_9ba30b1bdc210e 1-48
+apps/guoba-stream/playwright.config.ts
+  s_b78bbb7514823d::t_1d1672074e2c8e 1-31
+  s_b78bbb7514823d::t_1193606ef2f153 32-33
+apps/guoba-stream/e2e/app.spec.ts
+  s_b78bbb7514823d::t_ca70b60b71a569 1-67
+  s_b78bbb7514823d::t_472f8a6694a604 68-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5c41466178d8e3e5b83545c1b8692f231f6737b6",
+  "prompts": {},
+  "sessions": {
+    "s_b78bbb7514823d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2711b40-f11a-44e2-8d8c-10edfcbf282e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
