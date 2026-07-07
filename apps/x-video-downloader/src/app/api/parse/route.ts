@@ -30,6 +30,9 @@ export async function POST(request: NextRequest) {
     const post = parsePostUrl(typeof body?.url === 'string' ? body.url : '')
     const rawInfo = await getYtDlpInfo(post.normalizedUrl)
     const videos = normalizeYtDlpInfo(rawInfo, `${post.username}/${post.statusId}`)
+    if (videos.length === 0) {
+      return jsonError('解析器未识别到视频，请确认这条推文包含可公开访问的视频', 400)
+    }
     return NextResponse.json({ post, videos })
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : '解析失败', 400)

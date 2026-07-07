@@ -39,16 +39,43 @@ type RawFormat = {
 
 export async function getYtDlpInfo(url: string): Promise<unknown> {
   const binary = process.env.XVD_YTDLP_PATH || resolvePackagedYtDlpPath()
-  const { stdout } = await execFileAsync(
-    binary,
-    ['--dump-single-json', '--no-playlist', '--no-warnings', url],
-    { maxBuffer: 20 * 1024 * 1024, timeout: 45_000 },
-  )
-  return JSON.parse(stdout)
+  try {
+    const { stdout } = await execFileAsync(
+      binary,
+      ['--dump-single-json', '--no-playlist', '--no-warnings', url],
+      { maxBuffer: 20 * 1024 * 1024, timeout: 45_000 },
+    )
+    return JSON.parse(stdout)
+  } catch (error) {
+    throw new Error(toYtDlpErrorMessage(error), { cause: error })
+  }
 }
 
 function resolvePackagedYtDlpPath(): string {
   return packagedYtDlpPaths.find(existsSync) ?? 'yt-dlp'
+}
+
+export function toYtDlpErrorMessage(error: unknown): string {
+  const message = getErrorText(error)
+  if (message.includes('No video could be found in this tweet')) {
+    return '解析器未识别到视频，请确认这条推文包含可公开访问的视频'
+  }
+  if (message.includes('Bad guest token')) {
+    return 'X 临时拒绝公开视频解析请求，请稍后重试或换一个可公开访问的视频推文'
+  }
+  if (message.includes('timed out') || message.includes('ETIMEDOUT')) {
+    return '解析超时，请稍后重试'
+  }
+  if (message.includes('ENOENT')) {
+    return '服务端未找到视频解析器，请检查部署配置'
+  }
+  return '解析失败，请确认链接是可公开访问的 X 视频推文'
+}
+
+function getErrorText(error: unknown): string {
+  if (!(error instanceof Error)) return String(error)
+  const details = error as Error & { stderr?: string; stdout?: string }
+  return [details.stderr, details.stdout, details.message].filter(Boolean).join('\n')
 }
 
 export function normalizeYtDlpInfo(info: unknown, fallbackTitle = 'X video'): TweetVideo[] {
