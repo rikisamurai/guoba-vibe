@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import fxVideoTweet from '../lib/fixtures/fx-video-tweet.json' with { type: 'json' }
 import videoTweet from '../lib/fixtures/video-tweet.json' with { type: 'json' }
 import { verifyDownload } from '../lib/sign.js'
 import type { ResolvedTweet } from '../lib/types.js'
@@ -49,16 +50,56 @@ describe('GET /api/resolve', () => {
     expect(await res.json()).toEqual({ error: 'invalid_link' })
   })
 
-  it('maps a tombstone to restricted', async () => {
+  it('maps a tombstone to restricted when the FxTwitter fallback also fails', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockResolvedValue(Response.json({ __typename: 'TweetTombstone' })),
+      vi.fn().mockImplementation((input: unknown) => {
+        if (String(input).startsWith('https://cdn.syndication.twimg.com/')) {
+          return Promise.resolve(Response.json({ __typename: 'TweetTombstone' }))
+        }
+        return Promise.resolve(Response.json({ code: 404 }, { status: 404 }))
+      }),
     )
     const res = await GET(
       makeRequest(`?url=${encodeURIComponent('https://x.com/a/status/1')}`, KEY),
     )
     expect(res.status).toBe(404)
     expect(await res.json()).toEqual({ error: 'restricted' })
+  })
+
+  it('falls back to FxTwitter when syndication returns a tombstone', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((input: unknown) => {
+        if (String(input).startsWith('https://cdn.syndication.twimg.com/')) {
+          return Promise.resolve(Response.json({ __typename: 'TweetTombstone' }))
+        }
+        return Promise.resolve(Response.json(fxVideoTweet))
+      }),
+    )
+    const res = await GET(
+      makeRequest(
+        `?url=${encodeURIComponent('https://x.com/chenbao11522/status/2070505379432456331')}`,
+        KEY,
+      ),
+    )
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    if (!hasTweet(body)) throw new Error('expected tweet in response body')
+    const variant = body.tweet.media[0].variants[0]
+    expect(variant.label).toBe('720p')
+    const params = new URL(`http://x${variant.downloadUrl}`).searchParams
+    expect(params.get('name')).toBe('chenbao11522_2070505379432456331.mp4')
+    expect(
+      verifyDownload(
+        params.get('url')!,
+        params.get('name')!,
+        Number(params.get('exp')),
+        params.get('sig')!,
+        SECRET,
+        Math.floor(Date.now() / 1000),
+      ),
+    ).toBe('ok')
   })
 
   it('maps syndication 400 to invalid_link and other failures to upstream', async () => {
