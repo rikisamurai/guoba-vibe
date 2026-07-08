@@ -1,0 +1,52 @@
+.gitignore
+  s_f48a101136e36c::t_0bd473df7f1380 58
+.agents/skills/github-image-upload/SKILL.md
+  s_f48a101136e36c::t_df9bbfbf63e5c0 1-135
+apps/guoba-stream/api/resolve.test.ts
+  s_2144ff0419629e::t_cf33fcfc0e61d4 3
+  s_2144ff0419629e::t_d9f336e8c33d83 53,56-61,70-102
+  s_2144ff0419629e::t_ed7616054f40fa 103-104
+apps/guoba-stream/api/resolve.ts
+  s_2144ff0419629e::t_df99e73a6d19d8 2
+  s_2144ff0419629e::t_390e619843ee57 77-79
+  s_2144ff0419629e::t_21243d36eb271d 21-39,80
+skills-lock.json
+  s_f48a101136e36c::t_df9bbfbf63e5c0 22-27
+apps/guoba-stream/lib/fxtwitter.ts
+  s_2144ff0419629e::t_e745782d64ac5c 1-60
+apps/guoba-stream/lib/fxtwitter.test.ts
+  s_2144ff0419629e::t_a3cc2b471a970f 1-79
+apps/guoba-stream/lib/fixtures/fx-video-tweet.json
+  s_2144ff0419629e::t_0d70a97c07f6e3 1-46
+apps/guoba-stream/lib/syndication.ts
+  s_2144ff0419629e::t_d3c1ac948a1da2 12
+  s_2144ff0419629e::t_e3a9b9ad3eb6b0 1
+  s_2144ff0419629e::t_ec1a63c6e567bd 44-63
+  s_2144ff0419629e::t_4ea77f9c4ffa6b 71
+.claude/skills/github-image-upload
+  s_f48a101136e36c::t_bfde8dffdf4769 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ca685688baee6c4c2b8bbde81e4c97d9962138de",
+  "prompts": {},
+  "sessions": {
+    "s_2144ff0419629e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abae6b76-b300-4a30-a5e8-7e2e6ebae5e4",
+        "model": "claude-fable-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    },
+    "s_f48a101136e36c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f4076-1cac-7c02-9b88-d73e33bbee9f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
