@@ -1,0 +1,25 @@
+.gitignore
+  s_f48a101136e36c::t_b2a2b2d0acd8bd 58
+.agents/skills/github-image-upload/SKILL.md
+  s_f48a101136e36c::t_b2a2b2d0acd8bd 1-135
+skills-lock.json
+  s_f48a101136e36c::t_b2a2b2d0acd8bd 22-27
+.claude/skills/github-image-upload
+  s_f48a101136e36c::t_c3462e37d76bef 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "482058bad9ad5bbfe79659b92d85a5b8e50c77b3",
+  "prompts": {},
+  "sessions": {
+    "s_f48a101136e36c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f4076-1cac-7c02-9b88-d73e33bbee9f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
