@@ -18,7 +18,7 @@ export function UrlForm({
       }}
     >
       <div className="flex gap-2">
-        <label className="border-seam bg-pan flex flex-1 items-center gap-2 rounded-lg border px-3">
+        <label className="border-seam bg-pan focus-within:border-ember/70 focus-within:outline-ember flex flex-1 items-center gap-2 rounded-lg border px-3 transition-colors focus-within:outline-2 focus-within:outline-offset-2">
           <Link2 className="text-bran size-4 shrink-0" aria-hidden />
           <input
             type="url"
@@ -32,7 +32,7 @@ export function UrlForm({
         <button
           type="submit"
           disabled={loading}
-          className="bg-ember text-ember-ink flex h-11 items-center gap-1.5 rounded-lg px-4 font-medium"
+          className="bg-ember text-ember-ink hover:bg-ember-soft disabled:hover:bg-ember flex h-11 items-center gap-1.5 rounded-lg px-4 font-medium transition duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100"
         >
           {loading && <LoaderCircle className="size-4 animate-spin" aria-hidden />}
           Fetch

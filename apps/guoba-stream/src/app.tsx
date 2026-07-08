@@ -3,9 +3,11 @@ import { useState } from 'react'
 
 import type { ResolvedTweet, ResolveErrorCode } from '../lib/types'
 import { DownloadBar } from './components/download-bar'
+import { EmptyState } from './components/empty-state'
 import { ErrorBanner } from './components/error-banner'
 import { Gate } from './components/gate'
 import { MediaCard } from './components/media-card'
+import { ResultSkeleton } from './components/result-skeleton'
 import { TweetCard } from './components/tweet-card'
 import { UrlForm } from './components/url-form'
 import { clearAccessKey, loadAccessKey, saveAccessKey } from './lib/access-key'
@@ -78,6 +80,8 @@ export function App() {
       </header>
       <UrlForm loading={loading} onSubmit={(url) => void handleFetch(url)} />
       {errorCode && <ErrorBanner code={errorCode} />}
+      {loading && <ResultSkeleton />}
+      {!loading && !tweet && !errorCode && <EmptyState />}
       {tweet && (
         <>
           <TweetCard tweet={tweet} />

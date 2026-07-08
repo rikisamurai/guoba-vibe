@@ -2,7 +2,7 @@ import type { ResolvedTweet } from '../../lib/types'
 
 export function TweetCard({ tweet }: { tweet: ResolvedTweet }) {
   return (
-    <section className="border-crust bg-pan my-4 rounded-xl border p-3.5">
+    <section className="border-crust bg-pan animate-rise my-4 rounded-xl border p-3.5 motion-reduce:animate-none">
       <div className="flex items-start gap-2.5">
         <img
           src={tweet.avatarUrl}
@@ -14,7 +14,7 @@ export function TweetCard({ tweet }: { tweet: ResolvedTweet }) {
           <p className="text-sm font-medium">
             {tweet.authorName} <span className="text-bran font-normal">@{tweet.authorHandle}</span>
           </p>
-          <p className="text-husk mt-0.5 text-sm break-words">{tweet.text}</p>
+          <p className="text-husk mt-0.5 text-sm text-pretty break-words">{tweet.text}</p>
         </div>
       </div>
     </section>

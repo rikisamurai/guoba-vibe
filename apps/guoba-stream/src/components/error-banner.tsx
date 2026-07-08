@@ -11,8 +11,8 @@ const MESSAGES: Record<ResolveErrorCode, string> = {
 
 export function ErrorBanner({ code }: { code: ResolveErrorCode }) {
   return (
-    <p className="mt-4 flex items-center gap-2 rounded-lg border border-red-900/60 bg-red-950/40 px-3 py-2.5 text-sm text-red-300">
-      <CircleAlert className="size-4 shrink-0" aria-hidden />
+    <p className="border-scorch/40 bg-scorch/10 text-scorch-soft animate-fade-in mt-4 flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm text-pretty">
+      <CircleAlert className="text-scorch size-4 shrink-0" aria-hidden />
       {MESSAGES[code]}
     </p>
   )

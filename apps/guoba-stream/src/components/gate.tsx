@@ -28,9 +28,9 @@ export function Gate({ onUnlocked }: { onUnlocked: (key: string) => void }) {
           guoba<span className="text-ember">stream</span>
         </span>
       </div>
-      <p className="text-bran mt-2 text-xs">tweet videos, saved crispy</p>
+      <p className="text-bran mt-2 text-xs text-balance">tweet videos, saved crispy</p>
       <form onSubmit={(e) => void submit(e)} className="mt-8 flex w-full max-w-sm gap-2">
-        <label className="border-seam bg-pan flex flex-1 items-center gap-2 rounded-lg border px-3">
+        <label className="border-seam bg-pan focus-within:border-ember/70 focus-within:outline-ember flex flex-1 items-center gap-2 rounded-lg border px-3 transition-colors focus-within:outline-2 focus-within:outline-offset-2">
           <KeyRound className="text-bran size-4 shrink-0" aria-hidden />
           <input
             type="password"
@@ -44,12 +44,14 @@ export function Gate({ onUnlocked }: { onUnlocked: (key: string) => void }) {
         <button
           type="submit"
           disabled={checking}
-          className="bg-ember text-ember-ink h-11 rounded-lg px-5 font-medium"
+          className="bg-ember text-ember-ink hover:bg-ember-soft disabled:hover:bg-ember h-11 rounded-lg px-5 font-medium transition duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100"
         >
           {checking ? 'Checking…' : 'Unlock'}
         </button>
       </form>
-      {failed && <p className="mt-3 text-sm text-red-400">That code didn&apos;t work</p>}
+      {failed && (
+        <p className="text-scorch-soft animate-fade-in mt-3 text-sm">That code didn&apos;t work</p>
+      )}
       <p className="text-faint mt-6 text-xs">Invite-only. Codes are issued personally.</p>
     </main>
   )
