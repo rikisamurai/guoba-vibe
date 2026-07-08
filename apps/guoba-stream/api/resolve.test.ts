@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import videoTweet from '../lib/fixtures/video-tweet.json'
-import { verifyDownload } from '../lib/sign'
-import type { ResolvedTweet } from '../lib/types'
-import { GET } from './resolve'
+import videoTweet from '../lib/fixtures/video-tweet.json' with { type: 'json' }
+import { verifyDownload } from '../lib/sign.js'
+import type { ResolvedTweet } from '../lib/types.js'
+import { GET } from './resolve.js'
 
 const KEY = 'friend-key'
 const SECRET = 'test-secret'

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildDownloadPath, signDownload, verifyDownload } from './sign'
+import { buildDownloadPath, signDownload, verifyDownload } from './sign.js'
 
 const SECRET = 'test-secret'
 const URL_OK = 'https://video.twimg.com/ext_tw_video/1/pu/vid/1280x720/abc.mp4?tag=14'

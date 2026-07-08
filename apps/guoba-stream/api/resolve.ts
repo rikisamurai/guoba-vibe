@@ -1,8 +1,8 @@
-import { isValidAccessKey } from '../lib/auth'
-import { buildDownloadPath } from '../lib/sign'
-import { mapTweetResult, syndicationUrl, type RawTweetResult } from '../lib/syndication'
-import { resolveTweetId } from '../lib/tweet-url'
-import type { ResolveErrorCode } from '../lib/types'
+import { isValidAccessKey } from '../lib/auth.js'
+import { buildDownloadPath } from '../lib/sign.js'
+import { mapTweetResult, syndicationUrl, type RawTweetResult } from '../lib/syndication.js'
+import { resolveTweetId } from '../lib/tweet-url.js'
+import type { ResolveErrorCode } from '../lib/types.js'
 
 const SIGNATURE_TTL_SEC = 60 * 60
 
