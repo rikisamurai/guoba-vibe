@@ -1,0 +1,35 @@
+apps/guoba-stream/lib/tweet-url.test.ts
+  s_b81e77c378f57b::t_8285cf66a62273 3
+apps/guoba-stream/api/download.ts
+  s_b81e77c378f57b::t_d03ab574590bae 1
+apps/guoba-stream/lib/syndication.test.ts
+  s_b81e77c378f57b::t_0657a1c2f04649 3-4,10
+apps/guoba-stream/api/resolve.test.ts
+  s_b81e77c378f57b::t_cc989c3a6ce7cc 3-6
+apps/guoba-stream/lib/syndication.ts
+  s_b81e77c378f57b::t_0946c89a4603c4 1
+apps/guoba-stream/lib/auth.test.ts
+  s_b81e77c378f57b::t_22bab4c7871720 3
+apps/guoba-stream/lib/sign.test.ts
+  s_b81e77c378f57b::t_fc05d8c59cc1b6 3
+apps/guoba-stream/api/resolve.ts
+  s_b81e77c378f57b::t_c02c60b68474ed 1-5
+apps/guoba-stream/api/download.test.ts
+  s_b81e77c378f57b::t_3b81ad11af534d 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "25d4872f97448031f395f1c51ca7b59f99de094b",
+  "prompts": {},
+  "sessions": {
+    "s_b81e77c378f57b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "53498a3f-f082-436a-a150-748c21a563a4",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
