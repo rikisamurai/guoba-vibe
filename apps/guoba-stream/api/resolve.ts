@@ -1,4 +1,5 @@
 import { isValidAccessKey } from '../lib/auth.js'
+import { fxTweetUrl, mapFxTweet, type RawFxResponse } from '../lib/fxtwitter.js'
 import { buildDownloadPath } from '../lib/sign.js'
 import { mapTweetResult, syndicationUrl, type RawTweetResult } from '../lib/syndication.js'
 import { resolveTweetId } from '../lib/tweet-url.js'
@@ -15,6 +16,25 @@ function jsonError(code: ResolveErrorCode, status: number): Response {
 // Promise<unknown> and oxlint forbids `as` narrowing.
 function isRawTweetResult(value: unknown): value is RawTweetResult {
   return typeof value === 'object' && value !== null
+}
+
+// Same sound shallow guard as isRawTweetResult: every RawFxResponse field is optional.
+function isRawFxResponse(value: unknown): value is RawFxResponse {
+  return typeof value === 'object' && value !== null
+}
+
+// Syndication tombstones sensitive-flagged posts with no reason text; FxTwitter still
+// serves them. Any fallback failure keeps the original 'restricted' verdict.
+async function resolveViaFxTwitter(tweetId: string): Promise<ReturnType<typeof mapFxTweet> | null> {
+  try {
+    const upstream = await fetch(fxTweetUrl(tweetId), { headers: { 'user-agent': 'Mozilla/5.0' } })
+    if (!upstream.ok) return null
+    const raw = await upstream.json()
+    if (!isRawFxResponse(raw)) return null
+    return mapFxTweet(raw)
+  } catch {
+    return null
+  }
 }
 
 export async function GET(request: Request): Promise<Response> {
@@ -53,6 +73,10 @@ export async function GET(request: Request): Promise<Response> {
     mapped = mapTweetResult(raw)
   } catch {
     return jsonError('upstream', 502)
+  }
+  if (!mapped.ok && mapped.reason === 'restricted') {
+    const fallback = await resolveViaFxTwitter(tweetId)
+    if (fallback?.ok) mapped = fallback
   }
   if (!mapped.ok) return jsonError(mapped.reason, 404)
 

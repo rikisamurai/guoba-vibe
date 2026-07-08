@@ -1,4 +1,4 @@
-import type { MediaItem, MediaKind, ResolvedTweet } from './types.js'
+import type { MediaItem, MediaKind, MediaVariant, ResolvedTweet } from './types.js'
 
 export function syndicationToken(tweetId: string): string {
   return ((Number(tweetId) / 1e15) * Math.PI).toString(36).replace(/(0+|\.)/g, '')
@@ -9,7 +9,7 @@ export function syndicationUrl(tweetId: string): string {
   return `https://cdn.syndication.twimg.com/tweet-result?${params.toString()}`
 }
 
-interface RawVariant {
+export interface RawVariant {
   content_type: string
   url: string
   bitrate?: number
@@ -41,6 +41,26 @@ function mapKind(type: string): MediaKind | null {
   return null
 }
 
+// Shared with the FxTwitter fallback: both sources expose twimg variants in this shape.
+export function mapVariants(rawVariants: RawVariant[], kind: MediaKind): MediaVariant[] {
+  return rawVariants
+    .filter((variant) => variant.content_type === 'video/mp4')
+    .map((variant) => {
+      const dims = DIMENSIONS.exec(variant.url)
+      const width = dims ? Number(dims[1]) : null
+      const height = dims ? Number(dims[2]) : null
+      return {
+        label: kind === 'gif' ? 'gif' : height ? `${height}p` : 'mp4',
+        width,
+        height,
+        bitrate: variant.bitrate ?? 0,
+        rawUrl: variant.url,
+        downloadUrl: '',
+      }
+    })
+    .toSorted((a, b) => b.bitrate - a.bitrate)
+}
+
 export function mapTweetResult(raw: RawTweetResult): MappedTweet {
   // eslint-disable-next-line no-underscore-dangle
   if (raw.__typename !== 'Tweet') return { ok: false, reason: 'restricted' }
@@ -48,22 +68,7 @@ export function mapTweetResult(raw: RawTweetResult): MappedTweet {
   for (const item of raw.mediaDetails ?? []) {
     const kind = mapKind(item.type)
     if (!kind || !item.video_info) continue
-    const variants = item.video_info.variants
-      .filter((variant) => variant.content_type === 'video/mp4')
-      .map((variant) => {
-        const dims = DIMENSIONS.exec(variant.url)
-        const width = dims ? Number(dims[1]) : null
-        const height = dims ? Number(dims[2]) : null
-        return {
-          label: kind === 'gif' ? 'gif' : height ? `${height}p` : 'mp4',
-          width,
-          height,
-          bitrate: variant.bitrate ?? 0,
-          rawUrl: variant.url,
-          downloadUrl: '',
-        }
-      })
-      .toSorted((a, b) => b.bitrate - a.bitrate)
+    const variants = mapVariants(item.video_info.variants, kind)
     if (variants.length === 0) continue
     media.push({
       index: media.length,
