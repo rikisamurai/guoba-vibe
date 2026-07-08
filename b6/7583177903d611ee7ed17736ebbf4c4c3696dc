@@ -1,0 +1,30 @@
+apps/guoba-stream/api/resolve.ts
+  s_f48a101136e36c::t_694ef3264c422e 2,21-39,77-80
+apps/guoba-stream/lib/fxtwitter.test.ts
+  s_f48a101136e36c::t_694ef3264c422e 1-79
+apps/guoba-stream/lib/fixtures/fx-video-tweet.json
+  s_f48a101136e36c::t_694ef3264c422e 1-46
+apps/guoba-stream/lib/fxtwitter.ts
+  s_f48a101136e36c::t_694ef3264c422e 1-60
+apps/guoba-stream/api/resolve.test.ts
+  s_f48a101136e36c::t_694ef3264c422e 3,53,56-61,70-102
+  s_f48a101136e36c::t_2ac5967b3498cf 103-104
+apps/guoba-stream/lib/syndication.ts
+  s_f48a101136e36c::t_694ef3264c422e 1,12,44-63,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b67583177903d611ee7ed17736ebbf4c4c3696dc",
+  "prompts": {},
+  "sessions": {
+    "s_f48a101136e36c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f4076-1cac-7c02-9b88-d73e33bbee9f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
