@@ -1,0 +1,48 @@
+apps/guoba-stream/src/components/media-card.tsx
+  s_f48a101136e36c::t_cec5b0b7463fa4 26,28-29,47,55,65,79
+  s_f48a101136e36c::t_4d6ec8dc722727 27,66-68,90,107,114
+apps/guoba-stream/src/components/error-banner.tsx
+  s_f48a101136e36c::t_469dc11a70bbd9 15
+  s_f48a101136e36c::t_4d6ec8dc722727 14
+apps/guoba-stream/src/components/empty-state.tsx
+  s_f48a101136e36c::t_4d6ec8dc722727 11
+  s_f48a101136e36c::t_0cd34f826b3a43 1-10,12-30
+apps/guoba-stream/src/app.tsx
+  s_f48a101136e36c::t_0cd34f826b3a43 6,10,83-84
+apps/guoba-stream/src/components/gate.tsx
+  s_f48a101136e36c::t_4d6ec8dc722727 31,33,47,52-54
+apps/guoba-stream/src/components/result-skeleton.tsx
+  s_f48a101136e36c::t_0cd34f826b3a43 1-2,4-28
+  s_f48a101136e36c::t_4d6ec8dc722727 3
+apps/guoba-stream/src/components/download-bar.tsx
+  s_f48a101136e36c::t_469dc11a70bbd9 13
+  s_f48a101136e36c::t_4d6ec8dc722727 11,20
+apps/guoba-stream/index.html
+  s_f48a101136e36c::t_e5da5fe2db13eb 7-17
+apps/guoba-stream/public/favicon.svg
+  s_f48a101136e36c::t_e5da5fe2db13eb 1-11
+apps/guoba-stream/src/components/tweet-card.tsx
+  s_f48a101136e36c::t_4d6ec8dc722727 5,17
+apps/guoba-stream/src/components/url-form.tsx
+  s_f48a101136e36c::t_4d6ec8dc722727 21,35
+apps/guoba-stream/src/styles.css
+  s_f48a101136e36c::t_e5da5fe2db13eb 20-26,29-48,57-59,64-79
+  s_f48a101136e36c::t_4d6ec8dc722727 60
+  s_f48a101136e36c::t_fb3f614ea28f7a 80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0760254cfcfed91825636b338c4f9c2ca5c488a3",
+  "prompts": {},
+  "sessions": {
+    "s_f48a101136e36c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f4076-1cac-7c02-9b88-d73e33bbee9f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
