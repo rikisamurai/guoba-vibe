@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isValidAccessKey } from './auth'
+import { isValidAccessKey } from './auth.js'
 
 describe('isValidAccessKey', () => {
   it('accepts a key from the comma-separated list, ignoring whitespace', () => {

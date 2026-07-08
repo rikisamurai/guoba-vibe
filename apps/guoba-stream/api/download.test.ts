@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { buildDownloadPath } from '../lib/sign'
-import { GET } from './download'
+import { buildDownloadPath } from '../lib/sign.js'
+import { GET } from './download.js'
 
 const SECRET = 'test-secret'
 const RAW = 'https://video.twimg.com/ext_tw_video/1/pu/vid/1280x720/abc.mp4?tag=14'

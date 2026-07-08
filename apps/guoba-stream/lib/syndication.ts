@@ -1,4 +1,4 @@
-import type { MediaItem, MediaKind, ResolvedTweet } from './types'
+import type { MediaItem, MediaKind, ResolvedTweet } from './types.js'
 
 export function syndicationToken(tweetId: string): string {
   return ((Number(tweetId) / 1e15) * Math.PI).toString(36).replace(/(0+|\.)/g, '')

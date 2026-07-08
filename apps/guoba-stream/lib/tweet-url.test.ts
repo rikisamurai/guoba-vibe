@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { parseTweetUrl, resolveTweetId } from './tweet-url'
+import { parseTweetUrl, resolveTweetId } from './tweet-url.js'
 
 describe('parseTweetUrl', () => {
   it.each([

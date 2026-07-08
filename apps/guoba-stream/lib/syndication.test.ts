@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import gifTweet from './fixtures/gif-tweet.json'
-import videoTweet from './fixtures/video-tweet.json'
+import gifTweet from './fixtures/gif-tweet.json' with { type: 'json' }
+import videoTweet from './fixtures/video-tweet.json' with { type: 'json' }
 import {
   mapTweetResult,
   syndicationToken,
   syndicationUrl,
   type RawTweetResult,
-} from './syndication'
+} from './syndication.js'
 
 describe('syndicationToken', () => {
   it('matches the react-tweet token algorithm', () => {

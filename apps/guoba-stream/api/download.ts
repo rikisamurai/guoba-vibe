@@ -1,4 +1,4 @@
-import { verifyDownload } from '../lib/sign'
+import { verifyDownload } from '../lib/sign.js'
 
 export const maxDuration = 60
 
