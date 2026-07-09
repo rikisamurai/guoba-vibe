@@ -32,11 +32,11 @@ export function WorkspaceHeader({
 
   return (
     <section
-      className="bg-card/80 signal-panel shrink-0 space-y-3 rounded-lg border p-3 backdrop-blur-sm"
+      className="bg-card/80 signal-panel shrink-0 rounded-lg border p-3 backdrop-blur-sm"
       aria-labelledby="workspace-title"
     >
-      <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
-        <div className="bg-background/55 min-w-0 rounded-lg border p-3">
+      <div className="grid gap-3 border-b pb-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
               {t('workspace.statusLine')}
@@ -45,7 +45,7 @@ export function WorkspaceHeader({
               {t('app.footerTagline')}
             </Badge>
           </div>
-          <div className="mt-2 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <h1
               id="workspace-title"
               className="text-2xl leading-none font-semibold tracking-tight sm:text-3xl"
@@ -62,13 +62,13 @@ export function WorkspaceHeader({
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:auto-cols-fr sm:grid-flow-col sm:grid-cols-none">
+        <div className="bg-background/60 grid grid-cols-2 overflow-hidden rounded-lg border">
           <SummaryPill label={t('common.qrCodes')} value={data.qrs.length} />
           <SummaryPill label={t('common.collections')} value={data.collections.length} />
         </div>
       </div>
 
-      <div className="bg-background/45 rounded-lg border p-2.5">
+      <div className="border-b py-2.5">
         <CollectionChipRow
           data={data}
           uncategorizedCount={uncategorizedCount}
@@ -77,7 +77,7 @@ export function WorkspaceHeader({
         />
       </div>
 
-      <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+      <div className="grid gap-2 pt-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
         <div className="focus-within:border-ring/70 focus-within:ring-ring/30 bg-background/80 flex h-10 min-w-0 items-center gap-2 rounded-lg border px-3 shadow-sm transition-colors focus-within:ring-2">
           <Search className="text-muted-foreground size-3.5 shrink-0" />
           <input
@@ -112,7 +112,7 @@ export function WorkspaceHeader({
 
 function SummaryPill({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-background/70 text-card-foreground shadow-foreground/5 min-w-0 rounded-lg border px-3 py-2 shadow-sm">
+    <div className="text-card-foreground min-w-0 border-l px-3 py-2 first:border-l-0">
       <div className="font-mono text-lg leading-none font-semibold text-[var(--signal)] tabular-nums">
         {value}
       </div>
