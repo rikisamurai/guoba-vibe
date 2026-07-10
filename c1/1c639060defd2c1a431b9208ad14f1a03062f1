@@ -1,0 +1,29 @@
+apps/guoba-stream/package.json
+  s_90713b36adf322::t_d1c09a6474f2c0 13
+apps/guoba-stream/playwright.live.config.ts
+  s_90713b36adf322::t_d1c09a6474f2c0 1-39
+apps/guoba-stream/e2e-live/resolve-live.spec.ts
+  s_90713b36adf322::t_d1c09a6474f2c0 1-67
+.github/workflows/guoba-stream-live-e2e.yml
+  s_90713b36adf322::t_b7f2b3922485c3 1-37
+apps/guoba-stream/README.md
+  s_90713b36adf322::t_b7f2b3922485c3 32-33
+apps/guoba-stream/tsconfig.node.json
+  s_90713b36adf322::t_9f48027b49bde3 16-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c11c639060defd2c1a431b9208ad14f1a03062f1",
+  "prompts": {},
+  "sessions": {
+    "s_90713b36adf322": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f49ff-bdbb-75b1-919f-fba30e8f2efe",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
