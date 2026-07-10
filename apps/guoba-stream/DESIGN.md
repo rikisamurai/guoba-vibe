@@ -7,7 +7,7 @@ Decisions settled in the 2026-07-07 planning session (see
 
 | Branch            | Decision                                                                                                                                                                                                 |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Data source       | X syndication API (`cdn.syndication.twimg.com/tweet-result`, react-tweet-style token) via our own serverless function                                                                                    |
+| Data source       | X syndication API (`cdn.syndication.twimg.com/tweet-result`, react-tweet-style token) first; FxTwitter fallback for restricted posts and recoverable upstream failures                                   |
 | Download delivery | Proxy streaming with forced attachment as primary; raw CDN link as per-video fallback                                                                                                                    |
 | Media scope       | Videos + GIFs (GIFs are mp4s upstream, badge in UI); photos out of scope                                                                                                                                 |
 | Batch download    | Sequential individual downloads (500ms spacing), no zip                                                                                                                                                  |
@@ -36,8 +36,8 @@ on the sticky bar, `playsInline` previews.
 
 ## Known risks (accepted)
 
-1. Syndication API is unofficial and may change or vanish — surfaces as the
-   "upstream" error; would need a new data source.
+1. Syndication and FxTwitter are unofficial and may change or vanish — if both
+   fail, this surfaces as the "upstream" error and needs a new data source.
 2. Restricted / NSFW / deleted posts return a tombstone — clear error, no workaround.
 3. Vercel Hobby bandwidth (100GB/mo) carries proxied downloads; signed links are
    replayable within their 1h TTL — acceptable at friends-only scale.

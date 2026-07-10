@@ -7,8 +7,9 @@ pick quality, save — including batch download for multi-video posts. Mobile-fi
 
 - `api/resolve` — validates the `X-Access-Key` header, normalizes the link
   (x.com / twitter.com / mobile / `/i/status/` / t.co; query params are stripped
-  structurally — the parser only ever reads the pathname), fetches X's syndication
-  API, and returns media with short-lived HMAC-signed download links (1h TTL).
+  structurally — the parser only ever reads the pathname), tries X's syndication
+  API first and FxTwitter after restricted or recoverable upstream failures, then
+  returns media with short-lived HMAC-signed download links (1h TTL).
 - `api/download` — verifies the signature (no key needed; the signature is the
   authorization, because `<a>` navigation can't send headers), then streams the
   mp4 from `video.twimg.com` with `Content-Disposition: attachment`. A host
@@ -32,7 +33,7 @@ pick quality, save — including batch download for multi-video posts. Mobile-fi
 
 ## Known limits
 
-- The syndication API is unofficial; if X retires it, resolve returns the
+- Both syndication and FxTwitter are unofficial; if both fail, resolve returns the
   "upstream" error and this needs a new data source.
 - NSFW / login-gated / deleted posts can't be fetched (clear error shown).
 - Batch download fires N separate downloads; browsers may ask once for
