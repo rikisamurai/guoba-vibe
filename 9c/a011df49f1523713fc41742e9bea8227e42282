@@ -1,0 +1,26 @@
+apps/guoba-stream/api/download.test.ts
+  s_90713b36adf322::t_ba14bab33b192a 39-66
+apps/guoba-stream/DESIGN.md
+  s_90713b36adf322::t_0c78c374ccfaf4 11
+apps/guoba-stream/README.md
+  s_90713b36adf322::t_0c78c374ccfaf4 17
+apps/guoba-stream/api/download.ts
+  s_90713b36adf322::t_3b8e3f46ec7267 36-38
+  s_90713b36adf322::t_0206d61c29d0f1 24-25,39-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9ca011df49f1523713fc41742e9bea8227e42282",
+  "prompts": {},
+  "sessions": {
+    "s_90713b36adf322": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f49ff-bdbb-75b1-919f-fba30e8f2efe",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
