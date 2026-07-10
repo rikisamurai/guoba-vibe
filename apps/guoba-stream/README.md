@@ -33,6 +33,64 @@ pick quality, save — including batch download for multi-video posts. Mobile-fi
   Syndication and FxTwitter requests; intended for manual or scheduled checks
 - `pnpm lint` / `pnpm build`
 
+## Watch the Live E2E
+
+The default `pnpm test:e2e:live` command runs headless. The following modes show
+the same Live E2E against real Syndication and FxTwitter responses, using only the
+temporary access code and signing secret from `playwright.live.config.ts`.
+
+Install Chromium once if it is not already available:
+
+```bash
+pnpm --filter guoba-stream exec playwright install chromium
+```
+
+### 1. Step through with Playwright Inspector
+
+```bash
+pnpm --filter guoba-stream exec playwright test \
+  --config playwright.live.config.ts \
+  --debug
+```
+
+This opens a headed browser plus Playwright Inspector. Use Resume (F8), Pause
+(F8), and Step over (F10) to move through access-code entry, the real resolve
+request, and the result assertions. The Inspector highlights the currently
+paused source line and call log:
+
+![Live E2E paused in Playwright Inspector](docs/live-e2e/debug-inspector.png)
+
+### 2. Watch the test run in a browser
+
+```bash
+pnpm --filter guoba-stream exec playwright test \
+  --config playwright.live.config.ts \
+  --headed
+```
+
+This runs both live scenarios at normal speed while keeping Chromium visible.
+The resolved tweet, video card, quality selector, preview, and signed Save link
+appear in the real application UI:
+
+![Live E2E showing a resolved tweet](docs/live-e2e/headed-resolved-tweet.png)
+
+### 3. Explore and rerun with UI Mode
+
+```bash
+pnpm --filter guoba-stream exec playwright test \
+  --config playwright.live.config.ts \
+  --ui
+```
+
+UI Mode lets you run one scenario at a time and inspect its action timeline,
+browser snapshots, source, console, and network requests:
+
+![Live E2E result in Playwright UI Mode](docs/live-e2e/ui-mode-run.png)
+
+These commands call external services and can fail because of X rate limits,
+upstream outages, or deleted test posts. They do not use production credentials
+and the automated scenarios do not download the complete video.
+
 ## Known limits
 
 - Both syndication and FxTwitter are unofficial; if both fail, resolve returns the
