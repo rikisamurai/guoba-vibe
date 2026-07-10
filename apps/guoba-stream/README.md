@@ -14,7 +14,7 @@ pick quality, save — including batch download for multi-video posts. Mobile-fi
   authorization, because `<a>` navigation can't send headers), then streams the
   mp4 from `video.twimg.com` with `Content-Disposition: attachment`. A host
   allowlist plus filename sanitization prevent open-proxy abuse and header
-  injection.
+  injection; range requests preserve the upstream `206` response and headers.
 - Inline previews and raw-link fallbacks hit X's CDN directly — only actual
   downloads consume our bandwidth.
 

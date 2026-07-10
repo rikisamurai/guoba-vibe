@@ -21,7 +21,8 @@ export async function GET(request: Request): Promise<Response> {
 
   let upstream: Response
   try {
-    upstream = await fetch(rawUrl)
+    const range = request.headers.get('range')
+    upstream = range ? await fetch(rawUrl, { headers: { range } }) : await fetch(rawUrl)
   } catch {
     return new Response('Upstream fetch failed', { status: 502 })
   }
@@ -32,7 +33,9 @@ export async function GET(request: Request): Promise<Response> {
     'content-disposition': `attachment; filename="${name}"`,
     'cache-control': 'private, max-age=0',
   })
-  const length = upstream.headers.get('content-length')
-  if (length) headers.set('content-length', length)
-  return new Response(upstream.body, { headers })
+  for (const headerName of ['accept-ranges', 'content-length', 'content-range']) {
+    const value = upstream.headers.get(headerName)
+    if (value) headers.set(headerName, value)
+  }
+  return new Response(upstream.body, { headers, status: upstream.status })
 }
