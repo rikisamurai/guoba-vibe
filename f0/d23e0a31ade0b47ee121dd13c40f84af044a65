@@ -1,0 +1,36 @@
+apps/guoba-stream/api/resolve.ts
+  s_90713b36adf322::t_3e5d61e844bc45 2,9-12,15-16,37-38,41
+apps/guoba-stream/README.md
+  s_90713b36adf322::t_3f885ff03b3623 10-12,36
+  s_90713b36adf322::t_0c78c374ccfaf4 17
+apps/guoba-stream/DESIGN.md
+  s_90713b36adf322::t_3f885ff03b3623 10,39-40
+  s_90713b36adf322::t_0c78c374ccfaf4 11
+apps/guoba-stream/lib/resolve-source.ts
+  s_90713b36adf322::t_3e5d61e844bc45 1-37,40-79
+  s_90713b36adf322::t_65fe11e949a3c2 38-39
+apps/guoba-stream/lib/resolve-source.test.ts
+  s_90713b36adf322::t_c53581eb3523f1 1-58,60-82
+  s_90713b36adf322::t_28319015614b12 59
+apps/guoba-stream/api/download.test.ts
+  s_90713b36adf322::t_ba14bab33b192a 39-66
+apps/guoba-stream/api/download.ts
+  s_90713b36adf322::t_3b8e3f46ec7267 36-38
+  s_90713b36adf322::t_0206d61c29d0f1 24-25,39-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f0d23e0a31ade0b47ee121dd13c40f84af044a65",
+  "prompts": {},
+  "sessions": {
+    "s_90713b36adf322": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f49ff-bdbb-75b1-919f-fba30e8f2efe",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
