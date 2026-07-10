@@ -1,0 +1,19 @@
+apps/guoba-stream/e2e-live/resolve-live.spec.ts
+  s_90713b36adf322::t_0e1fee462b82f5 63-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "5e5c6038ba088fdbd15ffa737510a4ede40a2dc2",
+  "prompts": {},
+  "sessions": {
+    "s_90713b36adf322": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f49ff-bdbb-75b1-919f-fba30e8f2efe",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
