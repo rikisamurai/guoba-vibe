@@ -1,0 +1,20 @@
+apps/guoba-stream/README.md
+  s_90713b36adf322::t_f0c3b0e750bf70 56-59,61
+  s_90713b36adf322::t_0cb4453473858f 36-55,60,62-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "551dc322dae69a6525c3ea9d80998e5b72677084",
+  "prompts": {},
+  "sessions": {
+    "s_90713b36adf322": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f49ff-bdbb-75b1-919f-fba30e8f2efe",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": null
+    }
+  }
+}
