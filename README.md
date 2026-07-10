@@ -4,12 +4,12 @@
 
 ## 应用
 
-| 路径                                                 | 简介                                                                        | 技术栈                                                                                                    |
-| ---------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| [`apps/qr-codes`](apps/qr-codes)                     | 单管理员、公开只读的 deep link QR vault，部署在 Vercel 上                   | Next.js 16 (App Router) · React 19 · Drizzle + Vercel Postgres · better-auth + GitHub OAuth · Tailwind v4 |
-| [`apps/qr-vault`](apps/qr-vault)                     | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage`   | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
-| [`apps/rn-components`](apps/rn-components)           | React Native 组件库，提供 web Storybook、Expo 原生 Storybook 和组件回归测试 | React Native 0.81 · Expo SDK 54 · Storybook 10 · Vitest                                                   |
-| [`apps/x-video-downloader`](apps/x-video-downloader) | 私有移动端优先的 X/Twitter 推文视频解析下载工具                             | Next.js 16 (App Router) · React 19 · invite-code cookie auth · `yt-dlp`                                   |
+| 路径                                       | 简介                                                                        | 技术栈                                                                                                    |
+| ------------------------------------------ | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [`apps/qr-codes`](apps/qr-codes)           | 单管理员、公开只读的 deep link QR vault，部署在 Vercel 上                   | Next.js 16 (App Router) · React 19 · Drizzle + Vercel Postgres · better-auth + GitHub OAuth · Tailwind v4 |
+| [`apps/qr-vault`](apps/qr-vault)           | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage`   | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
+| [`apps/rn-components`](apps/rn-components) | React Native 组件库，提供 web Storybook、Expo 原生 Storybook 和组件回归测试 | React Native 0.81 · Expo SDK 54 · Storybook 10 · Vitest                                                   |
+| [`apps/guoba-stream`](apps/guoba-stream)   | 私有移动端优先的 X/Twitter 视频与 GIF 解析下载工具                          | React 19 · Vite 8 · Vercel Functions · invite-code access                                                 |
 
 四个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
 
@@ -65,14 +65,15 @@ pnpm build            # TypeScript no-emit 校验
 pnpm lint
 ```
 
-### x-video-downloader
+### guoba-stream
 
 ```bash
-cd apps/x-video-downloader
-XVD_INVITE_CODES=riki-local XVD_SESSION_SECRET="$(openssl rand -hex 32)" pnpm dev
-pnpm test
-pnpm build
+cd apps/guoba-stream
+pnpm dev       # Vite + 本地 /api bridge，默认 http://localhost:5173
+pnpm test      # Vitest
+pnpm test:e2e  # Playwright desktop + mobile
 pnpm lint
+pnpm build
 ```
 
 ### 仓库级
@@ -89,7 +90,7 @@ pnpm fmt:check    # CI 检查
 ├── apps/
 │   ├── qr-codes/   # Next.js 应用（服务端 + DB）
 │   ├── qr-vault/   # Vite 应用（纯前端 + localStorage）
-│   ├── x-video-downloader/ # Next.js 私有视频下载工具
+│   ├── guoba-stream/ # Vite + Vercel Functions 私有视频下载工具
 │   └── rn-components/ # React Native 组件库 + Storybook
 ├── docs/           # 跨应用文档
 ├── AGENTS.md       # 协作约定（CLAUDE.md 软链到此）
@@ -99,4 +100,4 @@ pnpm fmt:check    # CI 检查
 
 ## 协作约定
 
-仓库根目录的 [`AGENTS.md`](AGENTS.md) 记录了与 AI agent 协作时的通用准则（思考再写、最小改动、对齐目标后再执行等），以及 `agent-browser` 在本仓库的会话复用约定。各应用目录下还有自己的 `AGENTS.md`，包含框架版本注意事项、TDD 流程和测试模板。
+仓库根目录的 [`AGENTS.md`](AGENTS.md) 记录了与 AI agent 协作时的通用准则（思考再写、最小改动、对齐目标后再执行等），以及 `agent-browser` 在本仓库的会话复用约定。部分应用目录下还有自己的 `AGENTS.md`，包含框架版本注意事项、TDD 流程和测试模板。
