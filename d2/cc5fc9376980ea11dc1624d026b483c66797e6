@@ -1,0 +1,21 @@
+apps/guoba-stream/lib/resolve-source.test.ts
+  s_90713b36adf322::t_28319015614b12 59
+apps/guoba-stream/lib/resolve-source.ts
+  s_90713b36adf322::t_65fe11e949a3c2 38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d2cc5fc9376980ea11dc1624d026b483c66797e6",
+  "prompts": {},
+  "sessions": {
+    "s_90713b36adf322": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f49ff-bdbb-75b1-919f-fba30e8f2efe",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
