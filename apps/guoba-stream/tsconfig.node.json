@@ -13,5 +13,14 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "dev-api-plugin.ts", "playwright.config.ts", "api", "lib", "e2e"]
+  "include": [
+    "vite.config.ts",
+    "dev-api-plugin.ts",
+    "playwright.config.ts",
+    "playwright.live.config.ts",
+    "api",
+    "lib",
+    "e2e",
+    "e2e-live"
+  ]
 }

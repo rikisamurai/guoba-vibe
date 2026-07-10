@@ -1,0 +1,37 @@
+name: Guoba Stream Live E2E
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 20 * * *'
+
+concurrency:
+  group: guoba-stream-live-e2e
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  live-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter guoba-stream exec playwright install --with-deps chromium
+      - run: pnpm --filter guoba-stream test:e2e:live
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: guoba-stream-live-e2e-report
+          path: |
+            apps/guoba-stream/playwright-report/
+            apps/guoba-stream/test-results/
+          if-no-files-found: ignore
+          retention-days: 7

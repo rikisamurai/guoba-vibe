@@ -29,6 +29,8 @@ pick quality, save — including batch download for multi-video posts. Mobile-fi
 
 - `pnpm dev` — Vite + local `/api` bridge (`dev-api-plugin.ts`, dev-only)
 - `pnpm test` / `pnpm test:e2e` — Vitest unit suite / Playwright (Desktop Chrome + iPhone 13)
+- `pnpm test:e2e:live` — Chromium through the local `/api` bridge with real
+  Syndication and FxTwitter requests; intended for manual or scheduled checks
 - `pnpm lint` / `pnpm build`
 
 ## Known limits
