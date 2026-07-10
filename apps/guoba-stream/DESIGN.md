@@ -38,6 +38,7 @@ on the sticky bar, `playsInline` previews.
 
 1. Syndication and FxTwitter are unofficial and may change or vanish — if both
    fail, this surfaces as the "upstream" error and needs a new data source.
-2. Restricted / NSFW / deleted posts return a tombstone — clear error, no workaround.
+2. Restricted / NSFW posts fall back to FxTwitter; login-gated or deleted posts
+   still show a clear error when neither source can serve them.
 3. Vercel Hobby bandwidth (100GB/mo) carries proxied downloads; signed links are
    replayable within their 1h TTL — acceptable at friends-only scale.

@@ -95,6 +95,7 @@ and the automated scenarios do not download the complete video.
 
 - Both syndication and FxTwitter are unofficial; if both fail, resolve returns the
   "upstream" error and this needs a new data source.
-- NSFW / login-gated / deleted posts can't be fetched (clear error shown).
+- Sensitive posts fall back to FxTwitter when Syndication restricts them;
+  login-gated, deleted, or otherwise unavailable posts still show a clear error.
 - Batch download fires N separate downloads; browsers may ask once for
   multi-download permission (iOS Safari confirms each file).

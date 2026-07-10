@@ -41,6 +41,14 @@ describe('resolveTweetSource', () => {
         mediaDetails: [{ type: 'video', media_url_https: 'x', video_info: {} }],
       }),
     ],
+    ['malformed media collection', Response.json({ __typename: 'Tweet', mediaDetails: 'invalid' })],
+    [
+      'malformed video item',
+      Response.json({
+        __typename: 'Tweet',
+        mediaDetails: [{ type: 'video', media_url_https: 'x' }],
+      }),
+    ],
   ])('falls back after a recoverable syndication %s', async (_label, primaryFailure) => {
     const fetchImpl = mockFetch()
     if (primaryFailure instanceof Error) fetchImpl.mockRejectedValueOnce(primaryFailure)
@@ -68,6 +76,11 @@ describe('resolveTweetSource', () => {
   it.each([
     ['restricted', Response.json({ __typename: 'TweetTombstone' }), 'restricted'],
     ['upstream', new Response('down', { status: 503 }), 'upstream'],
+    [
+      'upstream after malformed payload',
+      Response.json({ __typename: 'Tweet', mediaDetails: 'invalid' }),
+      'upstream',
+    ],
   ] as const)(
     'preserves the primary %s error when the fallback fails',
     async (_label, primaryResponse, reason) => {

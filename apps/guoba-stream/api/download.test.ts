@@ -36,6 +36,15 @@ describe('GET /api/download', () => {
     expect(await res.text()).toBe('video-bytes')
   })
 
+  it('keeps non-range downloads at 200', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('video-bytes', { status: 206 })))
+    const path = buildDownloadPath(RAW, 'a_1.mp4', futureExp(), SECRET)
+
+    const res = await GET(new Request(`http://localhost${path}`))
+
+    expect(res.status).toBe(200)
+  })
+
   it('forwards range requests and preserves partial response headers', async () => {
     const fetchSpy = vi.fn().mockResolvedValue(
       new Response('part', {

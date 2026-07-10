@@ -13,12 +13,48 @@ interface PrimaryAttempt {
   shouldFallback: boolean
 }
 
-function isRawTweetResult(value: unknown): value is RawTweetResult {
+type UnknownRecord = Record<string, unknown>
+
+function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null
 }
 
+function isRawVariant(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    typeof value.content_type === 'string' &&
+    typeof value.url === 'string' &&
+    (value.bitrate === undefined || typeof value.bitrate === 'number')
+  )
+}
+
+function isRawMedia(value: unknown): boolean {
+  if (!isRecord(value) || typeof value.type !== 'string') return false
+  if (value.type !== 'video' && value.type !== 'animated_gif') return true
+  if (typeof value.media_url_https !== 'string') return false
+  if (!isRecord(value.video_info) || !Array.isArray(value.video_info.variants)) return false
+  if (
+    value.video_info.duration_millis !== undefined &&
+    typeof value.video_info.duration_millis !== 'number'
+  )
+    return false
+  return value.video_info.variants.every(isRawVariant)
+}
+
+function isRawTweetResult(value: unknown): value is RawTweetResult {
+  if (!isRecord(value)) return false
+  // eslint-disable-next-line no-underscore-dangle
+  const typename = value.__typename
+  if (typeof typename !== 'string') return false
+  if (typename !== 'Tweet') return true
+  return (
+    value.mediaDetails === undefined ||
+    (Array.isArray(value.mediaDetails) && value.mediaDetails.every(isRawMedia))
+  )
+}
+
 function isRawFxResponse(value: unknown): value is RawFxResponse {
-  return typeof value === 'object' && value !== null
+  return isRecord(value)
 }
 
 async function resolvePrimary(tweetId: string, fetchImpl: typeof fetch): Promise<PrimaryAttempt> {
