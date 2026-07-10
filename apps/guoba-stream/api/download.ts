@@ -19,9 +19,10 @@ export async function GET(request: Request): Promise<Response> {
     return new Response('Link expired — fetch the post again', { status: 410 })
   if (verdict !== 'ok') return new Response('Invalid download link', { status: 403 })
 
+  const range = request.headers.get('range')
   let upstream: Response
   try {
-    upstream = await fetch(rawUrl)
+    upstream = range ? await fetch(rawUrl, { headers: { range } }) : await fetch(rawUrl)
   } catch {
     return new Response('Upstream fetch failed', { status: 502 })
   }
@@ -34,5 +35,9 @@ export async function GET(request: Request): Promise<Response> {
   })
   const length = upstream.headers.get('content-length')
   if (length) headers.set('content-length', length)
-  return new Response(upstream.body, { headers })
+  for (const headerName of range ? ['accept-ranges', 'content-range'] : []) {
+    const value = upstream.headers.get(headerName)
+    if (value) headers.set(headerName, value)
+  }
+  return new Response(upstream.body, { headers, status: range ? upstream.status : 200 })
 }

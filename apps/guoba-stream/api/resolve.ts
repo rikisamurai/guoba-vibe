@@ -1,40 +1,19 @@
 import { isValidAccessKey } from '../lib/auth.js'
-import { fxTweetUrl, mapFxTweet, type RawFxResponse } from '../lib/fxtwitter.js'
+import { resolveTweetSource } from '../lib/resolve-source.js'
 import { buildDownloadPath } from '../lib/sign.js'
-import { mapTweetResult, syndicationUrl, type RawTweetResult } from '../lib/syndication.js'
 import { resolveTweetId } from '../lib/tweet-url.js'
 import type { ResolveErrorCode } from '../lib/types.js'
 
 const SIGNATURE_TTL_SEC = 60 * 60
 
-function jsonError(code: ResolveErrorCode, status: number): Response {
+function errorStatus(code: ResolveErrorCode): number {
+  if (code === 'invalid_link') return 400
+  if (code === 'upstream') return 502
+  return 404
+}
+
+function jsonError(code: ResolveErrorCode, status = errorStatus(code)): Response {
   return Response.json({ error: code }, { status })
-}
-
-// Sound shallow guard: every RawTweetResult field is optional, so any non-null
-// object satisfies the type. Needed because undici types Response.json() as
-// Promise<unknown> and oxlint forbids `as` narrowing.
-function isRawTweetResult(value: unknown): value is RawTweetResult {
-  return typeof value === 'object' && value !== null
-}
-
-// Same sound shallow guard as isRawTweetResult: every RawFxResponse field is optional.
-function isRawFxResponse(value: unknown): value is RawFxResponse {
-  return typeof value === 'object' && value !== null
-}
-
-// Syndication tombstones sensitive-flagged posts with no reason text; FxTwitter still
-// serves them. Any fallback failure keeps the original 'restricted' verdict.
-async function resolveViaFxTwitter(tweetId: string): Promise<ReturnType<typeof mapFxTweet> | null> {
-  try {
-    const upstream = await fetch(fxTweetUrl(tweetId), { headers: { 'user-agent': 'Mozilla/5.0' } })
-    if (!upstream.ok) return null
-    const raw = await upstream.json()
-    if (!isRawFxResponse(raw)) return null
-    return mapFxTweet(raw)
-  } catch {
-    return null
-  }
 }
 
 export async function GET(request: Request): Promise<Response> {
@@ -55,33 +34,11 @@ export async function GET(request: Request): Promise<Response> {
   }
   if (!tweetId) return jsonError('invalid_link', 400)
 
-  let upstream: Response
-  try {
-    upstream = await fetch(syndicationUrl(tweetId), { headers: { 'user-agent': 'Mozilla/5.0' } })
-  } catch {
-    return jsonError('upstream', 502)
-  }
-  // Syndication 400 = malformed id, 404 = well-formed but nonexistent id — both mean "check your
-  // link". Deleted/restricted tweets arrive as 200 + TweetTombstone, handled below as 'restricted'.
-  if (upstream.status === 400 || upstream.status === 404) return jsonError('invalid_link', 400)
-  if (!upstream.ok) return jsonError('upstream', 502)
-
-  let mapped: ReturnType<typeof mapTweetResult>
-  try {
-    const raw = await upstream.json()
-    if (!isRawTweetResult(raw)) return jsonError('upstream', 502)
-    mapped = mapTweetResult(raw)
-  } catch {
-    return jsonError('upstream', 502)
-  }
-  if (!mapped.ok && mapped.reason === 'restricted') {
-    const fallback = await resolveViaFxTwitter(tweetId)
-    if (fallback?.ok) mapped = fallback
-  }
-  if (!mapped.ok) return jsonError(mapped.reason, 404)
+  const resolved = await resolveTweetSource(tweetId)
+  if (!resolved.ok) return jsonError(resolved.reason)
 
   const expiresAtSec = Math.floor(Date.now() / 1000) + SIGNATURE_TTL_SEC
-  const { tweet } = mapped
+  const { tweet } = resolved
   for (const media of tweet.media) {
     const suffix = tweet.media.length > 1 ? `_${media.index + 1}` : ''
     // Handle/id come from unvalidated upstream JSON; keep filenames header-safe.

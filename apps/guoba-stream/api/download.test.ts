@@ -36,6 +36,43 @@ describe('GET /api/download', () => {
     expect(await res.text()).toBe('video-bytes')
   })
 
+  it('keeps non-range downloads at 200', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('video-bytes', { status: 206 })))
+    const path = buildDownloadPath(RAW, 'a_1.mp4', futureExp(), SECRET)
+
+    const res = await GET(new Request(`http://localhost${path}`))
+
+    expect(res.status).toBe(200)
+  })
+
+  it('forwards range requests and preserves partial response headers', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue(
+      new Response('part', {
+        status: 206,
+        headers: {
+          'accept-ranges': 'bytes',
+          'content-length': '4',
+          'content-range': 'bytes 0-3/11',
+          'content-type': 'video/mp4',
+        },
+      }),
+    )
+    vi.stubGlobal('fetch', fetchSpy)
+    const path = buildDownloadPath(RAW, 'a_1.mp4', futureExp(), SECRET)
+    const request = new Request(`http://localhost${path}`, {
+      headers: { range: 'bytes=0-3' },
+    })
+
+    const res = await GET(request)
+
+    expect(fetchSpy).toHaveBeenCalledWith(RAW, { headers: { range: 'bytes=0-3' } })
+    expect(res.status).toBe(206)
+    expect(res.headers.get('accept-ranges')).toBe('bytes')
+    expect(res.headers.get('content-range')).toBe('bytes 0-3/11')
+    expect(res.headers.get('content-length')).toBe('4')
+    expect(await res.text()).toBe('part')
+  })
+
   it('rejects tampered params with 403 and never fetches upstream', async () => {
     const fetchSpy = vi.fn()
     vi.stubGlobal('fetch', fetchSpy)
