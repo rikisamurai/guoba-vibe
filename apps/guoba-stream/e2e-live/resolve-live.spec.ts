@@ -60,6 +60,15 @@ for (const sample of SAMPLES) {
     await expect(page.getByText(`@${sample.authorHandle}`)).toBeVisible()
     await expect(page.getByRole('article')).toHaveCount(body.tweet.media.length)
     await expect(page.getByRole('button', { name: 'Play preview' }).first()).toBeVisible()
+    const resultImages = page.locator('section img, article img')
+    await expect(resultImages).toHaveCount(body.tweet.media.length + 1)
+    await expect
+      .poll(() =>
+        resultImages.evaluateAll((images) =>
+          images.every((image) => image.complete && image.naturalWidth > 0),
+        ),
+      )
+      .toBe(true)
     await expect(page.getByRole('link', { name: 'Save' }).first()).toHaveAttribute(
       'href',
       /\/api\/download\?/,
