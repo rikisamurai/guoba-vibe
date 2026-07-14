@@ -1,0 +1,41 @@
+name: Guoba Stream E2E
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/guoba-stream-e2e.yml'
+      - 'apps/guoba-stream/**'
+      - '.npmrc'
+      - '.nvmrc'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter guoba-stream exec playwright install --with-deps chromium webkit
+      - run: pnpm --filter guoba-stream test
+      - run: pnpm --filter guoba-stream test:e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: guoba-stream-playwright-report
+          path: |
+            apps/guoba-stream/playwright-report/
+            apps/guoba-stream/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
