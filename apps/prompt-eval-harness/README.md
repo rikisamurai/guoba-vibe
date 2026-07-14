@@ -1,87 +1,54 @@
 # Prompt Eval Harness
 
-Prompt Eval Harness is a small local tool for comparing multiple agent or prompt outputs against the same task.
+Prompt Eval Harness ranks multiple agent or prompt outputs against one explicit task, weighted rubric, and evidence record. The browser and Node 24 CLI use the same validation and scoring implementation.
 
-The current quick-start suite evaluates one concrete repo task: fixing QR Vault import/export collection membership. It ranks three candidate attempts with a weighted rubric, evidence, and a final `ship` / `inspect` / `hold` band.
+## Trust boundary
 
-## Quick Start
+This is a manual, offline evidence-ranking tool. It does not call an LLM judge, execute candidate code, verify commits, or prove that recorded evidence is true. A `ship` band means the validated manual ratings crossed the configured threshold; it is not an automated quality gate.
 
-From the repository root:
+The harness does guarantee that it will not score a structurally invalid suite:
+
+- Every suite needs a task, expected outcomes, uniquely identified criteria, and at least one attempt.
+- Rubric weights must be finite, between 0 and 1, and total exactly 100%.
+- Every rating must be finite and between 1 and 5, with non-empty evidence for every criterion.
+- Unknown rating/evidence keys, duplicate IDs, empty attempts, and malformed JSON block the decision.
+- Defensive scoring clamps direct invalid input, so scores cannot exceed 100 even when the scorer is called outside validation.
+
+## Browser workflow
 
 ```bash
-corepack enable
-pnpm install
-
-pnpm --filter prompt-eval-harness eval
 pnpm --filter prompt-eval-harness dev
 ```
 
-`eval` prints the scored ranking in the terminal. `dev` opens the browser UI where you can adjust rubric weights and inspect each attempt's evidence.
+Use the suite panel to inspect the task contract, import or export a complete suite JSON file, and normalize edited weights. Only valid suites are persisted in browser storage. Candidate ranking, rubric controls, and evidence inspection remain visually separate.
 
-Common commands:
+## CLI workflow
 
 ```bash
+# Bundled suite
+pnpm --filter prompt-eval-harness eval
+
+# Any suite file
+pnpm --filter prompt-eval-harness eval ./path/to/suite.json
+```
+
+The CLI exits non-zero and prints every validation error before scoring an invalid suite. Node 24 is required because the CLI imports the canonical TypeScript scorer directly.
+
+## Suite shape
+
+The bundled example lives in `src/eval-suite.json`. For each candidate, provide:
+
+- `ratings[criterionId]`: a manual value from 1 to 5.
+- `evidence[criterionId]`: the concrete reason or verification record supporting that rating.
+- `brief` and `output`: concise context for inspection.
+
+The bands are `ship` at 85+, `inspect` at 70–84, and `hold` below 70.
+
+## Verification
+
+```bash
+pnpm --filter prompt-eval-harness lint
 pnpm --filter prompt-eval-harness test
 pnpm --filter prompt-eval-harness build
-pnpm --filter prompt-eval-harness lint
+pnpm --filter prompt-eval-harness eval
 ```
-
-## What To Evaluate
-
-Use this harness when you have multiple outputs for the same task and need a repeatable way to decide which one is strongest.
-
-Good inputs:
-
-- Several agents fixing the same bug.
-- Several prompts answering the same product or coding question.
-- Several implementation plans for the same requirement.
-
-The included suite is stored in `src/eval-suite.json` and evaluates:
-
-- Task prompt: fix QR Vault import/export so collection membership survives Merge and Replace.
-- Expected outcomes: membership round trip, malformed payload safety, regression coverage, and verification evidence.
-- Attempts: three candidate responses with ratings and evidence.
-
-## How Evaluation Works
-
-Each attempt receives a `1-5` rating for every rubric criterion.
-
-The harness computes:
-
-```text
-final score = sum((rating / 5) * criterion weight) / sum(weights) * 100
-```
-
-Bands:
-
-- `ship`: score is `85` or higher.
-- `inspect`: score is `70-84`.
-- `hold`: score is below `70`.
-
-The browser UI lets you change criterion weights. The terminal `eval` command uses the weights in `src/eval-suite.json`.
-
-## Rubric
-
-Default criteria:
-
-| Criterion     | Default weight | Meaning                                                               |
-| ------------- | -------------: | --------------------------------------------------------------------- |
-| Correctness   |            45% | Does the attempt satisfy the task contract and handle key edge cases? |
-| Verification  |            25% | Does it include focused tests and fresh command evidence?             |
-| Repo fit      |            20% | Does it use existing project data shapes, commands, and conventions?  |
-| Scope control |            10% | Does it avoid unrelated rewrites and speculative features?            |
-
-Change the rubric in `src/eval-suite.json` when a different task needs different criteria.
-
-## Add Your Own Suite
-
-Edit `src/eval-suite.json`:
-
-1. Update `task.prompt` with the exact task being evaluated.
-2. Update `task.expectedOutcome` with concrete acceptance points.
-3. Update `rubric` with the criteria and weights you want.
-4. Add one `attempts[]` entry per candidate output.
-5. For every attempt, add `ratings` and `evidence` for each criterion id.
-6. Run `pnpm --filter prompt-eval-harness eval`.
-
-This is currently a manual/offline evaluation harness. It does not call an LLM judge or run the candidate code automatically.

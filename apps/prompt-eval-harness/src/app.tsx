@@ -1,189 +1,157 @@
-import { BarChart3, CheckCircle2, ClipboardList, ListFilter, SlidersHorizontal } from 'lucide-react'
-import { useMemo, useState, type CSSProperties } from 'react'
+import { FlaskConical, ShieldAlert, ShieldCheck } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { attempts, initialRubric, suite, type HarnessAttempt } from './eval-data'
+import { defaultSuite } from './eval-data'
+import { AttemptInspector, RubricPanel, Scoreboard } from './eval-panels'
+import { parseEvalSuite, validateEvalSuite } from './lib/eval-validation'
 import {
   normalizeRubricWeights,
   scoreAttempt,
   scoreAttempts,
   updateCriterionWeight,
-  validateEvalSuite,
-  type AttemptScore,
-  type RubricCriterion,
+  type EvalSuite,
 } from './lib/prompt-eval'
 import { SuitePanel } from './suite-panel'
 
-const initialLeaderId = scoreAttempts(initialRubric, attempts)[0].id
+const storageKey = 'prompt-eval-harness-suite-v1'
 
 export function App() {
-  const [rubric, setRubric] = useState(initialRubric)
-  const [selectedId, setSelectedId] = useState(initialLeaderId)
-  const scores = useMemo(() => scoreAttempts(rubric, attempts), [rubric])
-  const selectedAttempt = attempts.find((attempt) => attempt.id === selectedId) ?? attempts[0]
-  const selectedScore = scoreAttempt(rubric, selectedAttempt)
+  const [initial] = useState(readInitialState)
+  const [suite, setSuite] = useState(initial.suite)
+  const [selectedId, setSelectedId] = useState(readLeaderId(initial.suite))
+  const [suitePayload, setSuitePayload] = useState('')
+  const [message, setMessage] = useState(initial.message)
+  const scores = useMemo(() => scoreAttempts(suite.rubric, suite.attempts), [suite])
+  const selectedAttempt = suite.attempts.find((attempt) => attempt.id === selectedId)
+  const attempt = selectedAttempt ?? suite.attempts[0]
+  const selectedScore = scoreAttempt(suite.rubric, attempt)
   const leader = scores[0]
-  const validation = validateEvalSuite({ ...suite, rubric, attempts })
+  const validation = validateEvalSuite(suite)
+
+  useEffect(() => {
+    if (!validation.ok) return
+
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(suite))
+    } catch {
+      setMessage('Local save failed. Export the suite before leaving this page.')
+    }
+  }, [suite, validation.ok])
 
   function setWeight(id: string, weight: number) {
-    setRubric((current) => updateCriterionWeight(current, id, weight))
+    setSuite((current) => ({
+      ...current,
+      rubric: updateCriterionWeight(current.rubric, id, weight),
+    }))
+  }
+
+  function normalizeWeights() {
+    setSuite((current) => ({ ...current, rubric: normalizeRubricWeights(current.rubric) }))
+    setMessage('Weights normalized to exactly 100%.')
+  }
+
+  function importSuite() {
+    const parsed = parseEvalSuite(suitePayload)
+    if (!parsed.ok) {
+      setMessage(`Import rejected: ${parsed.errors.join(' ')}`)
+      return
+    }
+
+    setSuite(parsed.suite)
+    setSelectedId(readLeaderId(parsed.suite))
+    setMessage(`Imported “${parsed.suite.title}” with ${parsed.suite.attempts.length} attempts.`)
+  }
+
+  function resetSuite() {
+    setSuite(defaultSuite)
+    setSelectedId(readLeaderId(defaultSuite))
+    setMessage('Restored the bundled regression suite.')
   }
 
   return (
     <main className="page">
       <section className="harness" aria-label="Prompt Eval Harness">
         <header className="topbar">
-          <div>
-            <p className="eyebrow">eval control room</p>
-            <h1>{suite.title}</h1>
-            <p className="brief">{suite.description}</p>
+          <div className="brand">
+            <FlaskConical size={20} aria-hidden="true" />
+            <div>
+              <p>PROMPT EVAL HARNESS</p>
+              <span>Auditable manual evidence ranking</span>
+            </div>
           </div>
-          <div className="leader">
-            <CheckCircle2 size={17} aria-hidden="true" />
-            {leader.title} leads
+          <div className="decision">
+            <span className={validation.ok ? 'valid' : 'invalid'}>
+              {validation.ok ? <ShieldCheck size={15} /> : <ShieldAlert size={15} />}
+              {validation.ok ? 'SUITE VALID' : 'DECISION BLOCKED'}
+            </span>
+            <strong>
+              {validation.ok ? `${leader.title} · ${leader.score}` : 'Normalize or repair'}
+            </strong>
           </div>
         </header>
+
+        <div className="suite-heading">
+          <div>
+            <p>ACTIVE SUITE · {suite.id}</p>
+            <h1>{suite.title}</h1>
+          </div>
+          <span>Manual ratings only · candidate code is not executed</span>
+        </div>
 
         <div className="workspace">
           <SuitePanel
             suite={suite}
             errors={validation.errors}
-            onNormalize={() => setRubric((current) => normalizeRubricWeights(current))}
+            payload={suitePayload}
+            message={message}
+            onPayloadChange={setSuitePayload}
+            onNormalize={normalizeWeights}
+            onExport={() => {
+              setSuitePayload(JSON.stringify(suite, null, 2))
+              setMessage('Suite exported into the transfer field.')
+            }}
+            onImport={importSuite}
+            onReset={resetSuite}
           />
 
-          <section className="rubric-panel" aria-label="Rubric weights">
-            <div className="panel-title">
-              <SlidersHorizontal size={18} aria-hidden="true" />
-              <h2>Rubric weights</h2>
-            </div>
-            {rubric.map((criterion) => (
-              <CriterionControl
-                key={criterion.id}
-                criterion={criterion}
-                onWeightChange={setWeight}
-              />
-            ))}
-          </section>
+          <div className="ranking-column">
+            <Scoreboard
+              scores={scores}
+              selectedId={attempt.id}
+              decisionEnabled={validation.ok}
+              onSelect={setSelectedId}
+            />
+            <RubricPanel rubric={suite.rubric} onWeightChange={setWeight} />
+          </div>
 
-          <section className="scoreboard" aria-label="Attempt scores">
-            <div className="panel-title">
-              <BarChart3 size={18} aria-hidden="true" />
-              <h2>Attempt scores</h2>
-            </div>
-            {scores.map((score) => (
-              <ScoreRow
-                key={score.id}
-                score={score}
-                selected={score.id === selectedAttempt.id}
-                onSelect={() => setSelectedId(score.id)}
-              />
-            ))}
-          </section>
-
-          <AttemptInspector attempt={selectedAttempt} score={selectedScore} rubric={rubric} />
+          <AttemptInspector
+            attempt={attempt}
+            score={selectedScore}
+            rubric={suite.rubric}
+            decisionEnabled={validation.ok}
+          />
         </div>
       </section>
     </main>
   )
 }
 
-function CriterionControl({
-  criterion,
-  onWeightChange,
-}: {
-  criterion: RubricCriterion
-  onWeightChange: (id: string, weight: number) => void
-}) {
-  return (
-    <label className="criterion">
-      <span>
-        <ClipboardList size={17} aria-hidden="true" />
-        {criterion.label}
-      </span>
-      {criterion.description ? <small>{criterion.description}</small> : null}
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.05"
-        value={criterion.weight}
-        onChange={(event) => onWeightChange(criterion.id, Number(event.currentTarget.value))}
-      />
-      <strong>{Math.round(criterion.weight * 100)}%</strong>
-    </label>
-  )
+function readInitialState(): { suite: EvalSuite; message: string } {
+  if (typeof window === 'undefined') return { suite: defaultSuite, message: '' }
+
+  try {
+    const stored = window.localStorage.getItem(storageKey)
+    if (!stored) return { suite: defaultSuite, message: '' }
+
+    const parsed = parseEvalSuite(stored)
+    return parsed.ok
+      ? { suite: parsed.suite, message: 'Restored the last valid local suite.' }
+      : { suite: defaultSuite, message: 'Stored suite was invalid; restored the bundled suite.' }
+  } catch {
+    return { suite: defaultSuite, message: 'Local storage is unavailable; use suite export.' }
+  }
 }
 
-function ScoreRow({
-  score,
-  selected,
-  onSelect,
-}: {
-  score: AttemptScore
-  selected: boolean
-  onSelect: () => void
-}) {
-  return (
-    <button
-      type="button"
-      className={`score-row ${score.band} ${selected ? 'selected' : ''}`}
-      onClick={onSelect}
-    >
-      <div>
-        <h3>{score.title}</h3>
-        <span>{score.band}</span>
-      </div>
-      <div className="bar" style={{ '--score': `${score.score}%` } as CSSProperties}>
-        <span />
-      </div>
-      <strong>{score.score}</strong>
-    </button>
-  )
-}
-
-function AttemptInspector({
-  attempt,
-  score,
-  rubric,
-}: {
-  attempt: HarnessAttempt
-  score: AttemptScore
-  rubric: RubricCriterion[]
-}) {
-  return (
-    <aside className={`inspector ${score.band}`}>
-      <div className="panel-title">
-        <ListFilter size={18} aria-hidden="true" />
-        <h2>{attempt.title}</h2>
-      </div>
-      <p className="brief">{attempt.brief}</p>
-      <blockquote>{attempt.output}</blockquote>
-      <div className="matrix">
-        {rubric.map((criterion) => (
-          <CriterionEvidence key={criterion.id} criterion={criterion} attempt={attempt} />
-        ))}
-      </div>
-    </aside>
-  )
-}
-
-function CriterionEvidence({
-  criterion,
-  attempt,
-}: {
-  criterion: RubricCriterion
-  attempt: HarnessAttempt
-}) {
-  const rating = attempt.ratings[criterion.id] ?? 0
-
-  return (
-    <article className="evidence">
-      <div>
-        <strong>{criterion.label}</strong>
-        <span>
-          {rating}/5 · {Math.round(criterion.weight * 100)}%
-        </span>
-      </div>
-      <p>{attempt.evidence[criterion.id]}</p>
-    </article>
-  )
+function readLeaderId(suite: EvalSuite) {
+  return scoreAttempts(suite.rubric, suite.attempts)[0]?.id ?? suite.attempts[0]?.id ?? ''
 }

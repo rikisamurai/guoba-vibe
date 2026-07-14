@@ -1,45 +1,85 @@
-import { ClipboardList, TerminalSquare } from 'lucide-react'
+import { ClipboardList, Download, RotateCcw, Scale, TerminalSquare, Upload } from 'lucide-react'
 
 import type { EvalSuite } from './lib/prompt-eval'
 
-export function SuitePanel({
-  suite,
-  errors,
-  onNormalize,
-}: {
+type SuitePanelProps = {
   suite: EvalSuite
   errors: string[]
+  payload: string
+  message: string
+  onPayloadChange: (payload: string) => void
   onNormalize: () => void
-}) {
+  onExport: () => void
+  onImport: () => void
+  onReset: () => void
+}
+
+export function SuitePanel(props: SuitePanelProps) {
   return (
-    <section className="suite-panel" aria-label="Eval suite">
-      <div className="panel-title">
-        <ClipboardList size={18} aria-hidden="true" />
-        <h2>Suite contract</h2>
-      </div>
-      <p className="prompt">{suite.task.prompt}</p>
-      <ul>
-        {suite.task.expectedOutcome.map((item) => (
+    <section className="suite-panel" aria-label="Eval suite contract">
+      <PanelTitle icon={ClipboardList} title="Suite contract" />
+      <p className="prompt">{props.suite.task.prompt}</p>
+      <ol className="outcomes">
+        {props.suite.task.expectedOutcome.map((item) => (
           <li key={item}>{item}</li>
         ))}
-      </ul>
-      <div className={`suite-status ${errors.length ? 'invalid' : 'valid'}`}>
-        {errors.length ? `${errors.length} suite issues` : 'Suite is complete'}
+      </ol>
+
+      <section className={`suite-status ${props.errors.length ? 'invalid' : 'valid'}`}>
+        <strong>
+          {props.errors.length ? `${props.errors.length} blocking issues` : 'Ready to rank'}
+        </strong>
+        {props.errors.map((error) => (
+          <p key={error}>{error}</p>
+        ))}
+      </section>
+
+      <div className="suite-actions">
+        <button type="button" onClick={props.onNormalize}>
+          <Scale size={15} aria-hidden="true" />
+          Normalize weights
+        </button>
+        <button type="button" onClick={props.onReset}>
+          <RotateCcw size={15} aria-hidden="true" />
+          Reset sample
+        </button>
       </div>
-      {errors.length
-        ? errors.map((error) => (
-            <p key={error} className="suite-error">
-              {error}
-            </p>
-          ))
-        : null}
-      <button type="button" onClick={onNormalize}>
-        Normalize weights
-      </button>
+
+      <details className="suite-transfer">
+        <summary>Import / export suite JSON</summary>
+        <textarea
+          aria-label="Suite JSON"
+          value={props.payload}
+          onChange={(event) => props.onPayloadChange(event.target.value)}
+          placeholder="Export the active suite or paste a complete suite JSON document."
+          spellCheck={false}
+        />
+        <div>
+          <button type="button" onClick={props.onExport}>
+            <Download size={15} aria-hidden="true" /> Export
+          </button>
+          <button type="button" onClick={props.onImport}>
+            <Upload size={15} aria-hidden="true" /> Import
+          </button>
+        </div>
+      </details>
+
+      <p className="suite-message" role="status" aria-live="polite">
+        {props.message || 'Only suites that pass every structural check are persisted.'}
+      </p>
       <code className="cli-command">
         <TerminalSquare size={15} aria-hidden="true" />
-        pnpm --filter prompt-eval-harness eval
+        pnpm --filter prompt-eval-harness eval [suite.json]
       </code>
     </section>
+  )
+}
+
+function PanelTitle({ icon: Icon, title }: { icon: typeof ClipboardList; title: string }) {
+  return (
+    <div className="panel-title">
+      <Icon size={17} aria-hidden="true" />
+      <h2>{title}</h2>
+    </div>
   )
 }

@@ -1,0 +1,137 @@
+.scoreboard,
+.rubric-panel {
+  padding: 16px;
+  background: #fffdf7;
+}
+
+.score-row {
+  display: grid;
+  grid-template-columns: 30px minmax(120px, 0.9fr) minmax(80px, 1fr) 42px;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid transparent;
+  border-top-color: #dedfd9;
+  padding: 11px 7px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.score-row:hover {
+  background: #f5f6f1;
+}
+
+.score-row.selected {
+  border-color: #3465db;
+  box-shadow: inset 3px 0 #3465db;
+  background: #f0f4ff;
+}
+
+.rank {
+  color: #737c78;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 12px;
+}
+
+.candidate {
+  display: grid;
+  min-width: 0;
+}
+
+.candidate strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.candidate small {
+  margin-top: 3px;
+  color: #66706c;
+  font-size: 10px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.bar {
+  height: 11px;
+  overflow: hidden;
+  border: 1px solid #c1c5bf;
+  border-radius: 999px;
+  background: #e4e6e1;
+}
+
+.bar > span {
+  display: block;
+  width: var(--score);
+  height: 100%;
+  background: #2e8a54;
+}
+
+.score-row.inspect .bar > span {
+  background: #3465db;
+}
+
+.score-row.hold .bar > span {
+  background: #c54d38;
+}
+
+.score {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 20px;
+  text-align: right;
+}
+
+.criterion-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.criterion {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 50px;
+  gap: 7px 10px;
+  border: 1px solid #d3d5cf;
+  padding: 10px;
+  background: #f8f7f1;
+}
+
+.criterion span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.criterion input {
+  grid-column: 1;
+  width: 100%;
+  accent-color: #3465db;
+}
+
+.criterion strong {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 14px;
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  .score-row {
+    grid-template-columns: 26px minmax(0, 1fr) 40px;
+  }
+
+  .score-row .bar {
+    display: none;
+  }
+
+  .criterion-list {
+    grid-template-columns: 1fr;
+  }
+}

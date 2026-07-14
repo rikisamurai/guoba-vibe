@@ -37,10 +37,10 @@ export type AttemptScore = {
 }
 
 export function scoreAttempt(rubric: RubricCriterion[], attempt: EvalAttempt): AttemptScore {
-  const totalWeight = rubric.reduce((sum, criterion) => sum + criterion.weight, 0)
+  const totalWeight = rubric.reduce((sum, criterion) => sum + safeWeight(criterion.weight), 0)
   const weightedScore = rubric.reduce((sum, criterion) => {
-    const rating = attempt.ratings[criterion.id] ?? 0
-    return sum + (rating / 5) * criterion.weight
+    const rating = clampRating(attempt.ratings[criterion.id])
+    return sum + (rating / 5) * safeWeight(criterion.weight)
   }, 0)
   const score = totalWeight === 0 ? 0 : Math.round((weightedScore / totalWeight) * 100)
 
@@ -55,7 +55,7 @@ export function scoreAttempt(rubric: RubricCriterion[], attempt: EvalAttempt): A
 export function scoreAttempts(rubric: RubricCriterion[], attempts: EvalAttempt[]): AttemptScore[] {
   return attempts
     .map((attempt) => scoreAttempt(rubric, attempt))
-    .sort((left, right) => right.score - left.score)
+    .toSorted((left, right) => right.score - left.score || left.title.localeCompare(right.title))
 }
 
 export function updateCriterionWeight(
@@ -63,46 +63,36 @@ export function updateCriterionWeight(
   id: string,
   weight: number,
 ): RubricCriterion[] {
-  return rubric.map((criterion) => (criterion.id === id ? { ...criterion, weight } : criterion))
+  const nextWeight = Number.isFinite(weight) ? Math.min(1, Math.max(0, weight)) : 0
+  return rubric.map((criterion) =>
+    criterion.id === id ? { ...criterion, weight: nextWeight } : criterion,
+  )
 }
 
 export function normalizeRubricWeights(rubric: RubricCriterion[]): RubricCriterion[] {
-  const total = rubric.reduce((sum, criterion) => sum + criterion.weight, 0)
+  if (rubric.length === 0) return []
 
-  if (total === 0) {
-    return rubric
+  const total = rubric.reduce((sum, criterion) => sum + safeWeight(criterion.weight), 0)
+  const rawPoints = rubric.map((criterion) =>
+    total === 0 ? 100 / rubric.length : (safeWeight(criterion.weight) / total) * 100,
+  )
+  const points = rawPoints.map(Math.floor)
+  const remaining = 100 - points.reduce((sum, value) => sum + value, 0)
+  const remainderOrder = rawPoints
+    .map((value, index) => ({ index, fraction: value - points[index] }))
+    .toSorted((left, right) => right.fraction - left.fraction || left.index - right.index)
+
+  for (let index = 0; index < remaining; index += 1) {
+    points[remainderOrder[index].index] += 1
   }
 
-  return rubric.map((criterion) => ({
-    ...criterion,
-    weight: Math.round((criterion.weight / total) * 100) / 100,
-  }))
+  return rubric.map((criterion, index) => ({ ...criterion, weight: points[index] / 100 }))
 }
 
-export function validateEvalSuite(
-  suite: EvalSuite,
-): { ok: true; errors: [] } | { ok: false; errors: string[] } {
-  const errors: string[] = []
+function safeWeight(weight: number) {
+  return Number.isFinite(weight) && weight > 0 ? weight : 0
+}
 
-  if (!suite.rubric.length) {
-    errors.push('Suite must include at least one rubric criterion.')
-  }
-
-  if (!suite.attempts.length) {
-    errors.push('Suite must include at least one attempt.')
-  }
-
-  for (const attempt of suite.attempts) {
-    for (const criterion of suite.rubric) {
-      if (typeof attempt.ratings[criterion.id] !== 'number') {
-        errors.push(`${attempt.title} is missing rating for ${criterion.label}.`)
-      }
-
-      if (!attempt.evidence[criterion.id]) {
-        errors.push(`${attempt.title} is missing evidence for ${criterion.label}.`)
-      }
-    }
-  }
-
-  return errors.length ? { ok: false, errors } : { ok: true, errors: [] }
+function clampRating(rating: number | undefined) {
+  return Number.isFinite(rating) ? Math.min(5, Math.max(0, rating ?? 0)) : 0
 }

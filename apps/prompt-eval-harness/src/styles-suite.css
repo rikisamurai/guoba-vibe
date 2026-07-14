@@ -1,0 +1,131 @@
+.suite-panel {
+  display: grid;
+  gap: 11px;
+  padding: 16px;
+}
+
+.prompt {
+  border-left: 4px solid #3465db;
+  margin: 0;
+  padding: 10px 11px;
+  background: #eef3ff;
+  color: #26324e;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.outcomes {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 22px;
+  color: #47514d;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.suite-status {
+  border: 1px solid #aeb4b0;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.suite-status strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.suite-status p {
+  margin: 6px 0 0;
+}
+
+.suite-status.valid {
+  border-color: #8bc29e;
+  background: #edf8f0;
+  color: #285b3b;
+}
+
+.suite-status.invalid {
+  border-color: #dea497;
+  background: #fff0ec;
+  color: #913322;
+}
+
+.suite-actions,
+.suite-transfer > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.suite-actions button,
+.suite-transfer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  border: 1px solid #979e9a;
+  border-radius: 4px;
+  padding: 0 10px;
+  background: #fff;
+  color: #151a18;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.suite-actions button:first-child {
+  border-color: #2856bb;
+  background: #3465db;
+  color: #fff;
+}
+
+.suite-transfer {
+  border-top: 1px solid #d7d8d3;
+  padding-top: 9px;
+}
+
+.suite-transfer summary {
+  width: fit-content;
+  color: #46504c;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.suite-transfer textarea {
+  width: 100%;
+  min-height: 125px;
+  border: 1px solid #aeb4b0;
+  border-radius: 4px;
+  margin: 9px 0;
+  padding: 10px;
+  background: #fff;
+  color: #151a18;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.suite-message {
+  min-height: 18px;
+  margin: 0;
+  color: #5c6662;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.cli-command {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  border: 1px solid #c5c8c1;
+  padding: 9px;
+  background: #e8e9e4;
+  color: #28302d;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 10px;
+  white-space: nowrap;
+}

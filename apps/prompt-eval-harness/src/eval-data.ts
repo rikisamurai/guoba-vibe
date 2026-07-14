@@ -1,8 +1,8 @@
 import rawSuite from './eval-suite.json'
-import type { EvalSuite, EvalSuiteAttempt, RubricCriterion } from './lib/prompt-eval'
+import { collectEvalSuiteErrors, isEvalSuite } from './lib/eval-validation'
 
-export type HarnessAttempt = EvalSuiteAttempt
+if (!isEvalSuite(rawSuite)) {
+  throw new Error(`Bundled eval suite is invalid: ${collectEvalSuiteErrors(rawSuite).join(' ')}`)
+}
 
-export const suite = rawSuite as EvalSuite
-export const initialRubric: RubricCriterion[] = suite.rubric
-export const attempts: HarnessAttempt[] = suite.attempts
+export const defaultSuite = rawSuite

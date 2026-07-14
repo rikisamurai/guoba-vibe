@@ -1,0 +1,98 @@
+.inspector {
+  padding: 16px;
+  background: #161d1a;
+  color: #fffdf7;
+}
+
+.attempt-title,
+.evidence > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.attempt-title {
+  border-top: 1px solid #3a4541;
+  padding-top: 13px;
+}
+
+.attempt-title span {
+  color: #93a29c;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 10px;
+}
+
+.attempt-title h2 {
+  margin: 3px 0 0;
+  font-size: 20px;
+}
+
+.attempt-title > strong {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 38px;
+}
+
+.inspector.ship .attempt-title > strong {
+  color: #84d5a4;
+}
+
+.inspector.inspect .attempt-title > strong {
+  color: #8fb1ff;
+}
+
+.inspector.hold .attempt-title > strong,
+.inspector.invalid .attempt-title > strong {
+  color: #ff9e8d;
+}
+
+.brief {
+  margin: 13px 0;
+  color: #c7d0cc;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+blockquote {
+  border-left: 4px solid #3465db;
+  margin: 0 0 13px;
+  padding: 10px 11px;
+  background: #202a26;
+  color: #e0e6e3;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.matrix {
+  display: grid;
+  gap: 8px;
+}
+
+.evidence {
+  border: 1px solid #3b4843;
+  padding: 10px;
+  background: #1d2623;
+}
+
+.evidence > div {
+  margin-bottom: 5px;
+}
+
+.evidence strong {
+  font-size: 12px;
+}
+
+.evidence span {
+  color: #8fb1ff;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.evidence p {
+  margin: 0;
+  color: #c7d0cc;
+  font-size: 11px;
+  line-height: 1.45;
+}

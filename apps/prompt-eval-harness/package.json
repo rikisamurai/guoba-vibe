@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite",
     "build": "tsc -b && vite build",
     "eval": "node scripts/evaluate.mjs",
     "lint": "oxlint",
-    "preview": "vite preview --host 0.0.0.0",
+    "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"
   },
