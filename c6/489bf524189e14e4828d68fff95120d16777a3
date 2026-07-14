@@ -1,0 +1,63 @@
+apps/prompt-eval-harness/src/suite-panel.tsx
+  s_36b4104e727909::t_ead4e039605fd8 1,5,8-10,12-17,19-23,26-45,47-69,72,77-81,83
+  s_36b4104e727909::t_6dfbfaa4dcd004 82,84-85
+apps/prompt-eval-harness/src/eval-data.ts
+  s_36b4104e727909::t_0d1822918805f9 2,4-6,8
+apps/prompt-eval-harness/src/main.tsx
+  s_36b4104e727909::t_428b0b192d1766 7-9
+apps/prompt-eval-harness/scripts/evaluate.mjs
+  s_36b4104e727909::t_05f4240864829e 5-7,14-33,35-57,59-60,65-67,70-72
+  s_36b4104e727909::t_3235e8ef0f14ca 73
+apps/prompt-eval-harness/src/lib/prompt-eval.test.ts
+  s_36b4104e727909::t_1a9f1d4ec6d50b 3,9,12-30,48-58,61,64-65,68-69,72-75,78-82,84-86,88,90-104,106,108-136
+apps/prompt-eval-harness/README.md
+  s_36b4104e727909::t_4e53b67b586f31 3,5,7,9,11-15,17,20,23,25,27-29,31-32,35,37,39,41-43,45,47,49-54
+apps/prompt-eval-harness/src/styles-inspector.css
+  s_36b4104e727909::t_428b0b192d1766 1-98
+apps/prompt-eval-harness/scripts/evaluate.test.mjs
+  s_36b4104e727909::t_05f4240864829e 1-60
+apps/prompt-eval-harness/src/lib/prompt-eval.ts
+  s_36b4104e727909::t_58b0f0fb7f4f6a 40,42-43,58,66-69,73-86,89,92-94,96-97
+apps/prompt-eval-harness/src/styles-ranking.css
+  s_36b4104e727909::t_428b0b192d1766 1-137
+apps/prompt-eval-harness/src/styles-suite.css
+  s_36b4104e727909::t_428b0b192d1766 1-131
+.github/workflows/prompt-eval-harness.yml
+  s_36b4104e727909::t_4e53b67b586f31 1-30
+apps/prompt-eval-harness/src/app.tsx
+  s_36b4104e727909::t_ead4e039605fd8 1-2,4-6,12,16,19-27,29-39,42-68,75-80,82-89,93-100,105-114,117-132,139-140,142-144,146-150
+  s_36b4104e727909::t_76bf346506937b 151-152,155-156
+apps/prompt-eval-harness/vite.config.ts
+  s_36b4104e727909::t_42241fea5f6767 9
+apps/prompt-eval-harness/src/eval-panels.tsx
+  s_36b4104e727909::t_ead4e039605fd8 1-3,5-55,57-151,156
+  s_36b4104e727909::t_42241fea5f6767 4,56,152-155
+apps/prompt-eval-harness/package.json
+  s_36b4104e727909::t_4e53b67b586f31 7,11
+apps/prompt-eval-harness/src/lib/eval-validation.ts
+  s_36b4104e727909::t_58b0f0fb7f4f6a 1-157
+  s_36b4104e727909::t_ebd1f11227deaf 158
+apps/prompt-eval-harness/index.html
+  s_36b4104e727909::t_4e53b67b586f31 7-10
+apps/prompt-eval-harness/.oxlintrc.json
+  s_36b4104e727909::t_4e53b67b586f31 1-40
+apps/prompt-eval-harness/src/styles.css
+  s_36b4104e727909::t_428b0b192d1766 2-12,20,25-26,30-42,45,49,51-54,58-62,64,69-73,76,80-85,88-92,95-96,98,101-102,106-108,112-117,120-122,125-127,130-131,134-139,142-145,147,150-152,155-161,164-169,172-176,179,181-182,185-187,190-193,196-199,201-203,206,208-213,217-219,222-224,227
+  s_36b4104e727909::t_d3a1b6039762d8 228-232
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "c6489bf524189e14e4828d68fff95120d16777a3",
+  "prompts": {},
+  "sessions": {
+    "s_36b4104e727909": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f5ce2-4f15-77d2-ba4d-4e127a6361c1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
