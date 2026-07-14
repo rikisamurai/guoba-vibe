@@ -11,6 +11,7 @@ import type {
 import { inspectClaudeLink } from './claude-links'
 import { buildContentManifest } from './content-manifest'
 import { parseSkillMetadata } from './frontmatter'
+import { isMissingPathError } from './fs-errors'
 import { readLockFile } from './lock-file'
 import type { ManagerRoots, ScopePaths } from './paths'
 import { getSafeScopePaths } from './scope-safety'
@@ -109,7 +110,7 @@ async function directoryNames(path: string): Promise<string[]> {
     const entries = await readdir(path, { withFileTypes: true })
     return entries.filter((entry) => !entry.name.startsWith('.')).map((entry) => entry.name)
   } catch (error) {
-    if (isMissing(error)) return []
+    if (isMissingPathError(error)) return []
     throw error
   }
 }
@@ -119,7 +120,7 @@ async function isRealDirectory(path: string): Promise<boolean> {
     const stats = await lstat(path)
     return stats.isDirectory() && !stats.isSymbolicLink()
   } catch (error) {
-    if (isMissing(error)) return false
+    if (isMissingPathError(error)) return false
     throw error
   }
 }
@@ -127,8 +128,4 @@ async function isRealDirectory(path: string): Promise<boolean> {
 function compareSkills(left: SkillRecord, right: SkillRecord): number {
   if (left.scope !== right.scope) return left.scope === 'project' ? -1 : 1
   return left.name.localeCompare(right.name)
-}
-
-function isMissing(error: unknown): boolean {
-  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT'
 }

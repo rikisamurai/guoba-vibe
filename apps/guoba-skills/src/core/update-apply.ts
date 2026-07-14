@@ -36,6 +36,10 @@ export async function applyStoredPreview(
     const paths = await getSafeScopePaths(roots, record.scope)
     const staged = await stageDirectory(stored.remoteSkillPath, record.canonicalPath)
     try {
+      const stagedManifest = await buildContentManifest(staged)
+      if (stagedManifest.contentHash !== preview.remoteContentHash) {
+        throw new Error('Prepared Skill content changed after review. Prepare the update again.')
+      }
       await installDirectory(staged, record.canonicalPath, async () => {
         const folder = folderFromSkillId(record.id)
         await ensureClaudeLink(paths, folder)

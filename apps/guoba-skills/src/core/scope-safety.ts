@@ -2,6 +2,7 @@ import { lstat } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 
 import type { SkillScope } from '../shared/types'
+import { isMissingPathError } from './fs-errors'
 import { getScopePaths, type ManagerRoots, type ScopePaths } from './paths'
 
 export async function getSafeScopePaths(
@@ -37,10 +38,6 @@ async function rejectSymlink(path: string): Promise<void> {
       throw new Error(`Managed path contains a symbolic-link ancestor: ${path}`)
     }
   } catch (error) {
-    if (!isMissing(error)) throw error
+    if (!isMissingPathError(error)) throw error
   }
-}
-
-function isMissing(error: unknown): boolean {
-  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT'
 }

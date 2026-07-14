@@ -3,6 +3,7 @@ import { dirname, join, relative, resolve } from 'node:path'
 
 import type { ClaudeLinkStatus } from '../shared/types'
 import { buildContentManifest } from './content-manifest'
+import { isMissingPathError } from './fs-errors'
 import type { ScopePaths } from './paths'
 
 export async function inspectClaudeLink(
@@ -14,7 +15,7 @@ export async function inspectClaudeLink(
   try {
     stats = await lstat(claudePath)
   } catch (error) {
-    if (isMissing(error)) return canonicalExists ? 'missing' : 'claude_only'
+    if (isMissingPathError(error)) return canonicalExists ? 'missing' : 'claude_only'
     throw error
   }
   if (!stats.isSymbolicLink()) return canonicalExists ? 'real_directory' : 'claude_only'
@@ -78,7 +79,7 @@ export async function removeManagedClaudeLink(paths: ScopePaths, name: string): 
     const target = resolve(dirname(claudePath), await readlink(claudePath))
     if (target === resolve(canonicalPath)) await rm(claudePath)
   } catch (error) {
-    if (!isMissing(error)) throw error
+    if (!isMissingPathError(error)) throw error
   }
 }
 
@@ -87,12 +88,8 @@ async function exists(path: string, link = false): Promise<boolean> {
     await lstat(path)
     return true
   } catch (error) {
-    if (isMissing(error)) return false
+    if (isMissingPathError(error)) return false
     if (link) throw error
     throw error
   }
-}
-
-function isMissing(error: unknown): boolean {
-  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT'
 }

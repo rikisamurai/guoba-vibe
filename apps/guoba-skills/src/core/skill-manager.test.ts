@@ -1,4 +1,4 @@
-import { lstat, mkdir, readFile, readlink, symlink, writeFile } from 'node:fs/promises'
+import { chmod, lstat, mkdir, readFile, readlink, symlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
@@ -41,7 +41,7 @@ describe('SkillManager Git lifecycle', () => {
 
     await writeTestSkill(fixture.source, 'demo', 'Version C')
     await commitAll(fixture.source, 'version C')
-    await manager.apply(preview.previewId)
+    await Promise.all([manager.apply(preview.previewId), manager.discard(preview.previewId)])
     expect(await readFile(join(paths.canonicalRoot, 'demo', 'SKILL.md'), 'utf8')).toContain(
       'Version B',
     )
@@ -147,6 +147,42 @@ describe('SkillManager Git lifecycle', () => {
       'utf8',
     )
     expect(content).toMatch(/Version [BC]/u)
+  })
+
+  it('serializes check with apply so stale provenance cannot win', async () => {
+    const fixture = await workspace()
+    await writeTestSkill(fixture.source, 'demo', 'Version A')
+    await commitAll(fixture.source, 'version A')
+    const roots = getManagerRoots(fixture.project, fixture.home)
+    const updater = new SkillManager(roots)
+    const checker = new SkillManager(roots)
+    await updater.install({
+      source: pathToFileURL(fixture.source).toString(),
+      scope: 'project',
+      skill: 'demo',
+    })
+    await writeTestSkill(fixture.source, 'demo', 'Version B')
+    await commitAll(fixture.source, 'version B')
+    const preview = await updater.prepare('project:demo')
+    const bin = join(fixture.root, 'slow-git')
+    await mkdir(bin)
+    await writeFile(
+      join(bin, 'git'),
+      '#!/bin/sh\nif [ "$1" = "ls-remote" ]; then /bin/sleep 0.2; fi\nexec /usr/bin/git "$@"\n',
+    )
+    await chmod(join(bin, 'git'), 0o755)
+    const originalPath = process.env.PATH
+    process.env.PATH = `${bin}:${originalPath ?? ''}`
+    try {
+      const checking = checker.check('project:demo')
+      await new Promise((resolveDelay) => setTimeout(resolveDelay, 50))
+      await Promise.all([checking, updater.apply(preview.previewId)])
+    } finally {
+      process.env.PATH = originalPath
+    }
+    const record = (await updater.inventory()).skills.find(({ id }) => id === 'project:demo')
+    expect(record?.provenance?.revision).toBe(preview.remoteRevision)
+    expect(record?.updateStatus).toBe('up_to_date')
   })
 
   it('rejects managed path ancestors that are symbolic links', async () => {

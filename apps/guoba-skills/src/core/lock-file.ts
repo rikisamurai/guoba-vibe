@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import type { SkillProvenance } from '../shared/types'
 import { withFileLock } from './file-lock'
+import { isMissingPathError } from './fs-errors'
 
 interface LockFile {
   version: number
@@ -60,7 +61,7 @@ export async function readLockFile(path: string): Promise<LockFile> {
       ),
     }
   } catch (error) {
-    if (isMissing(error)) return structuredClone(EMPTY_LOCK)
+    if (isMissingPathError(error)) return structuredClone(EMPTY_LOCK)
     throw new Error(`Could not read ${path}: ${messageOf(error)}`, { cause: error })
   }
 }
@@ -105,10 +106,6 @@ function githubUrl(source: string, type: string): string | undefined {
   return type === 'github' && /^[\w.-]+\/[\w.-]+$/u.test(source)
     ? `https://github.com/${source}.git`
     : undefined
-}
-
-function isMissing(error: unknown): boolean {
-  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT'
 }
 
 function messageOf(error: unknown): string {

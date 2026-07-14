@@ -102,10 +102,10 @@ export class UpdateCoordinator {
   async apply(previewId: string): Promise<void> {
     const stored = this.#previews.get(previewId)
     if (!stored) throw new Error('This update preview expired. Prepare it again.')
+    this.#previews.delete(previewId)
     try {
       await applyStoredPreview(this.roots, stored)
     } finally {
-      this.#previews.delete(previewId)
       await rm(stored.temporaryRoot, { force: true, recursive: true })
     }
   }

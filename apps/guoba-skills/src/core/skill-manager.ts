@@ -31,7 +31,14 @@ export class SkillManager {
     const candidates = id
       ? [requireRecord(inventory, id)]
       : inventory.skills.filter((skill) => skill.provenance?.sourceUrl)
-    await Promise.all(candidates.map((skill) => this.#updates.check(skill)))
+    await Promise.all(
+      candidates.map((skill) =>
+        withFileLock(skill.canonicalPath, async () => {
+          const fresh = requireRecord(await this.inventory(), skill.id)
+          await this.#updates.check(fresh)
+        }),
+      ),
+    )
     return this.inventory()
   }
 

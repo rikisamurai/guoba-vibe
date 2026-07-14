@@ -8,6 +8,7 @@ import { ensureClaudeLink, removeManagedClaudeLink } from './claude-links'
 import { buildContentManifest } from './content-manifest'
 import { withFileLock } from './file-lock'
 import { parseSkillMetadata } from './frontmatter'
+import { isMissingPathError } from './fs-errors'
 import {
   findSkillDirectory,
   getTreeHash,
@@ -115,9 +116,7 @@ async function exists(path: string): Promise<boolean> {
     await lstat(path)
     return true
   } catch (error) {
-    if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT') {
-      return false
-    }
+    if (isMissingPathError(error)) return false
     throw error
   }
 }

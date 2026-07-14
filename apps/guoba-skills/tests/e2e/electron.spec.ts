@@ -37,6 +37,9 @@ test('launches the real Electron shell with the shared inventory UI', async () =
     await page.getByRole('tab', { name: 'files' }).click()
     await page.getByRole('button', { name: /SKILL\.md/u }).click()
     await expect(page.getByTestId('file-preview')).toContainText('User body')
+    if (process.env.GUOBA_SKILLS_CAPTURE_FILES) {
+      await page.screenshot({ path: process.env.GUOBA_SKILLS_CAPTURE_FILES })
+    }
     await page.getByTestId('skill-project:demo').click()
     await page.getByTitle('Check upstream').click()
     await expect(page.getByText('Update available').first()).toBeVisible()

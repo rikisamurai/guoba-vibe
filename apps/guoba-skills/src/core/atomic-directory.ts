@@ -1,12 +1,13 @@
 import { cp, mkdir, rename, rm } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 
 import { buildContentManifest } from './content-manifest'
+import { isMissingPathError } from './fs-errors'
 
 export async function stageDirectory(source: string, target: string): Promise<string> {
   await buildContentManifest(source)
   await mkdir(dirname(target), { recursive: true })
-  const staged = join(dirname(target), `.${target.split('/').at(-1)}.stage-${crypto.randomUUID()}`)
+  const staged = join(dirname(target), `.${basename(target)}.stage-${crypto.randomUUID()}`)
   await cp(source, staged, { recursive: true, errorOnExist: true, preserveTimestamps: true })
   await buildContentManifest(staged)
   return staged
@@ -18,7 +19,7 @@ export async function installDirectory(
   commitMetadata: () => Promise<void>,
 ): Promise<void> {
   const targetExists = await pathExists(target)
-  const backup = `${target}.backup-${crypto.randomUUID()}`
+  const backup = join(dirname(target), `.${basename(target)}.backup-${crypto.randomUUID()}`)
   if (targetExists) await rename(target, backup)
   try {
     await rename(staged, target)
@@ -28,7 +29,11 @@ export async function installDirectory(
     if (targetExists) await rename(backup, target)
     throw error
   }
-  if (targetExists) await rm(backup, { force: true, recursive: true })
+  if (targetExists) {
+    await rm(backup, { force: true, maxRetries: 3, recursive: true, retryDelay: 100 }).catch(
+      () => undefined,
+    )
+  }
 }
 
 async function pathExists(path: string): Promise<boolean> {
@@ -36,9 +41,7 @@ async function pathExists(path: string): Promise<boolean> {
     await buildContentManifest(path)
     return true
   } catch (error) {
-    if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT') {
-      return false
-    }
+    if (isMissingPathError(error)) return false
     throw error
   }
 }

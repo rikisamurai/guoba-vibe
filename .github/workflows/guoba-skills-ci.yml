@@ -39,13 +39,16 @@ jobs:
           apps/guoba-skills
           .github/workflows/guoba-skills-ci.yml
           .github/workflows/guoba-skills-release.yml
-      - run: pnpm --filter guoba-skills lint
       - run: pnpm --filter guoba-skills typecheck
+      - run: pnpm --filter guoba-skills lint
       - run: pnpm --filter guoba-skills test
       - run: pnpm --filter guoba-skills exec playwright install --with-deps chromium
       - run: pnpm --filter guoba-skills test:e2e:web
       - name: Pack installable CLI
-        run: pnpm --filter guoba-skills pack --pack-destination apps/guoba-skills/release/npm
+        run: |
+          pnpm --filter guoba-skills build:cli
+          pnpm --filter guoba-skills build:web
+          pnpm --filter guoba-skills pack --pack-destination apps/guoba-skills/release/npm
       - uses: actions/upload-artifact@v7
         with:
           name: guoba-skills-cli
