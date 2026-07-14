@@ -1,0 +1,160 @@
+.detail-section {
+  margin-top: 20px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.section-heading h3 {
+  margin-bottom: 0;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.section-heading span {
+  color: #747b7d;
+  font-size: 10px;
+}
+
+.command-list {
+  display: grid;
+  border: 1px solid #d8dad8;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.command-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid #e1e2e0;
+  padding: 10px 11px;
+  background: #fff;
+}
+
+.command-row:last-child {
+  border-bottom: 0;
+}
+
+.command-row > svg {
+  color: #8c9394;
+}
+
+.command-row.passed > svg {
+  color: #27804a;
+}
+
+.command-row.failed > svg {
+  color: #bd4d38;
+}
+
+.command-row small {
+  display: block;
+  margin-bottom: 2px;
+  color: #7a8183;
+  font-size: 9px;
+}
+
+.command-row code {
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+
+.command-row strong {
+  border-radius: 3px;
+  padding: 3px 5px;
+  background: #eceeec;
+  color: #666e70;
+  font-size: 9px;
+}
+
+.command-row.passed strong {
+  background: #e2f0e6;
+  color: #21663b;
+}
+
+.command-row.failed strong {
+  background: #f7e2dd;
+  color: #a23f2d;
+}
+
+.command-evidence {
+  max-height: 280px;
+  margin-bottom: 0;
+  overflow: auto;
+  border: 1px solid #d4d6d4;
+  border-radius: 7px;
+  padding: 13px;
+  background: #202528;
+  color: #e9ede8;
+  font-size: 11px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.missing-evidence {
+  margin-bottom: 0;
+  border: 1px dashed #c7cac7;
+  border-radius: 7px;
+  padding: 12px;
+  color: #757c7e;
+  font-size: 11px;
+}
+
+.artifact-list {
+  display: grid;
+  gap: 6px;
+}
+
+.artifact-list a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d4d6d4;
+  border-radius: 6px;
+  padding: 9px 10px;
+  color: #345b99;
+  font-size: 11px;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.artifact-list a:hover {
+  border-color: #8ca3c8;
+  background: #f4f7fb;
+}
+
+.artifact-list a span {
+  flex: 1;
+}
+
+.empty-detail {
+  display: grid;
+  min-height: 60vh;
+  place-content: center;
+  color: #737b7c;
+  text-align: center;
+}
+
+.empty-detail svg {
+  margin: 0 auto 10px;
+}
+
+.empty-detail h2 {
+  margin-bottom: 5px;
+  color: #31383a;
+  font-size: 20px;
+}
+
+.empty-detail p {
+  margin-bottom: 0;
+  font-size: 12px;
+}

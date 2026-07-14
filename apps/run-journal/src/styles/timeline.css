@@ -1,0 +1,96 @@
+.run-card,
+.run-card time {
+  display: flex;
+  align-items: center;
+}
+
+.run-list {
+  position: relative;
+  padding: 8px 0 18px;
+}
+
+.run-list::before {
+  position: absolute;
+  top: 16px;
+  bottom: 25px;
+  left: 19px;
+  width: 1px;
+  background: #c4c8c5;
+  content: '';
+}
+
+.run-card {
+  position: relative;
+  width: 100%;
+  gap: 11px;
+  border: 0;
+  border-bottom: 1px solid #dcdddb;
+  padding: 11px 13px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  transition: background-color 180ms ease;
+}
+
+.run-card:hover {
+  background: #e7e9e6;
+}
+
+.run-card.selected {
+  background: #fff;
+  box-shadow: inset 3px 0 #526f9f;
+}
+
+.timeline-dot {
+  position: relative;
+  z-index: 1;
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
+  border: 2px solid #f1f2ef;
+  border-radius: 50%;
+  background: #9ba1a2;
+  box-shadow: 0 0 0 1px #9ba1a2;
+}
+
+.run-card.verified .timeline-dot {
+  background: #2d8a50;
+  box-shadow: 0 0 0 1px #2d8a50;
+}
+
+.run-card.needs-attention .timeline-dot {
+  background: #c95a43;
+  box-shadow: 0 0 0 1px #c95a43;
+}
+
+.run-card-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 4px;
+}
+
+.run-card-copy strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.run-card-copy small {
+  color: #646c6f;
+  font-size: 11px;
+}
+
+.run-card time {
+  gap: 4px;
+  color: #7a8183;
+  font-size: 10px;
+}
+
+.empty-list {
+  padding: 18px;
+  color: #6c7476;
+  font-size: 12px;
+  text-align: center;
+}

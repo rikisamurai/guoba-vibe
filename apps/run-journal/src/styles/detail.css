@@ -1,0 +1,113 @@
+.run-detail {
+  min-width: 0;
+  padding: clamp(18px, 2.4vw, 32px);
+  background: #fff;
+}
+
+.detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.detail-head h2 {
+  margin: 8px 0 5px;
+  font-size: clamp(24px, 3vw, 36px);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.detail-head time {
+  color: #747b7d;
+  font-size: 11px;
+}
+
+.delete-button {
+  display: inline-flex;
+  min-width: 82px;
+  height: 33px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #d1d3d1;
+  border-radius: 5px;
+  background: #fff;
+  color: #656d6f;
+  font-size: 11px;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    background-color 180ms ease;
+}
+
+.delete-button:hover,
+.delete-button.confirming {
+  border-color: #c55b46;
+  background: #fff0ec;
+  color: #963b2b;
+}
+
+.evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 22px 0 16px;
+  border: 1px solid #d8dad8;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.metric {
+  min-width: 0;
+  border-right: 1px solid #d8dad8;
+  padding: 11px 13px;
+  background: #f8f8f6;
+}
+
+.metric:last-child {
+  border-right: 0;
+}
+
+.metric span,
+.metric strong {
+  display: block;
+}
+
+.metric span {
+  margin-bottom: 5px;
+  color: #6c7475;
+  font-size: 10px;
+}
+
+.metric strong {
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.metadata-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 22px;
+  border-left: 3px solid #7a8fae;
+  padding: 8px 11px;
+  background: #f4f6f8;
+}
+
+.metadata-strip div {
+  min-width: 0;
+}
+
+.metadata-strip dt {
+  margin-bottom: 2px;
+  color: #707779;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.metadata-strip dd {
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
