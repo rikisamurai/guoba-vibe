@@ -25,6 +25,20 @@ describe('evaluate CLI', () => {
     expect(result.stdout).toContain('Mode: manual ratings with recorded evidence')
     expect(result.stdout).toContain('Candidate: 100 / 100 (ship)')
   })
+
+  it('neutralizes terminal control sequences and forged output lines', () => {
+    const suite = createSuite(5)
+    suite.title = '\u001B[2JCLI suite\nFORGED RANKING'
+    suite.attempts[0].evidence.quality = '\u001B]8;;https://example.com\u0007Proof\u001B]8;;\u0007'
+
+    const result = runCli(suite)
+
+    expect(result.status).toBe(0)
+    expect(result.stdout).not.toContain('\u001B')
+    expect(result.stdout).not.toContain('\nFORGED RANKING')
+    expect(result.stdout).toContain('CLI suite FORGED RANKING')
+    expect(result.stdout).toContain('Proof')
+  })
 })
 
 function runCli(suite) {

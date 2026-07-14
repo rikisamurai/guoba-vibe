@@ -1,6 +1,7 @@
 import { BarChart3, ClipboardList, ListFilter, SlidersHorizontal } from 'lucide-react'
 import type { CSSProperties } from 'react'
 
+import { formatWeightPercent } from './lib/eval-validation'
 import type { AttemptScore, EvalSuiteAttempt, RubricCriterion } from './lib/prompt-eval'
 
 export function RubricPanel({
@@ -117,7 +118,7 @@ function CriterionControl({
         value={criterion.weight}
         onChange={(event) => onWeightChange(criterion.id, Number(event.currentTarget.value))}
       />
-      <strong>{Math.round(criterion.weight * 100)}%</strong>
+      <strong>{formatWeightPercent(criterion.weight)}</strong>
     </label>
   )
 }
@@ -134,7 +135,7 @@ function CriterionEvidence({
       <div>
         <strong>{criterion.label}</strong>
         <span>
-          {attempt.ratings[criterion.id]}/5 · {Math.round(criterion.weight * 100)}%
+          {attempt.ratings[criterion.id]}/5 · {formatWeightPercent(criterion.weight)}
         </span>
       </div>
       <p>{attempt.evidence[criterion.id]}</p>

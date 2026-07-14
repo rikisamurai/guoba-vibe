@@ -25,7 +25,12 @@ export function SuitePanel(props: SuitePanelProps) {
         ))}
       </ol>
 
-      <section className={`suite-status ${props.errors.length ? 'invalid' : 'valid'}`}>
+      <section
+        className={`suite-status ${props.errors.length ? 'invalid' : 'valid'}`}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         <strong>
           {props.errors.length ? `${props.errors.length} blocking issues` : 'Ready to rank'}
         </strong>

@@ -55,7 +55,12 @@ export function scoreAttempt(rubric: RubricCriterion[], attempt: EvalAttempt): A
 export function scoreAttempts(rubric: RubricCriterion[], attempts: EvalAttempt[]): AttemptScore[] {
   return attempts
     .map((attempt) => scoreAttempt(rubric, attempt))
-    .toSorted((left, right) => right.score - left.score || left.title.localeCompare(right.title))
+    .toSorted(
+      (left, right) =>
+        right.score - left.score ||
+        compareText(left.title, right.title) ||
+        compareText(left.id, right.id),
+    )
 }
 
 export function updateCriterionWeight(
@@ -95,4 +100,9 @@ function safeWeight(weight: number) {
 
 function clampRating(rating: number | undefined) {
   return Number.isFinite(rating) ? Math.min(5, Math.max(0, rating ?? 0)) : 0
+}
+
+function compareText(left: string, right: string) {
+  if (left === right) return 0
+  return left < right ? -1 : 1
 }

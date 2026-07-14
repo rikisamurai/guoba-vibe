@@ -5,20 +5,25 @@ export type ParsedEvalSuite =
   | { ok: true; errors: []; suite: EvalSuite }
   | { ok: false; errors: string[] }
 
+export function formatWeightPercent(weight: number) {
+  const percentage = Number.isFinite(weight) ? weight * 100 : 0
+  return `${Number(percentage.toFixed(4))}%`
+}
+
 export function validateEvalSuite(value: unknown): EvalValidation {
   const errors = collectEvalSuiteErrors(value)
   return errors.length === 0 ? { ok: true, errors: [] } : { ok: false, errors }
 }
 
 export function isEvalSuite(value: unknown): value is EvalSuite {
-  return collectEvalSuiteErrors(value).length === 0
+  return isValidatedEvalSuite(value, collectEvalSuiteErrors(value))
 }
 
 export function parseEvalSuite(payload: string): ParsedEvalSuite {
   try {
     const parsed: unknown = JSON.parse(payload)
     const errors = collectEvalSuiteErrors(parsed)
-    return errors.length === 0 && isEvalSuite(parsed)
+    return isValidatedEvalSuite(parsed, errors)
       ? { ok: true, errors: [], suite: parsed }
       : { ok: false, errors }
   } catch {
@@ -81,7 +86,7 @@ function validateRubric(value: unknown, errors: string[]) {
 
   if (new Set(ids).size !== ids.length) errors.push('Rubric criterion ids must be unique.')
   if (Math.abs(total - 1) > 0.000_001) {
-    errors.push(`Rubric weights must total 100% (currently ${Math.round(total * 100)}%).`)
+    errors.push(`Rubric weights must total 100% (currently ${formatWeightPercent(total)}).`)
   }
   return criteria
 }
@@ -155,4 +160,8 @@ function isBoundedNumber(value: unknown, min: number, max: number): value is num
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value))
+}
+
+function isValidatedEvalSuite(value: unknown, errors: string[]): value is EvalSuite {
+  return Boolean(value) && errors.length === 0
 }

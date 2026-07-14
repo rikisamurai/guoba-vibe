@@ -26,7 +26,7 @@ export function App() {
   const attempt = selectedAttempt ?? suite.attempts[0]
   const selectedScore = scoreAttempt(suite.rubric, attempt)
   const leader = scores[0]
-  const validation = validateEvalSuite(suite)
+  const validation = useMemo(() => validateEvalSuite(suite), [suite])
 
   useEffect(() => {
     if (!validation.ok) return

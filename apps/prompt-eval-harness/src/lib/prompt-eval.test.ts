@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseEvalSuite, validateEvalSuite } from './eval-validation'
+import { formatWeightPercent, parseEvalSuite, validateEvalSuite } from './eval-validation'
 import {
   normalizeRubricWeights,
   scoreAttempt,
@@ -75,6 +75,21 @@ describe('scoring', () => {
     ).toEqual(['a', 'b'])
   })
 
+  it('uses code-point ordering instead of the runtime locale for score ties', () => {
+    const rubric = [{ id: 'correctness', label: 'Correctness', weight: 1 }]
+    expect(
+      scoreAttempts(rubric, [
+        { id: 'umlaut', title: 'ä', ratings: { correctness: 5 } },
+        { id: 'z', title: 'z', ratings: { correctness: 5 } },
+      ]).map((item) => item.id),
+    ).toEqual(['z', 'umlaut'])
+  })
+
+  it('preserves meaningful precision when formatting rubric weights', () => {
+    expect(formatWeightPercent(0.3349)).toBe('33.49%')
+    expect(formatWeightPercent(0.45)).toBe('45%')
+  })
+
   it('normalizes displayed weights to exactly 100 percent', () => {
     const normalized = normalizeRubricWeights([
       { id: 'a', label: 'A', weight: 1 },
@@ -129,6 +144,17 @@ describe('suite validation', () => {
     wrongTotal.rubric[0].weight = 0.9
     expect(validateEvalSuite(wrongTotal).errors).toContain(
       'Rubric weights must total 100% (currently 90%).',
+    )
+
+    const roundedToOneHundred = structuredClone(validSuite)
+    roundedToOneHundred.rubric = [
+      { id: 'a', label: 'A', weight: 0.502 },
+      { id: 'b', label: 'B', weight: 0.502 },
+    ]
+    roundedToOneHundred.attempts[0].ratings = { a: 5, b: 5 }
+    roundedToOneHundred.attempts[0].evidence = { a: 'A evidence', b: 'B evidence' }
+    expect(validateEvalSuite(roundedToOneHundred).errors).toContain(
+      'Rubric weights must total 100% (currently 100.4%).',
     )
   })
 

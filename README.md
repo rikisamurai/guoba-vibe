@@ -10,7 +10,7 @@
 | [`apps/qr-vault`](apps/qr-vault)                       | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage`     | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
 | [`apps/rn-components`](apps/rn-components)             | React Native 组件库，提供 web Storybook、Expo 原生 Storybook 和组件回归测试   | React Native 0.81 · Expo SDK 54 · Storybook 10 · Vitest                                                   |
 | [`apps/prompt-eval-harness`](apps/prompt-eval-harness) | 本地 prompt / agent 输出评测工具，内置 quick-start 样例、CLI 跑分和浏览器看板 | React 19 · Vite 8 · Vitest                                                                                |
-| [`apps/guoba-stream`](apps/guoba-stream)               | 私有移动端优先的 X/Twitter 视频与 GIF 解析下载工具                          | React 19 · Vite 8 · Vercel Functions · invite-code access                                                 |
+| [`apps/guoba-stream`](apps/guoba-stream)               | 私有移动端优先的 X/Twitter 视频与 GIF 解析下载工具                            | React 19 · Vite 8 · Vercel Functions · invite-code access                                                 |
 
 四个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
 

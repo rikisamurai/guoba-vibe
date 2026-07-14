@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { stripVTControlCharacters } from 'node:util'
 
-import { parseEvalSuite } from '../src/lib/eval-validation.ts'
+import { formatWeightPercent, parseEvalSuite } from '../src/lib/eval-validation.ts'
 import { scoreAttempts } from '../src/lib/prompt-eval.ts'
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
@@ -24,8 +25,8 @@ async function main() {
 
   const parsed = parseEvalSuite(payload)
   if (!parsed.ok) {
-    console.error(`Prompt Eval Harness rejected ${suitePath}`)
-    for (const error of parsed.errors) console.error(`  - ${error}`)
+    console.error(`Prompt Eval Harness rejected ${terminalText(suitePath)}`)
+    for (const error of parsed.errors) console.error(`  - ${terminalText(error)}`)
     return 1
   }
 
@@ -36,20 +37,20 @@ async function main() {
 function printSuite(suite) {
   const scores = scoreAttempts(suite.rubric, suite.attempts)
 
-  console.log(`Prompt Eval Harness: ${suite.title}`)
-  console.log(`Suite: ${suitePath}`)
+  console.log(`Prompt Eval Harness: ${terminalText(suite.title)}`)
+  console.log(`Suite: ${terminalText(suitePath)}`)
   console.log('Mode: manual ratings with recorded evidence (candidate code is not executed)')
   console.log('')
   console.log('Task')
-  console.log(`  ${suite.task.prompt}`)
+  console.log(`  ${terminalText(suite.task.prompt)}`)
   console.log('')
   console.log('Expected outcome')
-  for (const item of suite.task.expectedOutcome) console.log(`  - ${item}`)
+  for (const item of suite.task.expectedOutcome) console.log(`  - ${terminalText(item)}`)
   console.log('')
   console.log('Rubric')
   for (const criterion of suite.rubric) {
     console.log(
-      `  - ${criterion.label} (${Math.round(criterion.weight * 100)}%): ${criterion.description ?? ''}`,
+      `  - ${terminalText(criterion.label)} (${formatWeightPercent(criterion.weight)}): ${terminalText(criterion.description ?? '')}`,
     )
   }
   console.log('')
@@ -59,15 +60,26 @@ function printSuite(suite) {
 
 function printAttempt(suite, score, index) {
   const attempt = suite.attempts.find((candidate) => candidate.id === score.id)
-  console.log(`${index + 1}. ${score.title}: ${score.score} / 100 (${score.band})`)
-  console.log(`   ${attempt.brief}`)
+  console.log(`${index + 1}. ${terminalText(score.title)}: ${score.score} / 100 (${score.band})`)
+  console.log(`   ${terminalText(attempt.brief)}`)
   for (const criterion of suite.rubric) {
     console.log(
-      `   - ${criterion.label}: ${attempt.ratings[criterion.id]}/5 - ${attempt.evidence[criterion.id]}`,
+      `   - ${terminalText(criterion.label)}: ${attempt.ratings[criterion.id]}/5 - ${terminalText(attempt.evidence[criterion.id])}`,
     )
   }
 }
 
 function readError(error) {
-  return error instanceof Error ? error.message : String(error)
+  return terminalText(error instanceof Error ? error.message : String(error))
+}
+
+function terminalText(value) {
+  const stripped = stripVTControlCharacters(String(value))
+  return Array.from(stripped, (character) => {
+    const code = character.codePointAt(0) ?? 0
+    return code < 32 || (code >= 127 && code <= 159) ? ' ' : character
+  })
+    .join('')
+    .replace(/\s+/gu, ' ')
+    .trim()
 }
