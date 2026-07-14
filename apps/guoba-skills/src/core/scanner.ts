@@ -12,7 +12,8 @@ import { inspectClaudeLink } from './claude-links'
 import { buildContentManifest } from './content-manifest'
 import { parseSkillMetadata } from './frontmatter'
 import { readLockFile } from './lock-file'
-import { getScopePaths, type ManagerRoots, type ScopePaths } from './paths'
+import type { ManagerRoots, ScopePaths } from './paths'
+import { getSafeScopePaths } from './scope-safety'
 
 export async function scanInventory(roots: ManagerRoots): Promise<Inventory> {
   const scopes: SkillScope[] = roots.projectRoot ? ['project', 'user'] : ['user']
@@ -26,7 +27,7 @@ export async function scanInventory(roots: ManagerRoots): Promise<Inventory> {
 }
 
 async function scanScope(roots: ManagerRoots, scope: SkillScope): Promise<SkillRecord[]> {
-  const paths = getScopePaths(roots, scope)
+  const paths = await getSafeScopePaths(roots, scope)
   const lock = await readLockFile(paths.lockPath)
   const canonicalNames = await directoryNames(paths.canonicalRoot)
   const claudeNames = await directoryNames(paths.claudeRoot)

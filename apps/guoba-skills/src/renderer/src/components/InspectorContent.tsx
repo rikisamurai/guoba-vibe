@@ -1,35 +1,68 @@
 import { ExternalLink, FileCode2, GitBranch } from 'lucide-react'
+import type { ComponentProps } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-import type { SkillRecord } from '../../../shared/types'
+import type { SkillFileContent, SkillRecord } from '../../../shared/types'
 import type { InspectorTab } from '../ui-types'
 
-export function InspectorContent({ skill, tab }: { skill: SkillRecord; tab: InspectorTab }) {
+export function InspectorContent({
+  skill,
+  tab,
+  file,
+  onReadFile,
+}: {
+  skill: SkillRecord
+  tab: InspectorTab
+  file?: SkillFileContent
+  onReadFile: (id: string, path: string) => void
+}) {
   if (tab === 'content') {
     return (
       <article className="markdown">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        <ReactMarkdown components={{ a: SafeMarkdownLink }} remarkPlugins={[remarkGfm]}>
           {withoutFrontmatter(skill.content)}
         </ReactMarkdown>
       </article>
     )
   }
-  if (tab === 'files') return <FileList skill={skill} />
+  if (tab === 'files') return <FileBrowser file={file} onReadFile={onReadFile} skill={skill} />
   return <SourceDetails skill={skill} />
 }
 
-function FileList({ skill }: { skill: SkillRecord }) {
+function FileBrowser({
+  skill,
+  file,
+  onReadFile,
+}: {
+  skill: SkillRecord
+  file?: SkillFileContent
+  onReadFile: (id: string, path: string) => void
+}) {
+  const visibleFile = file?.skillId === skill.id ? file : undefined
   return (
-    <div className="file-list">
-      {skill.files.map((file) => (
-        <div key={file}>
-          <FileCode2 size={15} />
-          <span>{file}</span>
-          {file === 'SKILL.md' ? <em>entry</em> : null}
-        </div>
-      ))}
+    <div className="file-browser">
+      <div className="file-list">
+        {skill.files.map((path) => (
+          <button key={path} onClick={() => onReadFile(skill.id, path)} type="button">
+            <FileCode2 size={15} />
+            <span>{path}</span>
+            {path === 'SKILL.md' ? <em>entry</em> : null}
+          </button>
+        ))}
+      </div>
+      <pre className="file-preview" data-testid="file-preview">
+        {visibleFile?.content ?? 'Select a file to inspect its contents.'}
+      </pre>
     </div>
+  )
+}
+
+function SafeMarkdownLink({ children, href, title }: ComponentProps<'a'>) {
+  return (
+    <a href={href} rel="noreferrer" target="_blank" title={title}>
+      {children}
+    </a>
   )
 }
 

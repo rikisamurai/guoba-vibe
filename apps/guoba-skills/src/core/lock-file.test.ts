@@ -48,6 +48,22 @@ describe('lock-file compatibility', () => {
     expect(text).toContain('"revision": "deadbeef"')
     expect(text.endsWith('\n')).toBe(true)
   })
+
+  it('serializes concurrent read-modify-write updates without losing entries', async () => {
+    const root = await temporaryRoot()
+    const path = join(root, 'skills-lock.json')
+    await Promise.all(
+      Array.from({ length: 20 }, (_, index) =>
+        setLockEntry(path, `skill-${index}`, {
+          source: `owner/repo-${index}`,
+          sourceType: 'github',
+          skillPath: `skills/skill-${index}/SKILL.md`,
+        }),
+      ),
+    )
+    const lock = await readLockFile(path)
+    expect(Object.keys(lock.skills)).toHaveLength(20)
+  })
 })
 
 async function temporaryRoot(): Promise<string> {

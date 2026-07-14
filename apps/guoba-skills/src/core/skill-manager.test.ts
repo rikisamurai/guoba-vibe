@@ -1,4 +1,4 @@
-import { lstat, readFile, readlink, writeFile } from 'node:fs/promises'
+import { lstat, mkdir, readFile, readlink, symlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
@@ -87,6 +87,85 @@ describe('SkillManager Git lifecycle', () => {
     expect(record?.updateStatus).toBe('up_to_date')
     expect(record?.provenance?.revision).toBe(latestRevision)
     expect(record?.provenance?.lastChecked?.revision).toBe(latestRevision)
+  })
+
+  it('keeps every result when checking multiple Skills together', async () => {
+    const fixture = await workspace()
+    await writeTestSkill(fixture.source, 'demo', 'Demo A')
+    await writeTestSkill(fixture.source, 'helper', 'Helper A')
+    await commitAll(fixture.source, 'version A')
+    const manager = new SkillManager(getManagerRoots(fixture.project, fixture.home))
+    await Promise.all(
+      ['demo', 'helper'].map((skill) =>
+        manager.install({
+          source: pathToFileURL(fixture.source).toString(),
+          scope: 'project',
+          skill,
+        }),
+      ),
+    )
+    await writeTestSkill(fixture.source, 'demo', 'Demo B')
+    await writeTestSkill(fixture.source, 'helper', 'Helper B')
+    const revision = await commitAll(fixture.source, 'version B')
+
+    const checked = await manager.check()
+    expect(
+      checked.skills
+        .filter(({ scope }) => scope === 'project')
+        .map(({ updateStatus }) => updateStatus),
+    ).toEqual(['update_available', 'update_available'])
+    const lock = await readFile(getScopePaths(manager.roots, 'project').lockPath, 'utf8')
+    expect(lock.match(new RegExp(revision, 'gu'))).toHaveLength(2)
+  })
+
+  it('serializes competing applies so canonical content is never deleted', async () => {
+    const fixture = await workspace()
+    await writeTestSkill(fixture.source, 'demo', 'Version A')
+    await commitAll(fixture.source, 'version A')
+    const roots = getManagerRoots(fixture.project, fixture.home)
+    const first = new SkillManager(roots)
+    const second = new SkillManager(roots)
+    await first.install({
+      source: pathToFileURL(fixture.source).toString(),
+      scope: 'project',
+      skill: 'demo',
+    })
+    await writeTestSkill(fixture.source, 'demo', 'Version B')
+    await commitAll(fixture.source, 'version B')
+    const previewB = await first.prepare('project:demo')
+    await writeTestSkill(fixture.source, 'demo', 'Version C')
+    await commitAll(fixture.source, 'version C')
+    const previewC = await second.prepare('project:demo')
+
+    const results = await Promise.allSettled([
+      first.apply(previewB.previewId),
+      second.apply(previewC.previewId),
+    ])
+    expect(results.map(({ status }) => status).toSorted()).toEqual(['fulfilled', 'rejected'])
+    const content = await readFile(
+      join(getScopePaths(roots, 'project').canonicalRoot, 'demo', 'SKILL.md'),
+      'utf8',
+    )
+    expect(content).toMatch(/Version [BC]/u)
+  })
+
+  it('rejects managed path ancestors that are symbolic links', async () => {
+    const fixture = await workspace()
+    await writeTestSkill(fixture.source, 'demo', 'Version A')
+    await commitAll(fixture.source, 'version A')
+    const victim = join(fixture.root, 'victim')
+    await mkdir(victim)
+    await symlink(victim, join(fixture.project, '.agents'), 'dir')
+    const manager = new SkillManager(getManagerRoots(fixture.project, fixture.home))
+
+    await expect(
+      manager.install({
+        source: pathToFileURL(fixture.source).toString(),
+        scope: 'project',
+        skill: 'demo',
+      }),
+    ).rejects.toThrow(/symbolic-link ancestor/u)
+    await expect(lstat(join(victim, 'skills', 'demo'))).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
   it('rolls back installation when a real Claude directory conflicts', async () => {

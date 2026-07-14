@@ -6,6 +6,7 @@ import type { InstallRequest, SkillProvenance } from '../shared/types'
 import { installDirectory, stageDirectory } from './atomic-directory'
 import { ensureClaudeLink, removeManagedClaudeLink } from './claude-links'
 import { buildContentManifest } from './content-manifest'
+import { withFileLock } from './file-lock'
 import { parseSkillMetadata } from './frontmatter'
 import {
   findSkillDirectory,
@@ -14,7 +15,8 @@ import {
   resolveRevision,
 } from './git-transport'
 import { setLockEntry } from './lock-file'
-import { getScopePaths, type ManagerRoots } from './paths'
+import type { ManagerRoots } from './paths'
+import { getSafeScopePaths } from './scope-safety'
 import { normalizeSource } from './source'
 
 export async function installSkill(roots: ManagerRoots, request: InstallRequest): Promise<string> {
@@ -31,9 +33,8 @@ export async function installSkill(roots: ManagerRoots, request: InstallRequest)
     )
     const content = await readFile(join(skillPath, 'SKILL.md'), 'utf8')
     const folder = chooseFolderName(source.requestedSkill, skillPath, content)
-    const paths = getScopePaths(roots, request.scope)
+    const paths = await getSafeScopePaths(roots, request.scope)
     const target = join(paths.canonicalRoot, folder)
-    if (await exists(target)) throw new Error(`Canonical Skill “${folder}” already exists.`)
     const manifest = await buildContentManifest(skillPath)
     const treeHash = await getTreeHash(repository, skillPath)
     const provenance = createProvenance({
@@ -44,18 +45,21 @@ export async function installSkill(roots: ManagerRoots, request: InstallRequest)
       treeHash,
       contentHash: manifest.contentHash,
     })
-    const staged = await stageDirectory(skillPath, target)
-    try {
-      await installDirectory(staged, target, async () => {
-        await ensureClaudeLink(paths, folder)
-        await setLockEntry(paths.lockPath, folder, provenance)
-      })
-    } catch (error) {
-      await removeManagedClaudeLink(paths, folder)
-      await rm(staged, { force: true, recursive: true })
-      throw error
-    }
-    return `${request.scope}:${folder}`
+    return await withFileLock(target, async () => {
+      if (await exists(target)) throw new Error(`Canonical Skill “${folder}” already exists.`)
+      const staged = await stageDirectory(skillPath, target)
+      try {
+        await installDirectory(staged, target, async () => {
+          await ensureClaudeLink(paths, folder)
+          await setLockEntry(paths.lockPath, folder, provenance)
+        })
+      } catch (error) {
+        await removeManagedClaudeLink(paths, folder)
+        await rm(staged, { force: true, recursive: true })
+        throw error
+      }
+      return `${request.scope}:${folder}`
+    })
   } finally {
     await rm(temporaryRoot, { force: true, recursive: true })
   }

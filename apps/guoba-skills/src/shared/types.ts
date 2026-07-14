@@ -90,6 +90,13 @@ export interface UpdatePreview {
   changes: FileChange[]
 }
 
+export interface SkillFileContent {
+  skillId: string
+  path: string
+  binary: boolean
+  content: string
+}
+
 export interface InstallRequest {
   source: string
   scope: SkillScope
@@ -97,15 +104,24 @@ export interface InstallRequest {
   ref?: string
 }
 
-export type ServiceAction =
-  | 'inventory'
-  | 'check'
-  | 'prepare'
-  | 'apply'
-  | 'sync'
-  | 'install'
-  | 'makeCanonical'
-  | 'chooseProject'
+export const SERVICE_ACTIONS = [
+  'inventory',
+  'check',
+  'prepare',
+  'discard',
+  'apply',
+  'sync',
+  'install',
+  'makeCanonical',
+  'readFile',
+  'chooseProject',
+] as const
+
+export type ServiceAction = (typeof SERVICE_ACTIONS)[number]
+
+export function isServiceAction(value: unknown): value is ServiceAction {
+  return typeof value === 'string' && SERVICE_ACTIONS.some((action) => action === value)
+}
 
 export interface ServiceTransport {
   invoke<T>(action: ServiceAction, payload?: unknown): Promise<T>

@@ -43,15 +43,17 @@ export function App() {
         onAdd={() => setInstallOpen(true)}
         onCheck={() => void skills.check().catch(() => undefined)}
         onQuery={setQuery}
-        onSelect={skills.setSelectedId}
+        onSelect={skills.select}
         query={query}
         selectedId={skills.selectedId}
         skills={visible}
       />
       <Inspector
+        file={skills.file}
         onCheck={(id) => void skills.check(id).catch(() => undefined)}
         onMakeCanonical={(id) => void skills.makeCanonical(id).catch(() => undefined)}
         onPrepare={(id) => void skills.prepare(id).catch(() => undefined)}
+        onReadFile={(id, path) => void skills.openFile(id, path).catch(() => undefined)}
         onSync={(id) => void skills.sync(id).catch(() => undefined)}
         skill={selected}
       />
@@ -79,7 +81,7 @@ export function App() {
       {skills.preview ? (
         <DiffDialog
           onApply={() => void skills.apply().catch(() => undefined)}
-          onClose={() => skills.setPreview(undefined)}
+          onClose={() => void skills.discard().catch(() => undefined)}
           preview={skills.preview}
           unsafe={
             selected?.updateStatus === 'local_modified' || selected?.updateStatus === 'diverged'

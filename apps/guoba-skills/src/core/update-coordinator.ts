@@ -3,8 +3,6 @@ import { tmpdir } from 'node:os'
 import { dirname, join, sep } from 'node:path'
 
 import type { SkillProvenance, SkillRecord, UpdatePreview } from '../shared/types'
-import { installDirectory, stageDirectory } from './atomic-directory'
-import { ensureClaudeLink } from './claude-links'
 import { buildContentManifest } from './content-manifest'
 import {
   findSkillDirectory,
@@ -14,19 +12,13 @@ import {
   type RemoteRevision,
 } from './git-transport'
 import { setLockEntry } from './lock-file'
-import { getScopePaths, type ManagerRoots } from './paths'
+import type { ManagerRoots } from './paths'
+import { getSafeScopePaths } from './scope-safety'
 import { diffSkillManifests, flattenSkillDiff } from './skill-diff'
-import type { ResolvedSourceInput } from './source'
+import { folderFromSkillId } from './skill-id'
+import { assertSafeSourceUrl, type ResolvedSourceInput } from './source'
+import { applyStoredPreview, type StoredPreview } from './update-apply'
 import { reconcileCheckedProvenance } from './update-check'
-
-interface StoredPreview {
-  public: UpdatePreview
-  record: SkillRecord
-  remote: RemoteRevision
-  remoteSkillPath: string
-  temporaryRoot: string
-  localWasModified: boolean
-}
 
 export class UpdateCoordinator {
   readonly #previews = new Map<string, StoredPreview>()
@@ -57,7 +49,8 @@ export class UpdateCoordinator {
       remoteHash,
       treeHash,
     )
-    await setLockEntry(getScopePaths(this.roots, record.scope).lockPath, folderName(record.id), {
+    const paths = await getSafeScopePaths(this.roots, record.scope)
+    await setLockEntry(paths.lockPath, folderFromSkillId(record.id), {
       ...checkedProvenance,
       lastChecked: {
         at: new Date().toISOString(),
@@ -69,6 +62,7 @@ export class UpdateCoordinator {
   }
 
   async prepare(record: SkillRecord): Promise<UpdatePreview> {
+    await this.#discardForSkill(record.id)
     const provenance = requireProvenance(record)
     const source = sourceFrom(provenance)
     const remote = await resolveRevision(source)
@@ -108,31 +102,23 @@ export class UpdateCoordinator {
   async apply(previewId: string): Promise<void> {
     const stored = this.#previews.get(previewId)
     if (!stored) throw new Error('This update preview expired. Prepare it again.')
-    const { record, public: preview } = stored
     try {
-      if (stored.localWasModified) {
-        throw new Error('This Skill has local changes. Guoba Skills will not overwrite them.')
-      }
-      const current = await buildContentManifest(record.canonicalPath)
-      if (current.contentHash !== preview.baseContentHash) {
-        throw new Error('The Skill changed after preview. Prepare the update again.')
-      }
-      const staged = await stageDirectory(stored.remoteSkillPath, record.canonicalPath)
-      const paths = getScopePaths(this.roots, record.scope)
-      const provenance = nextProvenance(record, stored)
-      try {
-        await installDirectory(staged, record.canonicalPath, async () => {
-          await ensureClaudeLink(paths, folderName(record.id))
-          await setLockEntry(paths.lockPath, folderName(record.id), provenance)
-        })
-      } catch (error) {
-        await rm(staged, { force: true, recursive: true })
-        throw error
-      }
+      await applyStoredPreview(this.roots, stored)
     } finally {
       this.#previews.delete(previewId)
       await rm(stored.temporaryRoot, { force: true, recursive: true })
     }
+  }
+
+  async discard(previewId: string): Promise<void> {
+    const stored = this.#previews.get(previewId)
+    if (!stored) return
+    this.#previews.delete(previewId)
+    await rm(stored.temporaryRoot, { force: true, recursive: true })
+  }
+
+  async dispose(): Promise<void> {
+    await Promise.all([...this.#previews.keys()].map((previewId) => this.discard(previewId)))
   }
 
   async #materialize(record: SkillRecord, source: ResolvedSourceInput, remote: RemoteRevision) {
@@ -150,6 +136,13 @@ export class UpdateCoordinator {
       throw error
     }
   }
+
+  async #discardForSkill(skillId: string): Promise<void> {
+    const entries = [...this.#previews.entries()].filter(
+      ([, stored]) => stored.record.id === skillId,
+    )
+    await Promise.all(entries.map(([previewId]) => this.discard(previewId)))
+  }
 }
 
 function requireProvenance(record: SkillRecord): SkillProvenance {
@@ -163,41 +156,11 @@ function requireProvenance(record: SkillRecord): SkillProvenance {
 
 function sourceFrom(provenance: SkillProvenance): ResolvedSourceInput {
   const sourceUrl = provenance.sourceUrl!
-  if (/^https?:\/\//u.test(sourceUrl)) {
-    const parsed = new URL(sourceUrl)
-    if (parsed.username || parsed.password)
-      throw new Error('Credential-bearing Git URLs are not supported. Use a credential helper.')
-  }
+  assertSafeSourceUrl(sourceUrl)
   return {
     source: provenance.source,
     sourceType: provenance.sourceType === 'github' ? 'github' : 'git',
     sourceUrl,
     requestedRef: provenance.requestedRef ?? provenance.branch ?? undefined,
   }
-}
-
-function nextProvenance(record: SkillRecord, stored: StoredPreview): SkillProvenance {
-  const now = new Date().toISOString()
-  const existing = record.provenance!
-  return {
-    ...existing,
-    branch: stored.remote.branch,
-    revision: stored.public.remoteRevision,
-    treeHash: stored.public.remoteTreeHash,
-    contentHash: stored.public.remoteContentHash,
-    computedHash: stored.public.remoteContentHash.replace(/^sha256:/u, ''),
-    hashProfile: 'guoba-skill-v1',
-    updatedAt: now,
-    installedAt: existing.installedAt ?? now,
-    lastChecked: {
-      at: now,
-      revision: stored.public.remoteRevision,
-      treeHash: stored.public.remoteTreeHash,
-      contentHash: stored.public.remoteContentHash,
-    },
-  }
-}
-
-function folderName(id: string): string {
-  return id.slice(id.indexOf(':') + 1)
 }

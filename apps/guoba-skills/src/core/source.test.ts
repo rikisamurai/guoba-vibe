@@ -25,5 +25,13 @@ describe('source normalization', () => {
   it('rejects traversal and embedded credentials', () => {
     expect(() => normalizeSubpath('../secret')).toThrow(/inside/u)
     expect(() => normalizeSource('https://token@github.com/owner/repo.git')).toThrow(/credentials/u)
+    expect(() => normalizeSource('ssh://git:secret@example.com/skills.git')).toThrow(/credentials/u)
+  })
+
+  it('preserves the selected GitHub SSH transport', () => {
+    expect(normalizeSource('git@github.com:acme/skills.git')).toMatchObject({
+      source: 'acme/skills',
+      sourceUrl: 'git@github.com:acme/skills.git',
+    })
   })
 })

@@ -42,13 +42,21 @@ export function Tui({ manager }: TuiProps) {
   }
 
   useInput((input, key) => {
-    if (input === 'q') exit()
+    if (input === 'q') {
+      if (preview) void manager.discard(preview.previewId).finally(exit)
+      else exit()
+      return
+    }
     if (key.upArrow) setSelected((value) => Math.max(0, value - 1))
     if (key.downArrow) setSelected((value) => Math.min(skills.length - 1, value + 1))
-    if (key.escape && preview) setPreview(undefined)
+    if (key.escape && preview) {
+      const previewId = preview.previewId
+      setPreview(undefined)
+      void manager.discard(previewId)
+    }
     if (input === 'c' && skill) void run(() => manager.check(skill.id), `Checking ${skill.name}…`)
     if (input === 's' && skill) void run(() => manager.sync(skill.id), `Syncing ${skill.name}…`)
-    if (input === 'u' && skill) {
+    if (input === 'u' && skill && !preview) {
       setMessage(`Preparing exact update for ${skill.name}…`)
       void manager
         .prepare(skill.id)
@@ -129,7 +137,7 @@ function Preview({ preview }: { preview: UpdatePreview }) {
       </Text>
       <Text dimColor>{preview.remoteRevision.slice(0, 12)}</Text>
       <Box flexDirection="column" marginTop={1}>
-        {preview.changes.slice(0, 5).map((change) => (
+        {preview.changes.map((change) => (
           <Box flexDirection="column" key={change.path}>
             <Text bold>
               {change.kind === 'added' ? '+' : change.kind === 'removed' ? '-' : '~'} {change.path}
@@ -157,7 +165,7 @@ function lineColor(line: string): string | undefined {
 
 function previewLines(path: string, patch?: string): { key: string; line: string }[] {
   const occurrences = new Map<string, number>()
-  return (patch?.split('\n').slice(0, 8) ?? []).map((line) => {
+  return (patch?.split('\n') ?? []).map((line) => {
     const count = (occurrences.get(line) ?? 0) + 1
     occurrences.set(line, count)
     return { key: `${path}:${count}:${line}`, line }

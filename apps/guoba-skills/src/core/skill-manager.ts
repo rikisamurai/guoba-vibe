@@ -1,7 +1,17 @@
-import type { InstallRequest, Inventory, SkillRecord, UpdatePreview } from '../shared/types'
+import type {
+  InstallRequest,
+  Inventory,
+  SkillFileContent,
+  SkillRecord,
+  UpdatePreview,
+} from '../shared/types'
 import { ensureClaudeLink, makeClaudeSkillCanonical } from './claude-links'
-import { getScopePaths, type ManagerRoots } from './paths'
+import { withFileLock } from './file-lock'
+import type { ManagerRoots } from './paths'
 import { scanInventory } from './scanner'
+import { getSafeScopePaths } from './scope-safety'
+import { readSkillFile } from './skill-file'
+import { folderFromSkillId } from './skill-id'
 import { installSkill } from './skill-installer'
 import { UpdateCoordinator } from './update-coordinator'
 
@@ -26,7 +36,12 @@ export class SkillManager {
   }
 
   async prepare(id: string): Promise<UpdatePreview> {
-    return this.#updates.prepare(requireRecord(await this.inventory(), id))
+    const checked = await this.check(id)
+    return this.#updates.prepare(requireRecord(checked, id))
+  }
+
+  discard(previewId: string): Promise<void> {
+    return this.#updates.discard(previewId)
   }
 
   async apply(previewId: string): Promise<Inventory> {
@@ -40,10 +55,13 @@ export class SkillManager {
       ? [requireRecord(inventory, id)]
       : inventory.skills.filter((skill) => skill.location === 'canonical')
     await Promise.all(
-      candidates.map((skill) => {
+      candidates.map(async (skill) => {
         if (skill.location !== 'canonical')
           throw new Error('Make this Claude-only Skill canonical first.')
-        return ensureClaudeLink(getScopePaths(this.roots, skill.scope), folderName(skill.id))
+        const paths = await getSafeScopePaths(this.roots, skill.scope)
+        return withFileLock(skill.canonicalPath, () =>
+          ensureClaudeLink(paths, folderFromSkillId(skill.id)),
+        )
       }),
     )
     return this.inventory()
@@ -52,13 +70,24 @@ export class SkillManager {
   async makeCanonical(id: string): Promise<Inventory> {
     const skill = requireRecord(await this.inventory(), id)
     if (skill.location !== 'claude_only') throw new Error('This Skill is already canonical.')
-    await makeClaudeSkillCanonical(getScopePaths(this.roots, skill.scope), folderName(skill.id))
+    const paths = await getSafeScopePaths(this.roots, skill.scope)
+    await withFileLock(skill.canonicalPath, () =>
+      makeClaudeSkillCanonical(paths, folderFromSkillId(skill.id)),
+    )
     return this.inventory()
+  }
+
+  async readFile(id: string, path: string): Promise<SkillFileContent> {
+    return readSkillFile(requireRecord(await this.inventory(), id), path)
   }
 
   async install(request: InstallRequest): Promise<{ id: string; inventory: Inventory }> {
     const id = await installSkill(this.roots, request)
     return { id, inventory: await this.inventory() }
+  }
+
+  dispose(): Promise<void> {
+    return this.#updates.dispose()
   }
 }
 
@@ -66,8 +95,4 @@ function requireRecord(inventory: Inventory, id: string): SkillRecord {
   const skill = inventory.skills.find((candidate) => candidate.id === id)
   if (!skill) throw new Error(`Skill “${id}” was not found.`)
   return skill
-}
-
-function folderName(id: string): string {
-  return id.slice(id.indexOf(':') + 1)
 }

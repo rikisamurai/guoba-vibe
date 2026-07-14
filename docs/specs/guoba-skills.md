@@ -40,7 +40,7 @@ Build a focused Skill manager for macOS and repository workflows. It manages onl
 - Open and remember a selected repository.
 - Aggregate Project and User sections, searchable from one view.
 - Read `SKILL.md`, browse files, inspect provenance and Claude link health.
-- Check one or many Skills, select updates, review diff, install, update, repair links, and make Claude-only Skills canonical.
+- Check one or many Skills, then select an individual update to review and apply; install, repair links, and make Claude-only Skills canonical.
 
 ## Repository CLI, TUI, and Web UI
 

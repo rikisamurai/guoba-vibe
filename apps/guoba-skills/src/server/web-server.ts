@@ -1,10 +1,11 @@
+import { randomUUID } from 'node:crypto'
 import { createReadStream } from 'node:fs'
 import { access, stat } from 'node:fs/promises'
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import { extname, join, relative, resolve } from 'node:path'
 
 import type { ServiceController } from '../service/controller'
-import type { ServiceAction } from '../shared/types'
+import { isServiceAction, type ServiceAction } from '../shared/types'
 
 interface ServerOptions {
   port?: number
@@ -13,8 +14,9 @@ interface ServerOptions {
 
 export async function startWebServer(controller: ServiceController, options: ServerOptions) {
   await access(join(options.staticRoot, 'index.html'))
+  const sessionToken = randomUUID()
   const server = createServer((request, response) => {
-    void routeRequest(controller, options.staticRoot, request, response)
+    void routeRequest(controller, options.staticRoot, sessionToken, request, response)
   })
   await new Promise<void>((resolveListening, reject) => {
     server.once('error', reject)
@@ -25,24 +27,28 @@ export async function startWebServer(controller: ServiceController, options: Ser
     throw new Error('Could not determine Web UI address.')
   return {
     url: `http://127.0.0.1:${address.port}`,
-    close: () =>
-      new Promise<void>((resolveClose, reject) =>
+    close: async () => {
+      await new Promise<void>((resolveClose, reject) =>
         server.close((error) => {
           if (error) reject(error)
           else resolveClose()
         }),
-      ),
+      )
+      await controller.dispose()
+    },
   }
 }
 
 async function routeRequest(
   controller: ServiceController,
   staticRoot: string,
+  sessionToken: string,
   request: IncomingMessage,
   response: ServerResponse,
 ): Promise<void> {
   try {
     if (request.method === 'POST' && request.url === '/api/invoke') {
+      assertTrustedMutation(request, sessionToken)
       const raw: unknown = JSON.parse(await readBody(request))
       const body = parseInvocation(raw)
       json(response, 200, { data: await controller.invoke(body.action, body.payload) })
@@ -52,13 +58,18 @@ async function routeRequest(
       json(response, 200, { ok: true })
       return
     }
-    await serveStatic(staticRoot, request.url ?? '/', response)
+    await serveStatic(staticRoot, request.url ?? '/', sessionToken, response)
   } catch (error) {
     json(response, 400, { error: error instanceof Error ? error.message : String(error) })
   }
 }
 
-async function serveStatic(root: string, url: string, response: ServerResponse): Promise<void> {
+async function serveStatic(
+  root: string,
+  url: string,
+  sessionToken: string,
+  response: ServerResponse,
+): Promise<void> {
   const pathname = decodeURIComponent(new URL(url, 'http://localhost').pathname)
   let path = resolve(root, `.${pathname}`)
   if (relative(resolve(root), path).startsWith('..')) throw new Error('Invalid asset path.')
@@ -70,6 +81,10 @@ async function serveStatic(root: string, url: string, response: ServerResponse):
   response.writeHead(200, {
     'Cache-Control': 'no-store',
     'Content-Type': mimeType(path),
+    'Referrer-Policy': 'no-referrer',
+    'Set-Cookie': `guoba_skills_session=${sessionToken}; HttpOnly; SameSite=Strict; Path=/`,
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
   })
   createReadStream(path).pipe(response)
 }
@@ -110,18 +125,18 @@ function parseInvocation(value: unknown): { action: ServiceAction; payload?: unk
   return { action, payload: Reflect.get(value, 'payload') }
 }
 
-function isServiceAction(value: unknown): value is ServiceAction {
-  switch (value) {
-    case 'inventory':
-    case 'check':
-    case 'prepare':
-    case 'apply':
-    case 'sync':
-    case 'install':
-    case 'makeCanonical':
-    case 'chooseProject':
-      return true
-    default:
-      return false
+function assertTrustedMutation(request: IncomingMessage, sessionToken: string): void {
+  const host = request.headers.host
+  const origin = request.headers.origin
+  const contentType = request.headers['content-type']
+  const cookies = request.headers.cookie?.split(/;\s*/u) ?? []
+  if (!host || !/^127\.0\.0\.1:\d+$/u.test(host) || origin !== `http://${host}`) {
+    throw new Error('Untrusted Web UI origin.')
+  }
+  if (!contentType?.startsWith('application/json')) {
+    throw new Error('Web UI requests must use application/json.')
+  }
+  if (!cookies.includes(`guoba_skills_session=${sessionToken}`)) {
+    throw new Error('Web UI session is missing or expired.')
   }
 }

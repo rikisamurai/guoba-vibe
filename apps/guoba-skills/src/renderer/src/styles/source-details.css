@@ -1,22 +1,35 @@
+.file-browser {
+  display: grid;
+  gap: 11px;
+}
 .file-list {
   overflow: hidden;
   border: 1px solid #242724;
   border-radius: 9px;
 }
-.file-list > div {
+.file-list > button {
   display: grid;
   grid-template-columns: 20px 1fr auto;
   gap: 8px;
   align-items: center;
   min-height: 39px;
+  width: 100%;
   padding: 0 12px;
   color: #9da39a;
   background: #111311;
   border-bottom: 1px solid #20231f;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  cursor: pointer;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
 }
-.file-list > div:last-child {
+.file-list > button:hover {
+  color: #d3dfbd;
+  background: #171a16;
+}
+.file-list > button:last-child {
   border-bottom: 0;
 }
 .file-list svg {
@@ -30,6 +43,21 @@
   font-family: 'Manrope Variable', sans-serif;
   font-size: 7px;
   font-style: normal;
+}
+.file-preview {
+  max-height: 360px;
+  min-height: 150px;
+  overflow: auto;
+  margin: 0;
+  padding: 13px;
+  color: #b9c1b1;
+  background: #0d0f0d;
+  border: 1px solid #232622;
+  border-radius: 9px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  line-height: 1.65;
+  white-space: pre-wrap;
 }
 .source-grid {
   display: grid;

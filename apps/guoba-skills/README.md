@@ -42,7 +42,7 @@ guoba-skills
 - Project：所选仓库内的 Skills。
 - User：当前用户主目录内的 Skills。
 
-你可以查看 `SKILL.md`、文件列表、来源与 Claude 链接状态，检查单个或多个更新，并在实际写入前查看文件级和文本级 diff。Claude-only 目录会继续显示，但必须由你明确选择“设为规范副本”后才会迁移。
+你可以查看 `SKILL.md`、打开 Skill 内的其他文件、检查来源与 Claude 链接状态，批量检查更新，再逐个选择并查看文件级和文本级 diff 后写入。Claude-only 目录会继续显示，但必须由你明确选择“设为规范副本”后才会迁移。
 
 ### TUI 与 CLI
 
@@ -130,6 +130,8 @@ skills.sh 在这里是发现入口，不是文件托管或更新 API。安装 sk
 - Git 命令禁用交互式凭据提示；认证不可用时会返回明确错误，而不是挂起 UI。
 - 不要把 token 写进 source URL；Guoba Skills 会直接拒绝这类 URL，避免凭据进入 lock、日志、shell 历史和进程列表。
 - 所有写入都限定在选定 scope 的 `.agents/skills`、对应安全 symlink 和 `skills-lock.json`。
+- 受管路径的父级如果是 symlink 会被拒绝；跨进程写锁位于系统临时目录，不会增加仓库 diff。
+- 本地 Web UI 的写请求要求同源、JSON 与随机会话 cookie；Electron 同时校验导航目标和 IPC sender。
 - Pull Request 构建产物未签名；只应从可信 PR 与 workflow run 下载。
 
 ## 开发

@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import type { InstallRequest, Inventory, UpdatePreview } from '../../shared/types'
+import type { InstallRequest, Inventory, SkillFileContent, UpdatePreview } from '../../shared/types'
 import { transport } from './transport'
 
 export function useSkills() {
   const [inventory, setInventory] = useState<Inventory>()
   const [selectedId, setSelectedId] = useState<string>()
   const [preview, setPreview] = useState<UpdatePreview>()
+  const [file, setFile] = useState<SkillFileContent>()
   const [busy, setBusy] = useState<string>()
   const [error, setError] = useState<string>()
 
@@ -70,6 +71,20 @@ export function useSkills() {
     acceptInventory(next)
   }
 
+  const discard = async () => {
+    if (!preview) return
+    const previewId = preview.previewId
+    setPreview(undefined)
+    await transport.invoke<void>('discard', { previewId })
+  }
+
+  const openFile = async (id: string, path: string) => {
+    const next = await run('Reading Skill file', () =>
+      transport.invoke<SkillFileContent>('readFile', { id, path }),
+    )
+    setFile(next)
+  }
+
   const install = async (request: InstallRequest) => {
     const result = await run('Installing Skill', () =>
       transport.invoke<{ id: string; inventory: Inventory }>('install', request),
@@ -93,16 +108,21 @@ export function useSkills() {
   return {
     inventory,
     selectedId,
-    setSelectedId,
+    select: (id: string) => {
+      setSelectedId(id)
+      setFile(undefined)
+    },
     preview,
-    setPreview,
+    file,
     busy,
     error,
     setError,
     check,
     sync,
     prepare,
+    discard,
     apply,
+    openFile,
     install,
     makeCanonical,
     chooseProject,

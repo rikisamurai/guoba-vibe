@@ -1,7 +1,7 @@
 import { FileCode2, Link2, RefreshCw, ShieldAlert } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import type { SkillRecord } from '../../../shared/types'
+import type { SkillFileContent, SkillRecord } from '../../../shared/types'
 import { linkLabel, statusTone, updateLabel } from '../status'
 import type { InspectorTab } from '../ui-types'
 import { InspectorContent } from './InspectorContent'
@@ -10,13 +10,23 @@ const INSPECTOR_TABS: InspectorTab[] = ['content', 'files', 'source']
 
 interface InspectorProps {
   skill?: SkillRecord
+  file?: SkillFileContent
   onCheck: (id: string) => void
   onMakeCanonical: (id: string) => void
   onPrepare: (id: string) => void
+  onReadFile: (id: string, path: string) => void
   onSync: (id: string) => void
 }
 
-export function Inspector({ skill, onCheck, onMakeCanonical, onPrepare, onSync }: InspectorProps) {
+export function Inspector({
+  skill,
+  file,
+  onCheck,
+  onMakeCanonical,
+  onPrepare,
+  onReadFile,
+  onSync,
+}: InspectorProps) {
   const [tab, setTab] = useState<InspectorTab>('content')
   useEffect(() => setTab('content'), [skill?.id])
   if (!skill)
@@ -84,7 +94,7 @@ export function Inspector({ skill, onCheck, onMakeCanonical, onPrepare, onSync }
         </div>
       </header>
       <div className="inspector-body">
-        <InspectorContent skill={skill} tab={tab} />
+        <InspectorContent file={file} onReadFile={onReadFile} skill={skill} tab={tab} />
       </div>
     </aside>
   )

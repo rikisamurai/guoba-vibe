@@ -42,14 +42,15 @@ program
   .argument('<id>')
   .option('--yes', 'apply the exact revision after printing its diff')
   .action(async (id: string, options) => {
-    const instance = await manager()
-    const preview = await instance.prepare(id)
+    const skillManager = await manager()
+    const preview = await skillManager.prepare(id)
     printPreview(preview)
     if (!options.yes) {
       console.log('\nPreview only. Re-run with --yes to apply this update.')
+      await skillManager.discard(preview.previewId)
       return
     }
-    printInventory(await instance.apply(preview.previewId))
+    printInventory(await skillManager.apply(preview.previewId))
   })
 
 program
@@ -78,8 +79,8 @@ program
   .option('--port <port>', 'local port', '4178')
   .option('--no-open', 'do not open the browser')
   .action(async (options) => {
-    const instance = await manager()
-    const server = await startWebServer(new ServiceController(instance), {
+    const skillManager = await manager()
+    const server = await startWebServer(new ServiceController(skillManager), {
       port: Number(options.port),
       staticRoot: await webRoot(),
     })
@@ -123,8 +124,8 @@ function parseScope(value: string): SkillScope {
 
 async function main(): Promise<void> {
   if (process.argv.length === 2) {
-    const instance = await manager()
-    await render(React.createElement(Tui, { manager: instance })).waitUntilExit()
+    const skillManager = await manager()
+    await render(React.createElement(Tui, { manager: skillManager })).waitUntilExit()
     return
   }
   await program.parseAsync()

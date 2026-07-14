@@ -16,6 +16,8 @@ export class ServiceController {
         return this.manager.check(asIdentifier(payload).id)
       case 'prepare':
         return this.manager.prepare(requiredId(payload))
+      case 'discard':
+        return this.manager.discard(requiredString(payload, 'previewId'))
       case 'apply':
         return this.manager.apply(requiredString(payload, 'previewId'))
       case 'sync':
@@ -24,11 +26,17 @@ export class ServiceController {
         return this.manager.install(parseInstallRequest(payload))
       case 'makeCanonical':
         return this.manager.makeCanonical(requiredId(payload))
+      case 'readFile':
+        return this.manager.readFile(requiredId(payload), requiredString(payload, 'path'))
       case 'chooseProject':
         return Promise.reject(new Error('Project selection is only available in the macOS app.'))
       default:
         return Promise.reject(new Error(`Unknown service action: ${String(action)}`))
     }
+  }
+
+  dispose(): Promise<void> {
+    return this.manager.dispose()
   }
 }
 

@@ -26,6 +26,14 @@ test('checks, previews, and applies an exact upstream update', async ({ page }) 
   await expect(page.getByTestId('inspector')).toContainText('Version B')
 })
 
+test('opens files from the Skill inventory', async ({ page }) => {
+  await page.goto('/')
+  await page.getByTestId('skill-user:user-helper').click()
+  await page.getByRole('tab', { name: 'files' }).click()
+  await page.getByRole('button', { name: /SKILL\.md/u }).click()
+  await expect(page.getByTestId('file-preview')).toContainText('User body')
+})
+
 test('opens the guided skills.sh install flow', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Add Skill' }).click()

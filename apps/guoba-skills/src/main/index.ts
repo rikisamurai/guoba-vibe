@@ -1,12 +1,13 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
 
 import { findProjectRoot, getManagerRoots } from '../core/paths'
 import { SkillManager } from '../core/skill-manager'
 import { ServiceController } from '../service/controller'
-import type { ServiceAction } from '../shared/types'
+import { isServiceAction } from '../shared/types'
 
 let window: BrowserWindow | undefined
 let projectRoot: string | undefined
@@ -35,6 +36,15 @@ async function createWindow(): Promise<void> {
   window.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https://')) void shell.openExternal(url)
     return { action: 'deny' }
+  })
+  window.webContents.on('will-navigate', (event, url) => {
+    if (isTrustedRendererUrl(url)) return
+    event.preventDefault()
+    if (url.startsWith('https://')) void shell.openExternal(url)
+  })
+  window.on('closed', () => {
+    void controller.dispose()
+    window = undefined
   })
   if (process.env.ELECTRON_RENDERER_URL) await window.loadURL(process.env.ELECTRON_RENDERER_URL)
   else await window.loadFile(join(__dirname, '../renderer/index.html'))
@@ -74,10 +84,25 @@ async function readRecentProject(): Promise<string | undefined> {
   }
 }
 
-ipcMain.handle('guoba-skills:invoke', (_event, action: ServiceAction, payload?: unknown) => {
+ipcMain.handle('guoba-skills:invoke', (event, action: unknown, payload?: unknown) => {
+  if (
+    !window ||
+    event.sender !== window.webContents ||
+    !event.senderFrame ||
+    !isTrustedRendererUrl(event.senderFrame.url)
+  ) {
+    throw new Error('Untrusted renderer cannot invoke Guoba Skills.')
+  }
+  if (!isServiceAction(action)) throw new Error('Unknown service action.')
   if (action === 'chooseProject') return chooseProject()
   return controller.invoke(action, payload)
 })
+
+function isTrustedRendererUrl(url: string): boolean {
+  const developmentUrl = process.env.ELECTRON_RENDERER_URL
+  if (developmentUrl) return new URL(url).origin === new URL(developmentUrl).origin
+  return url === pathToFileURL(join(__dirname, '../renderer/index.html')).toString()
+}
 
 async function bootstrap(): Promise<void> {
   await app.whenReady()

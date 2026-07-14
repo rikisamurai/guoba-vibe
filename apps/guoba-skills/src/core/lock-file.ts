@@ -1,9 +1,11 @@
+import { randomUUID } from 'node:crypto'
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { dirname, posix } from 'node:path'
 
 import { z } from 'zod'
 
 import type { SkillProvenance } from '../shared/types'
+import { withFileLock } from './file-lock'
 
 interface LockFile {
   version: number
@@ -65,7 +67,7 @@ export async function readLockFile(path: string): Promise<LockFile> {
 
 export async function writeLockFile(path: string, lock: LockFile): Promise<void> {
   await mkdir(dirname(path), { recursive: true })
-  const temporary = `${path}.tmp-${process.pid}-${Date.now()}`
+  const temporary = `${path}.tmp-${process.pid}-${randomUUID()}`
   try {
     await writeFile(temporary, `${JSON.stringify({ ...lock, version: 2 }, null, 2)}\n`, 'utf8')
     await rename(temporary, path)
@@ -80,9 +82,11 @@ export async function setLockEntry(
   name: string,
   entry: SkillProvenance,
 ): Promise<void> {
-  const lock = await readLockFile(path)
-  lock.skills[name] = entry
-  await writeLockFile(path, lock)
+  await withFileLock(path, async () => {
+    const lock = await readLockFile(path)
+    lock.skills[name] = entry
+    await writeLockFile(path, lock)
+  })
 }
 
 function normalizeEntry(entry: SkillProvenance): SkillProvenance {

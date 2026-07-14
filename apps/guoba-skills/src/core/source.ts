@@ -29,7 +29,7 @@ export function normalizeSource(input: string, skill?: string, ref?: string): Re
     }
   }
   if (!isGitUrl(sourcePart)) throw new Error('Use a skills.sh URL, owner/repo, or Git URL.')
-  rejectEmbeddedCredentials(sourcePart)
+  assertSafeSourceUrl(sourcePart)
   return {
     source: sourcePart,
     sourceType: 'git',
@@ -75,8 +75,12 @@ function parseGitHub(value: string): ResolvedSourceInput | undefined {
     const source = `${shorthand[1]}/${shorthand[2].replace(/\.git$/u, '')}`
     return { source, sourceType: 'github', sourceUrl: `https://github.com/${source}.git` }
   }
-  const match =
-    /^(?:https?:\/\/github\.com\/|git@github\.com:)([\w.-]+)\/([\w.-]+?)(?:\.git)?\/?$/u.exec(value)
+  const ssh = /^git@github\.com:([\w.-]+)\/([\w.-]+?)(?:\.git)?\/?$/u.exec(value)
+  if (ssh) {
+    const source = `${ssh[1]}/${ssh[2]}`
+    return { source, sourceType: 'github', sourceUrl: value.replace(/\/$/u, '') }
+  }
+  const match = /^https?:\/\/github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?\/?$/u.exec(value)
   if (!match) return undefined
   const source = `${match[1]}/${match[2]}`
   return { source, sourceType: 'github', sourceUrl: `https://github.com/${source}.git` }
@@ -86,10 +90,11 @@ function isGitUrl(value: string): boolean {
   return /^(?:https?:\/\/|ssh:\/\/|file:\/\/|git@)[^\s]+$/u.test(value)
 }
 
-function rejectEmbeddedCredentials(value: string): void {
-  if (!value.startsWith('http://') && !value.startsWith('https://')) return
+export function assertSafeSourceUrl(value: string): void {
+  if (!/^(?:https?|ssh):\/\//u.test(value)) return
   const url = new URL(value)
-  if (url.username || url.password) {
+  const webUser = /^https?:$/u.test(url.protocol) && Boolean(url.username)
+  if (webUser || url.password) {
     throw new Error('Do not put credentials in a source URL; use Git credential helpers or SSH.')
   }
 }
