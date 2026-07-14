@@ -1,0 +1,80 @@
+@media (max-width: 1020px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .source-panel {
+    border-right: 0;
+    border-bottom: 1px solid #d7dcda;
+  }
+}
+
+@media (max-width: 760px) {
+  .shell {
+    padding: 0;
+  }
+
+  .workspace {
+    border-width: 0;
+    border-radius: 0;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .status-pill {
+    max-width: 126px;
+    border-radius: 6px;
+  }
+
+  .workspace-actions {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    padding: 12px;
+  }
+
+  .workspace-buttons {
+    flex-wrap: wrap;
+  }
+
+  .json-drawer[open] {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 12px;
+  }
+
+  .matrix-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .matrix-row code {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar,
+  .preview-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .parts-grid,
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .query-row,
+  .param-row {
+    grid-template-columns: minmax(90px, 0.8fr) minmax(110px, 1.2fr) 34px;
+  }
+
+  .preview-actions button {
+    flex: 1;
+  }
+}

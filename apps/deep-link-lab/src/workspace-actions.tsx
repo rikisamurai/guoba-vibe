@@ -1,7 +1,8 @@
+import { FileJson2, RotateCcw, Upload } from 'lucide-react'
+
 export function WorkspaceActions({
   name,
   importText,
-  exportText,
   message,
   onNameChange,
   onImportTextChange,
@@ -11,7 +12,6 @@ export function WorkspaceActions({
 }: {
   name: string
   importText: string
-  exportText: string
   message: string
   onNameChange: (name: string) => void
   onImportTextChange: (value: string) => void
@@ -23,26 +23,36 @@ export function WorkspaceActions({
     <section className="workspace-actions" aria-label="Workspace actions">
       <label className="workspace-name">
         <span>Workspace</span>
-        <input value={name} onChange={(event) => onNameChange(event.target.value)} />
+        <input
+          required
+          maxLength={80}
+          value={name}
+          onChange={(event) => onNameChange(event.target.value)}
+        />
       </label>
       <div className="workspace-buttons">
         <button type="button" onClick={onExport}>
-          Export JSON
-        </button>
-        <button type="button" onClick={onImport}>
-          Import JSON
+          <FileJson2 size={14} aria-hidden="true" /> Export
         </button>
         <button type="button" onClick={onReset}>
-          Restore sample
+          <RotateCcw size={14} aria-hidden="true" /> Restore sample
         </button>
       </div>
-      <textarea
-        aria-label="Workspace JSON"
-        placeholder="Paste exported workspace JSON here, or click Export JSON."
-        value={importText || exportText}
-        onChange={(event) => onImportTextChange(event.target.value)}
-      />
-      {message ? <p className="workspace-message">{message}</p> : null}
+      <details className="json-drawer">
+        <summary>Workspace JSON</summary>
+        <textarea
+          aria-label="Workspace JSON"
+          spellCheck={false}
+          value={importText}
+          onChange={(event) => onImportTextChange(event.target.value)}
+        />
+        <button type="button" onClick={onImport}>
+          <Upload size={14} aria-hidden="true" /> Validate & import
+        </button>
+      </details>
+      <p className="workspace-message" aria-live="polite">
+        {message}
+      </p>
     </section>
   )
 }

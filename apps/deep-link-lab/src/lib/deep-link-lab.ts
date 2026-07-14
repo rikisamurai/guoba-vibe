@@ -4,112 +4,103 @@ export type EnvironmentProfile = {
   params: Record<string, string>
 }
 
-export type DeepLinkWorkspace = {
-  name: string
-  sourceUrl: string
-  profiles: EnvironmentProfile[]
-}
-
 export type EnvironmentLink = {
   id: string
   name: string
   url: string
   queryCount: number
+  scheme: string
+}
+
+export type DeepLinkValidation =
+  | { ok: true; message: ''; scheme: string }
+  | { ok: false; message: string; scheme: '' }
+
+const blockedSchemes = new Set([
+  'about',
+  'blob',
+  'chrome',
+  'data',
+  'file',
+  'intent',
+  'javascript',
+  'vbscript',
+])
+const schemePattern = /^[a-z][a-z0-9+.-]*$/i
+
+export function validateDeepLink(rawUrl: string): DeepLinkValidation {
+  const target = rawUrl.trim()
+  if (!target) return invalid('Enter a URL or app deep link.')
+
+  try {
+    const url = new URL(target)
+    const scheme = url.protocol.slice(0, -1).toLowerCase()
+
+    if (!schemePattern.test(scheme) || blockedSchemes.has(scheme)) {
+      return invalid(`The “${scheme || 'unknown'}” scheme is not allowed.`)
+    }
+    if (url.username || url.password) {
+      return invalid('Credentials are not allowed in deep links.')
+    }
+    if (scheme !== 'http' && scheme !== 'https' && (!target.includes('://') || !url.hostname)) {
+      return invalid('Custom app links must use scheme://target/path.')
+    }
+
+    return { ok: true, message: '', scheme }
+  } catch {
+    return invalid('Enter a valid URL or app deep link.')
+  }
 }
 
 export function buildEnvironmentLinks(
   rawUrl: string,
   profiles: EnvironmentProfile[],
 ): EnvironmentLink[] {
-  const source = new URL(rawUrl)
+  const validation = validateDeepLink(rawUrl)
+  if (!validation.ok) return []
 
+  const source = new URL(rawUrl.trim())
   return profiles.map((profile) => {
     const target = new URL(source.href)
-
     for (const [key, value] of Object.entries(profile.params)) {
       target.searchParams.set(key, value)
     }
-
     return {
       id: profile.id,
       name: profile.name,
       url: target.href,
-      queryCount: Array.from(target.searchParams.entries()).length,
+      queryCount: Array.from(target.searchParams).length,
+      scheme: validation.scheme,
     }
   })
 }
 
 export function readDeepLinkParts(rawUrl: string) {
-  const url = new URL(rawUrl)
+  if (!validateDeepLink(rawUrl).ok) return null
+  const url = new URL(rawUrl.trim())
   const path = [url.hostname, url.pathname.replace(/^\//, '')].filter(Boolean).join('/')
 
   return {
-    scheme: url.protocol.replace(/:$/, ''),
+    scheme: url.protocol.slice(0, -1),
     path,
-    query: Array.from(url.searchParams.entries()).map(([key, value]) => ({ key, value })),
+    query: Array.from(url.searchParams, ([key, value]) => ({ key, value })),
   }
 }
 
 export function upsertQueryParam(rawUrl: string, key: string, value: string) {
-  const target = new URL(rawUrl)
-  target.searchParams.set(key, value)
+  if (!validateDeepLink(rawUrl).ok || !key.trim()) return rawUrl
+  const target = new URL(rawUrl.trim())
+  target.searchParams.set(key.trim(), value)
   return target.href
 }
 
 export function removeQueryParam(rawUrl: string, key: string) {
-  const target = new URL(rawUrl)
+  if (!validateDeepLink(rawUrl).ok) return rawUrl
+  const target = new URL(rawUrl.trim())
   target.searchParams.delete(key)
   return target.href
 }
 
-export function validateDeepLink(
-  rawUrl: string,
-): { ok: true; message: '' } | { ok: false; message: string } {
-  try {
-    const url = new URL(rawUrl)
-    return url.protocol
-      ? { ok: true, message: '' }
-      : { ok: false, message: 'Enter a valid URL or app deep link.' }
-  } catch {
-    return { ok: false, message: 'Enter a valid URL or app deep link.' }
-  }
-}
-
-export function exportWorkspace(workspace: DeepLinkWorkspace) {
-  return JSON.stringify(workspace, null, 2)
-}
-
-export function importWorkspace(payload: string): DeepLinkWorkspace | null {
-  try {
-    const parsed = JSON.parse(payload) as Partial<DeepLinkWorkspace>
-
-    if (
-      typeof parsed.name !== 'string' ||
-      typeof parsed.sourceUrl !== 'string' ||
-      !Array.isArray(parsed.profiles) ||
-      !validateDeepLink(parsed.sourceUrl).ok
-    ) {
-      return null
-    }
-
-    const profiles = parsed.profiles.filter(isEnvironmentProfile)
-
-    return profiles.length ? { name: parsed.name, sourceUrl: parsed.sourceUrl, profiles } : null
-  } catch {
-    return null
-  }
-}
-
-function isEnvironmentProfile(profile: unknown): profile is EnvironmentProfile {
-  if (!profile || typeof profile !== 'object') {
-    return false
-  }
-
-  const candidate = profile as EnvironmentProfile
-  return (
-    typeof candidate.id === 'string' &&
-    typeof candidate.name === 'string' &&
-    Boolean(candidate.params) &&
-    Object.values(candidate.params).every((value) => typeof value === 'string')
-  )
+function invalid(message: string): DeepLinkValidation {
+  return { ok: false, message, scheme: '' }
 }

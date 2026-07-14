@@ -1,0 +1,104 @@
+.workspace-actions {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.45fr) auto minmax(220px, 1fr);
+  align-items: end;
+  gap: 10px 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #d7dcda;
+  background: #fff;
+}
+
+.workspace-name,
+.field,
+.identity-grid label {
+  display: grid;
+  gap: 6px;
+  color: #52605a;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #cbd2ce;
+  border-radius: 6px;
+  background: #fff;
+  color: #17201c;
+}
+
+input {
+  height: 34px;
+  padding: 0 9px;
+}
+
+textarea {
+  min-height: 78px;
+  padding: 10px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.workspace-buttons {
+  display: flex;
+  gap: 7px;
+}
+
+.workspace-buttons button,
+.json-drawer button,
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  border: 1px solid #b8c1bc;
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #f7f9f7;
+  color: #26312c;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.json-drawer {
+  align-self: center;
+}
+
+.json-drawer summary {
+  cursor: pointer;
+  color: #34443c;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.json-drawer[open] {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.json-drawer[open] summary {
+  grid-column: 1 / -1;
+}
+
+.json-drawer textarea {
+  min-height: 130px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 11px;
+}
+
+.workspace-message,
+.save-status {
+  margin: 0;
+  color: #506059;
+  font-size: 11px;
+}
+
+.save-status {
+  padding: 9px 16px;
+  border-top: 1px solid #d7dcda;
+  background: #fff;
+}
