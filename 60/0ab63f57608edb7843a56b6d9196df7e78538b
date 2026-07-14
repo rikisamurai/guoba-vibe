@@ -1,0 +1,45 @@
+apps/prompt-eval-harness/src/app.tsx
+  s_36b4104e727909::t_d93db365a3f8c9 29
+apps/prompt-eval-harness/src/styles-ranking.css
+  s_36b4104e727909::t_d93db365a3f8c9 32
+apps/prompt-eval-harness/src/eval-panels.tsx
+  s_36b4104e727909::t_59b3a77cf9d3d2 4
+  s_36b4104e727909::t_d93db365a3f8c9 121,138
+apps/prompt-eval-harness/scripts/evaluate.test.mjs
+  s_36b4104e727909::t_887e7f0fa86d7d 28-40
+  s_36b4104e727909::t_454c5059f762e4 41
+apps/prompt-eval-harness/src/lib/eval-validation.ts
+  s_36b4104e727909::t_59b3a77cf9d3d2 8-11,167
+  s_36b4104e727909::t_d93db365a3f8c9 19,26,89,164-166
+  s_36b4104e727909::t_e05959ef721e32 12
+apps/prompt-eval-harness/scripts/evaluate.mjs
+  s_36b4104e727909::t_59b3a77cf9d3d2 6
+  s_36b4104e727909::t_397b45ef4882b4 4,28-29,40-41,45,48,53,63-64,67,73-84
+apps/prompt-eval-harness/src/lib/prompt-eval.ts
+  s_36b4104e727909::t_d93db365a3f8c9 58-63,104-105
+  s_36b4104e727909::t_95717f14878ee1 106-108
+apps/prompt-eval-harness/src/suite-panel.tsx
+  s_36b4104e727909::t_d93db365a3f8c9 28-33
+apps/prompt-eval-harness/src/lib/prompt-eval.test.ts
+  s_36b4104e727909::t_887e7f0fa86d7d 78-92,148-157
+  s_36b4104e727909::t_59b3a77cf9d3d2 3
+  s_36b4104e727909::t_10efde31acebbb 158
+README.md
+  s_36b4104e727909::t_27f185b0fa4bc2 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "600ab63f57608edb7843a56b6d9196df7e78538b",
+  "prompts": {},
+  "sessions": {
+    "s_36b4104e727909": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f5ce2-4f15-77d2-ba4d-4e127a6361c1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
