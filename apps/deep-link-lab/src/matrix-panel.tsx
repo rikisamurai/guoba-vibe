@@ -2,7 +2,7 @@ import { Check, Copy, ExternalLink, FlaskConical, ShieldCheck, X } from 'lucide-
 import { useState } from 'react'
 
 import { copyLink, openLink } from './lib/browser-actions'
-import type { DeepLinkValidation, EnvironmentLink } from './lib/deep-link-lab'
+import { readOpenPolicy, type DeepLinkValidation, type EnvironmentLink } from './lib/deep-link-lab'
 
 export function MatrixPanel({
   validation,
@@ -19,6 +19,7 @@ export function MatrixPanel({
 }) {
   const [actionMessage, setActionMessage] = useState('')
   const [busyId, setBusyId] = useState('')
+  const openPolicy = readOpenPolicy(validation)
 
   async function copy(url: string, id: string) {
     setBusyId(id)
@@ -41,7 +42,11 @@ export function MatrixPanel({
         </div>
       </div>
 
-      <ValidationCard validation={validation} profileCount={links.length} />
+      <ValidationCard
+        validation={validation}
+        profileCount={links.length}
+        openAllowed={openPolicy.allowed}
+      />
 
       {validation.ok && activeLink ? (
         <>
@@ -56,10 +61,22 @@ export function MatrixPanel({
                 <Copy size={15} aria-hidden="true" />
                 {busyId === activeLink.id ? 'Copying…' : 'Copy link'}
               </button>
-              <button type="button" onClick={() => open(activeLink.url)}>
-                <ExternalLink size={15} aria-hidden="true" /> Open safely
+              <button
+                type="button"
+                disabled={!openPolicy.allowed}
+                onClick={() => open(activeLink.url)}
+              >
+                <ExternalLink size={15} aria-hidden="true" />
+                {openPolicy.allowed ? 'Open safely' : 'Open blocked'}
               </button>
             </div>
+            <p
+              className={`open-policy ${openPolicy.allowed ? 'allowed' : 'blocked'}`}
+              role="status"
+              aria-live="polite"
+            >
+              {openPolicy.message}
+            </p>
           </div>
 
           <div className="matrix" aria-label="Compiled profile links">
@@ -89,7 +106,12 @@ export function MatrixPanel({
                   </button>
                   <button
                     type="button"
-                    aria-label={`Open ${link.name} link`}
+                    aria-label={
+                      openPolicy.allowed
+                        ? `Open ${link.name} link`
+                        : `Opening ${link.name} is disabled for the ${link.scheme} scheme`
+                    }
+                    disabled={!openPolicy.allowed}
                     onClick={() => open(link.url)}
                   >
                     <ExternalLink size={15} aria-hidden="true" />
@@ -115,26 +137,34 @@ export function MatrixPanel({
 function ValidationCard({
   validation,
   profileCount,
+  openAllowed,
 }: {
   validation: DeepLinkValidation
   profileCount: number
+  openAllowed: boolean
 }) {
   const rows = [
     ['URL format', validation.ok],
-    ['Scheme policy', validation.ok],
+    ['Open policy', openAllowed],
     ['Credentials absent', validation.ok],
     ['Profiles compiled', validation.ok && profileCount > 0],
   ] as const
 
   return (
-    <div className={`validation-card ${validation.ok ? 'valid' : 'invalid'}`}>
+    <div
+      className={`validation-card ${
+        !validation.ok ? 'invalid' : openAllowed ? 'valid' : 'caution'
+      }`}
+    >
       <div className="validation-title">
         <ShieldCheck size={17} aria-hidden="true" />
-        <strong>{validation.ok ? 'Safe to use' : 'Validation stopped'}</strong>
+        <strong>
+          {!validation.ok ? 'Validation stopped' : openAllowed ? 'Ready to open' : 'Open blocked'}
+        </strong>
       </div>
       <div className="validation-rows">
         {rows.map(([label, valid]) => (
-          <div key={label}>
+          <div key={label} className={valid ? 'valid' : 'invalid'}>
             <span>{label}</span>
             <strong>{valid ? 'VALID' : 'BLOCKED'}</strong>
             {valid ? <Check size={14} aria-hidden="true" /> : <X size={14} aria-hidden="true" />}

@@ -1,4 +1,4 @@
-import { validateDeepLink } from './deep-link-lab'
+import { readOpenPolicy, validateDeepLink } from './deep-link-lab'
 
 export async function copyLink(url: string) {
   try {
@@ -10,10 +10,12 @@ export async function copyLink(url: string) {
     // Continue to the selection-based fallback for restricted browser contexts.
   }
 
+  const previousFocus = document.activeElement
   const textarea = document.createElement('textarea')
   textarea.value = url
   textarea.style.position = 'fixed'
   textarea.style.opacity = '0'
+  textarea.setAttribute('aria-hidden', 'true')
   document.body.append(textarea)
   textarea.select()
   let copied = false
@@ -23,6 +25,9 @@ export async function copyLink(url: string) {
     copied = false
   } finally {
     textarea.remove()
+    if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
+      previousFocus.focus({ preventScroll: true })
+    }
   }
   return copied
     ? { ok: true, message: 'Link copied to the clipboard.' }
@@ -32,6 +37,8 @@ export async function copyLink(url: string) {
 export function openLink(url: string) {
   const validation = validateDeepLink(url)
   if (!validation.ok) return { ok: false, message: validation.message }
+  const policy = readOpenPolicy(validation)
+  if (!policy.allowed) return { ok: false, message: policy.message }
 
   try {
     if (validation.scheme === 'http' || validation.scheme === 'https') {

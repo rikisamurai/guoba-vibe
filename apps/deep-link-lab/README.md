@@ -4,8 +4,8 @@ Deep Link Lab is a local-first compiler for web URLs and custom app links. It va
 
 ## What it does
 
-- Accepts `http`, `https`, and well-formed `scheme://target/path` app links.
-- Blocks executable, file, browser-internal, credential-bearing, and malformed targets before output is enabled.
+- Compiles `http`, `https`, and well-formed `scheme://target/path` links while rejecting credential-bearing and malformed targets.
+- Enables browser dispatch only for the explicit `http`, `https`, and `xhsdiscover` allowlist. Other custom or browser-internal schemes remain copyable, but every Open control stays blocked.
 - Edits source query parameters and reusable profile overrides in place.
 - Supports profile creation, deletion, renaming, stable IDs, and parameter key/value editing.
 - Imports and exports a strict, versioned workspace JSON format.
@@ -17,7 +17,7 @@ Deep Link Lab is a local-first compiler for web URLs and custom app links. It va
 {
   "schema": "deep-link-lab.workspace/v1",
   "name": "Shopping launch links",
-  "target": "myapp://checkout/confirm?sku=ABC123",
+  "target": "xhsdiscover://item/detail?id=ABC123",
   "profiles": [
     {
       "id": "staging",

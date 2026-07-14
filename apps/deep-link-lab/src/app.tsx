@@ -5,10 +5,16 @@ import { sampleWorkspace } from './deep-link-data'
 import {
   buildEnvironmentLinks,
   readDeepLinkParts,
+  readOpenPolicy,
   validateDeepLink,
   type EnvironmentProfile,
 } from './lib/deep-link-lab'
-import { exportWorkspace, importWorkspace, type DeepLinkWorkspace } from './lib/workspace'
+import {
+  exportWorkspace,
+  importWorkspace,
+  validateWorkspace,
+  type DeepLinkWorkspace,
+} from './lib/workspace'
 import { MatrixPanel } from './matrix-panel'
 import { SourcePanel } from './source-panel'
 import { WorkspaceActions } from './workspace-actions'
@@ -38,14 +44,13 @@ export function App() {
   const [storageError, setStorageError] = useState('')
 
   useEffect(() => {
-    const serialized = exportWorkspace(workspace)
-    const validation = importWorkspace(serialized)
+    const validation = validateWorkspace(workspace)
     if (!validation.ok) {
       setStorageError(`Draft not saved: ${validation.message}`)
       return
     }
     try {
-      window.localStorage.setItem(storageKey, serialized)
+      window.localStorage.setItem(storageKey, exportWorkspace(validation.workspace))
       setStorageError('')
     } catch {
       setStorageError('Autosave is unavailable in this browser.')
@@ -56,6 +61,7 @@ export function App() {
     const validation = validateDeepLink(workspace.target)
     return {
       validation,
+      openPolicy: readOpenPolicy(validation),
       links: validation.ok ? buildEnvironmentLinks(workspace.target, workspace.profiles) : [],
       parts: validation.ok ? readDeepLinkParts(workspace.target) : null,
     }
@@ -84,11 +90,12 @@ export function App() {
   }
 
   function exportCurrentWorkspace() {
-    if (!workspace.name.trim()) {
-      setWorkspaceMessage('Workspace name is required before export.')
+    const validation = validateWorkspace(workspace)
+    if (!validation.ok) {
+      setWorkspaceMessage(`Export blocked: ${validation.message}`)
       return
     }
-    setWorkspaceText(exportWorkspace(workspace))
+    setWorkspaceText(exportWorkspace(validation.workspace))
     setWorkspaceMessage('Current workspace JSON is ready to copy.')
   }
 
@@ -112,9 +119,24 @@ export function App() {
               <h1>Deep Link Lab</h1>
             </div>
           </div>
-          <div className={`status-pill ${result.validation.ok ? 'valid' : 'invalid'}`}>
-            {result.validation.ok ? <CheckCircle2 size={16} /> : <ShieldAlert size={16} />}
-            {result.validation.ok ? `${result.links.length} safe targets` : 'Target blocked'}
+          <div
+            className={`status-pill ${
+              !result.validation.ok ? 'invalid' : result.openPolicy.allowed ? 'valid' : 'caution'
+            }`}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {result.openPolicy.allowed ? (
+              <CheckCircle2 size={16} aria-hidden="true" />
+            ) : (
+              <ShieldAlert size={16} aria-hidden="true" />
+            )}
+            {!result.validation.ok
+              ? 'Target blocked'
+              : result.openPolicy.allowed
+                ? `${result.links.length} open-ready targets`
+                : `${result.links.length} compiled · open blocked`}
           </div>
         </header>
 
@@ -133,6 +155,7 @@ export function App() {
           <SourcePanel
             rawUrl={workspace.target}
             parts={result.parts}
+            validationMessage={result.validation.message}
             profiles={workspace.profiles}
             activeProfileId={activeProfileId}
             onRawUrlChange={(target) => setWorkspace((current) => ({ ...current, target }))}

@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
-import { removeQueryParam, upsertQueryParam } from './lib/deep-link-lab'
+import { appendQueryParam, removeQueryParamAt, updateQueryParamAt } from './lib/deep-link-lab'
 
 export function QueryEditor({
   rawUrl,
@@ -10,7 +10,7 @@ export function QueryEditor({
   onRawUrlChange,
 }: {
   rawUrl: string
-  query: Array<{ key: string; value: string }>
+  query: Array<{ index: number; key: string; value: string }>
   disabled: boolean
   onRawUrlChange: (url: string) => void
 }) {
@@ -23,11 +23,7 @@ export function QueryEditor({
       setMessage('Parameter key is required.')
       return
     }
-    if (query.some((param) => param.key === key)) {
-      setMessage(`Parameter “${key}” already exists.`)
-      return
-    }
-    onRawUrlChange(upsertQueryParam(rawUrl, key, newParam.value))
+    onRawUrlChange(appendQueryParam(rawUrl, key, newParam.value))
     setNewParam({ key: '', value: '' })
     setMessage('Source parameter added.')
   }
@@ -39,21 +35,25 @@ export function QueryEditor({
         <small>{disabled ? 'Fix the target to edit' : `${query.length} parameters`}</small>
       </div>
       {query.map((param) => (
-        <div className="query-row" key={param.key}>
-          <input aria-label={`${param.key} key`} value={param.key} readOnly />
+        <div className="query-row" key={param.index}>
           <input
-            aria-label={`${param.key} value`}
+            aria-label={`${param.key || 'Empty'} query key, item ${param.index + 1}`}
+            value={param.key}
+            readOnly
+          />
+          <input
+            aria-label={`${param.key || 'Empty'} query value, item ${param.index + 1}`}
             value={param.value}
             disabled={disabled}
             onChange={(event) =>
-              onRawUrlChange(upsertQueryParam(rawUrl, param.key, event.target.value))
+              onRawUrlChange(updateQueryParamAt(rawUrl, param.index, event.target.value))
             }
           />
           <button
             type="button"
-            aria-label={`Remove ${param.key}`}
+            aria-label={`Remove ${param.key || 'empty'} query item ${param.index + 1}`}
             disabled={disabled}
-            onClick={() => onRawUrlChange(removeQueryParam(rawUrl, param.key))}
+            onClick={() => onRawUrlChange(removeQueryParamAt(rawUrl, param.index))}
           >
             <Trash2 size={15} aria-hidden="true" />
           </button>

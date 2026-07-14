@@ -21,6 +21,10 @@ export function exportWorkspace(workspace: DeepLinkWorkspace) {
   return JSON.stringify(workspace, null, 2)
 }
 
+export function validateWorkspace(workspace: DeepLinkWorkspace): WorkspaceImportResult {
+  return importWorkspace(exportWorkspace(workspace))
+}
+
 export function importWorkspace(payload: string): WorkspaceImportResult {
   let parsed: unknown
   try {

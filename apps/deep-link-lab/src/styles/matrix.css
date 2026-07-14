@@ -17,6 +17,10 @@
   border-color: #dfaaa4;
 }
 
+.validation-card.caution {
+  border-color: #d9b670;
+}
+
 .validation-title {
   display: flex;
   align-items: center;
@@ -31,6 +35,11 @@
 .validation-card.invalid .validation-title {
   background: #fff4f2;
   color: #8e312a;
+}
+
+.validation-card.caution .validation-title {
+  background: #fff8e8;
+  color: #6d4c0f;
 }
 
 .validation-rows > div {
@@ -54,7 +63,7 @@
   letter-spacing: 0.07em;
 }
 
-.validation-card.invalid .validation-rows strong {
+.validation-rows > div.invalid strong {
   color: #b34238;
 }
 
@@ -102,6 +111,17 @@ code {
 .row-actions {
   display: flex;
   gap: 7px;
+}
+
+.open-policy {
+  margin: 9px 0 0;
+  color: #b9e9c7;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.open-policy.blocked {
+  color: #ffd79a;
 }
 
 .preview-actions button,

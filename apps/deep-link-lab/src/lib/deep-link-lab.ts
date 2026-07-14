@@ -16,16 +16,9 @@ export type DeepLinkValidation =
   | { ok: true; message: ''; scheme: string }
   | { ok: false; message: string; scheme: '' }
 
-const blockedSchemes = new Set([
-  'about',
-  'blob',
-  'chrome',
-  'data',
-  'file',
-  'intent',
-  'javascript',
-  'vbscript',
-])
+export type DeepLinkOpenPolicy = { allowed: boolean; message: string }
+
+const openSchemeAllowlist = new Set(['http', 'https', 'xhsdiscover'])
 const schemePattern = /^[a-z][a-z0-9+.-]*$/i
 
 export function validateDeepLink(rawUrl: string): DeepLinkValidation {
@@ -36,9 +29,7 @@ export function validateDeepLink(rawUrl: string): DeepLinkValidation {
     const url = new URL(target)
     const scheme = url.protocol.slice(0, -1).toLowerCase()
 
-    if (!schemePattern.test(scheme) || blockedSchemes.has(scheme)) {
-      return invalid(`The “${scheme || 'unknown'}” scheme is not allowed.`)
-    }
+    if (!schemePattern.test(scheme)) return invalid('Enter a valid URL or app deep link.')
     if (url.username || url.password) {
       return invalid('Credentials are not allowed in deep links.')
     }
@@ -49,6 +40,17 @@ export function validateDeepLink(rawUrl: string): DeepLinkValidation {
     return { ok: true, message: '', scheme }
   } catch {
     return invalid('Enter a valid URL or app deep link.')
+  }
+}
+
+export function readOpenPolicy(validation: DeepLinkValidation): DeepLinkOpenPolicy {
+  if (!validation.ok) return { allowed: false, message: validation.message }
+  if (openSchemeAllowlist.has(validation.scheme)) {
+    return { allowed: true, message: `Open is enabled for the “${validation.scheme}” scheme.` }
+  }
+  return {
+    allowed: false,
+    message: `Open is disabled for the “${validation.scheme}” scheme. Copy the compiled link to use it elsewhere.`,
   }
 }
 
@@ -83,22 +85,41 @@ export function readDeepLinkParts(rawUrl: string) {
   return {
     scheme: url.protocol.slice(0, -1),
     path,
-    query: Array.from(url.searchParams, ([key, value]) => ({ key, value })),
+    query: Array.from(url.searchParams, ([key, value], index) => ({ index, key, value })),
   }
 }
 
-export function upsertQueryParam(rawUrl: string, key: string, value: string) {
+export function appendQueryParam(rawUrl: string, key: string, value: string) {
   if (!validateDeepLink(rawUrl).ok || !key.trim()) return rawUrl
   const target = new URL(rawUrl.trim())
-  target.searchParams.set(key.trim(), value)
+  target.searchParams.append(key.trim(), value)
   return target.href
 }
 
-export function removeQueryParam(rawUrl: string, key: string) {
+export function updateQueryParamAt(rawUrl: string, index: number, value: string) {
   if (!validateDeepLink(rawUrl).ok) return rawUrl
   const target = new URL(rawUrl.trim())
-  target.searchParams.delete(key)
+  const entries = Array.from(target.searchParams)
+  const entry = entries[index]
+  if (!entry) return rawUrl
+  entries[index] = [entry[0], value]
+  replaceQuery(target, entries)
   return target.href
+}
+
+export function removeQueryParamAt(rawUrl: string, index: number) {
+  if (!validateDeepLink(rawUrl).ok) return rawUrl
+  const target = new URL(rawUrl.trim())
+  const entries = Array.from(target.searchParams)
+  if (!entries[index]) return rawUrl
+  entries.splice(index, 1)
+  replaceQuery(target, entries)
+  return target.href
+}
+
+function replaceQuery(target: URL, entries: Array<[string, string]>) {
+  target.search = ''
+  for (const [key, value] of entries) target.searchParams.append(key, value)
 }
 
 function invalid(message: string): DeepLinkValidation {

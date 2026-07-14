@@ -7,12 +7,13 @@ import { QueryEditor } from './query-editor'
 type DeepLinkParts = {
   scheme: string
   path: string
-  query: Array<{ key: string; value: string }>
+  query: Array<{ index: number; key: string; value: string }>
 } | null
 
 export function SourcePanel({
   rawUrl,
   parts,
+  validationMessage,
   profiles,
   activeProfileId,
   onRawUrlChange,
@@ -22,6 +23,7 @@ export function SourcePanel({
 }: {
   rawUrl: string
   parts: DeepLinkParts
+  validationMessage: string
   profiles: EnvironmentProfile[]
   activeProfileId: string
   onRawUrlChange: (url: string) => void
@@ -41,12 +43,19 @@ export function SourcePanel({
       <label className="field">
         <span>URL or app deep link</span>
         <textarea
+          aria-describedby={!parts ? 'target-validation-message' : undefined}
+          aria-invalid={!parts}
           value={rawUrl}
           spellCheck={false}
           placeholder="myapp://checkout/confirm?sku=ABC123"
           onChange={(event) => onRawUrlChange(event.target.value)}
         />
       </label>
+      {!parts ? (
+        <p id="target-validation-message" className="inline-message" role="status">
+          {validationMessage}
+        </p>
+      ) : null}
 
       <div className="parts-grid" aria-label="Parsed deep link">
         <Metric label="Scheme" value={parts?.scheme ?? 'Blocked'} />

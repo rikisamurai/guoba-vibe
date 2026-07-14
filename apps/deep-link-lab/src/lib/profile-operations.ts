@@ -9,7 +9,15 @@ export function addProfile(profiles: EnvironmentProfile[]): ProfileResult {
   if (profiles.length >= 12) return failed('A workspace supports up to 12 profiles.')
 
   let number = profiles.length + 1
-  while (profiles.some((profile) => profile.id === `profile-${number}`)) number += 1
+  while (
+    profiles.some(
+      (profile) =>
+        profile.id === `profile-${number}` ||
+        profile.name.trim().toLowerCase() === `profile ${number}`,
+    )
+  ) {
+    number += 1
+  }
   const profile = { id: `profile-${number}`, name: `Profile ${number}`, params: {} }
   return succeeded([...profiles, profile])
 }

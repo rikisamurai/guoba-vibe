@@ -36,7 +36,7 @@ button:focus-visible,
 summary:focus-visible,
 textarea:focus-visible,
 input:focus-visible {
-  outline: 3px solid rgba(47, 98, 220, 0.28);
+  outline: 3px solid #2f62dc;
   outline-offset: 1px;
 }
 
@@ -135,4 +135,10 @@ h1 {
   border-color: #9d4d46;
   background: #3b1d1a;
   color: #ffd0cb;
+}
+
+.status-pill.caution {
+  border-color: #a77a2c;
+  background: #3b2d13;
+  color: #ffe0a1;
 }
