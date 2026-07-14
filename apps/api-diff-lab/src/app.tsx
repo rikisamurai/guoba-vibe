@@ -1,157 +1,95 @@
-import { AlertTriangle, GitCompareArrows, ListChecks, RotateCcw } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { AlertTriangle, GitCompareArrows } from 'lucide-react'
+import { useMemo, useState } from 'react'
 
+import { CaseLibrary } from './case-library'
 import { DiffGroup, DiffInspector, JsonEditor } from './diff-components'
-import { samples } from './diff-samples'
-import {
-  buildDiffReport,
-  buildDiffRows,
-  parseDiffCases,
-  type DiffCase,
-  type DiffRow,
-} from './lib/api-diff'
+import { buildDiffReport, buildDiffRows, classifyDiffRows, type DiffRow } from './lib/api-diff'
+import { useCaseLibrary } from './use-case-library'
 
-const diffKinds: DiffRow['kind'][] = ['added', 'removed', 'changed']
-const storageKey = 'api-diff-lab-cases-v1'
-
-function readInitialCases() {
-  if (typeof window === 'undefined') {
-    return samples
-  }
-
-  const stored = window.localStorage.getItem(storageKey)
-  return stored ? (parseDiffCases(stored) ?? samples) : samples
-}
+const diffKinds: DiffRow['kind'][] = ['changed', 'removed', 'added', 'unobserved']
 
 export function App() {
-  const [cases, setCases] = useState<DiffCase[]>(readInitialCases)
-  const [before, setBefore] = useState(cases[0].before)
-  const [after, setAfter] = useState(cases[0].after)
-  const [activeSample, setActiveSample] = useState(cases[0].id)
-  const [caseLabel, setCaseLabel] = useState(cases[0].label)
-  const [casePayload, setCasePayload] = useState('')
-  const [caseMessage, setCaseMessage] = useState('')
+  const library = useCaseLibrary()
   const [selectedPath, setSelectedPath] = useState('')
-
-  const result = useMemo(() => {
-    try {
-      const rows = buildDiffRows(JSON.parse(before), JSON.parse(after))
-      return { rows, error: '' }
-    } catch {
-      return {
-        rows: [],
-        error: 'Invalid JSON. Fix the editor payload before reading the contract delta.',
-      }
-    }
-  }, [before, after])
-
+  const result = useMemo(
+    () => readDiff(library.before, library.after),
+    [library.after, library.before],
+  )
   const selectedRow = result.rows.find((row) => row.path === selectedPath) ?? result.rows[0]
-  const report = result.error ? '' : buildDiffReport(caseLabel, result.rows)
+  const groups = classifyDiffRows(result.rows)
+  const report = result.error ? '' : buildDiffReport(library.label, result.rows)
 
-  useEffect(() => {
-    window.localStorage.setItem(storageKey, JSON.stringify(cases))
-  }, [cases])
-
-  function loadSample(sampleId: string) {
-    const sample = cases.find((item) => item.id === sampleId) ?? cases[0]
-    setBefore(sample.before)
-    setAfter(sample.after)
-    setActiveSample(sample.id)
-    setCaseLabel(sample.label)
-    setSelectedPath('')
-  }
-
-  function saveCase() {
-    const nextCase = { id: slugify(caseLabel), label: caseLabel, before, after }
-    setCases((current) => [nextCase, ...current.filter((item) => item.id !== nextCase.id)])
-    setActiveSample(nextCase.id)
-    setCaseMessage('Case saved locally.')
-  }
-
-  function importCases() {
-    const parsed = parseDiffCases(casePayload)
-
-    if (!parsed) {
-      setCaseMessage('Import failed. Paste an exported API Diff Lab case list.')
-      return
+  async function copyReport() {
+    try {
+      if (!navigator.clipboard) throw new Error('Clipboard unavailable')
+      await navigator.clipboard.writeText(report)
+      library.setMessage('Contract report copied.')
+    } catch {
+      library.setMessage('Copy failed. Select the report text and copy it manually.')
     }
-
-    setCases(parsed)
-    setCaseMessage('Cases imported.')
-    loadCase(parsed[0])
-  }
-
-  function loadCase(diffCase: DiffCase) {
-    setBefore(diffCase.before)
-    setAfter(diffCase.after)
-    setActiveSample(diffCase.id)
-    setCaseLabel(diffCase.label)
-    setSelectedPath('')
   }
 
   return (
     <main className="page">
       <section className="lab" aria-label="API Diff Lab">
         <header className="topbar">
-          <div>
-            <p className="eyebrow">contract forensics</p>
-            <h1>API Diff Lab</h1>
+          <div className="brand">
+            <GitCompareArrows size={19} aria-hidden="true" />
+            <div>
+              <h1>API DIFF LAB</h1>
+              <span>JSON contract forensics</span>
+            </div>
           </div>
-          <div className="status">
-            <ListChecks size={17} aria-hidden="true" />
-            {result.rows.length} changes
+          <div className="summary" aria-label="Diff summary">
+            {result.error ? (
+              <span className="invalid">INVALID JSON · CHANGES WITHHELD</span>
+            ) : (
+              <>
+                <strong>{result.rows.length}</strong> changes
+                <span className={groups.breaking.length ? 'breaking' : 'clear'}>
+                  {groups.breaking.length} breaking
+                </span>
+                <span className="review">{groups.review.length} review</span>
+              </>
+            )}
           </div>
         </header>
 
-        <nav className="sample-bar" aria-label="Diff samples">
-          {cases.map((sample) => (
-            <button
-              key={sample.id}
-              type="button"
-              className={activeSample === sample.id ? 'active' : ''}
-              onClick={() => loadSample(sample.id)}
-            >
-              {sample.label}
-            </button>
-          ))}
-          <button type="button" onClick={() => loadSample(activeSample)}>
-            <RotateCcw size={15} aria-hidden="true" />
-            Reset
-          </button>
-        </nav>
+        <CaseLibrary
+          cases={library.cases}
+          activeId={library.activeId}
+          label={library.label}
+          payload={library.payload}
+          message={library.message}
+          dirty={library.dirty}
+          storageError={library.storageError}
+          storageBlocked={library.storageBlocked}
+          onSelect={library.selectCase}
+          onLabelChange={library.setLabel}
+          onPayloadChange={library.setPayload}
+          onSave={library.saveCase}
+          onReset={library.resetCase}
+          onDelete={library.deleteCase}
+          onExport={library.exportCases}
+          onImport={library.importCases}
+          onResetLibrary={library.resetLibrary}
+        />
 
-        <section className="case-tools" aria-label="Case library tools">
-          <input value={caseLabel} onChange={(event) => setCaseLabel(event.target.value)} />
-          <button type="button" onClick={saveCase}>
-            Save case
-          </button>
-          <button type="button" onClick={() => setCasePayload(JSON.stringify(cases, null, 2))}>
-            Export cases
-          </button>
-          <button type="button" onClick={importCases}>
-            Import cases
-          </button>
-          <textarea
-            aria-label="Case JSON"
-            placeholder="Paste exported case JSON here."
-            value={casePayload}
-            onChange={(event) => setCasePayload(event.target.value)}
-          />
-          {caseMessage ? <p>{caseMessage}</p> : null}
-        </section>
-
-        <section className="editors">
-          <JsonEditor label="Before" value={before} onChange={setBefore} />
-          <JsonEditor label="After" value={after} onChange={setAfter} />
+        <section className="editors" aria-label="JSON editors">
+          <JsonEditor label="Before" value={library.before} onChange={library.setBefore} />
+          <JsonEditor label="After" value={library.after} onChange={library.setAfter} />
         </section>
 
         <section className="diff-panel">
           <div className="panel-title">
-            <GitCompareArrows size={18} aria-hidden="true" />
-            <h2>Shape diff</h2>
+            <div>
+              <p>INFERRED SHAPE</p>
+              <h2>Contract changes</h2>
+            </div>
+            <span>Arrays use paths such as items[].id</span>
           </div>
           {result.error ? (
-            <p className="error">
+            <p className="error" role="alert">
               <AlertTriangle size={16} aria-hidden="true" />
               {result.error}
             </p>
@@ -173,10 +111,13 @@ export function App() {
           )}
           {!result.error ? (
             <section className="report-export" aria-label="Contract report export">
-              <button type="button" onClick={() => void navigator.clipboard?.writeText(report)}>
-                Copy report
-              </button>
-              <textarea value={report} readOnly />
+              <div>
+                <h2>Review report</h2>
+                <button type="button" onClick={() => void copyReport()}>
+                  Copy report
+                </button>
+              </div>
+              <textarea value={report} readOnly aria-label="Contract review report" />
             </section>
           ) : null}
         </section>
@@ -185,9 +126,16 @@ export function App() {
   )
 }
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
+function readDiff(before: string, after: string) {
+  try {
+    const beforeValue: unknown = JSON.parse(before)
+    try {
+      const afterValue: unknown = JSON.parse(after)
+      return { rows: buildDiffRows(beforeValue, afterValue), error: '' }
+    } catch {
+      return { rows: [], error: 'After contains invalid JSON.' }
+    }
+  } catch {
+    return { rows: [], error: 'Before contains invalid JSON.' }
+  }
 }

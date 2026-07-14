@@ -28,4 +28,10 @@ export const samples: DiffSample[] = [
     before: stringify({ data: { list: [], cursor: null }, success: true }),
     after: stringify({ data: { items: [], nextCursor: 'p2' }, ok: true }),
   },
+  {
+    id: 'line-items',
+    label: 'Line item array',
+    before: stringify({ items: [{ id: 7, price: 12, tags: ['new'] }] }),
+    after: stringify({ items: [{ id: '7', amount: '12.00', tags: [1] }] }),
+  },
 ]

@@ -4,6 +4,9 @@ import { createRoot } from 'react-dom/client'
 import { App } from './app'
 
 import './styles.css'
+import './styles-library.css'
+import './styles-workspace.css'
+import './styles-inspector.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

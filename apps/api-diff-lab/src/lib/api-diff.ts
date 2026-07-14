@@ -2,12 +2,14 @@ export type ApiShapeDiff = {
   added: string[]
   removed: string[]
   changed: string[]
+  unobserved: string[]
 }
 
 export type DiffRow =
   | { kind: 'added'; path: string; afterType: string }
   | { kind: 'removed'; path: string; beforeType: string }
   | { kind: 'changed'; path: string; beforeType: string; afterType: string }
+  | { kind: 'unobserved'; path: string; missingSide: 'before' | 'after'; observedType: string }
 
 export type DiffCase = {
   id: string
@@ -17,53 +19,49 @@ export type DiffCase = {
 }
 
 export function diffJsonShapes(before: unknown, after: unknown): ApiShapeDiff {
-  const beforeShape = flattenShape(before)
-  const afterShape = flattenShape(after)
-  const beforePaths = new Set(beforeShape.keys())
-  const afterPaths = new Set(afterShape.keys())
+  const rows = buildDiffRows(before, after)
 
   return {
-    added: [...afterPaths].filter((path) => !beforePaths.has(path)).sort(),
-    removed: [...beforePaths].filter((path) => !afterPaths.has(path)).sort(),
-    changed: [...beforePaths]
-      .filter((path) => afterPaths.has(path) && beforeShape.get(path) !== afterShape.get(path))
-      .map((path) => `${path}:${beforeShape.get(path)}->${afterShape.get(path)}`)
-      .sort(),
+    added: rows.filter((row) => row.kind === 'added').map((row) => row.path),
+    removed: rows.filter((row) => row.kind === 'removed').map((row) => row.path),
+    changed: rows
+      .filter((row) => row.kind === 'changed')
+      .map((row) => `${row.path}:${row.beforeType}->${row.afterType}`),
+    unobserved: rows
+      .filter((row) => row.kind === 'unobserved')
+      .map((row) => `${row.path}:${row.missingSide}`),
   }
 }
 
 export function buildDiffRows(before: unknown, after: unknown): DiffRow[] {
   const beforeShape = flattenShape(before)
   const afterShape = flattenShape(after)
-  const paths = [...new Set([...beforeShape.keys(), ...afterShape.keys()])].sort()
+  const paths = [...new Set([...beforeShape.types.keys(), ...afterShape.types.keys()])].toSorted()
   const rows: DiffRow[] = []
 
   for (const path of paths) {
-    const beforeType = beforeShape.get(path)
-    const afterType = afterShape.get(path)
+    const beforeType = beforeShape.types.get(path)
+    const afterType = afterShape.types.get(path)
 
     if (!beforeType && afterType) {
+      if (isUnobservedPath(path, beforeShape.emptyItemPaths)) continue
       rows.push({ kind: 'added', path, afterType })
-      continue
-    }
-
-    if (beforeType && !afterType) {
+    } else if (beforeType && !afterType) {
+      if (isUnobservedPath(path, afterShape.emptyItemPaths)) continue
       rows.push({ kind: 'removed', path, beforeType })
-      continue
-    }
-
-    if (beforeType && afterType && beforeType !== afterType) {
+    } else if (beforeType && afterType && beforeType !== afterType) {
       rows.push({ kind: 'changed', path, beforeType, afterType })
     }
   }
 
-  return rows
+  rows.push(...buildUnobservedRows(beforeShape, afterShape))
+  return rows.toSorted((left, right) => left.path.localeCompare(right.path))
 }
 
 export function classifyDiffRows(rows: DiffRow[]) {
   return {
     breaking: rows.filter((row) => row.kind === 'removed' || row.kind === 'changed'),
-    nonBreaking: rows.filter((row) => row.kind === 'added'),
+    review: rows.filter((row) => row.kind === 'added' || row.kind === 'unobserved'),
   }
 }
 
@@ -73,7 +71,7 @@ export function buildDiffReport(title: string, rows: DiffRow[]) {
     `## ${title}`,
     '',
     `Breaking changes: ${grouped.breaking.length}`,
-    `Non-breaking changes: ${grouped.nonBreaking.length}`,
+    `Review changes: ${grouped.review.length}`,
     '',
   ]
 
@@ -81,53 +79,117 @@ export function buildDiffReport(title: string, rows: DiffRow[]) {
     lines.push(`- breaking: ${readRow(row)}`)
   }
 
-  for (const row of grouped.nonBreaking) {
-    lines.push(`- non-breaking: ${readRow(row)}`)
+  for (const row of grouped.review) {
+    lines.push(`- review: ${readRow(row)}`)
   }
 
   return lines.join('\n')
 }
 
-export function parseDiffCases(payload: string): DiffCase[] | null {
-  try {
-    const parsed = JSON.parse(payload)
-    return Array.isArray(parsed) && parsed.every(isDiffCase) ? parsed : null
-  } catch {
-    return null
+type FlattenedShape = {
+  types: Map<string, string>
+  emptyItemPaths: Set<string>
+}
+
+function flattenShape(value: unknown): FlattenedShape {
+  const mutableShape = new Map<string, Set<string>>()
+  const emptyItemPaths = new Set<string>()
+  const observedItemPaths = new Set<string>()
+  visitShape(value, '$', mutableShape, emptyItemPaths, observedItemPaths)
+
+  return {
+    types: new Map(
+      [...mutableShape].map(([path, types]) => [path, [...types].toSorted().join(' | ')]),
+    ),
+    emptyItemPaths,
   }
 }
 
-function flattenShape(value: unknown, prefix = ''): Map<string, string> {
-  if (!isPlainObject(value)) {
-    return prefix ? new Map([[prefix, readType(value)]]) : new Map()
+function visitShape(
+  value: unknown,
+  path: string,
+  shape: Map<string, Set<string>>,
+  emptyItemPaths: Set<string>,
+  observedItemPaths: Set<string>,
+) {
+  addType(shape, path, readType(value))
+
+  if (Array.isArray(value)) {
+    const itemPath = path === '$' ? '$[]' : `${path}[]`
+    if (value.length === 0 && !observedItemPaths.has(itemPath)) emptyItemPaths.add(itemPath)
+    if (value.length > 0) {
+      observedItemPaths.add(itemPath)
+      emptyItemPaths.delete(itemPath)
+    }
+    for (const item of value) {
+      visitShape(item, itemPath, shape, emptyItemPaths, observedItemPaths)
+    }
+    return
   }
 
-  const shape = new Map<string, string>()
+  if (!isPlainObject(value)) {
+    return
+  }
 
   for (const [key, child] of Object.entries(value)) {
-    const path = prefix ? `${prefix}.${key}` : key
+    visitShape(child, appendObjectPath(path, key), shape, emptyItemPaths, observedItemPaths)
+  }
+}
 
-    if (isPlainObject(child)) {
-      for (const [nestedPath, type] of flattenShape(child, path)) {
-        shape.set(nestedPath, type)
-      }
-    } else {
-      shape.set(path, readType(child))
+function buildUnobservedRows(before: FlattenedShape, after: FlattenedShape): DiffRow[] {
+  const rows: DiffRow[] = []
+  addUnobservedSide(rows, before, after, 'before')
+  addUnobservedSide(rows, after, before, 'after')
+  return rows
+}
+
+function addUnobservedSide(
+  rows: DiffRow[],
+  emptySide: FlattenedShape,
+  observedSide: FlattenedShape,
+  missingSide: 'before' | 'after',
+) {
+  for (const path of emptySide.emptyItemPaths) {
+    const parentPath = path.slice(0, -2)
+    const observedType = observedSide.types.get(path)
+    if (
+      includesType(emptySide.types.get(parentPath), 'array') &&
+      includesType(observedSide.types.get(parentPath), 'array') &&
+      observedType
+    ) {
+      rows.push({ kind: 'unobserved', path, missingSide, observedType })
     }
   }
+}
 
-  return shape
+function includesType(value: string | undefined, expected: string) {
+  return value?.split(' | ').includes(expected) ?? false
+}
+
+function isUnobservedPath(path: string, emptyItemPaths: Set<string>) {
+  return [...emptyItemPaths].some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}.`) || path.startsWith(`${prefix}[`),
+  )
+}
+
+function appendObjectPath(path: string, key: string) {
+  if (/^[A-Z_$][\w$]*$/i.test(key) && !(path === '$' && key === '$')) {
+    return path === '$' ? key : `${path}.${key}`
+  }
+
+  return `${path === '$' ? '$' : path}[${JSON.stringify(key)}]`
+}
+
+function addType(shape: Map<string, Set<string>>, path: string, type: string) {
+  const types = shape.get(path) ?? new Set<string>()
+  types.add(type)
+  shape.set(path, types)
 }
 
 function readType(value: unknown) {
-  if (Array.isArray(value)) {
-    return 'array'
-  }
-
-  if (value === null) {
-    return 'null'
-  }
-
+  if (Array.isArray(value)) return 'array'
+  if (value === null) return 'null'
+  if (isPlainObject(value)) return 'object'
   return typeof value
 }
 
@@ -136,27 +198,8 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 function readRow(row: DiffRow) {
-  if (row.kind === 'added') {
-    return `${row.path} missing -> ${row.afterType}`
-  }
-
-  if (row.kind === 'removed') {
-    return `${row.path} ${row.beforeType} -> missing`
-  }
-
+  if (row.kind === 'added') return `${row.path} missing -> ${row.afterType}`
+  if (row.kind === 'removed') return `${row.path} ${row.beforeType} -> missing`
+  if (row.kind === 'unobserved') return `${row.path} has no ${row.missingSide} item sample`
   return `${row.path} ${row.beforeType} -> ${row.afterType}`
-}
-
-function isDiffCase(value: unknown): value is DiffCase {
-  if (!value || typeof value !== 'object') {
-    return false
-  }
-
-  const candidate = value as DiffCase
-  return (
-    typeof candidate.id === 'string' &&
-    typeof candidate.label === 'string' &&
-    typeof candidate.before === 'string' &&
-    typeof candidate.after === 'string'
-  )
 }

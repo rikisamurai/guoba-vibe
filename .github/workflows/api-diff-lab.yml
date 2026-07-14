@@ -1,0 +1,29 @@
+name: API Diff Lab
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/api-diff-lab/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/api-diff-lab.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter api-diff-lab lint
+      - run: pnpm --filter api-diff-lab test
+      - run: pnpm --filter api-diff-lab build
