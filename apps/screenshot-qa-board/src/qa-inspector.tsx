@@ -1,5 +1,7 @@
-import { CheckCircle2, ClipboardCheck, Eye, Image } from 'lucide-react'
+import { CheckCircle2, ClipboardCheck, Eye, Trash2, Wrench } from 'lucide-react'
 
+import { ImageCompare } from './image-compare'
+import { ImageInput } from './image-input'
 import { buildReviewChecklist, type QaStatus } from './lib/qa-board'
 import type { ReviewCard } from './review-data'
 
@@ -8,25 +10,47 @@ export function QaInspector({
   cards,
   statuses,
   onMove,
+  onUpdate,
+  onDelete,
+  onError,
 }: {
-  card: ReviewCard
+  card?: ReviewCard
   cards: ReviewCard[]
   statuses: QaStatus[]
   onMove: (status: QaStatus) => void
+  onUpdate: (patch: Partial<ReviewCard>) => void
+  onDelete: () => void
+  onError: (message: string) => void
 }) {
+  if (!card) {
+    return (
+      <section className="inspector inspector-empty">
+        <Eye size={28} />
+        <h2>No issue selected</h2>
+        <p>Create an issue or change the active filter.</p>
+      </section>
+    )
+  }
   const checklist = buildReviewChecklist(cards)
+
+  async function copyChecklist() {
+    try {
+      await navigator.clipboard.writeText(checklist)
+    } catch {
+      onError('Clipboard access was denied. Use the export field instead.')
+    }
+  }
 
   return (
     <section className="inspector" aria-label="Selected screenshot review">
-      <div className="inspector-head">
+      <header className="inspector-head">
         <div>
-          <p className="eyebrow">selected capture</p>
+          <p className="eyebrow">comparison canvas</p>
           <h2>{card.title}</h2>
         </div>
         <span className={`status-chip ${card.status}`}>{card.status}</span>
-      </div>
-
-      <div className="actions" aria-label="Status actions">
+      </header>
+      <div className="status-actions" aria-label="Status actions">
         {statuses.map((status) => (
           <button
             key={status}
@@ -34,66 +58,66 @@ export function QaInspector({
             className={card.status === status ? 'active' : ''}
             onClick={() => onMove(status)}
           >
-            {status === 'accepted' ? <CheckCircle2 size={16} /> : <Eye size={16} />}
-            {status}
+            <StatusIcon status={status} /> {status}
           </button>
         ))}
       </div>
 
-      <div className="compare">
-        <ShotFrame title="Before" tone="before" card={card} image={card.beforeImage} />
-        <ShotFrame title="After" tone="after" card={card} image={card.afterImage} />
-      </div>
+      <ImageCompare card={card} />
 
-      <aside className="review-note">
-        <Image size={17} aria-hidden="true" />
-        <div>
-          <strong>{card.route}</strong>
-          <p>{card.note || 'No note recorded yet.'}</p>
-          <span>
-            {card.viewport} · {card.severity}
-          </span>
+      <dl className="capture-metadata">
+        <Meta label="Route" value={card.route} />
+        <Meta label="Viewport" value={card.viewport} />
+        <Meta label="Browser" value={card.browser} />
+        <Meta label="OS" value={card.os} />
+        <Meta label="Captured" value={new Date(card.capturedAt).toLocaleString()} />
+        <Meta label="Severity" value={card.severity} />
+      </dl>
+      <p className="review-note">{card.note || 'No review note recorded.'}</p>
+
+      <details className="source-editor">
+        <summary>Manage screenshot sources</summary>
+        <div className="source-grid">
+          <ImageInput
+            label="Before"
+            source={card.beforeImage}
+            onCommit={(beforeImage) => onUpdate({ beforeImage })}
+            onError={onError}
+          />
+          <ImageInput
+            label="After"
+            source={card.afterImage}
+            onCommit={(afterImage) => onUpdate({ afterImage })}
+            onError={onError}
+          />
         </div>
-      </aside>
+      </details>
 
-      <section className="checklist-export" aria-label="Review checklist export">
-        <button type="button" onClick={() => void navigator.clipboard?.writeText(checklist)}>
-          <ClipboardCheck size={16} aria-hidden="true" />
-          Copy checklist
+      <details className="checklist-export">
+        <summary>Checklist export</summary>
+        <button type="button" onClick={() => void copyChecklist()}>
+          <ClipboardCheck size={16} /> Copy checklist
         </button>
-        <textarea value={checklist} readOnly />
-      </section>
+        <textarea aria-label="Review checklist" value={checklist} readOnly />
+      </details>
+      <button type="button" className="delete-issue" onClick={onDelete}>
+        <Trash2 size={16} /> Delete issue
+      </button>
     </section>
   )
 }
 
-function ShotFrame({
-  title,
-  tone,
-  card,
-  image,
-}: {
-  title: string
-  tone: string
-  card: ReviewCard
-  image?: string
-}) {
+function StatusIcon({ status }: { status: QaStatus }) {
+  if (status === 'accepted') return <CheckCircle2 size={16} />
+  if (status === 'fixed') return <Wrench size={16} />
+  return <Eye size={16} />
+}
+
+function Meta({ label, value }: { label: string; value: string }) {
   return (
-    <article className={`shot-frame ${tone} ${card.severity}`}>
-      <header>
-        <span>{title}</span>
-        <small>{card.viewport}</small>
-      </header>
-      {image ? (
-        <div className="image-path">{image}</div>
-      ) : (
-        <div className="mock-screen">
-          <span />
-          <span />
-          <span />
-          <b />
-        </div>
-      )}
-    </article>
+    <div>
+      <dt>{label}</dt>
+      <dd>{value}</dd>
+    </div>
   )
 }

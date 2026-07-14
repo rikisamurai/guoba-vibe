@@ -1,0 +1,89 @@
+@media (max-width: 1050px) {
+  .page {
+    padding: 20px;
+  }
+  .command-bar {
+    display: grid;
+  }
+  .board-actions {
+    justify-content: flex-start;
+  }
+  .workspace {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+  .capture-metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 14px;
+  }
+  .topbar {
+    display: grid;
+    align-items: start;
+  }
+  .blocker-pill {
+    justify-self: start;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+  }
+  .metric {
+    min-width: 0;
+    padding: 7px;
+  }
+  .metric strong {
+    font-size: 22px;
+  }
+  .board-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .board-actions button,
+  .button-like {
+    justify-content: center;
+  }
+  .three-up,
+  .image-fields,
+  .source-grid {
+    grid-template-columns: 1fr;
+  }
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .issue-queue {
+    position: static;
+    max-height: none;
+  }
+  .queue-list {
+    display: flex;
+    margin: 0 -13px -3px;
+    padding: 3px 13px 10px;
+    overflow-x: auto;
+  }
+  .issue-card {
+    flex: 0 0 280px;
+  }
+  .image-pair {
+    grid-template-columns: 1fr;
+  }
+  .capture-metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .image-empty {
+    min-height: 170px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .issue-card {
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease,
+      transform 150ms ease;
+  }
+}

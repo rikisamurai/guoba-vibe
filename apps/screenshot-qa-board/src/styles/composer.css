@@ -1,0 +1,141 @@
+.qa-composer {
+  border: 1px solid #bfc8c4;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  background: rgba(250, 250, 246, 0.96);
+  box-shadow: 5px 5px 0 #cbd0cb;
+}
+.qa-composer > summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 14px;
+  list-style: none;
+}
+.qa-composer > summary::-webkit-details-marker {
+  display: none;
+}
+.qa-composer > summary span {
+  display: grid;
+  gap: 1px;
+}
+.qa-composer > summary small {
+  color: #6a7570;
+  font-size: 11px;
+  font-weight: 500;
+}
+.qa-composer[open] > summary {
+  border-bottom: 1px solid #d3d9d6;
+}
+.qa-composer form {
+  display: grid;
+  gap: 13px;
+  padding: 14px;
+}
+.composer-grid {
+  display: grid;
+  gap: 10px;
+}
+.three-up {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.image-fields,
+.source-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.qa-composer label,
+.image-input {
+  display: grid;
+  gap: 6px;
+}
+.field-label {
+  color: #56635e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.qa-composer input,
+.qa-composer select,
+.qa-composer textarea,
+.image-input input,
+.checklist-export textarea {
+  width: 100%;
+  border: 1px solid #bfc9c5;
+  border-radius: 8px;
+  background: #fff;
+  color: #18211f;
+}
+.qa-composer input,
+.qa-composer select,
+.image-input input {
+  height: 39px;
+  padding: 0 10px;
+}
+.qa-composer textarea,
+.checklist-export textarea {
+  min-height: 78px;
+  padding: 10px;
+  resize: vertical;
+}
+.image-input {
+  align-content: start;
+  border: 1px solid #d2d9d5;
+  border-radius: 10px;
+  padding: 10px;
+  background: #f5f6f2;
+}
+.image-url-row,
+.image-input-actions {
+  display: flex;
+  gap: 6px;
+}
+.image-url-row input {
+  min-width: 0;
+}
+.image-url-row button {
+  display: grid;
+  flex: 0 0 39px;
+  border: 1px solid #aebbb5;
+  border-radius: 8px;
+  background: #fff;
+  color: #274f47;
+  place-items: center;
+}
+.image-input-actions {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.file-button,
+.clear-image {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  color: #1f6558;
+  font-size: 11px;
+  font-weight: 750;
+}
+.clear-image {
+  color: #a9342b;
+}
+.image-input small {
+  color: #78827d;
+  font-size: 10px;
+}
+.primary-button {
+  border: 1px solid #102d28;
+  border-radius: 9px;
+  min-height: 42px;
+  background: #102d28;
+  color: #fff;
+  font-weight: 800;
+}
+.form-error {
+  margin: 0;
+  color: #a9342b;
+  font-size: 12px;
+  font-weight: 700;
+}
