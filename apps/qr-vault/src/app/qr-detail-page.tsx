@@ -1,12 +1,12 @@
 import { useNavigate, useRouterState } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { useInlineCollectionCreate } from '@/app/qr-detail/inline-collection-create'
 import { NotFoundCard } from '@/app/qr-detail/not-found-card'
 import { QrDetailAside } from '@/app/qr-detail/qr-detail-aside'
-import { collectionIdsForQr, isQrDraftDirty, qrItemToDraft } from '@/app/qr-detail/qr-detail-draft'
+import { isQrDraftDirty, qrItemToDraft } from '@/app/qr-detail/qr-detail-draft'
 import { QrDetailFormCard } from '@/app/qr-detail/qr-detail-form-card'
 import { QrDetailHeader } from '@/app/qr-detail/qr-detail-header'
 import {
@@ -15,34 +15,29 @@ import {
   navigateToSavedQr,
   type QrDetailSearch,
 } from '@/app/qr-detail/qr-detail-navigation'
-import { useVault } from '@/app/use-vault'
-import { nanoid8 } from '@/lib/ids'
+import { buildQrDetailSource } from '@/app/qr-detail/qr-detail-source'
+import { FOCUS_QR_TITLE_KEY, LAST_SAVED_QR_ID_KEY } from '@/app/qr-session'
+import { useVault } from '@/app/vault/use-vault'
 import { downloadDataUrl, qrFileName } from '@/lib/qr'
-import { LAST_SAVED_QR_ID_KEY, upsertQr } from '@/lib/storage'
-import {
-  buildShareUrl,
-  compactQueryRows,
-  parseDeepLink,
-  queryToRows,
-  type QueryRow,
-} from '@/lib/url'
+import { buildShareUrl, compactQueryRows, parseDeepLink, type QueryRow } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
 export function QrDetailPage() {
   const { t } = useTranslation()
-  const { data, updateVault } = useVault()
+  const { view, qr, collection } = useVault()
   const navigate = useNavigate()
   const location = useRouterState({ select: (state) => state.location })
   const search = location.search as QrDetailSearch
   const returnFilter = getQrDetailReturnFilter(search)
   const titleRef = useRef<HTMLInputElement>(null)
+  const hydratedRevisionRef = useRef('')
   const [autoFocusTitle] = useState(() => {
-    const flag = sessionStorage.getItem('qr-vault:focus-title') === '1'
-    if (flag) sessionStorage.removeItem('qr-vault:focus-title')
+    const flag = sessionStorage.getItem(FOCUS_QR_TITLE_KEY) === '1'
+    if (flag) sessionStorage.removeItem(FOCUS_QR_TITLE_KEY)
     return flag
   })
   const { isNew, qrId } = getQrDetailRouteState(location.pathname)
-  const existingQr = data.qrs.find((qr) => qr.id === qrId)
+  const existingQr = view.getQr(qrId)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [url, setUrl] = useState('')
@@ -55,14 +50,12 @@ export function QrDetailPage() {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
   const [pngDownloaded, setPngDownloaded] = useState(false)
   const createCollection = useInlineCollectionCreate({
-    collections: data.collections,
+    collection,
     setCollectionIds,
-    updateVault,
   })
+  const detailSource = useMemo(() => buildQrDetailSource(existingQr, search), [existingQr, search])
   const parsed = parseDeepLink(url)
-  const savedDraft = existingQr
-    ? qrItemToDraft(existingQr, collectionIdsForQr(data.collectionItems, existingQr.id))
-    : undefined
+  const savedDraft = existingQr ? qrItemToDraft(existingQr, existingQr.collectionIds) : undefined
   const isDirty = isQrDraftDirty({ title, description, url, queryRows, collectionIds }, savedDraft)
   const documentTitle = isNew
     ? t('qrDetail.documentNew')
@@ -77,20 +70,21 @@ export function QrDetailPage() {
   useDocumentTitle(documentTitle)
 
   useEffect(() => {
-    const nextUrl = existingQr?.url ?? search.url ?? ''
-    setTitle(existingQr?.title ?? search.title ?? '')
-    setDescription(existingQr?.description ?? search.description ?? '')
-    setUrl(nextUrl)
-    setQueryRows(existingQr?.queryParams ?? queryToRows(parseDeepLink(nextUrl).query))
-    setCollectionIds(existingQr ? collectionIdsForQr(data.collectionItems, existingQr.id) : [])
+    if (hydratedRevisionRef.current === detailSource.revision) return
+    hydratedRevisionRef.current = detailSource.revision
+    setTitle(detailSource.title)
+    setDescription(detailSource.description)
+    setUrl(detailSource.url)
+    setQueryRows(detailSource.queryRows)
+    setCollectionIds(detailSource.collectionIds)
     setError('')
-  }, [data.collectionItems, existingQr, search.url, search.title, search.description])
+  }, [detailSource])
 
   useEffect(() => {
     if (autoFocusTitle) titleRef.current?.focus()
   }, [autoFocusTitle])
 
-  function qrInput(id: string) {
+  function qrInput(id?: string) {
     return {
       id,
       title,
@@ -106,8 +100,7 @@ export function QrDetailPage() {
       setError(t('qrDetail.validUrlRequired'))
       return
     }
-    const id = existingQr?.id ?? (isNew ? nanoid8() : qrId)
-    updateVault((current) => upsertQr(current, qrInput(id)))
+    const { id } = qr.save(qrInput(existingQr?.id))
     setSaved(true)
     sessionStorage.setItem(LAST_SAVED_QR_ID_KEY, id)
     window.setTimeout(() => setSaved(false), 1200)
@@ -119,8 +112,7 @@ export function QrDetailPage() {
       setError(t('qrDetail.validUrlRequired'))
       return
     }
-    const newId = nanoid8()
-    updateVault((current) => upsertQr(current, qrInput(newId)))
+    const { id: newId } = qr.save(qrInput())
     sessionStorage.setItem(LAST_SAVED_QR_ID_KEY, newId)
     toast.success(t('qrDetail.savedAsNewToast'))
     navigateToSavedQr(navigate, newId, returnFilter)
@@ -181,7 +173,7 @@ export function QrDetailPage() {
           url={url}
           queryRows={queryRows}
           collectionIds={collectionIds}
-          collections={data.collections}
+          collections={view.collections}
           error={error}
           saved={saved}
           autoFocusTitle={autoFocusTitle}

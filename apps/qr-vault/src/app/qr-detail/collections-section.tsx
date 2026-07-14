@@ -4,13 +4,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { CreateCollectionResult } from '@/app/qr-detail/inline-collection-create'
+import type { CollectionSummary } from '@/app/vault/vault-types'
 import { CollectionPicker } from '@/components/collection-picker'
 import { Button } from '@/components/shadcn-ui/button'
-import type { VaultData } from '@/lib/storage'
 
 type CollectionsSectionProps = {
   collectionIds: string[]
-  collections: VaultData['collections']
+  collections: readonly CollectionSummary[]
   onCollectionIdsChange: (next: string[]) => void
   onCreateCollection: (title: string) => CreateCollectionResult
 }

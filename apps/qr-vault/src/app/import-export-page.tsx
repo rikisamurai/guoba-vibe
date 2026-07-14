@@ -4,33 +4,21 @@ import { useTranslation } from 'react-i18next'
 
 import { ImportCard } from '@/app/import-export/import-card'
 import { SnapshotCard } from '@/app/import-export/snapshot-card'
-import { useVault } from '@/app/use-vault'
+import { useVault } from '@/app/vault/use-vault'
+import type { VaultImport } from '@/app/vault/vault-types'
 import { Badge } from '@/components/shadcn-ui/badge'
-import {
-  exportVaultJson,
-  mergeVaultData,
-  parseVaultData,
-  replaceVaultData,
-  type VaultData,
-} from '@/lib/storage'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
 export function ImportExportPage() {
   const { t } = useTranslation()
   useDocumentTitle(t('importExport.documentTitle'))
-  const { data, updateVault } = useVault()
-  const [pendingData, setPendingData] = useState<VaultData | null>(null)
+  const { view, transfer } = useVault()
+  const [pendingData, setPendingData] = useState<VaultImport | null>(null)
   const [fileName, setFileName] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [replaceArmed, setReplaceArmed] = useState(false)
-  const pendingCounts = pendingData
-    ? {
-        qrs: pendingData.qrs.length,
-        collections: pendingData.collections.length,
-        assignments: pendingData.collectionItems.length,
-      }
-    : null
+  const pendingCounts = pendingData?.counts ?? null
 
   useEffect(() => {
     if (!replaceArmed) return
@@ -39,7 +27,7 @@ export function ImportExportPage() {
   }, [replaceArmed])
 
   function exportVault() {
-    const blob = new Blob([exportVaultJson(data)], { type: 'application/json' })
+    const blob = new Blob([transfer.exportJSON()], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
@@ -57,8 +45,8 @@ export function ImportExportPage() {
     if (!file) return
 
     const raw = await file.text()
-    const parsed = parseVaultData(raw)
-    if (!parsed) {
+    const parsed = transfer.inspect(raw)
+    if (parsed.kind === 'invalid') {
       setError(t('importExport.invalidJson'))
       return
     }
@@ -66,15 +54,15 @@ export function ImportExportPage() {
     setPendingData(parsed)
     setMessage(
       t('importExport.loadedSummary', {
-        qrCount: parsed.qrs.length,
-        collectionCount: parsed.collections.length,
+        qrCount: parsed.counts.qrs,
+        collectionCount: parsed.counts.collections,
       }),
     )
   }
 
   function mergeImport() {
     if (!pendingData) return
-    updateVault((current) => mergeVaultData(current, pendingData))
+    transfer.apply(pendingData, 'merge')
     setReplaceArmed(false)
     setMessage(
       t('importExport.mergedFile', { fileName: fileName || t('importExport.fallbackFileName') }),
@@ -88,7 +76,7 @@ export function ImportExportPage() {
       return
     }
 
-    updateVault((current) => replaceVaultData(current, pendingData))
+    transfer.apply(pendingData, 'replace')
     setReplaceArmed(false)
     setMessage(
       t('importExport.replacedFile', { fileName: fileName || t('importExport.fallbackFileName') }),
@@ -110,7 +98,7 @@ export function ImportExportPage() {
       </div>
 
       <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
-        <SnapshotCard data={data} onExport={exportVault} />
+        <SnapshotCard counts={view.counts} onExport={exportVault} />
         <ImportCard
           hasPendingData={Boolean(pendingData)}
           pendingCounts={pendingCounts}

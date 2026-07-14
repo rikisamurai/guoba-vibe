@@ -3,27 +3,22 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
-import { useVault } from '@/app/use-vault'
+import { LAST_SAVED_QR_ID_KEY } from '@/app/qr-session'
+import { useVault } from '@/app/vault/use-vault'
 import { QrInspector } from '@/app/workspace/qr-inspector'
 import { QrList } from '@/app/workspace/qr-list'
 import type { ActiveFilter, WorkspaceQr } from '@/app/workspace/types'
-import {
-  parseWorkspaceFilterSearch,
-  resolveWorkspaceFilter,
-  workspaceFilterSearch,
-} from '@/app/workspace/workspace-filter'
+import { parseWorkspaceFilterSearch, workspaceFilterSearch } from '@/app/workspace/workspace-filter'
 import { WorkspaceHeader } from '@/app/workspace/workspace-header'
 import { useArmedAction } from '@/hooks/use-armed-action'
 import { downloadDataUrl, qrFileName } from '@/lib/qr'
-import { deleteQr, LAST_SAVED_QR_ID_KEY, restoreQr, type VaultData } from '@/lib/storage'
 import { buildShareUrl } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
-import { getQrsForCollection, getUncategorizedQrs, searchQrs, sortQrsByRecent } from '@/lib/vault'
 
 export function WorkspacePage() {
   const { t } = useTranslation()
   useDocumentTitle(t('workspace.documentTitle'))
-  const { data, updateVault } = useVault()
+  const { view, qr: qrCommands } = useVault()
   const navigate = useNavigate()
   const routeSearch = useRouterState({ select: (state) => state.location.search })
   const [search, setSearch] = useState('')
@@ -50,7 +45,7 @@ export function WorkspacePage() {
 
     const pendingSavedId = pendingSavedIdRef.current
     if (!pendingSavedId) return
-    if (!data.qrs.some((qr) => qr.id === pendingSavedId)) {
+    if (!view.getQr(pendingSavedId)) {
       pendingSavedIdRef.current = ''
       return
     }
@@ -62,33 +57,23 @@ export function WorkspacePage() {
     })
 
     return () => window.cancelAnimationFrame(frame)
-  }, [data.qrs])
+  }, [view])
 
   function handleDelete(qrId: string) {
-    const deletedIndex = data.qrs.findIndex((qr) => qr.id === qrId)
-    const deletedQr = data.qrs[deletedIndex]
-    const deletedCollectionItems = data.collectionItems.filter((item) => item.qrId === qrId)
-
-    updateVault((current) => deleteQr(current, qrId))
+    const receipt = qrCommands.delete(qrId)
     cancelArm()
     if (selectedId === qrId) setSelectedId('')
-    if (!deletedQr) return
+    if (receipt.kind === 'not-found') return
 
     toast.success(t('toast.deletedQr'), {
       action: {
         label: t('toast.undo'),
-        onClick: () => restoreDeletedQr(deletedQr, deletedCollectionItems, deletedIndex),
+        onClick: () => {
+          receipt.undo()
+          setSelectedId(receipt.id)
+        },
       },
     })
-  }
-
-  function restoreDeletedQr(
-    deletedQr: WorkspaceQr,
-    deletedCollectionItems: typeof data.collectionItems,
-    index: number,
-  ) {
-    updateVault((current) => restoreQr(current, deletedQr, deletedCollectionItems, index))
-    setSelectedId(deletedQr.id)
   }
 
   async function copyUrl(qr: WorkspaceQr) {
@@ -132,24 +117,16 @@ export function WorkspacePage() {
     void navigate({ to: '/', search: workspaceFilterSearch(next), replace: true })
   }
 
-  const uncategorizedCount = getUncategorizedQrs(data).length
-  const activeFilter = resolveWorkspaceFilter(parseWorkspaceFilterSearch(routeSearch), data)
-  const baseQrs =
-    activeFilter === 'all'
-      ? data.qrs
-      : activeFilter === 'uncategorized'
-        ? getUncategorizedQrs(data)
-        : getQrsForCollection(data, activeFilter)
-  const visibleQrs = sortQrsByRecent(searchQrs({ ...data, qrs: baseQrs }, search))
+  const activeFilter = view.resolveScope(parseWorkspaceFilterSearch(routeSearch))
+  const visibleQrs = view.listQrs({ scope: activeFilter, search, order: 'recent' })
   const selectedQr = visibleQrs.find((qr) => qr.id === selectedId) ?? visibleQrs[0]
-  const collectionNamesByQrId = getCollectionNamesByQrId(data)
 
   return (
     <div className="grid grid-cols-1 items-start gap-5 lg:h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1fr)_380px] lg:items-stretch lg:overflow-hidden xl:grid-cols-[minmax(520px,1fr)_500px] 2xl:grid-cols-[minmax(600px,1fr)_560px]">
       <div className="flex min-h-0 flex-col gap-4 lg:h-full lg:overflow-hidden">
         <WorkspaceHeader
-          data={data}
-          uncategorizedCount={uncategorizedCount}
+          counts={view.counts}
+          collections={view.collections}
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
           search={search}
@@ -165,7 +142,6 @@ export function WorkspacePage() {
             armedProgress={armedProgress}
             copiedUrlId={copiedUrlId}
             activeFilter={activeFilter}
-            collectionNamesByQrId={collectionNamesByQrId}
             itemRefs={listItemRefs}
             onSelect={setSelectedId}
             onCopyUrl={(qr) => void copyUrl(qr)}
@@ -190,17 +166,4 @@ export function WorkspacePage() {
       </aside>
     </div>
   )
-}
-
-function getCollectionNamesByQrId(data: VaultData) {
-  const collectionTitleById = new Map(
-    data.collections.map((collection) => [collection.id, collection.title]),
-  )
-
-  return data.collectionItems.reduce<Record<string, string[]>>((namesByQrId, item) => {
-    const title = collectionTitleById.get(item.collectionId)
-    if (!title) return namesByQrId
-    namesByQrId[item.qrId] = [...(namesByQrId[item.qrId] ?? []), title]
-    return namesByQrId
-  }, {})
 }

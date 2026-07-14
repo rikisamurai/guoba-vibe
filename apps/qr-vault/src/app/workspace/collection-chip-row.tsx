@@ -3,20 +3,22 @@ import { ChevronDown, ChevronUp, Inbox, LayoutGrid, Settings2 } from 'lucide-rea
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import type { CollectionSummary } from '@/app/vault/vault-types'
 import type { ActiveFilter } from '@/app/workspace/types'
-import type { VaultData } from '@/lib/storage'
 import { cn } from '@/lib/utils'
 
 type CollectionChipRowProps = {
-  data: VaultData
+  qrCount: number
   uncategorizedCount: number
+  collections: readonly CollectionSummary[]
   active: ActiveFilter
   onChange: (next: ActiveFilter) => void
 }
 
 export function CollectionChipRow({
-  data,
+  qrCount,
   uncategorizedCount,
+  collections,
   active,
   onChange,
 }: CollectionChipRowProps) {
@@ -26,7 +28,7 @@ export function CollectionChipRow({
   const [overflowing, setOverflowing] = useState(false)
   const [hiddenCount, setHiddenCount] = useState(0)
   const [collapsedHeight, setCollapsedHeight] = useState<number>()
-  const collectionKey = data.collections.map((collection) => collection.id).join(',')
+  const collectionKey = collections.map((collection) => collection.id).join(',')
 
   useEffect(() => {
     const el = chipsRef.current
@@ -74,7 +76,7 @@ export function CollectionChipRow({
             <Chip
               icon={<LayoutGrid className="size-3.5" />}
               label={t('common.allQr')}
-              count={data.qrs.length}
+              count={qrCount}
               active={active === 'all'}
               onClick={() => onChange('all')}
             />
@@ -87,16 +89,14 @@ export function CollectionChipRow({
                 onClick={() => onChange('uncategorized')}
               />
             )}
-            {data.collections.length > 0 && (
+            {collections.length > 0 && (
               <span aria-hidden className="bg-border mx-1 h-5 w-px shrink-0" />
             )}
-            {data.collections.map((collection) => (
+            {collections.map((collection) => (
               <Chip
                 key={collection.id}
                 label={collection.title}
-                count={
-                  data.collectionItems.filter((item) => item.collectionId === collection.id).length
-                }
+                count={collection.qrCount}
                 active={active === collection.id}
                 onClick={() => onChange(collection.id)}
               />

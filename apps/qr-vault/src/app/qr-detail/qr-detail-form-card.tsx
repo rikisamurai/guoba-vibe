@@ -6,12 +6,12 @@ import { CollectionsSection } from '@/app/qr-detail/collections-section'
 import type { CreateCollectionResult } from '@/app/qr-detail/inline-collection-create'
 import { MobileUrlPreview } from '@/app/qr-detail/mobile-url-preview'
 import { QrStatusChips } from '@/app/qr-detail/qr-status-chips'
+import type { CollectionSummary } from '@/app/vault/vault-types'
 import { FieldLabel } from '@/components/field-label'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
 import { Input } from '@/components/shadcn-ui/input'
 import { UrlEditor, type UrlEditorChange } from '@/components/url-editor'
-import type { VaultData } from '@/lib/storage'
 import type { QueryRow } from '@/lib/url'
 
 type QrDetailFormCardProps = {
@@ -26,7 +26,7 @@ type QrDetailFormCardProps = {
   url: string
   queryRows: QueryRow[]
   collectionIds: string[]
-  collections: VaultData['collections']
+  collections: readonly CollectionSummary[]
   error: string
   saved: boolean
   autoFocusTitle: boolean

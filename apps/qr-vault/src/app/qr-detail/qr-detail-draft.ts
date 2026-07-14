@@ -1,4 +1,4 @@
-import type { CollectionItem, QRCodeItem } from '@/lib/storage'
+import type { QrView } from '@/app/vault/vault-types'
 import { compactQueryRows, parseDeepLink, queryToRows, type QueryRow } from '@/lib/url'
 
 type QrDetailDraft = {
@@ -9,20 +9,14 @@ type QrDetailDraft = {
   collectionIds: string[]
 }
 
-export function collectionIdsForQr(items: CollectionItem[], qrId: string): string[] {
-  return items.reduce<string[]>((ids, item) => {
-    if (item.qrId === qrId) ids.push(item.collectionId)
-    return ids
-  }, [])
-}
-
-export function qrItemToDraft(qr: QRCodeItem, collectionIds: string[]): QrDetailDraft {
+export function qrItemToDraft(qr: QrView, collectionIds: readonly string[]): QrDetailDraft {
   return {
     title: qr.title ?? '',
     description: qr.description ?? '',
     url: qr.url,
-    queryRows: qr.queryParams ?? queryToRows(parseDeepLink(qr.url).query),
-    collectionIds,
+    queryRows:
+      qr.queryParams?.map((row) => ({ ...row })) ?? queryToRows(parseDeepLink(qr.url).query),
+    collectionIds: [...collectionIds],
   }
 }
 

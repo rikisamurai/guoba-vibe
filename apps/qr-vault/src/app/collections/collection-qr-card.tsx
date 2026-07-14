@@ -1,15 +1,15 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
+import type { CollectionSummary, QrView } from '@/app/vault/vault-types'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
-import type { Collection, VaultData } from '@/lib/storage'
 import { parseDeepLink } from '@/lib/url'
 import { cn } from '@/lib/utils'
 
 type CollectionQrCardProps = {
-  collection?: Collection
-  qrs: VaultData['qrs']
+  collection?: CollectionSummary
+  qrs: readonly QrView[]
 }
 
 export function CollectionQrCard({ collection, qrs }: CollectionQrCardProps) {
@@ -53,7 +53,7 @@ export function CollectionQrCard({ collection, qrs }: CollectionQrCardProps) {
   )
 }
 
-function CollectionQrLink({ qr }: { qr: VaultData['qrs'][number] }) {
+function CollectionQrLink({ qr }: { qr: QrView }) {
   const parsed = parseDeepLink(qr.url)
 
   return (

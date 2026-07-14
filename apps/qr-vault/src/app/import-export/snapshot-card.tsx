@@ -2,12 +2,12 @@ import { Download } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { StatTile } from '@/app/import-export/stat-tile'
+import type { VaultCounts } from '@/app/vault/vault-types'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
-import type { VaultData } from '@/lib/storage'
 
-export function SnapshotCard({ data, onExport }: { data: VaultData; onExport: () => void }) {
+export function SnapshotCard({ counts, onExport }: { counts: VaultCounts; onExport: () => void }) {
   const { t } = useTranslation()
 
   return (
@@ -20,9 +20,9 @@ export function SnapshotCard({ data, onExport }: { data: VaultData; onExport: ()
       </CardHeader>
       <CardContent className="space-y-5 pt-4">
         <div className="grid grid-cols-3 gap-2.5">
-          <StatTile value={data.qrs.length} label={t('common.qrCodes')} />
-          <StatTile value={data.collections.length} label={t('common.collections')} />
-          <StatTile value={data.collectionItems.length} label={t('common.assignments')} />
+          <StatTile value={counts.qrs} label={t('common.qrCodes')} />
+          <StatTile value={counts.collections} label={t('common.collections')} />
+          <StatTile value={counts.assignments} label={t('common.assignments')} />
         </div>
         <div>
           <Button type="button" onClick={onExport} size="lg" className="w-full">
