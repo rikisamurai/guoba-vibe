@@ -1,6 +1,6 @@
 # guoba-vibe
 
-围绕「二维码 / 移动端 deep link / 移动端组件 / 私人工具」的实验性 monorepo，目前包含四个独立应用。
+围绕「二维码 / 移动端 deep link / 移动端组件 / 私人工具」的实验性 monorepo，目前包含五个独立应用。
 
 ## 应用
 
@@ -10,8 +10,9 @@
 | [`apps/qr-vault`](apps/qr-vault)           | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage`   | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
 | [`apps/rn-components`](apps/rn-components) | React Native 组件库，提供 web Storybook、Expo 原生 Storybook 和组件回归测试 | React Native 0.81 · Expo SDK 54 · Storybook 10 · Vitest                                                   |
 | [`apps/guoba-stream`](apps/guoba-stream)   | 私有移动端优先的 X/Twitter 视频与 GIF 解析下载工具                          | React 19 · Vite 8 · Vercel Functions · invite-code access                                                 |
+| [`apps/run-journal`](apps/run-journal)     | 本地运行证据工作台，将命令、结果、产物与失败记录整理为可审查日志            | React 19 · Vite 8 · Vitest                                                                                |
 
-四个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
+五个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
 
 ## 环境要求
 
@@ -76,6 +77,16 @@ pnpm lint
 pnpm build
 ```
 
+### run-journal
+
+```bash
+cd apps/run-journal
+pnpm dev       # Vite dev server
+pnpm test      # Vitest
+pnpm lint
+pnpm build
+```
+
 ### 仓库级
 
 ```bash
@@ -90,6 +101,7 @@ pnpm fmt:check    # CI 检查
 ├── apps/
 │   ├── qr-codes/   # Next.js 应用（服务端 + DB）
 │   ├── qr-vault/   # Vite 应用（纯前端 + localStorage）
+│   ├── run-journal/ # 命令运行与验证证据工作台
 │   ├── guoba-stream/ # Vite + Vercel Functions 私有视频下载工具
 │   └── rn-components/ # React Native 组件库 + Storybook
 ├── docs/           # 跨应用文档
