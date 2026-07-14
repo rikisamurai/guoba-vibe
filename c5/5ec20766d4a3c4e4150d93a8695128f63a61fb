@@ -1,0 +1,38 @@
+apps/screenshot-qa-board/src/board-actions.tsx
+  s_36b4104e727909::t_f9fae95e619d14 7-8,15-16,31-36,42-43,47-56,95-103,107-108,110
+  s_36b4104e727909::t_cc090205d064e8 111
+apps/screenshot-qa-board/src/issue-queue.tsx
+  s_36b4104e727909::t_5c7f9bbf9adeb4 33,75
+apps/screenshot-qa-board/src/lib/board-storage.test.ts
+  s_36b4104e727909::t_9fb670a274a953 3-10,33-38,69-100
+apps/screenshot-qa-board/src/lib/board-storage.ts
+  s_36b4104e727909::t_c604c75ccabbd0 4,9-14,16,20,22,25-32,34-39,44-49,52,55-59,61-64,68-78,81
+apps/screenshot-qa-board/src/qa-inspector.tsx
+  s_36b4104e727909::t_d3630c7be759f6 67
+  s_36b4104e727909::t_5c7f9bbf9adeb4 59
+apps/screenshot-qa-board/src/styles/workspace.css
+  s_36b4104e727909::t_1693a2515bc589 217-220,257-258
+  s_36b4104e727909::t_d3630c7be759f6 259,331-339
+apps/screenshot-qa-board/src/app.tsx
+  s_36b4104e727909::t_4661d58cb1d4a6 6,18-25,28-30,32-37,46-47,56-63,71,98-103,105-107,111-116,146-147,151-154,158-161
+  s_36b4104e727909::t_85c2b2c2fb2e5a 55,68-70
+apps/screenshot-qa-board/src/image-compare.tsx
+  s_36b4104e727909::t_3795d86d456a6b 8-14,26,33,45,51
+  s_36b4104e727909::t_d3630c7be759f6 15-17,27,34,74,80,92-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "c55ec20766d4a3c4e4150d93a8695128f63a61fb",
+  "prompts": {},
+  "sessions": {
+    "s_36b4104e727909": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f5ce2-4f15-77d2-ba4d-4e127a6361c1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
