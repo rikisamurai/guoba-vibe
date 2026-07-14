@@ -1,0 +1,20 @@
+README.md
+  s_36b4104e727909::t_8d9c3ee8c98586 7-13,80
+  s_36b4104e727909::t_57ea0a948a1676 3,15,81-89,104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "6828b79d93574a726966441f540df9a5aa1946f7",
+  "prompts": {},
+  "sessions": {
+    "s_36b4104e727909": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f5ce2-4f15-77d2-ba4d-4e127a6361c1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
