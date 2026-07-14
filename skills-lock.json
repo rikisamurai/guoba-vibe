@@ -19,6 +19,12 @@
       "skillPath": "skills/frontend-design/SKILL.md",
       "computedHash": "063a0e6448123cd359ad0044cc46b0e490cc7964d45ef4bb9fd842bd2ffbca67"
     },
+    "github-image-upload": {
+      "source": "drogers0/gh-image",
+      "sourceType": "github",
+      "skillPath": "skills/github-image-upload/SKILL.md",
+      "computedHash": "a8d8cabd858f34c692418664fe63092fda263ad71925a7ca287e2af07761e6af"
+    },
     "grill-me": {
       "source": "mattpocock/skills",
       "sourceType": "github",

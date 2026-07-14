@@ -1,0 +1,46 @@
+{
+  "code": 200,
+  "message": "OK",
+  "tweet": {
+    "id": "2070505379432456331",
+    "text": "fixture: sensitive video tweet",
+    "author": {
+      "name": "Chen",
+      "screen_name": "chenbao11522",
+      "avatar_url": "https://pbs.twimg.com/profile_images/2046876593902288896/y6rE97qq_200x200.jpg"
+    },
+    "media": {
+      "videos": [
+        {
+          "type": "video",
+          "thumbnail_url": "https://pbs.twimg.com/amplify_video_thumb/2070503031389777920/img/1-AHrvPnmt9KLG_Y.jpg",
+          "duration": 185.364,
+          "width": 1920,
+          "height": 1080,
+          "variants": [
+            {
+              "url": "https://video.twimg.com/amplify_video/2070503031389777920/pl/R3U_aov9UVEuYQEg.m3u8?tag=14",
+              "bitrate": 0,
+              "content_type": "application/x-mpegURL"
+            },
+            {
+              "url": "https://video.twimg.com/amplify_video/2070503031389777920/vid/avc1/480x270/UIJ-525aKwxfNelX.mp4?tag=14",
+              "bitrate": 288000,
+              "content_type": "video/mp4"
+            },
+            {
+              "url": "https://video.twimg.com/amplify_video/2070503031389777920/vid/avc1/640x360/nUxFJQvOg7TSMttY.mp4?tag=14",
+              "bitrate": 832000,
+              "content_type": "video/mp4"
+            },
+            {
+              "url": "https://video.twimg.com/amplify_video/2070503031389777920/vid/avc1/1280x720/m7m3SKTpnNfjfEq6.mp4?tag=14",
+              "bitrate": 2176000,
+              "content_type": "video/mp4"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
