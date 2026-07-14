@@ -1,0 +1,51 @@
+apps/deep-link-lab/src/source-panel.tsx
+  s_36b4104e727909::t_c88a19e061b320 10,16,26,46-47
+  s_36b4104e727909::t_a10a6494c5b4b4 54-58
+apps/deep-link-lab/src/app.tsx
+  s_36b4104e727909::t_cef576f7b169a0 8,15,47,53,64,93-95,98,122-129,135-139,158
+  s_36b4104e727909::t_5ba825d19ef33e 13-14,16-17
+  s_36b4104e727909::t_41d5ce88dfb8c1 130-134
+  s_36b4104e727909::t_4fae98c6f1d384 12
+apps/deep-link-lab/src/lib/workspace.ts
+  s_36b4104e727909::t_2c484f15b1d3eb 24-27
+apps/deep-link-lab/src/matrix-panel.tsx
+  s_36b4104e727909::t_41d5ce88dfb8c1 154-158,167
+  s_36b4104e727909::t_6734a1001ef68d 5,22,45-49,64-70,73-79,109-114,140,144,148,161-163
+apps/deep-link-lab/src/query-editor.tsx
+  s_36b4104e727909::t_81be7db553f221 4,13,26,38-43,45,49,54,56
+apps/deep-link-lab/src/styles/matrix.css
+  s_36b4104e727909::t_41d5ce88dfb8c1 20-23,40-44,66
+  s_36b4104e727909::t_a975cf0b19b152 116-126
+apps/deep-link-lab/src/lib/profile-operations.ts
+  s_36b4104e727909::t_79440a6b907b70 12-20
+apps/deep-link-lab/README.md
+  s_36b4104e727909::t_b20fc5f3540861 7-8,20
+apps/deep-link-lab/src/lib/deep-link-lab.ts
+  s_36b4104e727909::t_e13cd464417fa8 19-21,32,46-56,88,92,95,99,102-106,110-123
+  s_36b4104e727909::t_6494e58aef2092 124
+apps/deep-link-lab/src/lib/deep-link-lab.test.ts
+  s_36b4104e727909::t_0ff1f3dd057fb4 1,3,5,7-10,19,46-48,56-73,84-100,108-114,165-174,189-193,199-206,208-216,218-220
+  s_36b4104e727909::t_e680dcf903a077 194-198,207,217
+apps/deep-link-lab/src/styles/base.css
+  s_36b4104e727909::t_a975cf0b19b152 39,139-143
+  s_36b4104e727909::t_7dfe803983f531 144
+apps/deep-link-lab/src/lib/browser-actions.ts
+  s_36b4104e727909::t_96ae11ba7201cf 1,13,18,30,40-41
+  s_36b4104e727909::t_e680dcf903a077 28-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "39d58bb5f73a857d978d8856f629f09f479333fc",
+  "prompts": {},
+  "sessions": {
+    "s_36b4104e727909": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f5ce2-4f15-77d2-ba4d-4e127a6361c1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
