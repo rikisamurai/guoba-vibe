@@ -32,54 +32,66 @@ export function WorkspaceHeader({
 
   return (
     <section
-      className="bg-card/70 signal-panel shrink-0 space-y-4 rounded-lg border p-4 backdrop-blur-sm"
+      className="bg-card/80 signal-panel shrink-0 rounded-lg border p-3 backdrop-blur-sm"
       aria-labelledby="workspace-title"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0 space-y-1">
+      <div className="grid gap-3 border-b pb-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
               {t('workspace.statusLine')}
             </p>
-            <Badge variant="outline" className="border-[var(--signal)] text-[10px]">
+            <Badge variant="outline" className="h-5 border-[var(--signal)] px-1.5 text-[10px]">
               {t('app.footerTagline')}
             </Badge>
           </div>
-          <h1
-            id="workspace-title"
-            className="text-2xl leading-tight font-semibold tracking-tight sm:text-3xl"
-          >
-            {t('common.vault')}
-          </h1>
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <h1
+              id="workspace-title"
+              className="text-2xl leading-none font-semibold tracking-tight sm:text-3xl"
+            >
+              {t('common.vault')}
+            </h1>
+            <div className="text-muted-foreground flex items-center gap-2 font-mono text-[11px]">
+              <span>{t('workspace.resultCount', { count: visibleCount })}</span>
+              {search && (
+                <Badge variant="outline" className="h-5 px-1.5 text-[10px] tracking-normal">
+                  {t('workspace.filtered')}
+                </Badge>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:auto-cols-fr sm:grid-flow-col sm:grid-cols-none">
+        <div className="bg-background/60 grid grid-cols-2 overflow-hidden rounded-lg border">
           <SummaryPill label={t('common.qrCodes')} value={data.qrs.length} />
           <SummaryPill label={t('common.collections')} value={data.collections.length} />
         </div>
       </div>
 
-      <CollectionChipRow
-        data={data}
-        uncategorizedCount={uncategorizedCount}
-        active={activeFilter}
-        onChange={onFilterChange}
-      />
+      <div className="border-b py-2.5">
+        <CollectionChipRow
+          data={data}
+          uncategorizedCount={uncategorizedCount}
+          active={activeFilter}
+          onChange={onFilterChange}
+        />
+      </div>
 
-      <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-        <div className="focus-within:border-ring/70 focus-within:ring-ring/30 bg-background/75 flex h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border px-3 shadow-sm transition-colors focus-within:ring-2">
+      <div className="grid gap-2 pt-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+        <div className="focus-within:border-ring/70 focus-within:ring-ring/30 bg-background/80 flex h-10 min-w-0 items-center gap-2 rounded-lg border px-3 shadow-sm transition-colors focus-within:ring-2">
           <Search className="text-muted-foreground size-3.5 shrink-0" />
           <input
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
             aria-label={t('workspace.searchLabel')}
             placeholder={t('workspace.searchPlaceholder')}
-            className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm outline-none"
+            className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent font-mono text-sm outline-none"
           />
           {search && (
             <button
               type="button"
               onClick={() => onSearchChange('')}
-              className="text-muted-foreground hover:text-foreground text-xs"
+              className="text-muted-foreground hover:text-foreground rounded-md px-1.5 py-1 text-xs transition-colors active:translate-y-px"
             >
               {t('common.clear')}
             </button>
@@ -94,22 +106,13 @@ export function WorkspaceHeader({
           </Link>
         </Button>
       </div>
-
-      <div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-[10px] font-medium tracking-wider uppercase">
-        <span>{t('workspace.resultCount', { count: visibleCount })}</span>
-        {search && (
-          <Badge variant="outline" className="h-5 px-1.5 text-[10px] tracking-normal">
-            {t('workspace.filtered')}
-          </Badge>
-        )}
-      </div>
     </section>
   )
 }
 
 function SummaryPill({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-background/70 text-card-foreground min-w-0 rounded-lg border px-3 py-2 shadow-sm">
+    <div className="text-card-foreground min-w-0 border-l px-3 py-2 first:border-l-0">
       <div className="font-mono text-lg leading-none font-semibold text-[var(--signal)] tabular-nums">
         {value}
       </div>
