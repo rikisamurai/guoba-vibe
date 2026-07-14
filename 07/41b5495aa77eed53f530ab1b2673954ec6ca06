@@ -1,0 +1,78 @@
+apps/deep-link-lab/src/query-editor.tsx
+  s_36b4104e727909::t_95234ddf676745 1-90
+  s_36b4104e727909::t_59614c554a5f06 91-96
+apps/deep-link-lab/src/profile-param-row.tsx
+  s_36b4104e727909::t_4efd4f758a8661 1-61
+apps/deep-link-lab/src/matrix-panel.tsx
+  s_36b4104e727909::t_3e4425f9a5b14f 1-2,4-5,8,14,20-33,38-41,44-46,49,51-61,64-65,77-79,85-86,88-95,102-105,107-110,115-128,130-137,140,142-143
+  s_36b4104e727909::t_df03862f0e2b42 138-139,141
+apps/deep-link-lab/src/styles/editor.css
+  s_36b4104e727909::t_d644648d451dfb 1-3,6-9,12-13,16,19-20,23-25,28-30,34-36,38,41-46,49-53,56-58,60-61,64-67,70-71,74-76,78,82-88,91-93,96-97,99-100,105,107-108,110,112-114,117-122,125,127-128,132-135,139-140,143-150,153-154,158-160,163-165,168-169,172,174,176,179-180,183-186,189-193,195-197
+apps/deep-link-lab/src/styles/matrix.css
+  s_36b4104e727909::t_d644648d451dfb 1-187
+apps/deep-link-lab/src/lib/workspace.ts
+  s_36b4104e727909::t_8d8abf0c766daf 103
+  s_36b4104e727909::t_9d1d674dec6518 18,33-35,81,92-94,131-135
+  s_36b4104e727909::t_1383283edb38bc 1-17,19-32,36-80,82-91,95-102,104-130,136-144
+apps/deep-link-lab/.oxlintrc.json
+  s_36b4104e727909::t_18c2a3eb3fc631 1-39
+apps/deep-link-lab/README.md
+  s_36b4104e727909::t_18c2a3eb3fc631 1-44
+.github/workflows/deep-link-lab.yml
+  s_36b4104e727909::t_18c2a3eb3fc631 1-32
+apps/deep-link-lab/index.html
+  s_36b4104e727909::t_18c2a3eb3fc631 7-11
+apps/deep-link-lab/src/styles/base.css
+  s_36b4104e727909::t_d644648d451dfb 1-132
+  s_36b4104e727909::t_7dfa2c77d49aff 133-138
+apps/deep-link-lab/src/deep-link-data.ts
+  s_36b4104e727909::t_93d42f52958fb3 2,11-17
+apps/deep-link-lab/src/app.tsx
+  s_36b4104e727909::t_5ba825d19ef33e 1,4,9,11,16,18-25,31-32,36-38,47,49-53,56-60,62,66-72,74,83-84,86-92,96-98,106-113,115-117,122,125,127,134,136,138,140-141,144,151-152
+  s_36b4104e727909::t_07aaf3ebfc924a 41-46,48
+  s_36b4104e727909::t_8d8abf0c766daf 75-77,80-82
+  s_36b4104e727909::t_051777c7e9af0b 153-154
+apps/deep-link-lab/src/profile-card.tsx
+  s_36b4104e727909::t_b6af3c1470b977 1-136
+apps/deep-link-lab/src/lib/deep-link-lab.test.ts
+  s_36b4104e727909::t_baddb67f00e4f5 7,9-15,17-27,36,41-44,46-48,51-117,119-124,127-130
+apps/deep-link-lab/src/styles/workspace.css
+  s_36b4104e727909::t_b3f4463e8d7695 1-104
+apps/deep-link-lab/src/styles/responsive.css
+  s_36b4104e727909::t_d644648d451dfb 1-80
+apps/deep-link-lab/src/source-panel.tsx
+  s_36b4104e727909::t_95234ddf676745 1,3,5,20-21,29-30,36-39,42-48,52-53,57-63,68-69
+apps/deep-link-lab/src/profile-list.tsx
+  s_36b4104e727909::t_4efd4f758a8661 7,11-33,35-47,49-58
+  s_36b4104e727909::t_b6af3c1470b977 1,4-5
+  s_36b4104e727909::t_07aaf3ebfc924a 48
+apps/deep-link-lab/src/lib/profile-operations.ts
+  s_36b4104e727909::t_779d510d1963a1 1-101
+apps/deep-link-lab/src/lib/browser-actions.ts
+  s_36b4104e727909::t_3e4425f9a5b14f 1-18,27-54
+  s_36b4104e727909::t_75879896e27f52 19-26
+apps/deep-link-lab/src/workspace-actions.tsx
+  s_36b4104e727909::t_e9cc68efeb3d51 1-2,26-31,35,38,41-53
+  s_36b4104e727909::t_e834a99b6bb93f 54-55
+apps/deep-link-lab/src/lib/deep-link-lab.ts
+  s_36b4104e727909::t_1383283edb38bc 12-52,59-60,62,72-73,79-80,84,86,91-93,98-99,104-105
+apps/deep-link-lab/src/main.tsx
+  s_36b4104e727909::t_d644648d451dfb 6,8-10
+  s_36b4104e727909::t_b3f4463e8d7695 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "0741b5495aa77eed53f530ab1b2673954ec6ca06",
+  "prompts": {},
+  "sessions": {
+    "s_36b4104e727909": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f5ce2-4f15-77d2-ba4d-4e127a6361c1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
