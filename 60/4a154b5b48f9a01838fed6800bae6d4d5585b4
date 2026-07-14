@@ -1,0 +1,157 @@
+.agents/skills/github-image-upload/SKILL.md
+  s_36b4104e727909::t_a52520bcbb6a4f 1-135
+.claude/skills/github-image-upload
+  s_36b4104e727909::t_5cd768ddf8c677 1
+.github/workflows/guoba-stream-e2e.yml
+  s_36b4104e727909::t_d3b4ecebdc8f85 1-41
+.github/workflows/guoba-stream-live-e2e.yml
+  s_36b4104e727909::t_c04fddde87ab14 1-37
+.gitignore
+  s_36b4104e727909::t_a03cc571bb69b2 58
+README.md
+  s_36b4104e727909::t_67e615ea384313 3,12,14,68-78,93,103
+apps/guoba-stream/.env.example
+  s_36b4104e727909::t_6550519f3d7e11 1-2
+apps/guoba-stream/.oxlintrc.json
+  s_36b4104e727909::t_ed2f84317f1fc0 1-40
+apps/guoba-stream/DESIGN.md
+  s_36b4104e727909::t_2c65c85b4d3ca0 1-44
+apps/guoba-stream/README.md
+  s_36b4104e727909::t_a3d62633ddb154 1-101
+apps/guoba-stream/api/download.test.ts
+  s_36b4104e727909::t_82e6f8d37b36b2 1-114
+apps/guoba-stream/api/download.ts
+  s_36b4104e727909::t_f3c0cb26b8392c 1-43
+apps/guoba-stream/api/resolve.test.ts
+  s_36b4104e727909::t_05f6bb9adbd681 1-189
+apps/guoba-stream/api/resolve.ts
+  s_36b4104e727909::t_002ddfdc5272a0 1-51
+apps/guoba-stream/dev-api-plugin.ts
+  s_36b4104e727909::t_1c698d064129dc 1-54
+apps/guoba-stream/e2e-live/environment.ts
+  s_36b4104e727909::t_a9500f6c66156e 1
+apps/guoba-stream/e2e-live/resolve-live.spec.ts
+  s_36b4104e727909::t_26bbeeb8420eb6 1-77
+apps/guoba-stream/e2e/app.spec.ts
+  s_36b4104e727909::t_a3d0e81ceb73e4 1-79
+apps/guoba-stream/e2e/fixtures.ts
+  s_36b4104e727909::t_2b4363eb9ff826 1-48
+apps/guoba-stream/index.html
+  s_36b4104e727909::t_3b7bba7aade4ac 1-24
+apps/guoba-stream/lib/auth.test.ts
+  s_36b4104e727909::t_94cd3f47612ea0 1-22
+apps/guoba-stream/lib/auth.ts
+  s_36b4104e727909::t_afce034788304f 1-13
+apps/guoba-stream/lib/fixtures/fx-video-tweet.json
+  s_36b4104e727909::t_b3db02d5d8b2ab 1-46
+apps/guoba-stream/lib/fixtures/gif-tweet.json
+  s_36b4104e727909::t_ea6f49faa33595 1-30
+apps/guoba-stream/lib/fixtures/video-tweet.json
+  s_36b4104e727909::t_b9c64ce9f166a0 1-41
+apps/guoba-stream/lib/fxtwitter.test.ts
+  s_36b4104e727909::t_2f19f8858cc960 1-79
+apps/guoba-stream/lib/fxtwitter.ts
+  s_36b4104e727909::t_73bbdac512a95b 1-60
+apps/guoba-stream/lib/resolve-source.test.ts
+  s_36b4104e727909::t_5eb590a3e4a10c 1-95
+apps/guoba-stream/lib/resolve-source.ts
+  s_36b4104e727909::t_1dbe3fabc91a81 1-115
+apps/guoba-stream/lib/sign.test.ts
+  s_36b4104e727909::t_658b2efe5709ed 1-63
+apps/guoba-stream/lib/sign.ts
+  s_36b4104e727909::t_5a37d6c0f022db 1-55
+apps/guoba-stream/lib/syndication.test.ts
+  s_36b4104e727909::t_3746e144856984 1-81
+apps/guoba-stream/lib/syndication.ts
+  s_36b4104e727909::t_7ab106a4f841b5 1-93
+apps/guoba-stream/lib/tweet-url.test.ts
+  s_36b4104e727909::t_6759689248dc39 1-82
+apps/guoba-stream/lib/tweet-url.ts
+  s_36b4104e727909::t_8d1416a5b97afa 1-45
+apps/guoba-stream/lib/types.ts
+  s_36b4104e727909::t_815a2a981bb90f 1-29
+apps/guoba-stream/package.json
+  s_36b4104e727909::t_160b7d9b0411a2 1-35
+apps/guoba-stream/playwright.config.ts
+  s_36b4104e727909::t_cb5b6d68b7fbaf 1-33
+apps/guoba-stream/playwright.live.config.ts
+  s_36b4104e727909::t_e34b4ed21b5cbe 1-39
+apps/guoba-stream/public/favicon.svg
+  s_36b4104e727909::t_7eeaf59a519b67 1-11
+apps/guoba-stream/src/app.tsx
+  s_36b4104e727909::t_bdf1caf2d42a21 1-111
+apps/guoba-stream/src/components/download-bar.tsx
+  s_36b4104e727909::t_19193170e441ac 1-28
+apps/guoba-stream/src/components/empty-state.tsx
+  s_36b4104e727909::t_24e2bc653529fb 1-30
+apps/guoba-stream/src/components/error-banner.tsx
+  s_36b4104e727909::t_5e58c9065b9750 1-19
+apps/guoba-stream/src/components/gate.tsx
+  s_36b4104e727909::t_7f7abaeb11a382 1-58
+apps/guoba-stream/src/components/media-card.tsx
+  s_36b4104e727909::t_8eac984e6f5555 1-122
+apps/guoba-stream/src/components/result-skeleton.tsx
+  s_36b4104e727909::t_fa33e7cc41722f 1-28
+apps/guoba-stream/src/components/tweet-card.tsx
+  s_36b4104e727909::t_f5433333e906fc 1-22
+apps/guoba-stream/src/components/url-form.tsx
+  s_36b4104e727909::t_3f44a07526bc22 1-47
+apps/guoba-stream/src/lib/access-key.ts
+  s_36b4104e727909::t_62dabadeebf6ab 1-13
+apps/guoba-stream/src/lib/api.ts
+  s_36b4104e727909::t_41103847bb2dce 1-32
+apps/guoba-stream/src/lib/download.ts
+  s_36b4104e727909::t_9727f8b8da04c4 1-16
+apps/guoba-stream/src/lib/format.test.ts
+  s_36b4104e727909::t_11d7320ae52708 1-11
+apps/guoba-stream/src/lib/format.ts
+  s_36b4104e727909::t_f90193da1a3c8f 1-6
+apps/guoba-stream/src/main.tsx
+  s_36b4104e727909::t_ade56e05348f2e 1-11
+apps/guoba-stream/src/styles.css
+  s_36b4104e727909::t_5df2e9bba022af 1-80
+apps/guoba-stream/src/vite-env.d.ts
+  s_36b4104e727909::t_5b2f23aadf8cbe 1
+apps/guoba-stream/tsconfig.app.json
+  s_36b4104e727909::t_f539eeb39897b2 1-22
+apps/guoba-stream/tsconfig.json
+  s_36b4104e727909::t_f5dce3716c5c8d 1-4
+apps/guoba-stream/tsconfig.node.json
+  s_36b4104e727909::t_d2086b814141de 1-26
+apps/guoba-stream/vite.config.ts
+  s_36b4104e727909::t_640f73bc135ac9 1-21
+apps/qr-vault/docs/index.html
+  s_36b4104e727909::t_30e2ce2a9502bc 6,593,595-596,602,620,632-633,638,640-641,647,649-650,655,657-658,671,673-675,702,732,739-764,790,792-793,796-797,801,819,852,854,863,874,883-884,903,916,918-919,947-948
+apps/qr-vault/src/app/workspace/qr-inspector-actions.tsx
+  s_36b4104e727909::t_064d724737095a 1-79
+apps/qr-vault/src/app/workspace/qr-inspector.tsx
+  s_36b4104e727909::t_7985c15bbabf47 2,5,71,73-91,99-100,113-122,127-133
+apps/qr-vault/src/app/workspace/qr-list.tsx
+  s_36b4104e727909::t_605c6807fc18e7 112,114-121,126,136-139,141-143,157,161,165
+apps/qr-vault/src/app/workspace/qr-row-actions.tsx
+  s_36b4104e727909::t_5776f60f25d060 38,49,63
+apps/qr-vault/src/app/workspace/workspace-header.tsx
+  s_36b4104e727909::t_051b1d34c279a7 35,38-39,44,48-63,65,71-78,80-81,88,94,115
+docs/superpowers/plans/2026-07-07-guoba-stream.md
+  s_36b4104e727909::t_c360c5b0fb2e16 1-2523
+pnpm-lock.yaml
+  s_36b4104e727909::t_900fc1eb94c7f2 70-118,1685-1687,1694-1696,9194-9195,9200-9201
+skills-lock.json
+  s_36b4104e727909::t_9015ac824b96e9 22-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "604a154b5b48f9a01838fed6800bae6d4d5585b4",
+  "prompts": {},
+  "sessions": {
+    "s_36b4104e727909": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f5ce2-4f15-77d2-ba4d-4e127a6361c1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "riki <rikisamurai310@gmail.com>"
+    }
+  }
+}
