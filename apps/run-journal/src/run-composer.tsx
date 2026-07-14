@@ -19,7 +19,7 @@ const blankForm = {
   artifactHref: '',
 }
 
-export function RunComposer({ onCreate }: { onCreate: (run: RunRecord) => void }) {
+export function RunComposer({ onCreate }: { onCreate: (run: RunRecord) => boolean }) {
   const [form, setForm] = useState(blankForm)
   const [outcome, setOutcome] = useState<RecordedOutcome>('draft')
   const [exitCode, setExitCode] = useState('1')
@@ -54,7 +54,7 @@ export function RunComposer({ onCreate }: { onCreate: (run: RunRecord) => void }
       artifactHref: form.artifactHref,
     })
 
-    onCreate(run)
+    if (!onCreate(run)) return
     setForm(blankForm)
     setOutcome('draft')
     setExitCode('1')

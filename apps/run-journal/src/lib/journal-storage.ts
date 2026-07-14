@@ -1,10 +1,7 @@
 import type { RunEvent, RunRecord } from './run-types'
 import { isSafeArtifactHref, parseRunRecords } from './run-validation'
 
-export const journalStorageKey = 'run-journal-records-v2'
-export const legacyStorageKey = 'run-journal-records-v1'
-
-type ParseOptions = {
+export type ParseOptions = {
   now?: string
 }
 

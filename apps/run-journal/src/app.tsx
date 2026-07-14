@@ -1,13 +1,7 @@
 import { BookOpenCheck } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { JournalActions } from './journal-actions'
-import {
-  journalStorageKey,
-  legacyStorageKey,
-  exportJournal,
-  parseJournal,
-} from './lib/journal-storage'
 import {
   filterRunsByStatus,
   summarizeRun,
@@ -16,54 +10,42 @@ import {
 } from './lib/run-journal'
 import { RunCard } from './run-card'
 import { RunComposer } from './run-composer'
-import { filters, initialRuns } from './run-data'
+import { filters } from './run-data'
 import { RunDetail } from './run-detail'
-
-type Notice = { kind: 'success' | 'error'; text: string }
-type JournalState = { runs: RunRecord[]; notice?: Notice }
+import { useJournalStore } from './use-journal-store'
 
 export function App() {
-  const [journal, setJournal] = useState<JournalState>(readInitialJournal)
+  const journal = useJournalStore()
   const [filter, setFilter] = useState<RunStatusFilter>('all')
   const [selectedId, setSelectedId] = useState(journal.runs[0]?.id ?? '')
   const visibleRuns = useMemo(
-    () => filterRunsByStatus(sortRuns(journal.runs), filter),
+    () => filterRunsByStatus(journal.runs, filter),
     [filter, journal.runs],
   )
   const selectedRun = visibleRuns.find((run) => run.id === selectedId) ?? visibleRuns[0]
   const verified = journal.runs.filter((run) => summarizeRun(run).status === 'verified').length
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(journalStorageKey, exportJournal(journal.runs))
-      window.localStorage.removeItem(legacyStorageKey)
-    } catch {
-      setJournal((current) => ({
-        ...current,
-        notice: { kind: 'error', text: 'Runs are in memory, but browser storage is unavailable.' },
-      }))
-    }
-  }, [journal.runs])
-
   function addRun(run: RunRecord) {
-    setJournal((current) => ({
-      runs: [run, ...current.runs],
-      notice: { kind: 'success', text: 'Run recorded.' },
-    }))
+    if (!journal.addRun(run)) return false
     setSelectedId(run.id)
     setFilter('all')
+    return true
   }
 
   function deleteRun(id: string) {
-    setJournal((current) => ({
-      runs: current.runs.filter((run) => run.id !== id),
-      notice: { kind: 'success', text: 'Run deleted.' },
-    }))
+    journal.deleteRun(id)
   }
 
   function importRuns(runs: RunRecord[]) {
-    setJournal({ runs: sortRuns(runs) })
+    if (!journal.importRuns(runs)) return
     setSelectedId(runs[0]?.id ?? '')
+    setFilter('all')
+  }
+
+  function restoreBackup() {
+    const restored = journal.restoreBackup()
+    if (!restored) return
+    setSelectedId(restored[0]?.id ?? '')
     setFilter('all')
   }
 
@@ -90,8 +72,10 @@ export function App() {
               </span>
               <JournalActions
                 runs={journal.runs}
+                hasBackup={journal.hasBackup}
                 onImport={importRuns}
-                onNotice={(notice) => setJournal((current) => ({ ...current, notice }))}
+                onRestore={restoreBackup}
+                onNotice={journal.setNotice}
               />
             </div>
           </header>
@@ -142,44 +126,6 @@ export function App() {
       </main>
     </>
   )
-}
-
-function readInitialJournal(): JournalState {
-  if (typeof window === 'undefined') return { runs: initialRuns }
-  try {
-    const current = window.localStorage.getItem(journalStorageKey)
-    const legacy = window.localStorage.getItem(legacyStorageKey)
-    const stored = current ?? legacy
-    if (!stored) return { runs: initialRuns }
-    const runs = parseJournal(stored)
-    if (runs)
-      return {
-        runs: sortRuns(runs),
-        notice: legacy
-          ? { kind: 'success', text: 'Journal upgraded to the evidence-safe schema.' }
-          : undefined,
-      }
-    window.localStorage.setItem(`${journalStorageKey}-invalid-backup`, stored)
-    return {
-      runs: initialRuns,
-      notice: {
-        kind: 'error',
-        text: 'Stored data was invalid. A backup was kept before loading samples.',
-      },
-    }
-  } catch {
-    return {
-      runs: initialRuns,
-      notice: {
-        kind: 'error',
-        text: 'Browser storage could not be read; using in-memory samples.',
-      },
-    }
-  }
-}
-
-function sortRuns(runs: RunRecord[]) {
-  return runs.toSorted((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt))
 }
 
 function parseFilter(value: string): RunStatusFilter {
