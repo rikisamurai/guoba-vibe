@@ -1,0 +1,101 @@
+.install-fields {
+  overflow: auto;
+  padding: 20px;
+}
+.install-fields label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+.install-fields label > span {
+  margin-bottom: 7px;
+  color: #9da399;
+  font-size: 9px;
+  font-weight: 650;
+}
+.install-fields label em {
+  color: #5f655d;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 500;
+}
+.install-fields input,
+.install-fields select {
+  width: 100%;
+  height: 38px;
+  padding: 0 11px;
+  color: #cbd0c7;
+  background: #0c0e0c;
+  border: 1px solid #292d28;
+  border-radius: 7px;
+  outline: 0;
+  font-size: 10px;
+}
+.install-fields input:focus,
+.install-fields select:focus {
+  border-color: #53643e;
+  box-shadow: 0 0 0 2px rgb(199 244 100 / 6%);
+}
+.install-fields input::placeholder {
+  color: #50564e;
+}
+.install-fields label small {
+  margin-top: 6px;
+  color: #545a52;
+  font-size: 8px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+.install-model {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  background: #0d0f0d;
+  border: 1px solid #242824;
+  border-radius: 8px;
+}
+.install-model span {
+  padding: 5px 7px;
+  border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+}
+.install-model i {
+  color: #50564d;
+  font-size: 7px;
+  font-style: normal;
+}
+.agents-node {
+  color: #b8dc78;
+  background: #202a18;
+}
+.claude-node {
+  color: #b2b9ad;
+  background: #20231f;
+}
+.link-arrow {
+  padding: 0 !important;
+  color: #6e7569 !important;
+  background: transparent !important;
+}
+
+@media (max-width: 760px) {
+  .dialog-backdrop {
+    padding: 12px;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .install-model {
+    grid-template-columns: 1fr auto 1fr;
+  }
+  .install-model i {
+    display: none;
+  }
+}

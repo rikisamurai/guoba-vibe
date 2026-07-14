@@ -1,0 +1,55 @@
+.busy-pill {
+  position: fixed;
+  top: 13px;
+  left: 50%;
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 11px;
+  color: #b9c1b2;
+  background: rgb(25 29 24 / 94%);
+  border: 1px solid #363d30;
+  border-radius: 14px;
+  box-shadow: 0 9px 30px rgb(0 0 0 / 35%);
+  font-size: 9px;
+  transform: translateX(-50%);
+}
+.busy-pill span {
+  width: 7px;
+  height: 7px;
+  border: 1px solid #4d573f;
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+.error-toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  max-width: 380px;
+  padding: 11px 14px;
+  color: #e7b0a9;
+  background: #2a1716;
+  border: 1px solid #542a27;
+  border-radius: 9px;
+  box-shadow: 0 15px 45px rgb(0 0 0 / 45%);
+  cursor: pointer;
+  text-align: left;
+}
+.error-toast strong {
+  font-size: 10px;
+}
+.error-toast span {
+  margin-top: 3px;
+  color: #b8807a;
+  font-size: 9px;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
