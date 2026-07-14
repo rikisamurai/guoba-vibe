@@ -1,87 +1,164 @@
 import { createHash, randomUUID } from 'node:crypto'
-import { mkdir, open, readFile, rm, stat } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rename, rmdir, stat, unlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { join } from 'node:path'
 
+import { canonicalResourcePath } from './canonical-resource'
 import { hasFileSystemErrorCode } from './fs-errors'
+import { currentProcessOwner, matchesProcessOwner, parseProcessOwner } from './process-owner'
 
 const LOCK_ROOT = join(tmpdir(), 'guoba-skills-locks')
 const RETRY_DELAY_MS = 50
 const RETRY_TIMEOUT_MS = 5_000
 
+interface LockOwner {
+  directory: string
+  path: string
+}
+
+interface LockCandidate extends LockOwner {
+  name: string
+}
+
 export async function withFileLock<T>(resource: string, action: () => Promise<T>): Promise<T> {
   await mkdir(LOCK_ROOT, { mode: 0o700, recursive: true })
-  const lockPath = fileLockPath(resource)
-  const startedAt = Date.now()
-  const handle = await acquire(lockPath, startedAt)
+  const owner = await acquire(await fileLockPath(resource), Date.now())
   try {
-    await handle.writeFile(`${JSON.stringify({ pid: process.pid, owner: randomUUID() })}\n`)
     return await action()
   } finally {
-    await handle.close()
-    await rm(lockPath, { force: true })
+    await release(owner)
   }
 }
 
-async function acquire(path: string, startedAt: number): ReturnType<typeof open> {
+async function acquire(directory: string, startedAt: number): Promise<LockOwner> {
+  const candidate = await createCandidate(directory)
   try {
-    return await open(path, 'wx', 0o600)
+    await rename(candidate.directory, directory)
+    return { directory, path: join(directory, candidate.name) }
   } catch (error) {
-    if (!isAlreadyLocked(error)) throw error
-    if (await recoverAbandonedLock(path)) return acquire(path, startedAt)
+    await discardCandidate(candidate)
+    if (!hasFileSystemErrorCode(error, 'EEXIST') && !hasFileSystemErrorCode(error, 'ENOTEMPTY')) {
+      throw error
+    }
+    if (await recoverAbandonedOwners(directory)) return acquire(directory, startedAt)
     if (Date.now() - startedAt >= RETRY_TIMEOUT_MS) {
-      throw new Error(`Another Guoba Skills process is writing this resource (${path}).`, {
+      throw new Error(`Another Guoba Skills process is writing this resource (${directory}).`, {
         cause: error,
       })
     }
     await delay(RETRY_DELAY_MS)
-    return acquire(path, startedAt)
+    return acquire(directory, startedAt)
   }
 }
 
-export function fileLockPath(resource: string): string {
-  return join(LOCK_ROOT, `${resourceKey(resource)}.lock`)
-}
-
-function resourceKey(resource: string): string {
-  return createHash('sha256').update(resolve(resource)).digest('hex')
-}
-
-function isAlreadyLocked(error: unknown): boolean {
-  return hasFileSystemErrorCode(error, 'EEXIST')
-}
-
-async function recoverAbandonedLock(path: string): Promise<boolean> {
-  let content: string
+async function createCandidate(directory: string): Promise<LockCandidate> {
+  const processOwner = await currentProcessOwner()
+  const id = randomUUID()
+  const candidateDirectory = `${directory}.candidate-${process.pid}-${id}`
+  const name = `owner-${process.pid}-${id}.json`
+  const path = join(candidateDirectory, name)
+  await mkdir(candidateDirectory, { mode: 0o700 })
   try {
-    content = await readFile(path, 'utf8')
+    await writeFile(path, `${JSON.stringify(processOwner)}\n`, {
+      flag: 'wx',
+      mode: 0o600,
+    })
+    return { directory: candidateDirectory, name, path }
   } catch (error) {
-    return hasFileSystemErrorCode(error, 'ENOENT')
-  }
-  const pid = ownerPid(content)
-  if (pid && isProcessAlive(pid)) return false
-  if (!pid && Date.now() - (await stat(path)).mtimeMs < RETRY_TIMEOUT_MS) return false
-  await rm(path, { force: true })
-  return true
-}
-
-function ownerPid(content: string): number | undefined {
-  try {
-    const raw: unknown = JSON.parse(content)
-    const pid = typeof raw === 'object' && raw !== null ? Reflect.get(raw, 'pid') : undefined
-    return typeof pid === 'number' && Number.isInteger(pid) && pid > 0 ? pid : undefined
-  } catch {
-    return undefined
+    await removeObservedOwner(path)
+    await removeEmptyDirectory(candidateDirectory)
+    throw error
   }
 }
 
-function isProcessAlive(pid: number): boolean {
+async function discardCandidate(candidate: LockCandidate): Promise<void> {
+  await removeObservedOwner(candidate.path)
+  await removeEmptyDirectory(candidate.directory)
+}
+
+export async function fileLockPath(resource: string): Promise<string> {
+  return join(LOCK_ROOT, `${await resourceKey(resource)}.v3.lock`)
+}
+
+async function recoverAbandonedOwners(directory: string): Promise<boolean> {
+  let names: string[]
   try {
-    process.kill(pid, 0)
+    names = await readdir(directory)
+  } catch (error) {
+    if (hasFileSystemErrorCode(error, 'ENOENT')) return true
+    throw error
+  }
+
+  if (names.length === 0) {
+    return (await isOlderThanTimeout(directory)) ? await removeEmptyDirectory(directory) : false
+  }
+
+  const liveOwners = await Promise.all(
+    names.map(async (name) => {
+      const ownerPath = join(directory, name)
+      if (await isLiveOwner(ownerPath)) {
+        return true
+      }
+      await removeObservedOwner(ownerPath)
+      return false
+    }),
+  )
+  return !liveOwners.includes(true) && (await removeEmptyDirectory(directory))
+}
+
+async function isLiveOwner(path: string): Promise<boolean> {
+  try {
+    const owner = parseProcessOwner(await readFile(path, 'utf8'))
+    if (owner) return matchesProcessOwner(owner)
+    return !(await isOlderThanTimeout(path))
+  } catch (error) {
+    if (hasFileSystemErrorCode(error, 'ENOENT')) return false
+    return true
+  }
+}
+
+async function isOlderThanTimeout(path: string): Promise<boolean> {
+  try {
+    return Date.now() - (await stat(path)).mtimeMs >= RETRY_TIMEOUT_MS
+  } catch (error) {
+    if (hasFileSystemErrorCode(error, 'ENOENT')) return false
+    throw error
+  }
+}
+
+async function removeObservedOwner(path: string): Promise<void> {
+  try {
+    await unlink(path)
+  } catch (error) {
+    if (!hasFileSystemErrorCode(error, 'ENOENT')) throw error
+  }
+}
+
+async function release(owner: LockOwner): Promise<void> {
+  try {
+    await unlink(owner.path)
+  } catch (error) {
+    if (hasFileSystemErrorCode(error, 'ENOENT')) return
+    throw error
+  }
+  await removeEmptyDirectory(owner.directory)
+}
+
+async function removeEmptyDirectory(path: string): Promise<boolean> {
+  try {
+    await rmdir(path)
     return true
   } catch (error) {
-    return hasFileSystemErrorCode(error, 'EPERM')
+    if (hasFileSystemErrorCode(error, 'ENOENT')) return true
+    if (hasFileSystemErrorCode(error, 'ENOTEMPTY')) return false
+    throw error
   }
+}
+
+async function resourceKey(resource: string): Promise<string> {
+  return createHash('sha256')
+    .update(await canonicalResourcePath(resource))
+    .digest('hex')
 }
 
 function delay(milliseconds: number): Promise<void> {
