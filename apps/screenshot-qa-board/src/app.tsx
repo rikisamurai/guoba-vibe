@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 
 import { BoardActions } from './board-actions'
 import { IssueQueue } from './issue-queue'
-import { loadBoard, saveBoard } from './lib/board-storage'
+import { loadBoard, replaceBoardWithBackup, saveBoard } from './lib/board-storage'
 import {
   summarizeBoard,
   transitionCardStatus,
@@ -15,12 +15,26 @@ import { QaComposer } from './qa-composer'
 import { QaInspector } from './qa-inspector'
 import { initialCards, statuses, type ReviewCard, type SeverityFilter } from './review-data'
 
-type InitialState = { cards: ReviewCard[]; error: string }
+type InitialState = {
+  cards: ReviewCard[]
+  error: string
+  recoveryRaw: string | null
+  backupRaw: string | null
+}
+
+type CommitOptions = { keepBackup?: boolean; resolveRecovery?: boolean }
 
 function readInitialState(): InitialState {
-  if (typeof window === 'undefined') return { cards: initialCards, error: '' }
+  if (typeof window === 'undefined') {
+    return { cards: initialCards, error: '', recoveryRaw: null, backupRaw: null }
+  }
   const result = loadBoard(window.localStorage)
-  return { cards: result.cards ?? initialCards, error: result.error }
+  return {
+    cards: result.cards ?? initialCards,
+    error: result.error,
+    recoveryRaw: result.recoveryRaw,
+    backupRaw: result.backupRaw,
+  }
 }
 
 export function App() {
@@ -29,6 +43,8 @@ export function App() {
   const [filter, setFilter] = useState<SeverityFilter>('all')
   const [selectedId, setSelectedId] = useState(cards[0]?.id)
   const [notice, setNotice] = useState(initial.error)
+  const [recoveryRaw, setRecoveryRaw] = useState(initial.recoveryRaw)
+  const [backupRaw, setBackupRaw] = useState(initial.backupRaw)
   const summary = summarizeBoard(cards)
   const visibleCards = useMemo(
     () => cards.filter((card) => filter === 'all' || card.severity === filter),
@@ -36,12 +52,23 @@ export function App() {
   )
   const selectedCard = visibleCards.find((card) => card.id === selectedId) ?? visibleCards[0]
 
-  function commitCards(next: ReviewCard[], successMessage = '') {
-    const result = saveBoard(window.localStorage, next)
+  function commitCards(next: ReviewCard[], successMessage = '', options: CommitOptions = {}) {
+    if (recoveryRaw && !options.resolveRecovery) {
+      setNotice('Export the recovery data, import a board, or reset before making changes.')
+      return false
+    }
+    const result =
+      options.keepBackup || options.resolveRecovery
+        ? replaceBoardWithBackup(window.localStorage, next)
+        : saveBoard(window.localStorage, next)
     if (!result.ok) {
       setNotice(result.error)
       return false
     }
+    if ('backupRaw' in result && typeof result.backupRaw === 'string') {
+      setBackupRaw(result.backupRaw)
+    }
+    if (options.resolveRecovery) setRecoveryRaw(null)
     setCards(next)
     setNotice(successMessage)
     return true
@@ -68,12 +95,25 @@ export function App() {
 
   function deleteSelected() {
     if (!selectedCard) return
+    if (
+      !window.confirm(
+        `Delete “${selectedCard.title}”? The current board will be kept as a recovery backup.`,
+      )
+    )
+      return
     const next = cards.filter((card) => card.id !== selectedCard.id)
-    if (commitCards(next, 'Issue deleted.')) setSelectedId(next[0]?.id)
+    if (commitCards(next, 'Issue deleted. Recovery backup updated.', { keepBackup: true })) {
+      setSelectedId(next[0]?.id)
+    }
   }
 
   function importBoard(next: QaCard[]) {
-    if (commitCards(next, `Imported ${next.length} issues.`)) {
+    if (
+      commitCards(next, `Imported ${next.length} issues. Previous data kept as a backup.`, {
+        keepBackup: true,
+        resolveRecovery: true,
+      })
+    ) {
       setFilter('all')
       setSelectedId(next[0]?.id)
     }
@@ -103,14 +143,22 @@ export function App() {
           </div>
           <BoardActions
             cards={cards}
+            recoveryRaw={recoveryRaw}
+            backupRaw={backupRaw}
             onImport={importBoard}
             onReset={() => {
               if (window.confirm('Restore the demo board?'))
-                commitCards(initialCards, 'Demo board restored.')
+                commitCards(initialCards, 'Demo board restored. Previous data kept as a backup.', {
+                  keepBackup: true,
+                  resolveRecovery: true,
+                })
             }}
             onClear={() => {
               if (window.confirm('Delete every issue from this local board?'))
-                commitCards([], 'Board cleared.')
+                commitCards([], 'Board cleared. Previous data kept as a backup.', {
+                  keepBackup: true,
+                  resolveRecovery: true,
+                })
             }}
             onError={setNotice}
           />

@@ -1,6 +1,13 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { boardStorageKey, loadBoard, maxBoardBytes, saveBoard } from './board-storage'
+import {
+  boardBackupStorageKey,
+  boardStorageKey,
+  loadBoard,
+  maxBoardBytes,
+  replaceBoardWithBackup,
+  saveBoard,
+} from './board-storage'
 import type { QaCard } from './qa-board'
 
 const savedCard: QaCard = {
@@ -23,7 +30,12 @@ describe('board storage', () => {
     expect(
       loadBoard({ getItem: () => JSON.stringify([savedCard]), setItem: vi.fn() }).cards,
     ).toEqual([savedCard])
-    expect(loadBoard({ getItem: () => '{bad', setItem: vi.fn() }).error).toContain('invalid')
+    const invalid = loadBoard({
+      getItem: (key) => (key === boardStorageKey ? '{bad' : null),
+      setItem: vi.fn(),
+    })
+    expect(invalid.error).toContain('invalid')
+    expect(invalid.recoveryRaw).toBe('{bad')
   })
 
   it('surfaces browser storage failures instead of reporting success', () => {
@@ -53,5 +65,37 @@ describe('board storage', () => {
     const storage = { getItem: vi.fn(() => null), setItem: vi.fn() }
     saveBoard(storage, [savedCard])
     expect(storage.setItem).toHaveBeenCalledWith(boardStorageKey, JSON.stringify([savedCard]))
+  })
+
+  it('backs up the current payload before replacing the board', () => {
+    const previous = JSON.stringify([savedCard])
+    const setItem = vi.fn()
+    const result = replaceBoardWithBackup(
+      {
+        getItem: (key) => (key === boardStorageKey ? previous : null),
+        setItem,
+      },
+      [],
+    )
+
+    expect(result).toEqual({ ok: true, backupRaw: previous })
+    expect(setItem.mock.calls).toEqual([
+      [boardBackupStorageKey, previous],
+      [boardStorageKey, '[]'],
+    ])
+  })
+
+  it('does not overwrite the board when the recovery backup fails', () => {
+    const setItem = vi.fn(() => {
+      throw new Error('quota')
+    })
+    const result = replaceBoardWithBackup(
+      { getItem: () => JSON.stringify([savedCard]), setItem },
+      [],
+    )
+
+    expect(result.ok).toBe(false)
+    expect(setItem).toHaveBeenCalledTimes(1)
+    expect(setItem).toHaveBeenCalledWith(boardBackupStorageKey, JSON.stringify([savedCard]))
   })
 })

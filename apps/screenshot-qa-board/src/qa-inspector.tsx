@@ -56,6 +56,7 @@ export function QaInspector({
             key={status}
             type="button"
             className={card.status === status ? 'active' : ''}
+            aria-pressed={card.status === status}
             onClick={() => onMove(status)}
           >
             <StatusIcon status={status} /> {status}
@@ -63,7 +64,7 @@ export function QaInspector({
         ))}
       </div>
 
-      <ImageCompare card={card} />
+      <ImageCompare key={card.id} card={card} />
 
       <dl className="capture-metadata">
         <Meta label="Route" value={card.route} />

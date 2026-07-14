@@ -30,6 +30,7 @@ export function IssueQueue({
             key={severity}
             type="button"
             className={filter === severity ? 'active' : ''}
+            aria-pressed={filter === severity}
             onClick={() => onFilter(severity)}
           >
             {severity}
@@ -71,6 +72,7 @@ function IssueButton({
     <button
       type="button"
       className={`issue-card ${card.severity} ${selected ? 'selected' : ''}`}
+      aria-pressed={selected}
       onClick={onSelect}
     >
       <span className="queue-preview">
