@@ -109,13 +109,21 @@ function QrListItem({
         if (node) itemRefs.current.set(qr.id, node)
         else itemRefs.current.delete(qr.id)
       }}
-      className="group relative"
+      className="group relative rounded-lg"
     >
+      <span
+        aria-hidden="true"
+        className={cn(
+          'absolute top-2 bottom-2 left-0.5 z-10 w-1 rounded-full transition-colors',
+          parsed.isValid ? 'bg-[var(--success)]' : 'bg-destructive',
+          isSelected ? 'opacity-100' : 'opacity-55 group-hover:opacity-80',
+        )}
+      />
       <button
         type="button"
         onClick={() => onSelect(qr.id)}
         className={cn(
-          'w-full rounded-lg border px-3.5 py-3.5 pr-32 text-left shadow-sm shadow-transparent transition-all duration-200 sm:pr-28',
+          'focus-visible:ring-ring/30 w-full rounded-lg border py-3.5 pr-36 pl-4 text-left shadow-sm shadow-transparent transition-all duration-200 outline-none focus-visible:ring-2 active:translate-y-px sm:pr-32',
           isSelected
             ? 'bg-card border-[var(--signal)] shadow-[0_0_0_1px_var(--signal)]'
             : 'border-border bg-card/80 hover:border-ring/60 hover:bg-card hover:shadow-foreground/5',
@@ -125,10 +133,14 @@ function QrListItem({
           <div className="mb-1.5 flex min-w-0 items-center gap-2">
             <span
               className={cn(
-                'size-1.5 rounded-full',
-                parsed.isValid ? 'bg-[var(--success)]' : 'bg-destructive',
+                'shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[10px] leading-none',
+                parsed.isValid
+                  ? 'border-foreground/15 bg-background/70 text-foreground'
+                  : 'border-destructive/40 bg-destructive/10 text-destructive',
               )}
-            />
+            >
+              {parsed.isValid ? t('common.valid') : t('common.invalid')}
+            </span>
             <strong className="truncate text-sm font-semibold">
               {qr.title || parsed.path || qr.url}
             </strong>
@@ -142,15 +154,15 @@ function QrListItem({
               showSeparator={Boolean(parsed.scheme)}
             />
           </div>
-          <p className="text-muted-foreground truncate pl-3.5 font-mono text-xs">
+          <p className="text-muted-foreground truncate font-mono text-xs">
             {parsed.path || qr.url}
           </p>
           {qr.description && (
-            <p className="text-muted-foreground mt-0.5 truncate pl-3.5 text-xs">{qr.description}</p>
+            <p className="text-muted-foreground mt-0.5 truncate text-xs">{qr.description}</p>
           )}
         </div>
       </button>
-      <div className="border-border/70 absolute top-1/2 right-1.5 flex h-11 -translate-y-1/2 items-center gap-1 border-l pl-3 opacity-75 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
+      <div className="border-border/80 bg-background/90 shadow-foreground/5 absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center gap-1 rounded-md border p-1 opacity-80 shadow-sm transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 sm:right-2">
         {armedDeleteId === qr.id ? (
           <button
             type="button"
