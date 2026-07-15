@@ -220,9 +220,6 @@ importers:
       react-i18next:
         specifier: ^17.0.8
         version: 17.0.8(i18next@26.3.0(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
-      shadcn:
-        specifier: ^4.8.0
-        version: 4.8.0(@types/node@24.12.4)(typescript@5.9.3)
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -260,6 +257,9 @@ importers:
       react-grab:
         specifier: ^0.1.37
         version: 0.1.37(react@19.2.4)
+      shadcn:
+        specifier: ^4.8.0
+        version: 4.8.0(@types/node@24.12.4)(typescript@5.9.3)
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.0
