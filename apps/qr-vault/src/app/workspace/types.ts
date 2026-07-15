@@ -1,5 +1,4 @@
-import type { VaultData } from '@/lib/storage'
+import type { QrScope, QrView } from '@/app/vault/vault-types'
 
-// (string & {}) keeps the literal autocomplete hints while still accepting any collection id
-export type ActiveFilter = 'all' | 'uncategorized' | (string & {})
-export type WorkspaceQr = VaultData['qrs'][number]
+export type ActiveFilter = QrScope
+export type WorkspaceQr = QrView

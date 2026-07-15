@@ -10,14 +10,13 @@ import { parseDeepLink } from '@/lib/url'
 import { cn } from '@/lib/utils'
 
 type QrListProps = {
-  qrs: WorkspaceQr[]
+  qrs: readonly WorkspaceQr[]
   selectedId?: string
   search: string
   activeFilter: ActiveFilter
   armedDeleteId: string
   armedProgress: number
   copiedUrlId: string
-  collectionNamesByQrId: Record<string, string[]>
   itemRefs: MutableRefObject<Map<string, HTMLDivElement>>
   onSelect: (id: string) => void
   onCopyUrl: (qr: WorkspaceQr) => void
@@ -33,7 +32,6 @@ export function QrList({
   armedDeleteId,
   armedProgress,
   copiedUrlId,
-  collectionNamesByQrId,
   itemRefs,
   onSelect,
   onCopyUrl,
@@ -69,7 +67,7 @@ export function QrList({
           armedProgress={armedProgress}
           copiedUrlId={copiedUrlId}
           activeFilter={activeFilter}
-          collectionNames={collectionNamesByQrId[qr.id] ?? []}
+          collectionNames={qr.collectionTitles}
           itemRefs={itemRefs}
           onSelect={onSelect}
           onCopyUrl={onCopyUrl}
@@ -94,10 +92,10 @@ function QrListItem({
   onArmDelete,
   onDelete,
   collectionNames,
-}: Omit<QrListProps, 'qrs' | 'search' | 'selectedId' | 'collectionNamesByQrId'> & {
+}: Omit<QrListProps, 'qrs' | 'search' | 'selectedId'> & {
   qr: WorkspaceQr
   isSelected: boolean
-  collectionNames: string[]
+  collectionNames: readonly string[]
 }) {
   const { t } = useTranslation()
   const parsed = parseDeepLink(qr.url)

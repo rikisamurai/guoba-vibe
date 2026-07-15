@@ -2,22 +2,20 @@ import { Link } from '@tanstack/react-router'
 import { FolderOpen, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import type { CollectionSummary } from '@/app/vault/vault-types'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
-import type { VaultData } from '@/lib/storage'
 import { cn } from '@/lib/utils'
 
 type CollectionListCardProps = {
-  collections: VaultData['collections']
-  collectionCounts: Record<string, number>
+  collections: readonly CollectionSummary[]
   activeId: string
   onNewCollection: () => void
 }
 
 export function CollectionListCard({
   collections,
-  collectionCounts,
   activeId,
   onNewCollection,
 }: CollectionListCardProps) {
@@ -52,7 +50,7 @@ export function CollectionListCard({
                 <FolderOpen className="size-3.5 shrink-0" />
                 <span className="min-w-0 truncate">{collection.title}</span>
                 <span className="text-muted-foreground font-mono text-[10px]">
-                  {collectionCounts[collection.id] ?? 0}
+                  {collection.qrCount}
                 </span>
               </Link>
             ))}

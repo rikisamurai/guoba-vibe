@@ -3,21 +3,20 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import { FOCUS_QR_TITLE_KEY } from '@/app/qr-session'
 import { ShareActions } from '@/app/share/share-actions'
 import { ShareFooter } from '@/app/share/share-footer'
 import { ShareHeader } from '@/app/share/share-header'
 import { ShareHero } from '@/app/share/share-hero'
 import { ShareQrDetails } from '@/app/share/share-qr-details'
-import { useVault } from '@/app/use-vault'
-import { nanoid8 } from '@/lib/ids'
+import { useVault } from '@/app/vault/use-vault'
 import { downloadDataUrl, qrFileName } from '@/lib/qr'
-import { upsertQr } from '@/lib/storage'
 import { parseDeepLink } from '@/lib/url'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
 export function SharePage() {
   const { t } = useTranslation()
-  const { data, updateVault } = useVault()
+  const { qr } = useVault()
   const navigate = useNavigate()
   const search = useRouterState({ select: (state) => state.location.search }) as {
     url?: string
@@ -36,18 +35,16 @@ export function SharePage() {
 
   function saveToLocal() {
     if (!parsed.isValid) return
-    const existingQr = data.qrs.find((qr) => qr.url === url)
-    if (existingQr) {
+    const result = qr.saveShared({ title, description, url })
+    if (result.kind === 'existing') {
       toast.success(t('share.alreadyInVaultToast'))
-      void navigate({ to: '/q/$qrId', params: { qrId: existingQr.id } })
+      void navigate({ to: '/q/$qrId', params: { qrId: result.id } })
       return
     }
 
-    const id = nanoid8()
-    updateVault((current) => upsertQr(current, { id, title, description, url }))
     toast.success(t('share.savedToVaultToast'))
-    sessionStorage.setItem('qr-vault:focus-title', '1')
-    void navigate({ to: '/q/$qrId', params: { qrId: id } })
+    sessionStorage.setItem(FOCUS_QR_TITLE_KEY, '1')
+    void navigate({ to: '/q/$qrId', params: { qrId: result.id } })
   }
 
   async function copyUrl() {

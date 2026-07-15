@@ -2,16 +2,16 @@ import { Link } from '@tanstack/react-router'
 import { Plus, Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import type { CollectionSummary, VaultCounts } from '@/app/vault/vault-types'
 import { CollectionChipRow } from '@/app/workspace/collection-chip-row'
 import type { ActiveFilter } from '@/app/workspace/types'
 import { workspaceFilterSearch } from '@/app/workspace/workspace-filter'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
-import type { VaultData } from '@/lib/storage'
 
 type WorkspaceHeaderProps = {
-  data: VaultData
-  uncategorizedCount: number
+  counts: VaultCounts
+  collections: readonly CollectionSummary[]
   activeFilter: ActiveFilter
   onFilterChange: (next: ActiveFilter) => void
   search: string
@@ -20,8 +20,8 @@ type WorkspaceHeaderProps = {
 }
 
 export function WorkspaceHeader({
-  data,
-  uncategorizedCount,
+  counts,
+  collections,
   activeFilter,
   onFilterChange,
   search,
@@ -63,15 +63,16 @@ export function WorkspaceHeader({
           </div>
         </div>
         <div className="bg-background/60 grid grid-cols-2 overflow-hidden rounded-lg border">
-          <SummaryPill label={t('common.qrCodes')} value={data.qrs.length} />
-          <SummaryPill label={t('common.collections')} value={data.collections.length} />
+          <SummaryPill label={t('common.qrCodes')} value={counts.qrs} />
+          <SummaryPill label={t('common.collections')} value={counts.collections} />
         </div>
       </div>
 
       <div className="border-b py-2.5">
         <CollectionChipRow
-          data={data}
-          uncategorizedCount={uncategorizedCount}
+          qrCount={counts.qrs}
+          uncategorizedCount={counts.uncategorized}
+          collections={collections}
           active={activeFilter}
           onChange={onFilterChange}
         />

@@ -1,33 +1,55 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { resolveInlineCollectionTitle } from '@/app/qr-detail/inline-collection-create'
-import type { Collection } from '@/lib/storage'
+import { createVaultStore } from '@/app/vault/vault-store'
 
-const collections: Collection[] = [
-  { id: 'dev', title: 'Dev Tools', createdAt: '1', updatedAt: '1' },
-  { id: 'foo', title: 'Foo', createdAt: '1', updatedAt: '1' },
-]
+const persistedVault = JSON.stringify({
+  version: 1,
+  qrs: [],
+  collections: [
+    { id: 'dev', title: 'Dev Tools', createdAt: '1', updatedAt: '1' },
+    { id: 'foo', title: 'Foo', createdAt: '1', updatedAt: '1' },
+  ],
+  collectionItems: [],
+})
 
-describe('resolveInlineCollectionTitle', () => {
+describe('inline collection creation through the Vault interface', () => {
   it('trims the submitted title before matching or creating', () => {
-    expect(resolveInlineCollectionTitle(collections, '  Dev Tools  ')).toEqual({
+    const { store, write } = setupStore()
+
+    expect(store.collection.selectOrCreate('  Dev Tools  ')).toEqual({
       kind: 'existing',
-      title: 'Dev Tools',
-      collection: collections[0],
+      id: 'dev',
     })
+    expect(write).not.toHaveBeenCalled()
   })
 
   it('matches duplicate titles case-sensitively', () => {
-    expect(resolveInlineCollectionTitle(collections, 'foo')).toEqual({
-      kind: 'new',
-      title: 'foo',
+    const { store } = setupStore()
+
+    expect(store.collection.selectOrCreate('foo')).toEqual({
+      kind: 'created',
+      id: 'new-collection',
     })
+    expect(store.getSnapshot().getCollection('new-collection')?.title).toBe('foo')
   })
 
   it('returns empty for whitespace-only titles', () => {
-    expect(resolveInlineCollectionTitle(collections, '   ')).toEqual({
-      kind: 'empty',
-      title: '',
-    })
+    const { store, write } = setupStore()
+
+    expect(store.collection.selectOrCreate('   ')).toEqual({ kind: 'empty' })
+    expect(write).not.toHaveBeenCalled()
   })
 })
+
+function setupStore() {
+  let persisted = persistedVault
+  const write = vi.fn((next: string) => {
+    persisted = next
+  })
+  const store = createVaultStore({
+    storage: { read: () => persisted, write },
+    now: () => '2026-07-15T00:00:00.000Z',
+    nextId: () => 'new-collection',
+  })
+  return { store, write }
+}

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 type CollectionMetaBadgeProps = {
-  collectionNames: string[]
+  collectionNames: readonly string[]
   showSeparator: boolean
 }
 

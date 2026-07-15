@@ -2,13 +2,13 @@ import { Check } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import type { CollectionSummary } from '@/app/vault/vault-types'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
-import type { Collection } from '@/lib/storage'
 import { cn } from '@/lib/utils'
 
 type CollectionPickerProps = {
-  collections: Collection[]
+  collections: readonly CollectionSummary[]
   isCreating?: boolean
   selectedIds: string[]
   onCancelCreate?: () => void

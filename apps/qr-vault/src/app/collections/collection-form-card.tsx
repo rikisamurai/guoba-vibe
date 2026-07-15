@@ -2,16 +2,16 @@ import { Save, Trash2 } from 'lucide-react'
 import type { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import type { CollectionSummary } from '@/app/vault/vault-types'
 import { FieldLabel } from '@/components/field-label'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
 import { Input } from '@/components/shadcn-ui/input'
 import { Textarea } from '@/components/shadcn-ui/textarea'
-import type { Collection } from '@/lib/storage'
 import { cn } from '@/lib/utils'
 
 type CollectionFormCardProps = {
-  collection?: Collection
+  collection?: CollectionSummary
   title: string
   description: string
   armedDeleteId: string
@@ -20,7 +20,7 @@ type CollectionFormCardProps = {
   onTitleChange: (next: string) => void
   onDescriptionChange: (next: string) => void
   onArmDelete: (id: string) => void
-  onDelete: (collection: Collection) => void
+  onDelete: (collection: CollectionSummary) => void
   onSave: () => void
 }
 
@@ -103,7 +103,7 @@ function CollectionDeleteButton({
   onArmDelete,
   onDelete,
 }: Pick<CollectionFormCardProps, 'armedDeleteId' | 'armedProgress' | 'onArmDelete' | 'onDelete'> & {
-  collection: Collection
+  collection: CollectionSummary
 }) {
   const { t } = useTranslation()
 

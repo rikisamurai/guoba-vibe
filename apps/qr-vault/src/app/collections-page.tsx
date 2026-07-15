@@ -8,27 +8,23 @@ import { CollectionCoverageRow } from '@/app/collections/collection-coverage-row
 import { CollectionFormCard } from '@/app/collections/collection-form-card'
 import { CollectionListCard } from '@/app/collections/collection-list-card'
 import { CollectionQrCard } from '@/app/collections/collection-qr-card'
-import { useVault } from '@/app/use-vault'
+import { useVault } from '@/app/vault/use-vault'
+import type { CollectionSummary } from '@/app/vault/vault-types'
 import { useArmedAction } from '@/hooks/use-armed-action'
-import { type Collection, deleteCollection, upsertCollection } from '@/lib/storage'
 import { useDocumentTitle } from '@/lib/use-document-title'
-import { getQrsForCollection, getUncategorizedQrs } from '@/lib/vault'
 
 export function CollectionsPage() {
   const { t } = useTranslation()
-  const { data, updateVault } = useVault()
+  const { view, collection } = useVault()
   const navigate = useNavigate()
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const collectionId = pathname.startsWith('/collections/')
     ? decodeURIComponent(pathname.slice('/collections/'.length))
     : ''
-  const selectedCollection = data.collections.find((collection) => collection.id === collectionId)
-  const qrs = selectedCollection ? getQrsForCollection(data, selectedCollection.id) : []
-  const uncategorizedCount = getUncategorizedQrs(data).length
-  const collectionCounts = data.collectionItems.reduce<Record<string, number>>((counts, item) => {
-    counts[item.collectionId] = (counts[item.collectionId] ?? 0) + 1
-    return counts
-  }, {})
+  const selectedCollection = view.collections.find((item) => item.id === collectionId)
+  const qrs = selectedCollection
+    ? view.listQrs({ scope: selectedCollection.id, order: 'stored' })
+    : []
   const titleRef = useRef<HTMLInputElement>(null)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -51,9 +47,7 @@ export function CollectionsPage() {
 
   function saveCollection() {
     if (!title.trim()) return
-    updateVault((current) =>
-      upsertCollection(current, { id: selectedCollection?.id, title, description }),
-    )
+    collection.save({ id: selectedCollection?.id, title, description })
     if (!selectedCollection) {
       setTitle('')
       setDescription('')
@@ -68,36 +62,21 @@ export function CollectionsPage() {
     window.setTimeout(() => titleRef.current?.focus(), 0)
   }
 
-  function handleDelete(target: Collection) {
-    const deletedItems = data.collectionItems.filter((item) => item.collectionId === target.id)
-    updateVault((current) => deleteCollection(current, target.id))
+  function handleDelete(target: CollectionSummary) {
+    const receipt = collection.delete(target.id)
     cancelArm()
     if (collectionId === target.id) void navigate({ to: '/collections' })
+    if (receipt.kind !== 'deleted') return
 
     toast.success(t('collections.deletedToast'), {
       action: {
         label: t('toast.undo'),
-        onClick: () => restoreCollection(target, deletedItems),
+        onClick: () => {
+          receipt.undo()
+          void navigate({ to: '/collections/$collectionId', params: { collectionId: target.id } })
+        },
       },
     })
-  }
-
-  function restoreCollection(target: Collection, deletedItems: typeof data.collectionItems) {
-    updateVault((current) => {
-      if (current.collections.some((collection) => collection.id === target.id)) return current
-      const existingKeys = new Set(
-        current.collectionItems.map((item) => `${item.collectionId}:${item.qrId}`),
-      )
-      return {
-        ...current,
-        collections: [...current.collections, target],
-        collectionItems: [
-          ...current.collectionItems,
-          ...deletedItems.filter((item) => !existingKeys.has(`${item.collectionId}:${item.qrId}`)),
-        ],
-      }
-    })
-    void navigate({ to: '/collections/$collectionId', params: { collectionId: target.id } })
   }
 
   return (
@@ -118,14 +97,13 @@ export function CollectionsPage() {
       </div>
 
       <CollectionCoverageRow
-        collectionCount={data.collections.length}
-        assignmentCount={data.collectionItems.length}
-        uncategorizedCount={uncategorizedCount}
+        collectionCount={view.counts.collections}
+        assignmentCount={view.counts.assignments}
+        uncategorizedCount={view.counts.uncategorized}
       />
 
       <CollectionListCard
-        collections={data.collections}
-        collectionCounts={collectionCounts}
+        collections={view.collections}
         activeId={collectionId}
         onNewCollection={startNewCollection}
       />
