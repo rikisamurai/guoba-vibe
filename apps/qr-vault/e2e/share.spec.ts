@@ -25,10 +25,26 @@ test('saves an incoming share to the local vault', async ({ page }) => {
   await expect(page.getByLabel('Description')).toHaveValue(description)
   await expect(page.getByLabel('Full URL')).toHaveValue(url)
 
+  await page.evaluate(() => {
+    const browserGlobal = globalThis as {
+      localStorage: { setItem: (key: string, value: string) => void }
+    }
+    browserGlobal.localStorage.setItem(
+      'qr-vault:data',
+      JSON.stringify({ version: 1, qrs: [], collections: [], collectionItems: [] }),
+    )
+  })
+
   await page.getByRole('link', { name: 'Vault' }).first().click()
-  await expect(
-    page.getByRole('button', {
-      name: new RegExp(`${escapeRegExp(title)}.*example\\.com/shared/deeplink`),
-    }),
-  ).toBeVisible()
+  const savedQr = page.getByRole('button', {
+    name: new RegExp(`${escapeRegExp(title)}.*example\\.com/shared/deeplink`),
+  })
+  await expect(savedQr).toBeVisible()
+
+  await page.getByRole('button', { name: `Delete ${title}` }).click()
+  await page.getByRole('button', { name: `Confirm delete ${title}` }).click()
+  await expect(savedQr).not.toBeVisible()
+
+  await page.getByRole('button', { name: 'Undo' }).click()
+  await expect(savedQr).toBeVisible()
 })

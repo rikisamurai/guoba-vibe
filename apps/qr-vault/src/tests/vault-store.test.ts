@@ -366,6 +366,33 @@ describe('Vault delete receipts', () => {
 })
 
 describe('Vault views and transfers', () => {
+  it('orders an older-created QR first when it was updated more recently', () => {
+    const storage = new MemoryVaultStorage(
+      serializedDocument({
+        qrs: [
+          {
+            ...qr('newer'),
+            createdAt: '2026-01-02T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+          {
+            ...qr('older'),
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-03T00:00:00.000Z',
+          },
+        ],
+      }),
+    )
+    const store = storeWith(storage)
+
+    expect(
+      store
+        .getSnapshot()
+        .listQrs()
+        .map((item) => item.id),
+    ).toEqual(['older', 'newer'])
+  })
+
   it('keeps persisted order when recent timestamps tie', () => {
     const storage = new MemoryVaultStorage(serializedDocument({ qrs: [qr('a'), qr('b'), qr('c')] }))
     const store = storeWith(storage)
@@ -453,6 +480,39 @@ describe('Vault views and transfers', () => {
     expect(store.getSnapshot().getQr('local')).toBeUndefined()
     expect(store.transfer.inspect(store.transfer.exportJSON()).kind).toBe('valid')
     expect(store.transfer.exportJSON()).toContain('\n  ')
+  })
+
+  it('round-trips a permissive export through a fresh Store without normalization', () => {
+    const expected = {
+      version: 1,
+      qrs: [
+        { ...qr('duplicate'), url: 'first', extension: { source: 'first' } },
+        { ...qr('unique'), extension: ['kept', 'in-order'] },
+        { ...qr('duplicate'), url: 'second', extension: { source: 'second' } },
+      ],
+      collections: [
+        { ...collection('duplicate-collection', 'First'), extension: 1 },
+        collection('unique-collection', 'Unique'),
+        { ...collection('duplicate-collection', 'Second'), extension: 2 },
+      ],
+      collectionItems: [
+        { collectionId: 'duplicate-collection', qrId: 'duplicate', extension: 'kept' },
+        { collectionId: 'duplicate-collection', qrId: 'duplicate', extension: 'kept' },
+        { collectionId: 'missing-collection', qrId: 'unique', orphan: 'collection' },
+        { collectionId: 'unique-collection', qrId: 'missing-qr', orphan: 'qr' },
+      ],
+      extension: { version: 'custom-v1' },
+    }
+    const source = storeWith(new MemoryVaultStorage(JSON.stringify(expected)))
+    const exported = source.transfer.exportJSON()
+    expect(JSON.parse(exported)).toEqual(expected)
+    const target = storeWith(new MemoryVaultStorage())
+    const candidate = target.transfer.inspect(exported)
+    if (candidate.kind !== 'valid') throw new Error('expected valid candidate')
+
+    target.transfer.apply(candidate, 'replace')
+
+    expect(JSON.parse(target.transfer.exportJSON())).toEqual(expected)
   })
 })
 
