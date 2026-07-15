@@ -27,6 +27,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter qr-vault test
       - run: pnpm --filter qr-vault exec playwright install --with-deps chromium
       - run: pnpm --filter qr-vault test:e2e
       - uses: actions/upload-artifact@v7

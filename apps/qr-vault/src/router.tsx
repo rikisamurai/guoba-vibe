@@ -5,16 +5,24 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  lazyRouteComponent,
 } from '@tanstack/react-router'
 import { Toaster } from 'sonner'
 
-import { AppShell } from '@/app/app-shell'
-import { CollectionsPage } from '@/app/collections-page'
-import { ImportExportPage } from '@/app/import-export-page'
-import { QrDetailPage } from '@/app/qr-detail-page'
-import { SharePage } from '@/app/share-page'
-import { WorkspacePage } from '@/app/workspace-page'
 import { parseWorkspaceFilterSearch, workspaceFilterSearch } from '@/app/workspace/workspace-filter'
+
+const LazyAppShell = lazyRouteComponent(() => import('@/app/app-shell'), 'AppShell')
+const LazyCollectionsPage = lazyRouteComponent(
+  () => import('@/app/collections-page'),
+  'CollectionsPage',
+)
+const LazyImportExportPage = lazyRouteComponent(
+  () => import('@/app/import-export-page'),
+  'ImportExportPage',
+)
+const LazyQrDetailPage = lazyRouteComponent(() => import('@/app/qr-detail-page'), 'QrDetailPage')
+const LazySharePage = lazyRouteComponent(() => import('@/app/share-page'), 'SharePage')
+const LazyWorkspacePage = lazyRouteComponent(() => import('@/app/workspace-page'), 'WorkspacePage')
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -28,7 +36,7 @@ const rootRoute = createRootRoute({
 const shellRoute = createRoute({
   getParentRoute: () => rootRoute,
   id: '_shell',
-  component: AppShell,
+  component: LazyAppShell,
 })
 
 const indexRoute = createRoute({
@@ -36,19 +44,19 @@ const indexRoute = createRoute({
   path: '/',
   validateSearch: (search: Record<string, unknown>) =>
     workspaceFilterSearch(parseWorkspaceFilterSearch(search)),
-  component: WorkspacePage,
+  component: LazyWorkspacePage,
 })
 
 const collectionsRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/collections',
-  component: CollectionsPage,
+  component: LazyCollectionsPage,
 })
 
 const collectionDetailRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/collections/$collectionId',
-  component: CollectionsPage,
+  component: LazyCollectionsPage,
 })
 
 const qrDetailRoute = createRoute({
@@ -56,7 +64,7 @@ const qrDetailRoute = createRoute({
   path: '/q/$qrId',
   validateSearch: (search: Record<string, unknown>) =>
     workspaceFilterSearch(parseWorkspaceFilterSearch(search)),
-  component: QrDetailPage,
+  component: LazyQrDetailPage,
 })
 
 const newRoute = createRoute({
@@ -68,13 +76,13 @@ const newRoute = createRoute({
     description: typeof search.description === 'string' ? search.description : '',
     ...workspaceFilterSearch(parseWorkspaceFilterSearch(search)),
   }),
-  component: QrDetailPage,
+  component: LazyQrDetailPage,
 })
 
 const importRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/import',
-  component: ImportExportPage,
+  component: LazyImportExportPage,
 })
 
 const shareRoute = createRoute({
@@ -85,7 +93,7 @@ const shareRoute = createRoute({
     title: typeof search.title === 'string' ? search.title : '',
     description: typeof search.description === 'string' ? search.description : '',
   }),
-  component: SharePage,
+  component: LazySharePage,
 })
 
 const routeTree = rootRoute.addChildren([
