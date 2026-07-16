@@ -1,0 +1,9 @@
+{
+  "name": "GitLab Handbook",
+  "repository": "https://gitlab.com/gitlab-com/content-sites/handbook.git",
+  "commit": "eb7f028cc25d3dd8cdfbe7b0b4f834c79a64d7cb",
+  "content_root": "content/handbook",
+  "public_base_url": "https://handbook.gitlab.com/handbook",
+  "content_license": "CC BY-SA 4.0",
+  "attribution_url": "https://handbook.gitlab.com/handbook/"
+}

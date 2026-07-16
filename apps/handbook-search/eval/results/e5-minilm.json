@@ -1,0 +1,40 @@
+{
+  "run_at": "2026-07-16",
+  "source_commit": "eb7f028cc25d3dd8cdfbe7b0b4f834c79a64d7cb",
+  "retrieval": {
+    "lexical": "SQLite FTS5 BM25",
+    "dense": "intfloat/multilingual-e5-small",
+    "fusion": "RRF(k=60)",
+    "reranker": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
+    "rerank_candidates": 40
+  },
+  "metrics": {
+    "recall@1": 0.5666666667,
+    "recall@5": 0.7333333333,
+    "recall@10": 0.7333333333,
+    "mrr": 0.6305555556
+  },
+  "slices": {
+    "en": {
+      "cases": 18,
+      "recall@10": 0.9444444444
+    },
+    "zh": {
+      "cases": 12,
+      "recall@10": 0.4166666667
+    }
+  },
+  "warm_latency_ms": {
+    "mean": 300.74,
+    "p95": 402.63
+  },
+  "evidence_gate": {
+    "cases": 40,
+    "accuracy": 0.85,
+    "rejection_precision": 1.0,
+    "rejection_recall": 0.6666666667,
+    "false_accepts": 6,
+    "false_rejects": 0
+  },
+  "notes": "Model load time is excluded. Warm latency keeps the conservative saved baseline rather than the faster rerun. The small reviewed set is diagnostic, not a production gate."
+}
