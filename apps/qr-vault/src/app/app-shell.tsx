@@ -93,7 +93,7 @@ export function AppShell() {
   const { t } = useTranslation()
 
   return (
-    <TooltipProvider delayDuration={200}>
+    <TooltipProvider delayDuration={200} skipDelayDuration={300}>
       <SidebarProvider>
         <Sidebar collapsible="icon" className="border-sidebar-border/80">
           <SidebarHeader>

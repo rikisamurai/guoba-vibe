@@ -35,7 +35,7 @@ export function QrRowActions({
             onCopyUrl(qr)
           }}
           aria-label={t('workspace.copyUrlFor', { name })}
-          className="text-muted-foreground hover:text-foreground hover:border-ring/60 bg-background/80 focus-visible:ring-ring/30 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-all focus-visible:ring-2 active:translate-y-px sm:size-8"
+          className="interactive-press text-muted-foreground hover:text-foreground hover:border-ring/60 bg-background/80 focus-visible:ring-ring/30 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm focus-visible:ring-2 sm:size-8"
         >
           {copiedUrlId === qr.id ? <Check className="size-4" /> : <Copy className="size-4" />}
         </button>
@@ -46,7 +46,7 @@ export function QrRowActions({
           params={{ qrId: qr.id }}
           search={workspaceFilterSearch(activeFilter)}
           aria-label={t('workspace.editQr', { name })}
-          className="text-muted-foreground hover:text-foreground hover:border-ring/60 bg-background/80 focus-visible:ring-ring/30 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-all focus-visible:ring-2 active:translate-y-px sm:size-8"
+          className="interactive-press text-muted-foreground hover:text-foreground hover:border-ring/60 bg-background/80 focus-visible:ring-ring/30 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm focus-visible:ring-2 sm:size-8"
         >
           <SquarePen className="size-4" />
         </Link>
@@ -60,7 +60,7 @@ export function QrRowActions({
             onArmDelete(qr.id)
           }}
           aria-label={t('workspace.deleteQr', { name })}
-          className="text-muted-foreground hover:text-destructive hover:border-destructive/40 bg-background/80 focus-visible:ring-destructive/20 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm transition-all focus-visible:ring-2 active:translate-y-px sm:size-8"
+          className="interactive-press text-muted-foreground hover:text-destructive hover:border-destructive/40 bg-background/80 focus-visible:ring-destructive/20 flex size-10 items-center justify-center rounded-md border border-transparent shadow-sm focus-visible:ring-2 sm:size-8"
         >
           <Trash2 className="size-4" />
         </button>

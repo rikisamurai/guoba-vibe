@@ -48,6 +48,10 @@
 
 :root {
   --radius: 0.5rem;
+  --motion-duration-press: 140ms;
+  --motion-duration-tooltip: 125ms;
+  --motion-duration-panel: 200ms;
+  --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --background: oklch(0.985 0 0);
   --foreground: oklch(0.15 0 0);
   --card: oklch(1 0 0);

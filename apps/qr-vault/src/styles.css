@@ -68,6 +68,12 @@
 }
 
 @layer utilities {
+  .interactive-press {
+    transition-duration: var(--motion-duration-press);
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-timing-function: var(--motion-ease-out);
+  }
+
   .signal-panel {
     box-shadow: var(--panel-shadow);
   }
@@ -84,5 +90,45 @@
       color-mix(in oklch, var(--signal) 72%, transparent),
       transparent
     );
+  }
+
+  .armed-action-progress {
+    animation: armed-action-countdown var(--armed-action-duration, 3000ms) linear forwards;
+    background: color-mix(in oklch, var(--warning) 30%, transparent);
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    transform-origin: left;
+  }
+}
+
+@keyframes armed-action-countdown {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .interactive-press:active:not(:focus-visible):not(:disabled):not([aria-disabled='true']) {
+    transform: scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-press {
+    transition-duration: 0ms;
+  }
+
+  .interactive-press:active:not(:focus-visible):not(:disabled):not([aria-disabled='true']),
+  .armed-action-progress {
+    transform: none;
+  }
+
+  .armed-action-progress {
+    animation: none;
   }
 }

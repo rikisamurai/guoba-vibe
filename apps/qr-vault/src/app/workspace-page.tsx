@@ -25,7 +25,7 @@ export function WorkspacePage() {
   const [selectedId, setSelectedId] = useState('')
   const {
     armedId: armedDelete,
-    progress: armedProgress,
+    durationMs: armedDurationMs,
     arm: armDelete,
     cancel: cancelArm,
   } = useArmedAction()
@@ -139,7 +139,7 @@ export function WorkspacePage() {
             selectedId={selectedQr?.id}
             search={search}
             armedDeleteId={armedDelete}
-            armedProgress={armedProgress}
+            armedDurationMs={armedDurationMs}
             copiedUrlId={copiedUrlId}
             activeFilter={activeFilter}
             itemRefs={listItemRefs}

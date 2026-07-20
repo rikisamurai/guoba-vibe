@@ -30,7 +30,7 @@ export function CollectionsPage() {
   const [description, setDescription] = useState('')
   const {
     armedId: armedDeleteId,
-    progress: armedProgress,
+    durationMs: armedDurationMs,
     arm: armDelete,
     cancel: cancelArm,
   } = useArmedAction()
@@ -114,7 +114,7 @@ export function CollectionsPage() {
           title={title}
           description={description}
           armedDeleteId={armedDeleteId}
-          armedProgress={armedProgress}
+          armedDurationMs={armedDurationMs}
           titleRef={titleRef}
           onTitleChange={setTitle}
           onDescriptionChange={setDescription}

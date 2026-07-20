@@ -92,7 +92,7 @@ export function WorkspaceHeader({
             <button
               type="button"
               onClick={() => onSearchChange('')}
-              className="text-muted-foreground hover:text-foreground rounded-md px-1.5 py-1 text-xs transition-colors active:translate-y-px"
+              className="interactive-press text-muted-foreground hover:text-foreground rounded-md px-1.5 py-1 text-xs"
             >
               {t('common.clear')}
             </button>

@@ -3,6 +3,7 @@ import type { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { CollectionSummary } from '@/app/vault/vault-types'
+import { ArmedActionProgress } from '@/components/armed-action-progress'
 import { FieldLabel } from '@/components/field-label'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
@@ -15,7 +16,7 @@ type CollectionFormCardProps = {
   title: string
   description: string
   armedDeleteId: string
-  armedProgress: number
+  armedDurationMs: number
   titleRef: RefObject<HTMLInputElement | null>
   onTitleChange: (next: string) => void
   onDescriptionChange: (next: string) => void
@@ -29,7 +30,7 @@ export function CollectionFormCard({
   title,
   description,
   armedDeleteId,
-  armedProgress,
+  armedDurationMs,
   titleRef,
   onTitleChange,
   onDescriptionChange,
@@ -83,7 +84,7 @@ export function CollectionFormCard({
           <CollectionDeleteButton
             collection={collection}
             armedDeleteId={armedDeleteId}
-            armedProgress={armedProgress}
+            armedDurationMs={armedDurationMs}
             onArmDelete={onArmDelete}
             onDelete={onDelete}
           />
@@ -99,10 +100,13 @@ export function CollectionFormCard({
 function CollectionDeleteButton({
   collection,
   armedDeleteId,
-  armedProgress,
+  armedDurationMs,
   onArmDelete,
   onDelete,
-}: Pick<CollectionFormCardProps, 'armedDeleteId' | 'armedProgress' | 'onArmDelete' | 'onDelete'> & {
+}: Pick<
+  CollectionFormCardProps,
+  'armedDeleteId' | 'armedDurationMs' | 'onArmDelete' | 'onDelete'
+> & {
   collection: CollectionSummary
 }) {
   const { t } = useTranslation()
@@ -118,11 +122,8 @@ function CollectionDeleteButton({
           onClick={() => onDelete(collection)}
           aria-label={t('collections.confirmDelete', { name: collection.title })}
         >
+          <ArmedActionProgress durationMs={armedDurationMs} />
           <Trash2 /> {t('common.confirm')}
-          <span
-            className="absolute bottom-0 left-0 h-0.5 bg-[var(--warning)]"
-            style={{ width: `${armedProgress * 100}%` }}
-          />
         </Button>
       ) : (
         <Button
