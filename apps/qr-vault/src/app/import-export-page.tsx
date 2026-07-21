@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next'
 
 import { ImportCard } from '@/app/import-export/import-card'
 import { SnapshotCard } from '@/app/import-export/snapshot-card'
+import { createLatestFileReader } from '@/app/latest-file-reader'
 import { useVault } from '@/app/vault/use-vault'
-import type { VaultImport } from '@/app/vault/vault-types'
+import type { InvalidImport, VaultImport } from '@/app/vault/vault-types'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { useDocumentTitle } from '@/lib/use-document-title'
 
@@ -17,7 +18,9 @@ export function ImportExportPage() {
   const [fileName, setFileName] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [invalid, setInvalid] = useState<InvalidImport | null>(null)
   const [replaceArmed, setReplaceArmed] = useState(false)
+  const [fileReader] = useState(createLatestFileReader)
   const pendingCounts = pendingData?.counts ?? null
 
   useEffect(() => {
@@ -40,13 +43,19 @@ export function ImportExportPage() {
     setMessage('')
     setError('')
     setPendingData(null)
+    setInvalid(null)
     setReplaceArmed(false)
     setFileName(file?.name ?? '')
-    if (!file) return
 
-    const raw = await file.text()
-    const parsed = transfer.inspect(raw)
+    const read = await fileReader.read(file)
+    if (read.kind === 'empty' || read.kind === 'stale') return
+    if (read.kind === 'failed') {
+      setError(t('importExport.fileReadFailed'))
+      return
+    }
+    const parsed: InvalidImport | VaultImport = transfer.inspect(read.raw)
     if (parsed.kind === 'invalid') {
+      setInvalid(parsed)
       setError(t('importExport.invalidJson'))
       return
     }
@@ -62,7 +71,14 @@ export function ImportExportPage() {
 
   function mergeImport() {
     if (!pendingData) return
-    transfer.apply(pendingData, 'merge')
+    setError('')
+    try {
+      transfer.apply(pendingData, 'merge')
+    } catch {
+      setMessage('')
+      setError(t('importExport.writeFailed'))
+      return
+    }
     setReplaceArmed(false)
     setMessage(
       t('importExport.mergedFile', { fileName: fileName || t('importExport.fallbackFileName') }),
@@ -76,7 +92,14 @@ export function ImportExportPage() {
       return
     }
 
-    transfer.apply(pendingData, 'replace')
+    setError('')
+    try {
+      transfer.apply(pendingData, 'replace')
+    } catch {
+      setMessage('')
+      setError(t('importExport.writeFailed'))
+      return
+    }
     setReplaceArmed(false)
     setMessage(
       t('importExport.replacedFile', { fileName: fileName || t('importExport.fallbackFileName') }),
@@ -105,6 +128,7 @@ export function ImportExportPage() {
           fileName={fileName}
           message={message}
           error={error}
+          invalid={invalid}
           replaceArmed={replaceArmed}
           onFileChange={(file) => void readImportFile(file)}
           onMerge={mergeImport}

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { createVaultStore } from '@/app/vault/vault-store'
+import { openVaultStore } from '@/app/vault/vault-open'
 
 const persistedVault = JSON.stringify({
   version: 1,
@@ -46,10 +46,11 @@ function setupStore() {
   const write = vi.fn((next: string) => {
     persisted = next
   })
-  const store = createVaultStore({
+  const opened = openVaultStore({
     storage: { read: () => persisted, write },
     now: () => '2026-07-15T00:00:00.000Z',
     nextId: () => 'new-collection',
   })
-  return { store, write }
+  if (opened.kind !== 'ready') throw new Error('expected ready Vault')
+  return { store: opened.store, write }
 }

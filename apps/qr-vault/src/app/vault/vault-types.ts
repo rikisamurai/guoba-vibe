@@ -1,3 +1,4 @@
+import type { InvalidVaultDocument } from '@/app/vault/vault-document-decoder'
 import type { QueryRow } from '@/lib/url'
 
 export type QrView = Readonly<{
@@ -91,7 +92,7 @@ export type VaultImport = Readonly<{
   [vaultImportBrand]: true
 }>
 
-export type InvalidImport = Readonly<{ kind: 'invalid' }>
+export type InvalidImport = InvalidVaultDocument
 
 export interface VaultHandle {
   readonly view: VaultView

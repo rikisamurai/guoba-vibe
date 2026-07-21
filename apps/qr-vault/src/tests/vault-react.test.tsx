@@ -4,9 +4,10 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { useVault } from '@/app/vault/use-vault'
+import { openVaultStore } from '@/app/vault/vault-open'
 import { VaultProvider } from '@/app/vault/vault-provider'
 import type { VaultStorageAdapter } from '@/app/vault/vault-storage'
-import { createVaultStore, type VaultStore } from '@/app/vault/vault-store'
+import type { VaultStore } from '@/app/vault/vault-store'
 import type { VaultHandle } from '@/app/vault/vault-types'
 
 const empty = JSON.stringify({ version: 1, qrs: [], collections: [], collectionItems: [] })
@@ -19,11 +20,13 @@ function createStore(): VaultStore {
       raw = next
     },
   }
-  return createVaultStore({
+  const opened = openVaultStore({
     storage,
     now: () => '2026-01-01T00:00:00.000Z',
     nextId: () => 'generated',
   })
+  if (opened.kind !== 'ready') throw new Error('expected ready Vault')
+  return opened.store
 }
 
 function Probe({ capture }: { capture?: (handle: VaultHandle) => void }) {

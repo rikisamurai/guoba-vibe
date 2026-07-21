@@ -1,26 +1,13 @@
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
-import { Database, Download, FolderOpen, HelpCircle, Plus, QrCode } from 'lucide-react'
+import { Database, Download, FolderOpen, HelpCircle, Plus } from 'lucide-react'
 import { type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { AppBrand, AppFrame } from '@/app/app-frame'
 import { useOnboarding } from '@/app/onboarding/use-onboarding'
 import { LanguageToggle } from '@/components/language-toggle'
 import { Button } from '@/components/shadcn-ui/button'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/shadcn-ui/sidebar'
-import { TooltipProvider } from '@/components/shadcn-ui/tooltip'
+import { SidebarMenuButton, SidebarMenuItem } from '@/components/shadcn-ui/sidebar'
 import { ThemeToggle } from '@/components/theme-toggle'
 
 function OnboardingReplayButton() {
@@ -93,62 +80,25 @@ export function AppShell() {
   const { t } = useTranslation()
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <SidebarProvider>
-        <Sidebar collapsible="icon" className="border-sidebar-border/80">
-          <SidebarHeader>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild size="lg" tooltip={t('app.brand')}>
-                  <Link to="/">
-                    <div className="scan-plate flex aspect-square size-8 items-center justify-center rounded-md border">
-                      <QrCode className="size-4" />
-                    </div>
-                    <div className="grid flex-1 text-left leading-tight">
-                      <span className="font-semibold">{t('app.brand')}</span>
-                      <span className="text-muted-foreground text-xs">{t('app.subtitle')}</span>
-                    </div>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarHeader>
-
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {NAV_ITEMS.map((item) => (
-                    <NavLink key={item.to} item={item} />
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-
-          <SidebarFooter>
-            <div className="flex items-center justify-start gap-2 px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center">
-              <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col">
-                <OnboardingReplayButton />
-                <LanguageToggle />
-                <ThemeToggle />
-              </div>
-            </div>
-          </SidebarFooter>
-        </Sidebar>
-
-        <SidebarInset className="bg-transparent">
-          <header className="bg-background/82 flex h-12 shrink-0 items-center gap-2 border-b px-3 backdrop-blur">
-            <SidebarTrigger />
-            <div aria-hidden className="bg-border h-4 w-px shrink-0" />
-            <span className="text-muted-foreground font-mono text-xs">{t('app.shortName')}</span>
-            <div aria-hidden className="signal-rule ml-auto h-px w-24" />
-          </header>
-          <div className="flex-1 overflow-auto p-4 sm:p-5">
-            <Outlet />
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    </TooltipProvider>
+    <AppFrame
+      brand={
+        <Link to="/">
+          <AppBrand />
+        </Link>
+      }
+      navigation={NAV_ITEMS.map((item) => (
+        <NavLink key={item.to} item={item} />
+      ))}
+      footerActions={
+        <>
+          <OnboardingReplayButton />
+          <LanguageToggle />
+          <ThemeToggle />
+        </>
+      }
+      headerLabel={t('app.shortName')}
+    >
+      <Outlet />
+    </AppFrame>
   )
 }

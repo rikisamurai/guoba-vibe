@@ -1,11 +1,6 @@
 import { createDeleteReceipt } from '@/app/vault/vault-delete-receipt'
-import {
-  buildDemoDocument,
-  createEmptyDocument,
-  parseVaultDocument,
-  serializeVaultDocument,
-  type VaultDocument,
-} from '@/app/vault/vault-document'
+import { serializeVaultDocument, type VaultDocument } from '@/app/vault/vault-document'
+import { decodeVaultDocument } from '@/app/vault/vault-document-decoder'
 import {
   deleteCollectionDocument,
   deleteQrDocument,
@@ -26,17 +21,18 @@ export interface VaultStore extends Omit<VaultHandle, 'view'> {
   readonly subscribe: (listener: Listener) => () => void
 }
 
-type CreateVaultStoreInput = Readonly<{
+export type CreateVaultStoreInput = Readonly<{
   storage: VaultStorageAdapter
   now: () => string
   nextId: () => string
 }>
 
 const importDocuments = new WeakMap<object, VaultDocument>()
-const invalidImport = Object.freeze({ kind: 'invalid' }) satisfies InvalidImport
-
-export function createVaultStore(input: CreateVaultStoreInput): VaultStore {
-  let document = loadDocument(input)
+export function createVaultStore(
+  input: CreateVaultStoreInput,
+  initialDocument: VaultDocument,
+): VaultStore {
+  let document = initialDocument
   let serialized = serializeVaultDocument(document)
   let view = buildVaultView(document)
   const listeners = new Set<Listener>()
@@ -117,8 +113,9 @@ export function createVaultStore(input: CreateVaultStoreInput): VaultStore {
 
   const transfer: VaultStore['transfer'] = Object.freeze({
     inspect(raw) {
-      const candidateDocument = parseVaultDocument(raw)
-      if (!candidateDocument) return invalidImport
+      const decoded = decodeVaultDocument(raw)
+      if (decoded.kind === 'invalid') return decoded satisfies InvalidImport
+      const candidateDocument = decoded.document
       const candidate = Object.freeze({
         kind: 'valid' as const,
         counts: buildVaultView(candidateDocument).counts,
@@ -146,21 +143,4 @@ export function createVaultStore(input: CreateVaultStoreInput): VaultStore {
       return () => listeners.delete(listener)
     },
   })
-}
-
-function loadDocument(input: CreateVaultStoreInput): VaultDocument {
-  let raw: string | null
-  try {
-    raw = input.storage.read()
-  } catch (cause) {
-    throw new VaultStorageError('read', cause)
-  }
-  if (raw !== null) return parseVaultDocument(raw) ?? createEmptyDocument()
-  const seeded = buildDemoDocument(input.now(), input.nextId)
-  try {
-    input.storage.write(serializeVaultDocument(seeded))
-  } catch (cause) {
-    throw new VaultStorageError('write', cause)
-  }
-  return seeded
 }

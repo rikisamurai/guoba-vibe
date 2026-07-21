@@ -5,16 +5,15 @@ if (import.meta.env.DEV) {
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { VaultProvider } from '@/app/vault/vault-provider'
+import { VaultApp } from '@/app/vault-app'
+import { openVaultStore } from '@/app/vault/vault-open'
 import { createBrowserVaultStorage } from '@/app/vault/vault-storage'
-import { createVaultStore } from '@/app/vault/vault-store'
 import { nanoid8 } from '@/lib/ids'
-import { AppRouter } from '@/router'
 import '@/i18n/i18n'
 
 import './styles.css'
 
-const vaultStore = createVaultStore({
+const vault = openVaultStore({
   storage: createBrowserVaultStorage(window.localStorage),
   now: () => new Date().toISOString(),
   nextId: nanoid8,
@@ -22,8 +21,6 @@ const vaultStore = createVaultStore({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <VaultProvider store={vaultStore}>
-      <AppRouter />
-    </VaultProvider>
+    <VaultApp initial={vault} />
   </StrictMode>,
 )
