@@ -15,12 +15,13 @@ export function saveQrDocument(
   const id = input.id ?? nextId()
   const existing = document.qrs.find((qr) => qr.id === id)
   const nextQr: QrDocument = {
+    ...existing,
     id,
     title: input.title?.trim() || undefined,
     description: input.description?.trim() || undefined,
     url: input.url,
     queryParams: input.queryParams?.length
-      ? input.queryParams.map((row) => ({ ...row }))
+      ? mergeQueryRows(existing?.queryParams, input.queryParams)
       : undefined,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
@@ -28,13 +29,9 @@ export function saveQrDocument(
   const qrs = existing
     ? document.qrs.map((qr) => (qr.id === id ? nextQr : qr))
     : [...document.qrs, nextQr]
-  const collectionIds =
-    input.collectionIds ??
-    document.collectionItems.filter((item) => item.qrId === id).map((item) => item.collectionId)
-  const collectionItems = [
-    ...document.collectionItems.filter((item) => item.qrId !== id),
-    ...collectionIds.map((collectionId) => ({ collectionId, qrId: id })),
-  ]
+  const collectionItems = input.collectionIds
+    ? replaceQrItems(document.collectionItems, id, input.collectionIds)
+    : document.collectionItems
   return { document: { ...document, qrs, collectionItems }, id, created: !existing }
 }
 
@@ -49,6 +46,7 @@ export function saveCollectionDocument(
     : undefined
   const id = existing?.id ?? input.id ?? nextId()
   const nextCollection: CollectionDocument = {
+    ...existing,
     id,
     title: input.title.trim(),
     description: input.description?.trim() || undefined,
@@ -104,11 +102,44 @@ export function restoreCollectionDocument(
 
 export function mergeVaultDocuments(local: VaultDocument, incoming: VaultDocument): VaultDocument {
   return {
+    ...local,
+    ...incoming,
     version: 1,
     qrs: mergeById(local.qrs, incoming.qrs),
     collections: mergeById(local.collections, incoming.collections),
     collectionItems: mergeItems(local.collectionItems, incoming.collectionItems),
   }
+}
+
+function mergeQueryRows<T extends { id: string }>(
+  existing: readonly T[] | undefined,
+  next: readonly T[],
+) {
+  const available = new Map<string, T[]>()
+  existing?.forEach((item) => {
+    const bucket = available.get(item.id) ?? []
+    bucket.push(item)
+    available.set(item.id, bucket)
+  })
+  return next.map((item) => ({ ...available.get(item.id)?.shift(), ...item }))
+}
+
+function replaceQrItems(
+  items: CollectionItemDocument[],
+  qrId: string,
+  collectionIds: readonly string[],
+) {
+  const available = new Map<string, CollectionItemDocument[]>()
+  items.forEach((item) => {
+    if (item.qrId !== qrId) return
+    const bucket = available.get(item.collectionId) ?? []
+    bucket.push(item)
+    available.set(item.collectionId, bucket)
+  })
+  const requested = collectionIds.map(
+    (collectionId) => available.get(collectionId)?.shift() ?? { collectionId, qrId },
+  )
+  return [...items.filter((item) => item.qrId !== qrId), ...requested]
 }
 
 function appendMissingItems(current: CollectionItemDocument[], incoming: CollectionItemDocument[]) {

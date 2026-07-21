@@ -2,6 +2,8 @@ import { Check, FileUp, Replace } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { StatTile } from '@/app/import-export/stat-tile'
+import { ValidationIssues } from '@/app/vault/validation-issues'
+import type { InvalidImport } from '@/app/vault/vault-types'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
 import { cn } from '@/lib/utils'
@@ -12,6 +14,7 @@ type ImportCardProps = {
   fileName: string
   message: string
   error: string
+  invalid: InvalidImport | null
   replaceArmed: boolean
   onFileChange: (file: File | undefined) => void
   onMerge: () => void
@@ -30,6 +33,7 @@ export function ImportCard({
   fileName,
   message,
   error,
+  invalid,
   replaceArmed,
   onFileChange,
   onMerge,
@@ -51,7 +55,7 @@ export function ImportCard({
           fileName={fileName}
           onFileChange={onFileChange}
         />
-        <ImportMessage message={message} error={error} />
+        <ImportMessage message={message} error={error} invalid={invalid} />
         {pendingCounts && <ImportPreflight counts={pendingCounts} />}
         <div className="grid grid-cols-2 gap-2">
           <Button type="button" onClick={onMerge} disabled={!hasPendingData}>
@@ -128,10 +132,17 @@ function ImportDropzone({
   )
 }
 
-function ImportMessage({ message, error }: Pick<ImportCardProps, 'message' | 'error'>) {
+function ImportMessage({
+  message,
+  error,
+  invalid,
+}: Pick<ImportCardProps, 'message' | 'error' | 'invalid'>) {
   if (message) {
     return (
-      <div className="bg-muted/50 text-foreground flex items-start gap-2 rounded-lg border px-3 py-2.5 text-xs">
+      <div
+        role="status"
+        className="bg-muted/50 text-foreground flex items-start gap-2 rounded-lg border px-3 py-2.5 text-xs"
+      >
         <Check className="mt-0.5 size-3.5 shrink-0" />
         <span>{message}</span>
       </div>
@@ -140,8 +151,17 @@ function ImportMessage({ message, error }: Pick<ImportCardProps, 'message' | 'er
 
   if (error) {
     return (
-      <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2.5 text-xs">
-        {error}
+      <div
+        role="alert"
+        aria-live="assertive"
+        className="border-destructive/30 bg-destructive/10 rounded-lg border px-3 py-2.5"
+      >
+        <p className="text-destructive text-xs">{error}</p>
+        {invalid && (
+          <div className="mt-3">
+            <ValidationIssues issues={invalid.issues} truncated={invalid.truncated} />
+          </div>
+        )}
       </div>
     )
   }

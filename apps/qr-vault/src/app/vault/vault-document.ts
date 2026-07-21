@@ -64,52 +64,6 @@ export function buildDemoDocument(now: string, nextId: () => string): VaultDocum
   }
 }
 
-export function parseVaultDocument(raw: string): VaultDocument | null {
-  try {
-    const parsed = JSON.parse(raw) as unknown
-    return isVaultDocument(parsed) ? parsed : null
-  } catch {
-    return null
-  }
-}
-
 export function serializeVaultDocument(document: VaultDocument): string {
   return JSON.stringify(document, null, 2)
-}
-
-function isVaultDocument(value: unknown): value is VaultDocument {
-  if (!value || typeof value !== 'object') return false
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- fields are checked below
-  const candidate = value as VaultDocument
-  return (
-    candidate.version === 1 &&
-    Array.isArray(candidate.qrs) &&
-    Array.isArray(candidate.collections) &&
-    Array.isArray(candidate.collectionItems) &&
-    candidate.qrs.every(
-      (qr) =>
-        typeof qr.id === 'string' &&
-        typeof qr.url === 'string' &&
-        (qr.queryParams === undefined || isQueryRows(qr.queryParams)),
-    ) &&
-    candidate.collections.every(
-      (collection) => typeof collection.id === 'string' && typeof collection.title === 'string',
-    ) &&
-    candidate.collectionItems.every(
-      (item) => typeof item.collectionId === 'string' && typeof item.qrId === 'string',
-    )
-  )
-}
-
-function isQueryRows(value: unknown): value is QueryRow[] {
-  return (
-    Array.isArray(value) &&
-    value.every(
-      (row) =>
-        typeof row.id === 'string' &&
-        typeof row.key === 'string' &&
-        typeof row.value === 'string' &&
-        typeof row.enabled === 'boolean',
-    )
-  )
 }
