@@ -257,6 +257,7 @@
     "parsedDetails": "解析详情",
     "rawUrl": "原始 URL",
     "noUrlProvided": "未提供 URL",
+    "openLink": "打开链接",
     "saveToLocal": "保存到本地",
     "staysLocal": "保存在这台设备上。不会上传任何内容。",
     "alreadyInVaultToast": "已在本地库中",

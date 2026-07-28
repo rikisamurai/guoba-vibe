@@ -29,6 +29,31 @@ export type UrlRowsParts = {
 }
 
 const SCHEME_SEPARATOR = '://'
+const BLOCKED_OPEN_SCHEMES = new Set([
+  'about',
+  'blob',
+  'data',
+  'file',
+  'filesystem',
+  'javascript',
+  'vbscript',
+])
+
+export function resolveOpenTarget(input: string): { href: string; mode: 'web' | 'app' } | null {
+  const href = input.trim()
+  if (!href) return null
+
+  const parsed = parseDeepLink(href)
+  const separatorIndex = href.indexOf(SCHEME_SEPARATOR)
+  if (!parsed.isValid || separatorIndex <= 0) return null
+
+  const scheme = parsed.scheme.toLowerCase()
+  const inputScheme = href.slice(0, separatorIndex).toLowerCase()
+  if (inputScheme !== scheme || BLOCKED_OPEN_SCHEMES.has(scheme)) return null
+
+  const mode = scheme === 'http' || scheme === 'https' ? 'web' : 'app'
+  return { href, mode }
+}
 
 export function parseDeepLink(input: string): ParsedDeepLink {
   const raw = input.trim()

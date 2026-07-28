@@ -6,6 +6,53 @@ test.beforeEach(async ({ page }) => {
   await prepareEnglishVault(page)
 })
 
+test('opens web URLs in a new tab without sharing opener access', async ({ page }) => {
+  await page.goto('/')
+  const url = new URL('/', page.url()).toString()
+
+  await page.goto(`/#/share?${new URLSearchParams({ url }).toString()}`)
+
+  const openLink = page.getByRole('link', { name: 'Open link' })
+  await expect(openLink).toHaveAttribute('href', url)
+  await expect(openLink).toHaveAttribute('target', '_blank')
+  await expect(openLink).toHaveAttribute('rel', 'noopener noreferrer')
+
+  const popupPromise = page.waitForEvent('popup')
+  await openLink.click()
+  const popup = await popupPromise
+  await expect(popup).toHaveURL(url)
+  await popup.close()
+})
+
+test('hands app deep links to the current browsing context', async ({ page }) => {
+  const url = 'xhsdiscover://xx'
+
+  await page.goto(`/#/share?${new URLSearchParams({ url }).toString()}`)
+
+  const openLink = page.getByRole('link', { name: 'Open link' })
+  await expect(openLink).toHaveAttribute('href', url)
+  expect(await openLink.getAttribute('target')).toBeNull()
+  expect(await openLink.getAttribute('rel')).toBeNull()
+})
+
+test('does not expose unsafe URLs as links', async ({ page }) => {
+  const url = 'javascript:alert(1)'
+
+  await page.goto(`/#/share?${new URLSearchParams({ url }).toString()}`)
+
+  await expect(page.getByRole('button', { name: 'Open link' })).toBeDisabled()
+  await expect(page.getByRole('link', { name: 'Open link' })).toHaveCount(0)
+})
+
+test('does not open schemeless URLs', async ({ page }) => {
+  const url = 'www.google.com'
+
+  await page.goto(`/#/share?${new URLSearchParams({ url }).toString()}`)
+
+  await expect(page.getByRole('button', { name: 'Open link' })).toBeDisabled()
+  await expect(page.getByRole('link', { name: 'Open link' })).toHaveCount(0)
+})
+
 test('saves an incoming share to the local vault', async ({ page }) => {
   const title = uniqueName('Shared QR')
   const description = 'Saved from a share link'

@@ -8,6 +8,7 @@ import {
   normalizeQueryRows,
   parseDeepLink,
   queryToRows,
+  resolveOpenTarget,
 } from '@/lib/url'
 
 describe('parseDeepLink', () => {
@@ -31,6 +32,54 @@ describe('parseDeepLink', () => {
   it('keeps incomplete text invalid while preserving raw input', () => {
     expect(parseDeepLink('xhsdiscover://').isValid).toBe(false)
     expect(parseDeepLink('xhsdiscover://').raw).toBe('xhsdiscover://')
+  })
+})
+
+describe('resolveOpenTarget', () => {
+  it.each(['http://example.com/path', 'https://www.google.com'])(
+    'resolves %s as a web target',
+    (href) => {
+      expect(resolveOpenTarget(href)).toEqual({ href, mode: 'web' })
+    },
+  )
+
+  it.each(['xhsdiscover://rn/page', 'myapp://settings/profile'])(
+    'resolves %s as an app target',
+    (href) => {
+      expect(resolveOpenTarget(href)).toEqual({ href, mode: 'app' })
+    },
+  )
+
+  it('trims surrounding whitespace without rewriting the URL', () => {
+    expect(resolveOpenTarget('  xhsdiscover://rn/page?foo=hello%20world  ')).toEqual({
+      href: 'xhsdiscover://rn/page?foo=hello%20world',
+      mode: 'app',
+    })
+  })
+
+  it.each([
+    '',
+    'www.google.com',
+    'https:',
+    'https:/example.com',
+    'https:example.com',
+    'https://',
+    'xhsdiscover:/',
+    'xhsdiscover://',
+  ])('rejects empty, schemeless, or incomplete input: %s', (input) => {
+    expect(resolveOpenTarget(input)).toBeNull()
+  })
+
+  it.each([
+    'javascript:alert(1)',
+    'DATA:text/html,hello',
+    'VbScRiPt:msgbox(1)',
+    'file:///etc/passwd',
+    'blob:https://example.com/id',
+    'filesystem:https://example.com/temporary/file',
+    'about:blank',
+  ])('rejects dangerous protocol: %s', (href) => {
+    expect(resolveOpenTarget(href)).toBeNull()
   })
 })
 

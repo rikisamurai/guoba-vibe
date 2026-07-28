@@ -1,7 +1,8 @@
-import { Check, Copy, Download, Save, ShieldCheck } from 'lucide-react'
+import { Check, Copy, Download, ExternalLink, Save, ShieldCheck } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/shadcn-ui/button'
+import { resolveOpenTarget } from '@/lib/url'
 
 type ShareActionsProps = {
   url: string
@@ -25,6 +26,7 @@ export function ShareActions({
   onCopyUrl,
 }: ShareActionsProps) {
   const { t } = useTranslation()
+  const openTarget = resolveOpenTarget(url)
 
   return (
     <div className="mx-auto w-full max-w-xl space-y-6">
@@ -40,6 +42,21 @@ export function ShareActions({
       </div>
 
       <div className="space-y-3">
+        {openTarget ? (
+          <Button asChild size="lg" className="w-full">
+            <a
+              href={openTarget.href}
+              target={openTarget.mode === 'web' ? '_blank' : undefined}
+              rel={openTarget.mode === 'web' ? 'noopener noreferrer' : undefined}
+            >
+              <ExternalLink /> {t('share.openLink')}
+            </a>
+          </Button>
+        ) : (
+          <Button type="button" disabled size="lg" className="w-full">
+            <ExternalLink /> {t('share.openLink')}
+          </Button>
+        )}
         <div className="grid gap-2 sm:grid-cols-3">
           <Button
             type="button"
@@ -60,7 +77,7 @@ export function ShareActions({
             {pngDownloaded ? <Check /> : <Download />}
             {pngDownloaded ? t('common.saved') : t('common.download')}
           </Button>
-          <Button type="button" onClick={onCopyUrl} disabled={!url} size="lg">
+          <Button type="button" variant="outline" onClick={onCopyUrl} disabled={!url} size="lg">
             {urlCopied ? <Check /> : <Copy />}
             {urlCopied ? t('common.copied') : t('common.copyUrl')}
           </Button>
