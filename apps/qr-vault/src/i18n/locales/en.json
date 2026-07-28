@@ -257,6 +257,7 @@
     "parsedDetails": "Parsed details",
     "rawUrl": "Raw URL",
     "noUrlProvided": "No URL provided",
+    "openLink": "Open link",
     "saveToLocal": "Save to local",
     "staysLocal": "Stays on this device. Nothing is uploaded.",
     "alreadyInVaultToast": "Already in local vault",
