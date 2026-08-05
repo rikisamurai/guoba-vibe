@@ -15,15 +15,21 @@ export function SourceSection() {
       <div className="border-seam bg-panel-2 mb-3 flex rounded-lg border p-[3px]">
         <button
           type="button"
-          disabled
-          title="Live API lands with the proxy stage"
-          className="text-faint flex-1 cursor-not-allowed rounded-md py-1.5 text-center text-[12.5px]"
+          onClick={() => updateSettings({ source: 'live' })}
+          className={cx(
+            'flex-1 rounded-md py-1.5 text-center text-[12.5px]',
+            settings.source === 'live' ? 'bg-void font-medium' : 'text-mute hover:text-ink',
+          )}
         >
           Live API
         </button>
         <button
           type="button"
-          className="bg-void flex-1 rounded-md py-1.5 text-center text-[12.5px] font-medium"
+          onClick={() => updateSettings({ source: 'sim' })}
+          className={cx(
+            'flex-1 rounded-md py-1.5 text-center text-[12.5px]',
+            settings.source === 'sim' ? 'bg-void font-medium' : 'text-mute hover:text-ink',
+          )}
         >
           Simulator
         </button>

@@ -7,11 +7,14 @@ import { planChunks } from '../sim/profiles'
 import { createSimSource } from '../sim/sim-source'
 import { addUserMessage, applyFrame, chatStore, startAssistantMessage } from '../store/chat-store'
 import { settingsStore } from '../store/settings-store'
+import { createChatSource } from '../stream/chat-source'
+import { isTerminal } from '../types/message'
 import type { TokenSource } from '../types/stream'
 
 let runSeed = 0
+const HISTORY_LIMIT = 20
 
-function buildSource(): { source: TokenSource; label: string } {
+function buildSimSource(): { source: TokenSource; label: string } {
   const settings = settingsStore.get()
   runSeed += 1
   const corpus = getCorpus(settings.corpusId)
@@ -19,6 +22,23 @@ function buildSource(): { source: TokenSource; label: string } {
   return {
     source: createSimSource(plan, settings.speed),
     label: `sim/${settings.profileId}`,
+  }
+}
+
+function buildLiveSource(): { source: TokenSource; label: string } {
+  const settings = settingsStore.get()
+  const history = chatStore
+    .get()
+    .messages.filter((message) => isTerminal(message.phase) && message.text !== '')
+    .slice(-HISTORY_LIMIT)
+    .map((message) => ({ role: message.role, content: message.text }))
+  return {
+    source: createChatSource({
+      provider: settings.provider,
+      model: settings.model,
+      messages: history,
+    }),
+    label: settings.model,
   }
 }
 
@@ -32,7 +52,7 @@ export function useChat(): { send: (text: string) => void; stop: () => void } {
 
     addUserMessage(trimmed)
     const settings = settingsStore.get()
-    const { source, label } = buildSource()
+    const { source, label } = settings.source === 'live' ? buildLiveSource() : buildSimSource()
     const id = startAssistantMessage(settings.mode, label)
     const scheduler = createScheduler(
       {

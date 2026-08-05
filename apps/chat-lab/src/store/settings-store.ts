@@ -10,6 +10,7 @@ export interface Settings {
   throttleMs: number
   source: SourceKind
   provider: ProviderId
+  model: string
   corpusId: string
   profileId: ProfileId
   speed: number
@@ -20,6 +21,7 @@ export const settingsStore = createStore<Settings>({
   throttleMs: 48,
   source: 'sim',
   provider: 'deepseek',
+  model: 'deepseek-v4-flash',
   corpusId: 'long-form',
   profileId: 'jitter',
   speed: 1,
