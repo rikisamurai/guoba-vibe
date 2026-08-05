@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react'
 
+import { metrics } from '../engine/metrics'
 import { createScheduler } from '../engine/scheduler'
 import { runStream } from '../engine/stream-run'
 import { getCorpus } from '../sim/corpus'
@@ -54,16 +55,27 @@ export function useChat(): { send: (text: string) => void; stop: () => void } {
     const settings = settingsStore.get()
     const { source, label } = settings.source === 'live' ? buildLiveSource() : buildSimSource()
     const id = startAssistantMessage(settings.mode, label)
+    metrics.reset(`${settings.mode} · ${label}`)
     const scheduler = createScheduler(
       {
         policy: settings.mode === 'M0' ? 'immediate' : 'throttled',
         throttleMs: settings.throttleMs,
         smoothing: settings.smoothing,
       },
-      (frame) => applyFrame(id, frame),
+      (frame) => {
+        applyFrame(id, frame)
+        metrics.onCommit(frame.text.length)
+      },
     )
+    const instrumented = {
+      ...scheduler,
+      onDelta(delta: string) {
+        metrics.onDelta(delta.length)
+        scheduler.onDelta(delta)
+      },
+    }
     activeSource.current = source
-    void runStream(source, scheduler).finally(() => {
+    void runStream(source, instrumented).finally(() => {
       if (activeSource.current === source) activeSource.current = null
     })
   }, [])

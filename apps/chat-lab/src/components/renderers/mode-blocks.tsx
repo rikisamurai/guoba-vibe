@@ -1,4 +1,7 @@
+import { useEffect } from 'react'
+
 import { finalizeBlocks, splitBlocks } from '../../engine/block-splitter'
+import { metrics } from '../../engine/metrics'
 import type { ChatMessage } from '../../types/message'
 import { isTerminal } from '../../types/message'
 import { BlockView } from './block-view'
@@ -13,6 +16,9 @@ export function ModeBlocks({ message }: { message: ChatMessage }) {
   const split = terminal
     ? finalizeBlocks(message.id, message.text)
     : splitBlocks(message.id, message.text)
+  useEffect(() => {
+    if (!terminal) metrics.onSplit(split.tailParseMs, split.stableCount, split.blocks.length)
+  }, [terminal, split])
   const last = split.blocks.length - 1
   return (
     <>
