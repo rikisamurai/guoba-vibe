@@ -20,6 +20,7 @@
     "stream-render-core": "workspace:*"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.0",
     "@types/node": "^24.12.4",
     "@types/react": "^19",

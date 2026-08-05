@@ -1,1 +1,6 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@theme {
+  --color-neutral-925: #111113;
+}
