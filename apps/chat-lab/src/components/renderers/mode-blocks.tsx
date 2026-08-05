@@ -11,7 +11,7 @@ import { BlockView } from './block-view'
  * tail; the terminal phase runs one full reconcile so any mid-stream freeze
  * mistakes are corrected against the raw text.
  */
-export function ModeBlocks({ message }: { message: ChatMessage }) {
+export function ModeBlocks({ message, heavy }: { message: ChatMessage; heavy: boolean }) {
   const terminal = isTerminal(message.phase)
   const split = terminal
     ? finalizeBlocks(message.id, message.text)
@@ -23,7 +23,12 @@ export function ModeBlocks({ message }: { message: ChatMessage }) {
   return (
     <>
       {split.blocks.map((block, index) => (
-        <BlockView key={block.id} block={block} repair={!terminal && index === last} />
+        <BlockView
+          key={block.id}
+          block={block}
+          repair={!terminal && index === last}
+          heavy={heavy}
+        />
       ))}
     </>
   )

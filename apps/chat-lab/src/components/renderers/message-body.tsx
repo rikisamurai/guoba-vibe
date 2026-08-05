@@ -35,7 +35,7 @@ export function MessageBody({ message }: { message: ChatMessage }) {
       ) : mode === 'M1' ? (
         <ModePatched message={message} />
       ) : (
-        <ModeBlocks message={message} />
+        <ModeBlocks message={message} heavy={mode === 'M3'} />
       )}
     </div>
   )

@@ -59,3 +59,9 @@ body {
     opacity: 0;
   }
 }
+
+.shiki-block pre {
+  margin: 0;
+  padding: 14px;
+  background: transparent !important;
+}
