@@ -1,5 +1,6 @@
 import type { CommitFrame } from '../engine/scheduler'
 import type { ChatMessage, MessagePhase, RendererMode } from '../types/message'
+import { isTerminal } from '../types/message'
 import { createStore, useStore } from './create-store'
 
 export interface ChatState {
@@ -59,7 +60,7 @@ export function applyFrame(id: string, frame: CommitFrame): void {
           }
         : message,
     )
-    const stillActive = state.activeId === id && frame.phase === 'streaming'
+    const stillActive = state.activeId === id && !isTerminal(frame.phase)
     return { ...state, messages, activeId: stillActive ? id : null }
   })
 }

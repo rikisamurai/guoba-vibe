@@ -58,6 +58,7 @@ export function useChat(): { send: (text: string) => void; stop: () => void } {
       {
         policy: settings.mode === 'M0' ? 'immediate' : 'throttled',
         throttleMs: settings.throttleMs,
+        smoothing: settings.smoothing,
       },
       (frame) => applyFrame(id, frame),
     )

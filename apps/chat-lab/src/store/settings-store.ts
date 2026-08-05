@@ -8,6 +8,7 @@ export type ProviderId = 'deepseek' | 'kimi'
 export interface Settings {
   mode: RendererMode
   throttleMs: number
+  smoothing: boolean
   source: SourceKind
   provider: ProviderId
   model: string
@@ -19,6 +20,7 @@ export interface Settings {
 export const settingsStore = createStore<Settings>({
   mode: 'M0',
   throttleMs: 48,
+  smoothing: false,
   source: 'sim',
   provider: 'deepseek',
   model: 'deepseek-v4-flash',
