@@ -80,7 +80,6 @@ export function LabConsole(props: LabConsoleProps) {
               {r.label}
             </option>
           ))}
-          <option disabled>P1 · 稳定前缀（待实现）</option>
           <option disabled>P2 · 重型节点（待实现）</option>
         </select>
       </Field>

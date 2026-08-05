@@ -26,6 +26,7 @@ export function MessageItem({ message, renderer }: { message: UiMessage; rendere
       )}
       <Component
         text={message.text}
+        streaming={message.status === 'streaming'}
         className="prose prose-invert prose-sm prose-pre:bg-neutral-900 max-w-none"
       />
       <StatusLine message={message} />

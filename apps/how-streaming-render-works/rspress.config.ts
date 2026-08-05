@@ -12,6 +12,7 @@ export default defineConfig({
         { text: '2 · 传输层：手写 SSE 解析', link: '/guide/transport' },
         { text: '3 · P0：最小可用基线', link: '/guide/p0' },
         { text: '4 · 回放模拟器', link: '/guide/replay' },
+        { text: '5 · P1：调度器与稳定前缀', link: '/guide/p1' },
       ],
     },
   },
