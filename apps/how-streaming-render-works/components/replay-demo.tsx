@@ -11,12 +11,27 @@ import {
   splitUniform,
   sseDataEvents,
   StreamMarkdownP0,
+  StreamMarkdownP1,
+  StreamMarkdownP2,
   wireChunksToStream,
 } from 'stream-render-core'
 import type { ChatDelta } from 'stream-render-core'
 
 type Content = 'adversarial' | 'uniform'
 type Wire = 'jitter' | 'uniform' | 'burst'
+
+type RendererComponent = React.ComponentType<{
+  text: string
+  streaming?: boolean
+  mermaidLive?: boolean
+  className?: string
+}>
+
+const RENDERERS: Record<'p0' | 'p1' | 'p2', RendererComponent> = {
+  p0: StreamMarkdownP0,
+  p1: StreamMarkdownP1,
+  p2: StreamMarkdownP2,
+}
 
 export interface ReplayDemoProps {
   /** events：展示解析出的 SSE 事件流；markdown：展示渲染结果 */
@@ -26,6 +41,9 @@ export interface ReplayDemoProps {
   speed?: number
   /** 显示策略选择控件 */
   controls?: boolean
+  /** markdown 视图使用的渲染器，默认 p0 */
+  renderer?: keyof typeof RENDERERS
+  mermaidLive?: boolean
 }
 
 const panel: React.CSSProperties = {
@@ -166,7 +184,10 @@ export function ReplayDemo(props: ReplayDemoProps) {
           {text === '' ? (
             <p style={{ opacity: 0.5 }}>（点击播放，压力样本将流式渲染在这里）</p>
           ) : (
-            <StreamMarkdownP0 text={text} />
+            (() => {
+              const Renderer = RENDERERS[props.renderer ?? 'p0']
+              return <Renderer text={text} streaming={running} mermaidLive={props.mermaidLive} />
+            })()
           )}
         </div>
       )}

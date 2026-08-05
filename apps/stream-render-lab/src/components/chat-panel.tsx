@@ -7,6 +7,7 @@ import { MessageItem } from './message-item'
 export interface ChatPanelProps {
   messages: UiMessage[]
   renderer: RendererId
+  mermaidLive?: boolean
   streaming: boolean
   inputDisabled: boolean
   onSend: (text: string) => void
@@ -16,6 +17,7 @@ export interface ChatPanelProps {
 export function ChatPanel({
   messages,
   renderer,
+  mermaidLive,
   streaming,
   inputDisabled,
   onSend,
@@ -54,7 +56,7 @@ export function ChatPanel({
           </div>
         )}
         {messages.map((m) => (
-          <MessageItem key={m.id} message={m} renderer={renderer} />
+          <MessageItem key={m.id} message={m} renderer={renderer} mermaidLive={mermaidLive} />
         ))}
       </div>
 

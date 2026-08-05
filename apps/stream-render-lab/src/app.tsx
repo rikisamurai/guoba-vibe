@@ -13,6 +13,7 @@ export function App() {
   const [mode, setMode] = useState<LabMode>('live')
   const [provider, setProvider] = useState<ProviderId>('deepseek')
   const [renderer, setRenderer] = useState<RendererId>('p0')
+  const [mermaidLive, setMermaidLive] = useState(false)
   const [replayConfig, setReplayConfig] = useState<ReplayConfig>({
     content: 'adversarial',
     wire: 'jitter',
@@ -36,6 +37,7 @@ export function App() {
         <ChatPanel
           messages={session.messages}
           renderer={renderer}
+          mermaidLive={mermaidLive}
           streaming={session.streaming}
           inputDisabled={mode === 'replay'}
           onSend={(text) => void session.send(provider, text)}
@@ -49,6 +51,8 @@ export function App() {
             onProviderChange={setProvider}
             renderer={renderer}
             onRendererChange={setRenderer}
+            mermaidLive={mermaidLive}
+            onMermaidLiveChange={setMermaidLive}
             replayConfig={replayConfig}
             onReplayConfigChange={setReplayConfig}
             onPlay={() => session.replay(replayConfig)}

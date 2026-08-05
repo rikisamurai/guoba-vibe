@@ -13,6 +13,8 @@ export default defineConfig({
         { text: '3 · P0：最小可用基线', link: '/guide/p0' },
         { text: '4 · 回放模拟器', link: '/guide/replay' },
         { text: '5 · P1：调度器与稳定前缀', link: '/guide/p1' },
+        { text: '6 · P2：Shiki 与 Mermaid', link: '/guide/p2' },
+        { text: '7 · 收尾：安全与评测', link: '/guide/wrap' },
       ],
     },
   },

@@ -14,6 +14,8 @@ export interface LabConsoleProps {
   onProviderChange: (p: ProviderId) => void
   renderer: RendererId
   onRendererChange: (r: RendererId) => void
+  mermaidLive: boolean
+  onMermaidLiveChange: (v: boolean) => void
   replayConfig: ReplayConfig
   onReplayConfigChange: (c: ReplayConfig) => void
   onPlay: () => void
@@ -80,9 +82,19 @@ export function LabConsole(props: LabConsoleProps) {
               {r.label}
             </option>
           ))}
-          <option disabled>P2 · 重型节点（待实现）</option>
         </select>
       </Field>
+
+      {props.renderer === 'p2' && (
+        <label className="flex items-center gap-2 text-xs text-neutral-400">
+          <input
+            type="checkbox"
+            checked={props.mermaidLive}
+            onChange={(e) => props.onMermaidLiveChange(e.target.checked)}
+          />
+          Mermaid 流式渲染（实验）
+        </label>
+      )}
 
       {mode === 'replay' && (
         <div className="space-y-3 border-t border-neutral-800 pt-3">

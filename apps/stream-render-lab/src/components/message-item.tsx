@@ -2,7 +2,15 @@ import { RENDERERS } from '../lib/renderers'
 import type { RendererId } from '../lib/renderers'
 import type { UiMessage } from '../lib/use-stream-session'
 
-export function MessageItem({ message, renderer }: { message: UiMessage; renderer: RendererId }) {
+export function MessageItem({
+  message,
+  renderer,
+  mermaidLive,
+}: {
+  message: UiMessage
+  renderer: RendererId
+  mermaidLive?: boolean
+}) {
   if (message.role === 'user') {
     return (
       <div className="flex justify-end">
@@ -27,6 +35,7 @@ export function MessageItem({ message, renderer }: { message: UiMessage; rendere
       <Component
         text={message.text}
         streaming={message.status === 'streaming'}
+        mermaidLive={mermaidLive}
         className="prose prose-invert prose-sm prose-pre:bg-neutral-900 max-w-none"
       />
       <StatusLine message={message} />
