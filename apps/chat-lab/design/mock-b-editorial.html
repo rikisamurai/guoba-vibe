@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>chat-lab · Mock B · Editorial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #faf6ee;
+        --surface: #ffffff;
+        --hairline: #e6ddcd;
+        --shade: #f2ecdf;
+        --ink: #201c16;
+        --muted: #6e6557;
+        --faint: #a1988a;
+        --accent: #cf4520;
+        --accent-soft: rgba(207, 69, 32, 0.08);
+        --serif: 'Fraunces', serif;
+        --prose: 'Newsreader', serif;
+        --sans: 'Public Sans', sans-serif;
+        --mono: 'IBM Plex Mono', monospace;
+      }
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 16px 34px;
+        border-bottom: 1px solid var(--hairline);
+      }
+      .wordmark {
+        font-family: var(--serif);
+        font-size: 21px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .wordmark em {
+        color: var(--accent);
+        font-style: normal;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .tb-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--hairline);
+        background: var(--surface);
+        border-radius: 999px;
+        padding: 6px 8px 6px 14px;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .tb-group b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .pill {
+        font-family: var(--mono);
+        font-size: 11px;
+        border-radius: 999px;
+        padding: 4px 10px;
+        color: var(--muted);
+      }
+      .pill.on {
+        background: var(--ink);
+        color: var(--bg);
+      }
+      .tb-label {
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--faint);
+        margin-right: 2px;
+      }
+
+      .stream {
+        flex: 1;
+        overflow: hidden;
+        padding: 40px 0 24px;
+      }
+      .msgs {
+        max-width: 660px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+      }
+      .msg-user {
+        font-family: var(--prose);
+        font-size: 17px;
+        line-height: 1.5;
+        padding-left: 18px;
+        border-left: 3px solid var(--ink);
+        color: var(--ink);
+      }
+      .msg-user .who {
+        font-family: var(--sans);
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--faint);
+        display: block;
+        margin-bottom: 6px;
+      }
+      .msg-ai .who {
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .who .badge {
+        background: var(--accent-soft);
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-family: var(--mono);
+        letter-spacing: 0.06em;
+      }
+      .prose {
+        font-family: var(--prose);
+        font-size: 16.5px;
+        line-height: 1.72;
+      }
+      .prose h3 {
+        font-family: var(--serif);
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0 0 12px;
+        letter-spacing: -0.01em;
+      }
+      .prose p {
+        margin: 0 0 14px;
+      }
+      .prose b {
+        font-weight: 600;
+      }
+      .prose code {
+        font-family: var(--mono);
+        font-size: 13px;
+        background: var(--shade);
+        border-radius: 4px;
+        padding: 1px 5px;
+      }
+      .prose ul {
+        margin: 0 0 14px;
+        padding-left: 22px;
+      }
+      .prose li {
+        margin-bottom: 6px;
+      }
+      .codeblock {
+        background: #17150f;
+        color: #ece5d3;
+        border-radius: 8px;
+        margin: 18px 0;
+        overflow: hidden;
+        box-shadow: 0 1px 0 var(--hairline);
+      }
+      .codebar {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: #8d8672;
+        padding: 9px 16px;
+        border-bottom: 1px solid #2a2820;
+      }
+      pre {
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.65;
+        padding: 15px 18px;
+        overflow: hidden;
+      }
+      .tok-k {
+        color: #e6b45a;
+      }
+      .tok-f {
+        color: #9fc6ff;
+      }
+      .tok-s {
+        color: #b9d99a;
+      }
+      .tok-c {
+        color: #7a745f;
+      }
+      .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 16px;
+        background: var(--accent);
+        vertical-align: -2px;
+      }
+
+      .composer {
+        padding: 10px 24px 18px;
+      }
+      .composer-box {
+        max-width: 660px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 14px;
+        padding: 14px 14px 14px 20px;
+        box-shadow: 0 2px 10px rgba(32, 28, 22, 0.05);
+      }
+      .composer-box .hint {
+        flex: 1;
+        font-family: var(--prose);
+        color: var(--faint);
+        font-size: 16px;
+      }
+      .btn-stop {
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        background: var(--accent);
+        border: 0;
+        border-radius: 9px;
+        padding: 10px 20px;
+      }
+
+      .statusbar {
+        display: flex;
+        align-items: center;
+        border-top: 1px solid var(--hairline);
+        background: var(--surface);
+        padding: 10px 34px;
+        gap: 34px;
+        font-family: var(--mono);
+      }
+      .stat {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .stat .k {
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--faint);
+        font-family: var(--sans);
+      }
+      .stat .v {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .stat .v small {
+        font-size: 10.5px;
+        color: var(--muted);
+        margin-left: 2px;
+      }
+      .statusbar .phase {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        color: var(--accent);
+      }
+      .phase .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wordmark">chat<em>·</em>lab</div>
+      <div class="spacer"></div>
+      <div class="toolbar">
+        <div class="tb-group">
+          <span class="tb-label">Renderer</span> <span class="pill">M0</span
+          ><span class="pill">M1</span><span class="pill on">M2</span><span class="pill">M3</span>
+        </div>
+        <div class="tb-group"><span class="tb-label">Source</span> <b>Simulator</b> · jitter ▾</div>
+        <div class="tb-group"><b>DeepSeek</b> · deepseek-chat ▾</div>
+      </div>
+    </header>
+
+    <div class="stream">
+      <div class="msgs">
+        <div class="msg-user">
+          <span class="who">You</span>Show me how a streaming markdown renderer stays stable while
+          tokens are still arriving.
+        </div>
+        <div class="msg-ai">
+          <div class="who">
+            <span class="badge">M2 · blocks</span
+            ><span style="color: var(--faint)">streaming · commit #47</span>
+          </div>
+          <div class="prose">
+            <h3>Two clocks, one pipeline</h3>
+            <p>
+              The network has its own rhythm; the UI should have another. Deltas land in a
+              <b>raw buffer</b> immediately, while a scheduler decides how much becomes
+              <code>visibleText</code> per frame.
+            </p>
+            <ul>
+              <li>Completed blocks are frozen with stable ids — they never re-render.</li>
+              <li>Only the <b>dirty tail</b> is re-parsed on each commit.</li>
+              <li>Heavy nodes get their own clock entirely.</li>
+            </ul>
+            <div class="codeblock">
+              <div class="codebar"><span>ts · streaming</span><span>block #9 · dirty</span></div>
+              <pre><span class="tok-k">function</span> <span class="tok-f">commitFrame</span>(budget: <span class="tok-k">number</span>) {
+  <span class="tok-c">// take whole graphemes only</span>
+  visible += <span class="tok-f">takeGraphemes</span>(buffer, budget)
+  <span class="tok-k">if</span> (<span class="tok-f">boundaryReached</span>()) <span class="tok-f">reparseTail</span>(<span class="tok-s">'dirty'</span>)<span class="cursor"></span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <div class="composer-box">
+        <span class="hint">Ask anything…</span>
+        <button class="btn-stop">Stop</button>
+      </div>
+    </div>
+
+    <div class="statusbar">
+      <div class="stat"><span class="k">Commits/s</span><span class="v">12.4</span></div>
+      <div class="stat">
+        <span class="k">Raw→Visible</span><span class="v">64<small>ms</small></span
+        ><span class="k">p95 118</span>
+      </div>
+      <div class="stat">
+        <span class="k">Tail parse</span><span class="v">1.8<small>ms</small></span
+        ><span class="k">p95 4.2</span>
+      </div>
+      <div class="stat">
+        <span class="k">Stable</span><span class="v">8/9<small>blocks</small></span>
+      </div>
+      <div class="phase"><span class="dot"></span> streaming</div>
+    </div>
+  </body>
+</html>
