@@ -16,7 +16,8 @@ interface FenceState {
   length: number
 }
 
-function scanFences(text: string): FenceState {
+/** Line-based fence tracker, shared with the block splitter. */
+export function scanFences(text: string): FenceState {
   const state: FenceState = { open: false, char: '`', length: 3 }
   for (const line of text.split('\n')) {
     const match = /^ {0,3}(`{3,}|~{3,})/.exec(line)

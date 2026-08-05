@@ -5,6 +5,7 @@ import { useSettings } from '../../store/settings-store'
 import type { ChatMessage } from '../../types/message'
 import { isTerminal } from '../../types/message'
 import { Markdown } from './markdown'
+import { ModeBlocks } from './mode-blocks'
 
 function ModeNaive({ text }: { text: string }) {
   return <Markdown text={text} />
@@ -29,7 +30,13 @@ export function MessageBody({ message }: { message: ChatMessage }) {
   const mode = useSettings().mode
   return (
     <div className="text-[14.5px] leading-[1.65]">
-      {mode === 'M0' ? <ModeNaive text={message.text} /> : <ModePatched message={message} />}
+      {mode === 'M0' ? (
+        <ModeNaive text={message.text} />
+      ) : mode === 'M1' ? (
+        <ModePatched message={message} />
+      ) : (
+        <ModeBlocks message={message} />
+      )}
     </div>
   )
 }
