@@ -18,6 +18,7 @@
     "apps/**/.agents/**",
     "apps/**/.claude/**",
     "apps/qr-codes/drizzle/meta/**",
-    "apps/**/.rnstorybook/storybook.requires.ts"
+    "apps/**/.rnstorybook/storybook.requires.ts",
+    "apps/chat-lab/src/sim/corpus/**"
   ]
 }
