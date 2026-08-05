@@ -7,7 +7,12 @@ export default defineConfig({
   themeConfig: {
     nav: [{ text: '教程', link: '/guide/intro' }],
     sidebar: {
-      '/guide/': [{ text: '开篇：流式渲染为什么难', link: '/guide/intro' }],
+      '/guide/': [
+        { text: '1 · 开篇：流式渲染为什么难', link: '/guide/intro' },
+        { text: '2 · 传输层：手写 SSE 解析', link: '/guide/transport' },
+        { text: '3 · P0：最小可用基线', link: '/guide/p0' },
+        { text: '4 · 回放模拟器', link: '/guide/replay' },
+      ],
     },
   },
 })
