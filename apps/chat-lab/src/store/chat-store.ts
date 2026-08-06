@@ -78,6 +78,15 @@ export function resetChat(): void {
   chatStore.set(() => ({ messages: [], activeId: null }))
 }
 
+/** Restore a persisted session; bumps the id counter past loaded ids. */
+export function hydrateChat(messages: ChatMessage[]): void {
+  for (const message of messages) {
+    const numeric = Number(message.id.split('-')[1])
+    if (Number.isFinite(numeric)) nextId = Math.max(nextId, numeric)
+  }
+  chatStore.set(() => ({ messages, activeId: null }))
+}
+
 export function useChatMessages(): ChatMessage[] {
   return useStore(chatStore, (state) => state.messages)
 }

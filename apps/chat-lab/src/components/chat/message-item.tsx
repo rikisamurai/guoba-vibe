@@ -3,7 +3,9 @@ import { Profiler } from 'react'
 import { metrics } from '../../engine/metrics'
 import { cx } from '../../lib/cx'
 import type { ChatMessage } from '../../types/message'
+import { isTerminal } from '../../types/message'
 import { MessageBody } from '../renderers/message-body'
+import { MessageActions } from './message-actions'
 
 const PHASE_STYLES: Record<string, string> = {
   streaming: 'bg-pulse/12 text-pulse',
@@ -13,7 +15,7 @@ const PHASE_STYLES: Record<string, string> = {
   error: 'bg-red-400/10 text-red-400',
 }
 
-export function MessageItem({ message }: { message: ChatMessage }) {
+export function MessageItem({ message, isLast }: { message: ChatMessage; isLast: boolean }) {
   if (message.role === 'user') {
     return (
       <div className="border-seam bg-panel-2 max-w-[78%] self-end rounded-[14px] rounded-br-[4px] border px-4 py-3 text-[14.5px] leading-relaxed whitespace-pre-wrap">
@@ -51,6 +53,7 @@ export function MessageItem({ message }: { message: ChatMessage }) {
           {message.error}
         </div>
       )}
+      {isTerminal(message.phase) ? <MessageActions message={message} isLast={isLast} /> : null}
     </div>
   )
 }

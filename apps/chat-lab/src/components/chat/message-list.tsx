@@ -34,7 +34,13 @@ export function MessageList() {
             </p>
           </div>
         ) : (
-          messages.map((message) => <MessageItem key={message.id} message={message} />)
+          messages.map((message, index) => (
+            <MessageItem
+              key={message.id}
+              message={message}
+              isLast={index === messages.length - 1}
+            />
+          ))
         )}
       </div>
     </div>
