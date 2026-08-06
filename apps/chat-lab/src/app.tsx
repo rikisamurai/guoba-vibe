@@ -1,9 +1,13 @@
+import { SlidersHorizontal } from 'lucide-react'
+import { useState } from 'react'
+
 import { Composer } from './components/chat/composer'
 import { MessageList } from './components/chat/message-list'
 import { ControlPanel } from './components/panel/control-panel'
 import { ProviderSelect } from './components/provider-select'
 
 export function App() {
+  const [panelOpen, setPanelOpen] = useState(false)
   return (
     <div className="flex h-dvh flex-col">
       <header className="border-seam flex items-center gap-4 border-b px-6 py-3.5">
@@ -17,13 +21,21 @@ export function App() {
         </div>
         <div className="flex-1" />
         <ProviderSelect />
+        <button
+          type="button"
+          aria-label="Toggle lab panel"
+          onClick={() => setPanelOpen((value) => !value)}
+          className="border-seam bg-panel text-mute rounded-lg border p-2 lg:hidden"
+        >
+          <SlidersHorizontal className="size-4" />
+        </button>
       </header>
       <div className="flex min-h-0 flex-1">
         <main className="flex min-w-0 flex-1 flex-col">
           <MessageList />
           <Composer />
         </main>
-        <ControlPanel />
+        <ControlPanel open={panelOpen} onClose={() => setPanelOpen(false)} />
       </div>
     </div>
   )
