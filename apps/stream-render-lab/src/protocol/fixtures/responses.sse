@@ -1,0 +1,16 @@
+event: response.created
+data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_fixture","status":"in_progress"}}
+
+event: response.in_progress
+data: {"type":"response.in_progress","sequence_number":1,"response":{"id":"resp_fixture","status":"in_progress"}}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","sequence_number":2,"item_id":"msg_fixture","output_index":0,"content_index":0,"delta":"hello"}
+
+event: response.output_text.done
+data: {"type":"response.output_text.done","sequence_number":3,"item_id":"msg_fixture","output_index":0,"content_index":0,"text":"hello"}
+
+event: response.completed
+data: {"type":"response.completed","sequence_number":4,"response":{"id":"resp_fixture","status":"completed"}}
+
+: fixture terminator

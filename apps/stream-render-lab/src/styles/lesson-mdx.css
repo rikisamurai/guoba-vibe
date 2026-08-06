@@ -1,0 +1,74 @@
+.lesson-mdx > h2:first-child {
+  margin-top: 0;
+}
+
+.lesson-mdx > ul,
+.lesson-mdx > ol {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding-left: 22px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.lesson-mdx > pre {
+  margin: 28px 0;
+  overflow-x: auto;
+  padding: 18px 20px;
+  border: 1px solid var(--scope-rule);
+  border-radius: var(--radius-sm);
+  background: var(--scope);
+  box-shadow: var(--shadow-scope);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.lesson-mdx > pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.lesson-checkpoint {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 22px;
+  margin: 30px 0;
+  padding: 20px;
+  border-block: 1px solid var(--rule-dark);
+  background: rgb(250 246 236 / 68%);
+}
+
+.lesson-checkpoint > span {
+  color: var(--rust-dark);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lesson-checkpoint p {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.lesson-checkpoint--alert {
+  border-left: 4px solid var(--rust);
+}
+
+.lesson-checkpoint--proof {
+  border-left: 4px solid var(--signal-soft);
+}
+
+@media (max-width: 760px) {
+  .lesson-checkpoint {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+}

@@ -1,0 +1,32 @@
+## 观察失败
+
+`text.split("\\n\\n")` 遇到 CRLF、独立 CR、多行 `data`、comment 或跨 chunk 空行就会失真。EOF 前未出现空行的残留事件也不应被擅自派发。
+
+<Checkpoint label="事件边界有规范" tone="alert">
+  SSE parser 处理行与字段；provider adapter 处理 JSON 和业务事件。不要把两层状态机塞进一个分支。
+</Checkpoint>
+
+## 实现一个增量
+
+实现 WHATWG 状态机：首个 BOM 忽略；CR、LF 和 CRLF 归一；多行 `data` 以换行连接；识别 `event`、`id`、`retry` 与 comment；空行才 dispatch。
+
+```text
+: keep-alive
+data: first
+data: second
+
+```
+
+## 确定性验证
+
+用同一 wire fixture 枚举 every-byte split，再加 CR/LF/CRLF 组合。所有 partition 产生相同 SSE event 序列，EOF 残留不 dispatch。
+
+## 浏览器观察
+
+对照 Network 中的 SSE 字节和 Inspector 的 internal events：一个 transport chunk 可以没有事件，一个空行也可能一次派发多行 `data`。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：text chunk 边界不影响 SSE event 序列。
+- **Trade-off**：保留行缓冲和 event buffer，换来规范级行为。
+- **退化**：连接在 terminal proof 前结束时，上层得到 `truncated`，不是自动 `completed`。

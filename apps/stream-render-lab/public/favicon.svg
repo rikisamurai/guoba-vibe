@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="3" fill="#f2ecdf"/>
+  <path d="M5 4h22v24H5z" fill="none" stroke="#d85d36" stroke-width="2"/>
+  <text x="16" y="20" fill="#11110f" font-family="ui-monospace, monospace" font-size="10" font-weight="700" text-anchor="middle">SR</text>
+</svg>

@@ -1,0 +1,29 @@
+## 观察失败
+
+一个网络爆发可以在一帧内送来数十个 delta。如果每个 delta 都发布 React snapshot，浏览器会为用户根本看不到的中间态重复工作。
+
+<Checkpoint label="两只时钟" tone="alert">
+  ingest clock 记录内容何时到达；display clock 决定何时向 React 公开新版本。
+</Checkpoint>
+
+## 实现一个增量
+
+将新 raw 先接受到 engine buffer，并安排一个 Clock frame。同一帧内再来的 delta 只更新 buffer，不新建 frame。协议终态后进入 draining，而不是立即 settled。
+
+```text
+streaming → draining → settling → settled
+```
+
+## 确定性验证
+
+用 VirtualClock 在一帧前接受多个 delta，断言 preview commit 最多一次。收到 terminal 后暂不推帧，`settled` 必须仍未 resolve；推进 frame 后才完成排空。
+
+## 浏览器观察
+
+播放右侧密集 delta，确认 internal events 多于 commits；再观察 raw → visible p95 是否落在可接受的 frame 延迟范围。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：每帧最多一次 preview commit，终态前排空已接受内容。
+- **Trade-off**：减少 commit，代价是最多一帧的可见延迟。
+- **退化**：后台 rAF 可暂停；取消与 terminal drain 需要显式的安全收敛路径。
