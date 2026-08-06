@@ -61,5 +61,6 @@ app.post('/api/chat', async (c) => {
 })
 
 const port = Number(process.env.PORT ?? 8787)
-serve({ fetch: app.fetch, port })
-console.log(`[server] listening on http://localhost:${port}`)
+serve({ fetch: app.fetch, port }, (info) => {
+  console.log(`[server] listening on http://localhost:${info.port}`)
+})
