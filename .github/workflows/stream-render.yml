@@ -1,0 +1,48 @@
+name: Streaming Render Course
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/stream-render.yml'
+      - 'apps/stream-render-course/**'
+      - 'apps/stream-render-lab/**'
+      - 'packages/stream-render-contract/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @stream-render/contract test
+      - run: pnpm --filter @stream-render/contract build
+      - run: pnpm --filter stream-render-course verify
+      - run: pnpm --filter stream-render-lab test
+      - run: pnpm --filter stream-render-lab build
+      - run: pnpm --filter stream-render-lab exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm --filter stream-render-course test:e2e
+      - run: pnpm --filter stream-render-lab exec playwright test
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: stream-render-playwright-report
+          path: |
+            apps/stream-render-lab/playwright-report/
+            apps/stream-render-lab/test-results/
+            apps/stream-render-course/playwright-report/
+            apps/stream-render-course/test-results/
+          if-no-files-found: ignore
+          retention-days: 7

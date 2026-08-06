@@ -1,17 +1,19 @@
 # guoba-vibe
 
-围绕「二维码 / 移动端 deep link / 移动端组件 / 私人工具」的实验性 monorepo，目前包含四个独立应用。
+围绕前端工程实验与个人工具的 monorepo。目前包含六个应用，其中 Streaming Render Course / Lab 组成一套从网络字节到 React commit 的交互课程。
 
 ## 应用
 
-| 路径                                       | 简介                                                                        | 技术栈                                                                                                    |
-| ------------------------------------------ | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| [`apps/qr-codes`](apps/qr-codes)           | 单管理员、公开只读的 deep link QR vault，部署在 Vercel 上                   | Next.js 16 (App Router) · React 19 · Drizzle + Vercel Postgres · better-auth + GitHub OAuth · Tailwind v4 |
-| [`apps/qr-vault`](apps/qr-vault)           | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage`   | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
-| [`apps/rn-components`](apps/rn-components) | React Native 组件库，提供 web Storybook、Expo 原生 Storybook 和组件回归测试 | React Native 0.81 · Expo SDK 54 · Storybook 10 · Vitest                                                   |
-| [`apps/guoba-stream`](apps/guoba-stream)   | 私有移动端优先的 X/Twitter 视频与 GIF 解析下载工具                          | React 19 · Vite 8 · Vercel Functions · invite-code access                                                 |
+| 路径                                                     | 简介                                                                        | 技术栈                                                                                                    |
+| -------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [`apps/qr-codes`](apps/qr-codes)                         | 单管理员、公开只读的 deep link QR vault，部署在 Vercel 上                   | Next.js 16 (App Router) · React 19 · Drizzle + Vercel Postgres · better-auth + GitHub OAuth · Tailwind v4 |
+| [`apps/qr-vault`](apps/qr-vault)                         | 纯前端、本地优先的 QR / deep link 管理器，数据保存在浏览器 `localStorage`   | React 19 · Vite 8 · TanStack Router (hash) · Tailwind v4                                                  |
+| [`apps/rn-components`](apps/rn-components)               | React Native 组件库，提供 web Storybook、Expo 原生 Storybook 和组件回归测试 | React Native 0.81 · Expo SDK 54 · Storybook 10 · Vitest                                                   |
+| [`apps/guoba-stream`](apps/guoba-stream)                 | 私有移动端优先的 X/Twitter 视频与 GIF 解析下载工具                          | React 19 · Vite 8 · Vercel Functions · invite-code access                                                 |
+| [`apps/stream-render-course`](apps/stream-render-course) | 面向前端开发者的 Streaming Render 交互课程                                  | Rspress 2 · MDX · React 19                                                                                |
+| [`apps/stream-render-lab`](apps/stream-render-lab)       | 字节/SSE、渲染策略、Profiler 与 DeepSeek Chat 实验台                        | React 19 · Vite 8 · Vitest · Playwright                                                                   |
 
-四个应用互不依赖，可以独立开发、构建和部署。详细的功能说明、使用方式和约定见各自子目录下的 README / AGENTS。
+应用可以独立开发、构建和部署；Course 与 Lab 只通过 `@stream-render/contract` 中的 iframe manifest / `postMessage` 协议协作，不相互导入源码。详细约定见各自目录。
 
 ## 环境要求
 
@@ -23,6 +25,58 @@ pnpm install
 ```
 
 首次安装时会通过 `simple-git-hooks` 注册 pre-commit 钩子，提交前由 `lint-staged` + `oxfmt` 统一格式化暂存区文件。
+
+## Streaming Render Course V2
+
+同时启动教程与实验台：
+
+```bash
+pnpm dev:stream-render
+```
+
+- Course：`http://localhost:5173`
+- Lab：`http://localhost:5174`
+
+也可以分别启动：
+
+```bash
+pnpm --filter stream-render-course dev
+pnpm --filter stream-render-lab dev
+```
+
+第一轮课程包含 Quick Start、WHATWG SSE 与 M1 frame batching。每课都有可编辑 exercise、真实 fixture、共享 contract test 和 solution：
+
+```bash
+pnpm --filter stream-render-lab lesson quick-start test
+pnpm --filter stream-render-lab lesson sse test
+pnpm --filter stream-render-lab lesson m1 test
+
+# 对照参考实现
+pnpm --filter stream-render-lab lesson quick-start solution
+pnpm --filter stream-render-lab lesson sse solution
+pnpm --filter stream-render-lab lesson m1 solution
+```
+
+真实 DeepSeek Chat 只在本地明确启用。密钥保存在 gitignored 的 `apps/stream-render-lab/.env.local`，不会进入客户端 bundle：
+
+```dotenv
+ENABLE_LIVE_API=1
+DEEPSEEK_API_KEY=your-local-key
+VITE_COURSE_ORIGIN=http://localhost:5173
+```
+
+Course 侧用 `PUBLIC_LAB_ORIGIN` 指向可信 Lab；Lab 侧用 `VITE_COURSE_ORIGIN`
+指定唯一可接收 embed report 的课程站。部署时两个 origin 必须成对配置。
+
+课程、引擎和浏览器验证：
+
+```bash
+pnpm --filter stream-render-course verify
+pnpm --filter stream-render-course test:e2e
+pnpm --filter stream-render-lab test
+pnpm --filter stream-render-lab build
+pnpm --filter stream-render-lab test:e2e
+```
 
 ## 常用脚本
 
@@ -91,7 +145,11 @@ pnpm fmt:check    # CI 检查
 │   ├── qr-codes/   # Next.js 应用（服务端 + DB）
 │   ├── qr-vault/   # Vite 应用（纯前端 + localStorage）
 │   ├── guoba-stream/ # Vite + Vercel Functions 私有视频下载工具
+│   ├── stream-render-course/ # Rspress 交互课程
+│   ├── stream-render-lab/ # Streaming Render 实验、Profiler 与 Chat
 │   └── rn-components/ # React Native 组件库 + Storybook
+├── packages/
+│   └── stream-render-contract/ # Course ↔ Lab 的内部 embed contract
 ├── docs/           # 跨应用文档
 ├── AGENTS.md       # 协作约定（CLAUDE.md 软链到此）
 ├── pnpm-workspace.yaml

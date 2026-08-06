@@ -1,0 +1,152 @@
+.lesson-demo {
+  margin: 2rem 0 2.8rem;
+  overflow: hidden;
+  border: 1px solid #cfd8d3;
+  border-radius: 12px;
+  background: #f5f7f4;
+  box-shadow: 0 18px 48px rgb(32 45 39 / 8%);
+}
+
+.lesson-demo__header,
+.lesson-demo__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+}
+
+.lesson-demo__header {
+  border-bottom: 1px solid #cfd8d3;
+  background: #edf2ee;
+}
+
+.lesson-demo__header > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.lesson-demo__header span {
+  color: var(--sr-orange);
+  font-family: var(--sr-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.lesson-demo__header strong {
+  color: var(--sr-ink);
+  font-size: 0.9rem;
+}
+
+.lesson-demo__header output {
+  padding: 0.34rem 0.62rem;
+  border: 1px solid #bdcbc4;
+  border-radius: 999px;
+  color: #4e5d56;
+  font-family: var(--sr-mono);
+  font-size: 0.68rem;
+}
+
+.lesson-demo__header output[data-state='ready'] {
+  border-color: #7dc6be;
+  color: #15766f;
+  background: #e2f5f1;
+}
+
+.lesson-demo__header output[data-state='settled'] {
+  border-color: #e5a18f;
+  color: #a93d25;
+  background: #fff0ea;
+}
+
+.lesson-demo__frame {
+  display: block;
+  width: 100%;
+  height: min(580px, 70vh);
+  border: 0;
+  background: #fff;
+}
+
+.lesson-demo__footer {
+  min-height: 3.5rem;
+  border-top: 1px solid #cfd8d3;
+  background: #fff;
+}
+
+.lesson-demo__footer p {
+  margin: 0;
+  color: #65716b;
+  font-size: 0.78rem;
+}
+
+.lesson-demo__checks {
+  flex: 1;
+}
+
+.lesson-demo__checks ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.7rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lesson-demo__checks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  color: #52615a;
+  font-size: 0.76rem;
+}
+
+.lesson-demo__checks li > span {
+  color: #15766f;
+  font-family: var(--sr-mono);
+  font-weight: 700;
+}
+
+.lesson-demo__checks li[data-passed='false'] > span {
+  color: #a93d25;
+}
+
+.lesson-demo__checks li div {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.lesson-demo__checks li strong {
+  font-weight: 650;
+}
+
+.lesson-demo__checks li small {
+  color: #758079;
+  font-family: var(--sr-mono);
+  font-size: 0.68rem;
+}
+
+.lesson-demo__footer a {
+  flex: none;
+  color: var(--sr-orange-dark);
+  font-family: var(--sr-mono);
+  font-size: 0.72rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.lesson-demo__footer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+
+@media (max-width: 640px) {
+  .lesson-demo__header,
+  .lesson-demo__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lesson-demo__frame {
+    height: 520px;
+  }
+}

@@ -1,0 +1,369 @@
+---
+title: 10 · M1：把 arrival 与 display 变成两只时钟
+description: 从逐 delta commit 演进到 frame batching，并用 VirtualClock 证明 drain 与 cancel 的边界。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+<p className="sr-kicker">CHAPTER 10 · SCHEDULE WHAT USERS CAN SEE</p>
+
+# M1：一帧只发布一次，但一个字符也不能丢
+
+M0 已经给了我们正确性 oracle，但网络 burst 可能在一帧内触发几十次 parse 与 React snapshot。M1 不改 Markdown，不缓存 block，也不做平滑打字；它只增加一个 scheduler，把“数据已到达”和“现在向 UI 公开”拆成两只可测试的时钟。
+
+<LessonMeta
+  duration="80 分钟"
+  exercise="1 个支持同步 drain / cancel 的 direct frame batcher"
+  prerequisites={['M0 baseline', 'requestAnimationFrame', 'AbortSignal']}
+/>
+
+## 先定义成功，而不是先写 rAF
+
+M1 同时满足四个条件才算完成：
+
+1. delta 到达时立即进入 raw，不能等下一帧才接受事实。
+2. 同一显示帧内最多发布一次 preview snapshot。
+3. 收到协议终态后，必须把已接受 raw 排空到 visible 才能 settled。
+4. settled 后没有遗留 frame、timer 或 late update。
+
+最容易犯的错误是只实现第 2 条，然后在终态或取消时丢掉最后一段文字。
+
+## 观察失败：网络 burst 制造不可见工作
+
+下面五条 delta 在 12 ms 内到达：
+
+```text
+arrival  0ms  A
+arrival  3ms  B
+arrival  6ms  C
+arrival  9ms  D
+arrival 12ms  E
+display 16ms  ?
+```
+
+M0 的 visible 序列是：
+
+```text
+A → AB → ABC → ABCD → ABCDE
+```
+
+但 60 Hz 用户在第一帧真正能看到的只有 `ABCDE`。M1 应立即把 raw 走完五个状态，却只在 16 ms 发布一次 visible。
+
+### 一个看似正确、实际有 race 的实现
+
+```ts
+function onDelta(delta: string) {
+  raw += delta
+  requestAnimationFrame(() => publish(raw))
+}
+```
+
+它仍会注册五个 callback；浏览器在同一 frame 执行五次 publish。`requestAnimationFrame` 不是自动 debounce，它只是把工作搬到下一帧。
+
+再看第二个错误：
+
+```ts
+function onTerminal() {
+  phase = 'settled'
+  cancelAnimationFrame(frame)
+}
+```
+
+如果 terminal 在 13 ms 到达，scheduled frame 被取消，raw 是 `ABCDE`，visible 仍为空。协议完成了，用户却少了一整段回答。
+
+## M1 的最小状态模型
+
+不要把 scheduler 写成一个散落的 boolean。先把生命周期画出来：
+
+```text
+connecting
+    │ first source event
+    ▼
+streaming ── terminal proof ──→ draining
+    │ cancel                     │ flush visible
+    ▼                            ▼
+settling ←──────────────────── settling
+    │ canonical parse + heavy finalization
+    ▼
+settled
+```
+
+完整 engine 需要 lifecycle 和 outcome；本课 workshop 先把调度器收缩为一个可独立验证的 primitive，只保留两个核心状态：
+
+```ts
+interface FrameBatcherState {
+  pending: string
+  cancelFrame: (() => void) | null
+}
+```
+
+- `pending`：本帧已经接受、尚未交给 engine commit 的 delta。
+- `cancelFrame`：非空就表示已经有人拥有下一次 flush，后续 delta 只能加入 pending。
+
+`raw / visible / terminalPending / outcome` 仍由真实 engine 管理，不伪装成这个小练习的一部分。你会先证明 batcher 的 frame ownership，再在内嵌 Demo 观察它怎样被 engine lifecycle 使用。
+
+## 为什么 Clock 必须是依赖
+
+生产环境需要 `performance.now()`、rAF 和 timer；测试需要精确推进 16 ms。如果业务代码直接调用全局时钟，测试只能 sleep，然后在 CI 上随机失败。
+
+统一 seam：
+
+```ts
+interface EngineClock {
+  now(): number
+  frame(task: (timestamp: number) => void): () => void
+  after(ms: number, task: () => void): () => void
+}
+```
+
+### BrowserClock
+
+它只是薄 adapter：
+
+```ts
+class BrowserClock implements EngineClock {
+  now = () => performance.now()
+  frame = (task) => {
+    const id = requestAnimationFrame(task)
+    return () => cancelAnimationFrame(id)
+  }
+}
+```
+
+### VirtualClock
+
+VirtualClock 不“模拟真实浏览器有多快”。它只提供确定性排序：
+
+- `advanceBy(5)`：推进到指定时间并执行到期任务。
+- `advanceFrame()`：推进到下一个 frame boundary。
+- `runUntilIdle()`：按 due time 与注册顺序排空任务。
+- `pendingCount`：验证 settled 后没有泄漏。
+
+真实性能仍在 BrowserClock + production build 中测量；VirtualClock 负责证明 ordering 与 work count。
+
+## 分步实现 frame batcher
+
+练习目录：
+
+<p className="lesson-path">
+  <code>apps/stream-render-lab/workshop/10-m1-frame-batching/</code>
+</p>
+
+运行：
+
+```bash
+pnpm --filter stream-render-lab lesson m1 test
+```
+
+完成后运行参考实现：
+
+```bash
+pnpm --filter stream-render-lab lesson m1 solution
+```
+
+关键文件：
+
+```text
+workshop/10-m1-frame-batching/exercise/frame-batcher.ts 待实现的 M1 scheduler
+workshop/10-m1-frame-batching/solution/frame-batcher.ts 参考实现
+workshop/10-m1-frame-batching/contract.ts               frame cap、drain、cancel、mini chat 契约
+workshop/shared/mini-chat.ts                             从 SSE event 累积 raw/visible 的共享主线
+workshop/05-sse/solution/parse-sse.ts                    上一课已通过的 parser
+```
+
+### 这不是另一个孤立 demo
+
+`contract.ts` 会把 `workshop/05-sse/fixtures/mini-chat.ts` 中的真实 Chat Completions wire 拆成 every-byte chunks，交给上一课的 `parseLessonSse`。得到三个 content delta 后，再交给本课 batcher：
+
+```text
+real SSE bytes
+  → lesson 05 parseLessonSse
+  → 3 Chat content deltas
+  → lesson 10 createFrameBatcher
+  → 1 visible commit
+```
+
+因此第二个用例不只证明 `ABC` 玩具字符串；它会证明同一个 mini chat 在加入 M1 后 raw 与 visible 终态仍相等，commit 少于 delta，且 terminal 后没有 pending task。
+
+### TODO 1：delta 先进入 pending，再安排 frame
+
+```ts
+push(delta: string) {
+  pending += delta
+  cancelFrame ??= clock.frame(flush)
+}
+```
+
+真实 engine 会先把 delta 写入 raw，再调用这个 batcher；workshop 的 `pending` 只代表等待合并提交的显示工作，不是 canonical raw。
+
+### TODO 2：只允许一个 pending frame
+
+```ts
+cancelFrame ??= clock.frame(flush)
+```
+
+空值合并赋值表达所有权：已经存在 cancel handle 时，第二、第三个 delta 不再注册 callback。`flush` 要先把 handle 恢复为 `null`，否则 flush 后的新内容无法安排下一帧。
+
+### TODO 3：frame 只在 dirty 时 commit
+
+```ts
+function flush() {
+  cancelFrame = null
+  if (pending === '') return
+  const batch = pending
+  pending = ''
+  commit(batch)
+}
+```
+
+这里提交整个 pending batch，是 M1 direct reveal 的最小 primitive。smooth reveal 会故意只推进一段字符，是后续独立实验，不能偷偷混进本章。
+
+### TODO 4：drain 采用同步安全 flush
+
+workshop 的 `drain()` 不接收 provider outcome；它只保证当前 pending 不丢，并取消已经安排的 frame：
+
+```ts
+function drain() {
+  cancelFrame?.()
+  flush()
+}
+```
+
+这是 direct 模式的一种合法终态策略：terminal 到来时同步发布最后一批。真实 Lab engine 选择另一种策略——进入 `draining`，让 pending display frame 排空后再 canonical settle。两者都必须满足“accepted raw 不丢”，但 lifecycle owner 不同。
+
+### TODO 5：cancel 丢弃未发布工作且不 late commit
+
+primitive 的 `cancel()` 没有 outcome；它只撤销 task 并清空 pending：
+
+```ts
+cancelFrame?.()
+cancelFrame = null
+pending = ''
+```
+
+随后即使 VirtualClock 再推进一帧，也不能出现 late commit。用户取消与 provider 已终态时的 outcome 选择，仍由外层 engine 决定。
+
+## 用 VirtualClock 证明，不用肉眼猜
+
+第一个测试一次接受三个 delta，但不推进 frame：
+
+```ts
+const clock = new VirtualClock({ frameDuration: 16 })
+const commits: string[] = []
+const batcher = createFrameBatcher(clock, (batch) => commits.push(batch))
+
+batcher.push('A')
+batcher.push('B')
+batcher.push('C')
+
+expect(commits).toEqual([])
+expect(clock.pendingCount).toBe(1)
+```
+
+推进一帧：
+
+```ts
+clock.advanceFrame()
+
+expect(commits).toEqual(['ABC'])
+expect(clock.pendingCount).toBe(0)
+```
+
+第二个测试证明同步 drain 不重复提交：
+
+```ts
+batcher.push('final')
+batcher.drain()
+expect(commits).toEqual(['ABC', 'final'])
+clock.runUntilIdle()
+expect(commits).toEqual(['ABC', 'final'])
+expect(clock.pendingCount).toBe(0)
+```
+
+第三组 contract 会 `push('late update') → cancel() → advanceFrame()`，断言 commit 仍为空且 `pendingCount === 0`。三组断言共同防止重复 frame、丢终态与 late update。
+
+## 在实验台观察真实 engine
+
+本章 Demo 使用 BrowserClock，不假装浏览器能手动推进 rAF。你可以修改 commit cadence，暂停 transport 后逐个单步 ingest；pipeline header 会分别显示 raw、visible、revision 与 phase。确定性的“精确推进一帧”只在上面的 VirtualClock contract 中完成。
+
+<LessonDemo demoId="m1" presetId="m1-frame-batching" />
+
+建议观察：
+
+- Events 中 `part.delta` 的 source event 顺序是否按 `sourceEventOrdinal` 增长。它是引擎的归一化地址，不是 Responses 协议的 `sequence_number`。
+- 两条 pipeline 的 raw 是否相同，而 M1 visible/revision 更新更少。
+- Metrics 中 internal events 是否大于 engine commits。
+- terminal 附近 phase 是否经过 draining，最终 raw 与 visible 是否相等。
+
+## Solution diff：关键是 pending frame 的所有权
+
+```diff
+ push(delta) {
+-  commit(delta)
++  pending += delta
++  cancelFrame ??= clock.frame(flush)
+ }
+```
+
+以及 drain / cancel：
+
+```diff
+ drain() {
++  cancelFrame?.()
++  flush()
++}
++cancel() {
++  cancelFrame?.()
++  cancelFrame = null
++  pending = ''
+ }
+```
+
+`cancelFrame` 看似简单，却表达了一个深层所有权：任意时刻最多有一个 task 负责把当前 pending 推向 commit。没有这个所有权，重复 callback、取消 race 和 late update 会一起出现。
+
+## 性能结果应该怎样读
+
+M1 只承诺限制 commit 频率，不承诺 parse 已经增量化。
+
+| 指标                   | M1 期望                       | 不能据此声称什么            |
+| ---------------------- | ----------------------------- | --------------------------- |
+| engine commits         | 不超过显示帧数 + 终态提交     | React subtree 已经 memoized |
+| previewParsedCodeUnits | 通常下降，因为 parse 次数减少 | 单次 parse 不是全文         |
+| raw → visible p95      | 大约一个 frame budget 内      | 后台标签页也始终如此        |
+| final IR               | 与 M0 完全相同                | preview 中间态完全相同      |
+
+真实浏览器报告要使用 BrowserClock 与 production profiling build。VirtualClock 的数字只用于确定性 work unit，不用于宣传“快了多少毫秒”。
+
+## Invariant、trade-off 与退化
+
+### Invariant
+
+- primitive 每个 frame boundary 最多调用一次 commit；engine 每帧最多一次 preview snapshot commit。
+- `visible` 始终是 `raw` 的前缀，settled 时二者相等。
+- terminal proof 前 EOF 是 truncated；terminal 后必须 drain。
+- drain/cancel 后 `pendingCount === 0`；engine settled 后不接受 late update。
+
+### Trade-off
+
+batching 把大量不可见工作换成最多一个 frame 的显示延迟。高刷新率设备 frame 更短，后台标签页却可能让 rAF 长时间暂停；因此“一个 frame”不是固定毫秒数。
+
+### 退化条件
+
+- delta 本来就慢于 frame cadence 时，几乎每条仍会 commit，M1 收益有限。
+- 单次 Markdown parse 已超过 frame budget 时，减少次数仍解决不了长任务，需要 M2/M3。
+- 浏览器暂停 rAF 时，terminal drain 需要显式 fallback 或同步安全收敛策略。
+- smooth reveal 会让 visible 故意落后 raw 多帧，必须另行定义 Stop 与 drain 语义。
+
+## 挑战题
+
+1. 同一时刻注册 timer 与 frame，VirtualClock 应按什么顺序执行？把规则写进测试。
+2. 为后台标签页设计 100 ms timeout fallback。如何避免 timeout 与 rAF 同时 commit？
+3. 如果 flush 期间同步到达一个新 delta，谁负责下一帧？用状态转移解释。
+4. 把 burst 从 5 条扩展到 5,000 条。M1 限制了 commits，但 raw string 拼接与 source queue 还可能有什么成本？
+
+## 面试时怎么讲
+
+> 我没有把 rAF 当成简单节流，而是把 pending frame 建模成有所有权的调度任务。delta 立即进入 raw，同帧只保留一个 flush；provider terminal 先进入 draining，直到 visible 追上 raw 才 settled。Clock 从第一天就是依赖，因此测试能精确推进 frame、验证 commit 上限和零 pending task，而真实性能报告再切回 BrowserClock。
+
+下一步 M2 会保留 M1 的显示时钟，但开始处理 React structural sharing：即使 tail 变化，稳定 block 也不应该重新 render。

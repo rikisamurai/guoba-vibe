@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "dev:stream-render": "pnpm --parallel --filter stream-render-course --filter stream-render-lab run dev",
     "fmt": "oxfmt .",
     "fmt:check": "oxfmt --check .",
     "lint": "pnpm -r --parallel lint",

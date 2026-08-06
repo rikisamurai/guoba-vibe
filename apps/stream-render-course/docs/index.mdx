@@ -1,0 +1,58 @@
+---
+title: Streaming Render Course
+description: 从网络字节到 React commit，亲手实现 AI Chat 的流式渲染。
+---
+
+<p className="sr-kicker">COURSE / LAB · 3 GOLDEN LESSONS</p>
+
+# 不把 Streaming Render 当黑盒
+
+这不是一套“看完就算会了”的概念文章。你会维护一个很小的 React Chat，让同一条回答依次经历最笨但正确的 M0、按帧提交的 M1，以及带局部解析与重型节点保护的 M4；每一次优化都由失败现象、测试和浏览器指标推动。
+
+> 适合已经会 TypeScript、React、Promise 和基础 HTTP，但还没有系统处理过流式协议与增量渲染的前端工程师。
+
+## 先完成这三个黄金实验
+
+<div className="roadmap-grid">
+  <a className="roadmap-card" href="/learn/01-quick-start.html">
+    <span>01 · MENTAL MODEL</span>
+    <h3>Quick Start</h3>
+    <p>用同一条 trace 对比 M0 与 M4，先学会读 raw、visible、engine commit 和 parse work。</p>
+  </a>
+  <a className="roadmap-card" href="/learn/05-sse.html">
+    <span>05 · NETWORK</span>
+    <h3>WHATWG SSE</h3>
+    <p>从任意 Uint8Array 切片还原事件，亲手击破 split("\n\n")。</p>
+  </a>
+  <a className="roadmap-card" href="/learn/10-m1-frame-batching.html">
+    <span>10 · SCHEDULER</span>
+    <h3>M1 Frame Batching</h3>
+    <p>分离 arrival 与 display clock，并用 VirtualClock 证明每帧最多一次提交。</p>
+  </a>
+  <article className="roadmap-card">
+    <span>NEXT · AFTER REVIEW</span>
+    <h3>剩余 15 课</h3>
+    <p>三章验收后，再沿协议适配、Markdown 增量解析、重型节点与产品行为逐步展开。</p>
+  </article>
+</div>
+
+## 完整 18 课学习地图
+
+| Part | 课程                                                      | 你最终能解释什么                             |
+| ---- | --------------------------------------------------------- | -------------------------------------------- |
+| 起步 | 01 Quick Start · 02 Raw/visible · 03 VirtualClock         | 为什么网络到达速度不等于用户看到的速度       |
+| 网络 | 04 UTF-8 · 05 SSE · 06 Chat · 07 Responses · 08 Anthropic | byte、event、provider 语义为什么必须分层     |
+| 渲染 | 09 M0 · 10 M1 · 11 Repair · 12 M2 · 13 M3 · 14 M4         | 从 O(n²) 全文重算走向可证明的增量工作        |
+| 交付 | 15 产品行为 · 16 安全 · 17 Profiler · 18 Capstone         | 如何把正确性、性能、可访问性和面试表达串起来 |
+
+## 学习方式
+
+每章都要求你先运行一个会失败的 exercise，再只增加一个能力。不要先复制 solution；先写下你预测的事件序列或 commit 数，再运行测试。预测与结果不一致的地方，才是这套课程真正有价值的部分。
+
+```bash
+pnpm install
+pnpm dev:stream-render
+pnpm --filter stream-render-lab lesson quick-start test
+```
+
+[从 Quick Start 开始 →](/learn/01-quick-start)
