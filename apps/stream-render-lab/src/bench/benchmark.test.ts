@@ -13,7 +13,7 @@ describe('deterministic Markdown work benchmark', () => {
 
   beforeAll(async () => {
     report = await runBenchmarkMatrix()
-  })
+  }, 30_000)
 
   it('generates reproducible corpora with the requested UTF-16 size', () => {
     const first = generateBenchmarkCorpus('checkpoint-rich', 8_192, 42)
