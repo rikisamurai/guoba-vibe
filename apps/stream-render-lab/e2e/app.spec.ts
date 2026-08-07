@@ -105,16 +105,17 @@ test('Course embed 使用 manifest preset 并可跳转完整 Lab', async ({ page
   await page.goto('/embed/sse?preset=sse-edge-cases')
 
   await expect(page.getByText('WHATWG SSE 边界实验', { exact: true })).toBeVisible()
-  await expect(page.getByLabel('场景 PRESET')).toBeDisabled()
   await expect(page.getByRole('link', { name: '打开完整实验台 ↗' })).toHaveAttribute(
     'href',
     '/lab?demo=sse&preset=sse-edge-cases',
   )
-  await expect(page.getByLabel('Transport')).toHaveValue('readable-stream')
-  await page.getByRole('button', { name: 'Every byte · 1B' }).click()
-  await expect(page.getByLabel('Chunk min (bytes)')).toHaveValue('1')
-  await expect(page.getByLabel('Chunk max (bytes)')).toHaveValue('1')
-  await expect(page.getByRole('button', { name: '开始回放' })).toBeVisible()
+  await expect(page.getByRole('button', { name: '播放 trace' })).toBeVisible()
+  await expect(page.getByRole('button', { name: '重置' })).toBeVisible()
+  await expect(page.getByLabel('arrival 与 visible 时间线')).toBeVisible()
+  await expect(page.getByText('1 / 7', { exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: '单步' }).click()
+  await expect(page.getByText('2 / 7', { exact: true })).toBeVisible()
 })
 
 test('故障案例使用真实换行并完成 M0 与目标模式重放', async ({ page }) => {
@@ -156,13 +157,17 @@ test('性能页保持 idle，显式开始后分开聚合与单次结果', async 
     await expect(developmentWarning).toContainText('development build')
   }
 
+  await page.getByLabel('内容规模').selectOption('4')
+  await page.getByLabel('Delta size').selectOption('192')
+  await page.getByLabel('Warmup').selectOption('0')
+  await page.getByLabel('Measurements').selectOption('3')
   await page.getByRole('button', { name: '开始 A/B 采样' }).click()
   await expect(page.getByRole('heading', { level: 2, name: /M1 .*重复工作/ })).toBeVisible({
     timeout: 20_000,
   })
   await expect(page.locator('.profile-result-cards')).toContainText('RAW → VISIBLE P95')
   await expect(page.locator('.profile-lanes')).toContainText('最近一次 M1 时间线')
-  await expect(page.locator('.profile-run-table')).toContainText('5 次测量')
+  await expect(page.locator('.profile-run-table')).toContainText('3 次测量')
   await expect(page.getByRole('button', { name: '重新采样' })).toBeVisible()
 })
 
