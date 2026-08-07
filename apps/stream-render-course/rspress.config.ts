@@ -13,6 +13,9 @@ export default defineConfig({
   lang: 'zh',
   llms: true,
   ssg: true,
+  themeConfig: {
+    darkMode: 'force-light',
+  },
   builderConfig: {
     source: {
       define: {

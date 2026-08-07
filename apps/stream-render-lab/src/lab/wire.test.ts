@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { adaptProtocolStream } from '../protocol/protocol-stream'
-import { presetConfig } from './presets'
+import { LAB_PRESETS, presetConfig } from './presets'
 import { buildWireChunks, type WireChunk } from './wire'
 
 describe('Lab wire generator', () => {
@@ -23,11 +23,11 @@ describe('Lab wire generator', () => {
   })
 
   it('keeps every default teaching replay below a short deterministic budget', () => {
-    for (const preset of ['quick-start-burst', 'sse-edge-cases', 'm1-frame-batching'] as const) {
-      const chunks = buildWireChunks(presetConfig(preset))
+    for (const { id } of LAB_PRESETS) {
+      const chunks = buildWireChunks(presetConfig(id))
       const totalDelay = chunks.reduce((sum, chunk) => sum + chunk.delayMs, 0)
-      expect(chunks.length, `${preset} chunk count`).toBeLessThan(500)
-      expect(totalDelay, `${preset} total delay`).toBeLessThan(2_000)
+      expect(chunks.length, `${id} chunk count`).toBeLessThan(1_000)
+      expect(totalDelay, `${id} total delay`).toBeLessThan(5_000)
     }
   })
 

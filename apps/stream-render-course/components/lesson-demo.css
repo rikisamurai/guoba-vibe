@@ -68,6 +68,10 @@
   background: #fff;
 }
 
+.lesson-demo[data-compact='true'] .lesson-demo__frame {
+  height: min(470px, 70vh);
+}
+
 .lesson-demo__footer {
   min-height: 3.5rem;
   border-top: 1px solid #cfd8d3;

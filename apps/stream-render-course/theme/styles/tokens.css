@@ -1,0 +1,84 @@
+:root {
+  --rp-c-brand: #dc5739;
+  --rp-c-brand-dark: #bd4026;
+  --rp-c-brand-darker: #9e321e;
+  --rp-c-brand-light: #f06d4d;
+  --rp-c-brand-lighter: #f7a08b;
+  --rp-c-bg: #fffefb;
+  --rp-c-bg-soft: #f5f6f1;
+  --rp-c-divider: #daddd6;
+  --rp-nav-height: 72px;
+  --rp-sidebar-width: 292px;
+  --rp-outline-width: 252px;
+  --rp-content-max-width: 900px;
+  --rp-content-padding-x: 60px;
+  --rp-content-padding-y: 48px;
+  --sr-paper: #fffefb;
+  --sr-paper-deep: #f4f5ef;
+  --sr-ink: #18201c;
+  --sr-muted: #68726c;
+  --sr-line: #d9ddd6;
+  --sr-orange: #dc5739;
+  --sr-orange-dark: #a83b25;
+  --sr-cyan: #168d87;
+  --sr-cyan-soft: #dff3ee;
+  --sr-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --sr-sans: 'Schibsted Grotesk Variable', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+}
+
+html.rp-dark {
+  color-scheme: light !important;
+  --rp-c-bg: #fffefb;
+  --rp-c-bg-soft: #f5f6f1;
+  --rp-c-bg-mute: #eff1eb;
+  --rp-c-bg-alt: #fffefb;
+  --rp-c-divider: #00000040;
+  --rp-c-divider-light: #0000001f;
+  --rp-c-text-0: #000;
+  --rp-c-text-1: #242424;
+  --rp-c-text-2: #000000b3;
+  --rp-c-text-3: #3c3c3c54;
+  --rp-c-text-4: #3c3c3c2e;
+  --rp-c-text-code: #476582;
+  --rp-c-text-code-bg: #99a1b30f;
+  --rp-c-text-code-border: #00000009;
+  --rp-c-link: var(--rp-c-brand-dark);
+  --rp-code-title-bg: #f8f8f9;
+  --rp-code-block-color: #2e3440;
+  --rp-code-block-bg: var(--rp-c-bg);
+  --shiki-token-constant: #1976d2;
+  --shiki-token-string: #218438;
+  --shiki-token-comment: #777;
+  --shiki-token-keyword: #cf2727;
+  --shiki-token-parameter: #b56600;
+  --shiki-token-function: #7041c8;
+  --shiki-token-punctuation: #242323;
+}
+
+html {
+  background: var(--sr-paper);
+}
+
+body {
+  color: var(--sr-ink);
+  background:
+    linear-gradient(rgb(24 32 28 / 1.7%) 1px, transparent 1px) 0 0 / 100% 32px,
+    var(--sr-paper);
+  font-family: var(--sr-sans);
+  font-feature-settings: 'ss01', 'ss02';
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--sr-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

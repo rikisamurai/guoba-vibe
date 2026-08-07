@@ -1,0 +1,204 @@
+---
+title: 00 · Quick Start：先把地图和环境跑通
+description: 十分钟认识最终项目、两个站点与课程的练习循环。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+<p className="sr-kicker">CHAPTER 00 · ORIENTATION</p>
+
+# 先跑通，再谈 Streaming
+
+这一课不要求你实现任何优化。你只要确认环境、找到将持续演进的 mini-chat，并能说出一段网络响应从 byte 到 React 的最短路径。
+
+<LessonMeta
+  duration="10 分钟"
+  exercise="1 个真实 M0 / M4 对照 TODO"
+  prerequisites={['TypeScript', 'React', 'Promise', '基础 HTTP']}
+/>
+
+## 先看终点：同一份回答，为什么感受不同
+
+下面两列吃的是**同一条 trace**。M0 每到一小段就立即公开一次；M4 代表课程终点的优化版。现在不用懂它们怎么实现，只看四件事：
+
+- `arrival clock`：小段什么时候真正到达。
+- `raw`：程序已经收到的完整原文，不能因为渲染慢就丢字。
+- `display clock`：浏览器决定什么时候把新画面交给你。
+- `visible`：此刻屏幕上真正看得见的内容。
+
+<LessonDemo demoId="quick-start" presetId="quick-start-burst" />
+
+点击开始后，先看 `raw` 是否同速增长，再看 `visible` 和 commit 数。你应该得到第一个直觉：
+
+```text
+网络到达节奏 ≠ 屏幕更新节奏
+raw 是事实，visible 是当前发布给用户的版本
+```
+
+后面的每一课都只会解开这个对照里的一层，不会让你直接复制一个黑盒。
+
+## 本节新增文件
+
+00 有自己的观察型 workshop。它不会让你先实现 M4，而是用真实生产引擎把“课程起点”和“课程终点”放到同一个可重复实验里：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/00-quick-start/
+├── fixture.ts                    # 一条有 4 个 delta 的 Replay trace
+├── run-profile.ts                # 真实 Engine + VirtualClock + ReplaySource
+├── contract.ts                   # 两边终态与 commit 断言
+├── exercise/run-comparison.ts    # 本节唯一 TODO
+└── solution/run-comparison.ts    # 参考答案
+```
+
+这里没有复制一个“教学版假引擎”。`run-profile.ts` 直接从 Lab 导入：
+
+```ts
+import { createStreamingRenderEngine, VirtualClock } from '../../../src/engine'
+import { ReplaySource } from '../../../src/replay'
+```
+
+因此你看到的 commit、raw 和 Render IR，正是后续 Lab 与真实 Chat 使用的那套语义。
+
+## 为什么从非流式 Chat 开始
+
+如果直接从一堆网络事件开始，你很难判断错误属于协议、状态还是渲染。我们的路线先建立一个“等完整字符串再显示”的正确版本，再一层层替换输入边界：
+
+```text
+bytes → UTF-8 text → SSE event → provider delta → chat state → React
+```
+
+这六层不能因为都包含“文本”就合成一个函数。后面的每个线上怪问题，都能落回其中一条边界。
+
+## 先观察一个可复现失败
+
+从仓库根目录运行 00 的 exercise：
+
+```bash
+pnpm --filter stream-render-lab lesson 00 test
+```
+
+你应该看到 3 个 contract 中前 2 个通过、最后 1 个失败：
+
+```text
+✓ 00 settles both views with the complete replay
+✓ 00 keeps final raw and render IR equivalent
+× 00 compares M0 with M4 and publishes fewer commits
+Expected: "M4"
+Received: "M0"
+
+Tests  1 failed | 2 passed
+```
+
+这不是引擎坏了。starter 故意把左右两边都跑成 M0：最终内容当然一致，但它没有真正比较优化后的 profile。
+
+## 启动 Course 与 Lab
+
+先确认 Node.js 与 pnpm 使用仓库要求的版本，再启动两个站点：
+
+```bash
+cd <guoba-vibe 仓库根目录>
+node --version          # 必须 >= 24
+corepack pnpm --version # 应为 11.3.0
+pnpm install
+pnpm dev:stream-render
+```
+
+预期出现：
+
+```text
+stream-render-course  Local: http://localhost:5173/
+stream-render-lab     Local: http://localhost:5174/
+```
+
+Course 是教程，Lab 是可操作实验。若脚本提示端口被占用，不要继续盯着旧页面：先用 `lsof -nP -iTCP:5173 -sTCP:LISTEN` 确认进程，再停止旧服务重新启动。
+
+## 找到唯一 TODO
+
+打开 `exercise/run-comparison.ts`。完整问题只有一行：
+
+```ts
+export async function runComparison(): Promise<QuickStartComparison> {
+  const baseline = await runProfile('M0')
+  // TODO 00: 用课程终点 profile 跑右侧，不要把 M0 结果重复比较一次。
+  const challenger = await runProfile('M0')
+  return { baseline, challenger }
+}
+```
+
+`baseline` 是从零开始学习时的基线；`challenger` 应该代表课程完成后的 M4。两次运行仍使用相同的 fixture、16 ms frame 和 direct reveal，所以唯一变量只能是 profile。
+
+<details>
+  <summary>提示：应该换成哪个字符串？</summary>
+
+在页面顶部的对照实验里，右列名称已经告诉你答案：`M4`。
+
+</details>
+
+## Contract 到底证明了什么
+
+不要只看“测试绿了”。这三个断言分别保护三件不同的事：
+
+```text
+两次 outcome 都是 completed
+→ 两次最终 raw 完整且相同
+→ 两次最终 Render IR 等价
+→ M4 用更少 commit 到达相同终点
+```
+
+如果只断言 commit 更少，丢掉半句话也可能“性能更好”。所以性能结论必须排在正确性之后。
+
+## Solution diff
+
+```diff
+ const baseline = await runProfile('M0')
+-const challenger = await runProfile('M0')
++const challenger = await runProfile('M4')
+```
+
+## 验证本地 workshop
+
+先保存你的修改并重跑 `lesson 00 test`。然后用独立 solution 快照确认参考实现：
+
+```bash
+pnpm --filter stream-render-lab lesson 00 solution
+```
+
+预期关键行：
+
+```text
+✓ 00 settles both views with the complete replay
+✓ 00 keeps final raw and render IR equivalent
+✓ 00 compares M0 with M4 and publishes fewer commits
+Test Files  1 passed
+Tests       3 passed
+```
+
+## Checkpoint
+
+- [ ] Course 与 Lab 都来自当前 worktree，而不是旧进程。
+- [ ] `lesson 00 test` 在修改前恰好 1 红，修改后 3 绿。
+- [ ] 你能解释为什么必须先比较 raw / IR，再比较 commit。
+- [ ] 你能不用看答案说出六层数据流顺序。
+
+## 常见错误
+
+| 现象            | 原因                         | 修复                         |
+| --------------- | ---------------------------- | ---------------------------- |
+| 5173 还是旧页面 | 旧 worktree 的 Vite 仍占端口 | 停止旧 PID 后重启            |
+| `pnpm` 版本不同 | 没通过 Corepack 使用仓库版本 | `corepack enable`            |
+| 找不到 package  | 没在这份 monorepo 中运行     | 找到根 `pnpm-workspace.yaml` |
+
+## 挑战题
+
+不看本文，画出六层数据流，并标出 `JSON.parse` 应属于哪一层。再解释为什么 UTF-8 decoder 不应该知道 JSON。
+
+## 下一步会替换哪一层
+
+01 只实现最后一段：`完整字符串 → chat state → React`。此时没有网络 chunk，方便先把“正确答案”钉住。
+
+## 面试时怎么讲
+
+> 我学习流式渲染时先把 byte、文本、事件、provider 语义和 UI 状态分层。这样遇到乱码、丢事件或多次渲染时，能先定位是哪条边界失效，而不是把所有问题归因于 streaming。
+
+[下一课：01 · 非流式 Mini Chat →](/learn/01-non-streaming-chat)

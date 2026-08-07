@@ -1,0 +1,181 @@
+---
+title: 06 · Chat Completions：从 SSE data 到 text delta
+description: 用 provider adapter 隔离 JSON shape、choice address 与终态证据。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+<p className="sr-kicker">CHAPTER 06 · PROVIDER SEMANTICS</p>
+
+# SSE event 还不是 Chat 消息
+
+05 只保证 `data` 字符串完整。06 的 adapter 才理解 Chat Completions：解析 JSON、选择 choice、提取 reasoning/content，并识别 `[DONE]`。这样 mini-chat 不需要知道 provider payload 长什么样。
+
+<LessonMeta
+  duration="50 分钟"
+  exercise="把 Chat Completions wire 映射为 typed mini-chat events"
+  prerequisites={['05 SSE', 'JSON.parse', 'discriminated union']}
+/>
+
+## 本节新增文件
+
+```text
+workshop/mini-chat/06-chat-completions/
+├── contract.ts
+├── fixture.ts
+├── exercise/
+│   ├── index.tsx
+│   ├── sse.ts
+│   └── chat-completions.ts
+└── solution/
+    ├── index.tsx
+    ├── sse.ts
+    └── chat-completions.ts
+```
+
+本课第一次把通用 SSE event 变成领域事件：
+
+```ts
+type ChatEvent =
+  | { kind: 'reasoning-delta'; text: string }
+  | { kind: 'content-delta'; text: string }
+  | { kind: 'finish'; reason: string }
+  | { kind: 'done' }
+```
+
+## 先看一条真实 wire 的三种语义
+
+```text
+data: {"choices":[{"index":0,"delta":{"reasoning_content":"先分析"}}]}
+
+data: {"choices":[{"index":0,"delta":{"content":"答案"},"finish_reason":"stop"}]}
+
+data: [DONE]
+
+```
+
+- SSE parser 只看到三条 `data`。
+- adapter 把前两条 JSON 映射为 delta，并记录 `finish_reason`。
+- `[DONE]` 是 transport stream 中的 terminal proof，不应当送进 `JSON.parse`。
+
+本课 fixture 只请求 choice 0，因此 workshop event 暂不携带 index；生产 adapter 必须把 `choiceIndex` 当结构地址，而不是全局 sequence number。Chat Completions payload 没有可用来检测倒序的协议序号。
+
+## 复现失败：所有 data 都当正文
+
+```bash
+pnpm --filter stream-render-lab lesson 06 test
+```
+
+预期失败：
+
+```text
+× maps Chat Completions deltas into the mini chat
+Expected reasoning/content/finish/done events
+Received []
+```
+
+starter 返回空数组。SSE 已经正确解析，但 provider 语义没有进入 mini-chat，证明“events 有了”仍不等于“答案有了”。
+
+## TODO：在 provider 边界归一化
+
+打开 `06-chat-completions/exercise/chat-completions.ts`：
+
+```ts
+export function adaptChatCompletions(_events: readonly SseEvent[]): readonly ChatCompletionEvent[] {
+  // TODO 06：映射 provider JSON 与 [DONE]
+  return []
+}
+```
+
+adapter 可以为一个 provider event 返回多个 internal event，因为同一个 delta object 可能同时携带 reasoning 与 content。不要复用一个含混的 `seq`。
+
+<details open>
+  <summary>手算 Demo：这条 payload 应生成几个 event？</summary>
+
+```json
+{ "choices": [{ "index": 0, "delta": { "reasoning_content": "想", "content": "答" } }] }
+```
+
+答案是两个：先 reasoning，再 content。空字符串字段不生成事件；choice address 会在扩展多 choice 时加入生产 event origin。
+
+</details>
+
+## 内嵌实验：逐层看 Wire → Events → Chat
+
+先在 Raw/Wire 找到 JSON，再切 Events 看归一化 delta，最后确认 Rendered 只出现 answer；reasoning 保持独立通道。
+
+<LessonDemo demoId="chat-adapter" presetId="chat-completions-wire" />
+
+## Solution diff
+
+```diff
+-return []
++const output = []
++for (const event of events) {
++  if (event.data === '[DONE]') {
++    output.push({ kind: 'done' })
++    continue
++  }
++  for (const choice of parseChoices(event.data)) {
++    appendChoice(output, choice)
++  }
++}
++return output
+```
+
+测试 exercise：
+
+```bash
+pnpm --filter stream-render-lab lesson 06 test
+```
+
+预期通过：
+
+```text
+✓ maps Chat Completions deltas into the mini chat
+Test Files  1 passed
+Tests       6 passed
+```
+
+```bash
+pnpm --filter stream-render-lab lesson 06 solution
+```
+
+## Checkpoint：四层边界没有混在一起
+
+- [ ] SSE parser 不调用 `JSON.parse`。
+- [ ] adapter 不关心 byte/text chunk 如何切分。
+- [ ] reasoning 与 content 分通道。
+- [ ] `[DONE]` 不当 JSON，EOF 也不冒充 `[DONE]`。
+
+**Invariant：** mini-chat 的 raw content 只由有序 `content-delta.text` 拼接；provider JSON 外壳永不进入 raw。
+
+**Trade-off：** 每种 provider interface 都需要 adapter，但引擎和 React 获得稳定、typed 的事件模型。本课单 choice 类型更小，多 choice 时必须扩展 origin。
+
+**退化条件：** 多 choice 请求会产生多条并行地址；若产品只显示 choice 0，过滤必须是显式产品规则，而不是排序规则。
+
+## 常见错误
+
+| 错误                        | 后果                             |
+| --------------------------- | -------------------------------- |
+| `[DONE]` 进入 `JSON.parse`  | 正常终态被报告为 malformed JSON  |
+| 用 `choiceIndex` 检测倒序   | 把结构地址误当序列号             |
+| 丢弃空 delta event          | 可能漏掉 role 或 finish metadata |
+| reasoning append 到 content | UI 与复制结果混入思考文本        |
+
+如果 transport 在 `[DONE]` 前 EOF，生命周期层应给出 `truncated`，不能由 adapter 静默补成 done。
+
+## 挑战题
+
+把 fixture 的 `finish_reason` 改为 `length`。adapter 应保留什么证据，运行结果为什么不能叫 completed？先写类型，不需要提前实现完整 lifecycle。
+
+## 下一步映射
+
+到这里，mini-chat 已完成第一条真实链路：bytes → UTF-8 → SSE → Chat adapter → raw/visible → transcript。07 会在同一 typed event seam 上接 Responses，而不是复制一套渲染器。
+
+## 面试时怎么讲
+
+> 我把协议 framing 与 provider 语义分开：SSE parser 只产出字段，Chat adapter 处理 JSON、choice address、reasoning/content 与 `[DONE]`。这样 transport 任意切片不会渗透到 UI，三种 API 也能共享同一引擎。
+
+[回到课程地图 →](/)

@@ -1,0 +1,171 @@
+---
+title: 01 · 先做一个非流式 Mini Chat
+description: 从一份完整回复建立第一份可信 chat transcript。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+<p className="sr-kicker">CHAPTER 01 · FINAL TRUTH FIRST</p>
+
+# Streaming 的起点，是一个正确的非流式结果
+
+这一课暂时不接网络。你会把 fixture 中的 user prompt 和完整 assistant reply 组成 transcript。它很朴素，却是后续所有增量版本必须保持的最终真相。
+
+<LessonMeta
+  duration="25 分钟"
+  exercise="让 mini-chat 渲染一条完整 assistant reply"
+  prerequisites={['完成 00', 'React JSX', '数组不可变更新']}
+/>
+
+## 本节新增文件
+
+```text
+workshop/mini-chat/01-static-chat/
+├── contract.ts
+├── fixture.ts
+├── exercise/
+│   ├── index.tsx
+│   └── index.test.ts
+└── solution/
+    ├── index.tsx
+    └── index.test.ts
+```
+
+`fixture.ts` 提供固定 prompt/reply；`contract.ts` 描述 transcript；你只改 `exercise/index.tsx`。
+
+## 为什么暂时不接网络
+
+只要最终 transcript 都不可靠，加入 chunk 只会增加噪声。先固定三条最小语义：
+
+```ts
+type Message = {
+  role: 'user' | 'assistant'
+  text: string
+}
+```
+
+1. user 消息先出现；
+2. 完整 reply 对应一条 assistant 消息；
+3. assistant 内容与输入 reply 逐字相同。
+
+本课用同步 fixture 压缩变量；接真实请求时，输入 seam 会换成返回 `Promise<string>` 的 complete 函数，transcript invariant 不变。
+
+## 先观察失败：回复到了，界面状态里却没有
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+```
+
+预期失败的关键行：
+
+```text
+× renders one non-streaming assistant reply
+Expected markup contains an assistant article
+Received markup only contains the user article
+```
+
+打开 exercise，你会看到 fixture 已经有完整 reply，但 `messages` 只返回 user。这模拟了常见错误：请求成功，不代表结果已经进入 UI state。
+
+## 最小原理：把 transcript 当作值
+
+不要让这个练习掺入 React state 或全局 store。先实现一个纯函数：同样的 fixture，得到同样的消息数组。
+
+```ts
+export function createStaticChat(input: Fixture): StaticChat {
+  // TODO 01：在 user 后追加 assistant reply
+  return { messages: [{ role: 'user', text: input.prompt }] }
+}
+```
+
+<details open>
+  <summary>Terminal Demo：先预测，再运行</summary>
+
+在改代码前回答：如果 prompt 是 `解释 SSE`，reply 是 `SSE 是服务器推送事件流。`，数组中的 role 顺序是什么？然后运行测试，看失败 diff 是否与你的预测一致。
+
+</details>
+
+## 内嵌实验：完整回复只提交一次
+
+运行后观察 assistant 在 provider 完成前保持空白，完成时一次出现完整内容。这里没有 chunk；这正是后续课程的正确性基线。
+
+<LessonDemo demoId="response" presetId="complete-response" />
+
+## 实现 TODO
+
+保持返回值不可变，不要先 `push` 一个空 assistant 再修改它：
+
+```ts
+return {
+  messages: [
+    { role: 'user', text: input.prompt },
+    { role: 'assistant', text: input.reply },
+  ],
+}
+```
+
+再次运行：
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+```
+
+精确通过信号：
+
+```text
+✓ renders one non-streaming assistant reply
+Test Files  1 passed
+Tests       1 passed
+```
+
+## Solution diff
+
+```diff
+-return { messages: [{ role: 'user', text: input.prompt }] }
++return {
++  messages: [
++    { role: 'user', text: input.prompt },
++    { role: 'assistant', text: input.reply },
++  ],
++}
+```
+
+如果你的实现不同，先用官方 solution 做交叉检查：
+
+```bash
+pnpm --filter stream-render-lab lesson 01 solution
+```
+
+## Checkpoint：最终真相成立了吗
+
+- [ ] transcript 恰好两条消息，顺序为 user → assistant。
+- [ ] reply 中的中文、换行和标点没有被处理。
+- [ ] fixture 相同，多次运行结果相同。
+
+**Invariant：** assistant `text` 必须逐字等于 fixture 的完整 reply。
+
+**Trade-off：** 用户必须等待完整回复，没有渐进反馈；但状态模型最简单，适合作为最终内容 oracle。
+
+**退化条件：** 回复越长，首屏等待越久；正确性不受影响，体验会变差。
+
+## 常见错误
+
+| 错误                     | 为什么不对                  |
+| ------------------------ | --------------------------- |
+| assistant 放在 user 前面 | transcript 的因果顺序被反转 |
+| `reply.trim()`           | 悄悄改写 provider 真相      |
+| catch 后返回空数组       | 把失败伪装成“没有回答”      |
+
+## 挑战题
+
+给 fixture 的 reply 加上首尾换行。你的 transcript 是否仍逐字保留？为什么这里不应该替用户 `trim()`？
+
+## 下一步映射
+
+02 不改变最终两条消息，只把“一次返回完整 reply”换成“按时间播放多个字符串片段”。如果 02 最终内容不同，错误一定发生在新加入的 replay 层。
+
+## 面试时怎么讲
+
+> 我不会一上来写复杂的 streaming state。先用纯函数建立非流式最终结果，把它作为后续每个增量前缀和终态的 correctness oracle；这样性能优化不会悄悄改变内容语义。
+
+[下一课：02 · String Replay 与 VirtualClock →](/learn/02-string-replay-clock)

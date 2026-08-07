@@ -1,58 +1,109 @@
 ---
 title: Streaming Render Course
-description: 从网络字节到 React commit，亲手实现 AI Chat 的流式渲染。
+description: 从一个普通 Chat 开始，逐步走到真实 AI 流式渲染。
 ---
 
-<p className="sr-kicker">COURSE / LAB · 3 GOLDEN LESSONS</p>
+<p className="sr-kicker">COURSE / LAB · BUILD ONE MINI CHAT</p>
 
-# 不把 Streaming Render 当黑盒
+# 从“等完整答案”开始，亲手造出 Streaming Chat
 
-这不是一套“看完就算会了”的概念文章。你会维护一个很小的 React Chat，让同一条回答依次经历最笨但正确的 M0、按帧提交的 M1，以及带局部解析与重型节点保护的 M4；每一次优化都由失败现象、测试和浏览器指标推动。
+这不是 API 名词手册，也不是把完成品拆成 18 篇介绍。你会一直维护**同一个 mini-chat**：先渲染一条完整回复，再加入可重复播放、增量 UTF-8、SSE、provider adapter，最后才讨论调度、Markdown 与性能。
 
-> 适合已经会 TypeScript、React、Promise 和基础 HTTP，但还没有系统处理过流式协议与增量渲染的前端工程师。
-
-## 先完成这三个黄金实验
+每一课只增加一个能力，`starter(N) = solution(N-1)`。先复现失败，再填一个 TODO，用同一组 contract test 证明这一步真的成立。
 
 <div className="roadmap-grid">
-  <a className="roadmap-card" href="/learn/01-quick-start.html">
-    <span>01 · MENTAL MODEL</span>
-    <h3>Quick Start</h3>
-    <p>用同一条 trace 对比 M0 与 M4，先学会读 raw、visible、engine commit 和 parse work。</p>
+  <a className="roadmap-card" href="/learn/00-quick-start.html">
+    <span>00 · START HERE</span>
+    <h3>先把环境和地图跑通</h3>
+    <p>10 分钟确认 Node、pnpm、两个站点和 workshop 命令。</p>
   </a>
-  <a className="roadmap-card" href="/learn/05-sse.html">
-    <span>05 · NETWORK</span>
-    <h3>WHATWG SSE</h3>
-    <p>从任意 Uint8Array 切片还原事件，亲手击破 split("\n\n")。</p>
+  <a className="roadmap-card" href="/learn/01-non-streaming-chat.html">
+    <span>01 · FIRST WORKING CHAT</span>
+    <h3>先做非流式回复</h3>
+    <p>从一份完整字符串开始，建立可信的最终结果。</p>
   </a>
-  <a className="roadmap-card" href="/learn/10-m1-frame-batching.html">
-    <span>10 · SCHEDULER</span>
-    <h3>M1 Frame Batching</h3>
-    <p>分离 arrival 与 display clock，并用 VirtualClock 证明每帧最多一次提交。</p>
+  <a className="roadmap-card" href="/learn/04-utf8.html">
+    <span>04 · FIRST NETWORK BUG</span>
+    <h3>让中文跨 byte split 也不乱码</h3>
+    <p>第一次进入真实网络边界：chunk 不等于字符。</p>
   </a>
-  <article className="roadmap-card">
-    <span>NEXT · AFTER REVIEW</span>
-    <h3>剩余 15 课</h3>
-    <p>三章验收后，再沿协议适配、Markdown 增量解析、重型节点与产品行为逐步展开。</p>
-  </article>
 </div>
 
-## 完整 18 课学习地图
+## 你最终会做出什么
 
-| Part | 课程                                                      | 你最终能解释什么                             |
-| ---- | --------------------------------------------------------- | -------------------------------------------- |
-| 起步 | 01 Quick Start · 02 Raw/visible · 03 VirtualClock         | 为什么网络到达速度不等于用户看到的速度       |
-| 网络 | 04 UTF-8 · 05 SSE · 06 Chat · 07 Responses · 08 Anthropic | byte、event、provider 语义为什么必须分层     |
-| 渲染 | 09 M0 · 10 M1 · 11 Repair · 12 M2 · 13 M3 · 14 M4         | 从 O(n²) 全文重算走向可证明的增量工作        |
-| 交付 | 15 产品行为 · 16 安全 · 17 Profiler · 18 Capstone         | 如何把正确性、性能、可访问性和面试表达串起来 |
-
-## 学习方式
-
-每章都要求你先运行一个会失败的 exercise，再只增加一个能力。不要先复制 solution；先写下你预测的事件序列或 commit 数，再运行测试。预测与结果不一致的地方，才是这套课程真正有价值的部分。
-
-```bash
-pnpm install
-pnpm dev:stream-render
-pnpm --filter stream-render-lab lesson quick-start test
+```text
+Response bytes
+  → incremental UTF-8
+  → WHATWG SSE
+  → provider delta
+  → raw / visible state
+  → scheduled React commits
+  → safe rich-text rendering
 ```
 
-[从 Quick Start 开始 →](/learn/01-quick-start)
+最终项目不是一个漂亮但解释不清的黑盒：每层都有 fixture、可控时钟、失败示例和可观察指标。你能从 Network 中一个被切断的 emoji，一路解释到 React 为什么少 commit 一次。
+
+## 开始前只需要这些
+
+- Node.js `>= 24`
+- pnpm `11.3.0`（仓库的 `packageManager` 会固定版本）
+- 会 TypeScript、React state、Promise 和基础 HTTP
+
+在 **guoba-vibe 仓库根目录**运行：
+
+```bash
+node --version
+corepack pnpm --version
+pnpm install
+pnpm dev:stream-render
+```
+
+看到下面两行就说明入口正确：
+
+```text
+stream-render-course  Local: http://localhost:5173/
+stream-render-lab     Local: http://localhost:5174/
+```
+
+打开 Course `http://localhost:5173/` 阅读；打开 Lab `http://localhost:5174/` 做实验。若端口被占用，启动脚本会直接报告冲突端口；确认并停止旧进程，或分别指定 `STREAM_RENDER_COURSE_PORT`、`STREAM_RENDER_LAB_PORT` 后启动。
+
+## 你会一直编辑的目录
+
+```text
+apps/stream-render-lab/workshop/mini-chat/
+├── 01-static-chat/
+├── 02-replay-clock/
+├── 03-m0-baseline/
+├── 04-utf8/
+├── 05-sse/
+└── 06-chat-completions/
+```
+
+每层都有 `exercise/`、`solution/`、`fixture.ts` 和 `contract.ts`。只改 `exercise/`；卡住时先看提示，再看 solution diff，不要一上来复制答案。
+
+## 第一阶段：六次连续增量
+
+| 课  | 只新增的能力             | 完成后的证据                    |
+| --- | ------------------------ | ------------------------------- |
+| 01  | 完整字符串回复           | 一条 user + assistant 消息      |
+| 02  | Replay + VirtualClock    | 时间不前进，文本就不前进        |
+| 03  | raw / visible            | 到达事实与屏幕状态分别记录      |
+| 04  | 增量 UTF-8               | 任意 byte split 都不乱码        |
+| 05  | WHATWG SSE               | 字段、空行和 EOF 语义正确       |
+| 06  | Chat Completions adapter | wire event 变成 mini-chat delta |
+
+## 后续地图（尚未交付）
+
+07 Responses · 08 Anthropic · 09 生命周期 · 10 帧批处理 · 11 Preview repair · 12 Block identity · 13 Suffix reparse · 14 代码与重型节点 · 15 Chat 产品行为 · 16 安全 · 17 Profiler · 18 Capstone。
+
+这些课目前只代表依赖顺序，不是假装已经写完的空壳。先把 00–06 做透，再扩展下一段。
+
+## 每课固定循环
+
+1. 运行 exercise，确认它以文档写明的方式失败。
+2. 在 Browser checkpoint 里先写下预测。
+3. 只填本课的 TODO，再运行同一个测试。
+4. 对照 solution diff，解释 invariant 与 trade-off。
+5. 通过 checkpoint 后再进入下一课。
+
+[从 00 · Quick Start 开始 →](/learn/00-quick-start)

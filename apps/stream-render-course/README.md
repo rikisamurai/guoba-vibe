@@ -11,8 +11,18 @@ pnpm --filter stream-render-course build
 
 开发默认使用 `http://localhost:5174` 的 Lab。部署前通过 `PUBLIC_LAB_ORIGIN` 设置受信任的 Lab origin；`LessonDemo` 会同时校验 `message.origin`、`message.source`、协议版本和 `demoId`。
 
-当前黄金课程：
+当前连续课程：
 
-- `01-quick-start`：同 trace 的 M0 / M4 A/B。
-- `05-sse`：真实 bytes 到 WHATWG SSE event。
-- `10-m1-frame-batching`：VirtualClock、frame cap 与 terminal drain。
+- `00`：用真实 Engine、VirtualClock 与 ReplaySource 观察 M0 / M4 的共同终点与 commit 差异。
+- `01–03`：非流式 Mini Chat → 可控 Replay → M0 raw / visible。
+- `04–06`：任意 UTF-8 byte split → WHATWG SSE → Chat Completions adapter。
+- `10`：提前开放的 M1 frame batching 黄金样板；正式路径仍先完成 07–09。
+
+```bash
+pnpm --filter stream-render-lab lesson 00 test
+pnpm --filter stream-render-lab lesson 00 solution
+pnpm --filter stream-render-lab lesson 10 test
+pnpm --filter stream-render-lab lesson 10 solution
+```
+
+`pnpm dev:stream-render` 会先检查 `5173 / 5174`。若旧 worktree 的 dev server 仍占端口，脚本会明确失败，避免浏览器继续展示旧站却被误认为新 Course。

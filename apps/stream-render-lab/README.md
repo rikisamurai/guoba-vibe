@@ -32,14 +32,16 @@ pnpm --filter stream-render-lab dev
 pnpm --filter stream-render-lab test
 pnpm --filter stream-render-lab test:bench
 pnpm --filter stream-render-lab test:e2e
-pnpm --filter stream-render-lab lesson quick-start test
-pnpm --filter stream-render-lab lesson sse test
-pnpm --filter stream-render-lab lesson m1 test
+pnpm --filter stream-render-lab lesson 00 test
+pnpm --filter stream-render-lab lesson 01 test
+pnpm --filter stream-render-lab lesson 04 test
+pnpm --filter stream-render-lab lesson 06 test
+pnpm --filter stream-render-lab lesson 10 test
 ```
 
 页面入口：`/lab`、`/profiler`、`/chat`、`/bench`、`/embed/:demoId`。内部还保留 `/repro/:case` 故障复现路由。`/embed/:demoId` 仅接受 manifest 注册的 demo/preset；`/bench` 控制 iframe 中独立的 `bench-frame.html` entry，以减少文档 Shell、字体和 Router 对浏览器报告的干扰。
 
-`workshop` 的 `test` 模式验证待完成的 exercise（初始状态预期失败）；将最后一个参数换成 `solution` 可验证参考实现。
+`workshop/mini-chat/00-quick-start` 是观察型入口：直接使用生产 Engine、VirtualClock 与 ReplaySource，对同一条 trace 比较 M0 / M4。`01` 起才进入学习者持有的连续 Mini Chat，逐步长成 `06` 的真实 Chat Completions wire。`10` 是提前开放的 M1 frame batching 黄金样板，使用 06 的物理快照，不 import 旧 solution 或生产引擎。`test` 验证当前 exercise（只保留本课新增的一个预期失败）；将最后一个参数换成 `solution` 可验证参考实现。
 
 ## DeepSeek live
 

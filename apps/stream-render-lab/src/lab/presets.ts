@@ -23,6 +23,11 @@ const M1_MARKDOWN = `# M1 frame batching
 同一帧内到达的 **delta A / B / C** 应只触发一次 preview commit。
 `
 
+const FOUNDATION_MARKDOWN = `# Mini Chat
+
+你好，🙂！这是同一个回答从网络到屏幕的旅程。
+`
+
 const BASE: Omit<LabConfig, 'presetId'> = {
   input: QUICK_START_MARKDOWN,
   baseline: 'M0',
@@ -41,6 +46,78 @@ const BASE: Omit<LabConfig, 'presetId'> = {
 }
 
 export const LAB_PRESETS: readonly LabPreset[] = [
+  {
+    id: 'complete-response',
+    label: '01 · 完整响应',
+    summary: '先建立正确但没有流式反馈的最小基线。',
+    question: '为什么最终文本正确，等待体验仍然很差？',
+    config: {
+      ...BASE,
+      presetId: 'complete-response',
+      input: FOUNDATION_MARKDOWN,
+      challenger: 'M1',
+      chunkMin: 2_048,
+      chunkMax: 4_096,
+      delayMin: 600,
+      delayMax: 600,
+      burstiness: 0,
+    },
+  },
+  {
+    id: 'string-replay',
+    label: '02 · 可控字符串流',
+    summary: '暂停、单步和重放同一组字符串 delta。',
+    question: '一次 arrival 是否必然对应一次 display？',
+    config: {
+      ...BASE,
+      presetId: 'string-replay',
+      input: FOUNDATION_MARKDOWN,
+      challenger: 'M1',
+      chunkMin: 5,
+      chunkMax: 9,
+      delayMin: 10,
+      delayMax: 22,
+      burstiness: 25,
+      seed: 2,
+    },
+  },
+  {
+    id: 'm0-every-delta',
+    label: '03 · M0 raw / visible',
+    summary: '让每个 delta 都触发全文 parse 与 visible commit。',
+    question: 'raw truth 与屏幕版本为什么需要分别计数？',
+    config: {
+      ...BASE,
+      presetId: 'm0-every-delta',
+      input: FOUNDATION_MARKDOWN,
+      challenger: 'M1',
+      chunkMin: 1,
+      chunkMax: 4,
+      delayMin: 0,
+      delayMax: 2,
+      burstiness: 92,
+      seed: 3,
+    },
+  },
+  {
+    id: 'utf8-byte-boundary',
+    label: '04 · UTF-8 every byte',
+    summary: '把中文与 emoji 拆到任意 byte boundary。',
+    question: '为什么 TextDecoder 必须跨 chunk 保留状态？',
+    config: {
+      ...BASE,
+      presetId: 'utf8-byte-boundary',
+      input: FOUNDATION_MARKDOWN,
+      challenger: 'M1',
+      sliceMode: 'boundary-aware',
+      chunkMin: 1,
+      chunkMax: 1,
+      delayMin: 2,
+      delayMax: 5,
+      burstiness: 45,
+      seed: 4,
+    },
+  },
   {
     id: 'quick-start-burst',
     label: 'Quick Start · mixed Markdown',
@@ -71,6 +148,24 @@ export const LAB_PRESETS: readonly LabPreset[] = [
       delayMax: 7,
       burstiness: 55,
       seed: 7,
+    },
+  },
+  {
+    id: 'chat-completions-wire',
+    label: '06 · Chat Completions wire',
+    summary: '把 SSE data JSON 归一化为 reasoning、answer 与 terminal event。',
+    question: '为什么 [DONE]、finish_reason 和 EOF 不能混成一种结束？',
+    config: {
+      ...BASE,
+      presetId: 'chat-completions-wire',
+      input: FOUNDATION_MARKDOWN,
+      challenger: 'M1',
+      chunkMin: 3,
+      chunkMax: 11,
+      delayMin: 5,
+      delayMax: 18,
+      burstiness: 55,
+      seed: 6,
     },
   },
   {

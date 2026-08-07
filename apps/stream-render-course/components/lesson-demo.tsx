@@ -53,7 +53,11 @@ export function LessonDemo({ demoId, presetId }: LessonDemoProps) {
 
   const settled = state.kind === 'settled' ? state.report : undefined
   return (
-    <section className="lesson-demo" aria-label={`${LESSON_DEMOS[demoId].label}交互实验`}>
+    <section
+      className="lesson-demo"
+      data-compact={demoId !== 'quick-start' && demoId !== 'm1'}
+      aria-label={`${LESSON_DEMOS[demoId].label}交互实验`}
+    >
       <header className="lesson-demo__header">
         <div>
           <span>LIVE LAB</span>

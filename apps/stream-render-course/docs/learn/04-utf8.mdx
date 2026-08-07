@@ -1,0 +1,157 @@
+---
+title: 04 · UTF-8：网络 chunk 不是字符串
+description: 复用一个 TextDecoder，让中文与 emoji 跨任意 byte split 仍可还原。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+<p className="sr-kicker">CHAPTER 04 · BYTES ARE NOT CHARACTERS</p>
+
+# 第一个真实网络边界：半个 emoji 也会先到
+
+之前的 replay 直接交付 string。真实 `Response.body` 交付的是 `Uint8Array`，切点由网络决定，完全不尊重中文字符、JSON 或 token 边界。
+
+<LessonMeta
+  duration="45 分钟"
+  exercise="实现跨任意 byte split 的增量 UTF-8 decoder"
+  prerequisites={['03 raw/visible', 'Uint8Array', 'AsyncIterable']}
+/>
+
+## 本节新增文件
+
+```text
+workshop/mini-chat/04-utf8/
+├── contract.ts
+├── fixture.ts
+├── exercise/index.tsx
+└── solution/index.tsx
+```
+
+fixture 仍是上一课的回答，只是先经过 `TextEncoder`，再故意切在多 byte 字符中间。
+
+## 先复现乱码
+
+```bash
+pnpm --filter stream-render-lab lesson 04 test
+```
+
+预期失败：
+
+```text
+× decodes UTF-8 across arbitrary byte splits
+Expected: "你好，👋 streaming"
+Received: "������������� streaming"
+```
+
+错误实现为每个 chunk 新建 decoder：
+
+```ts
+chunks.map((chunk) => new TextDecoder().decode(chunk)).join('')
+```
+
+`你` 是 `E4 BD A0`，`🙂` 是 `F0 9F 99 82`。如果 chunk 只含 `E4 BD`，独立 decoder 不知道下一个 byte 还会来，只能输出 replacement character。
+
+## 最小原理：decoder 自己也有跨 chunk 状态
+
+```text
+chunk A: E4 BD       decoder 暂存，不输出“你”
+chunk B: A0 F0 9F    输出“你”，暂存 emoji 前半
+chunk C: 99 82       输出“🙂”
+EOF                  flush decoder
+```
+
+同一个 `TextDecoder` 必须贯穿一次 response；中间使用 `{ stream: true }`，EOF 再无参数 `decode()` 完成 flush。
+
+## TODO：复用 decoder 并在 EOF flush
+
+```ts
+export function decodeUtf8Chunks(chunks: readonly Uint8Array[]): string {
+  // TODO 1：只创建一次 decoder
+  let text = ''
+  for (const chunk of chunks) {
+    text += new TextDecoder().decode(chunk)
+  }
+  return text
+}
+```
+
+目标形状：
+
+```ts
+const decoder = new TextDecoder()
+for (const chunk of chunks) text += decoder.decode(chunk, { stream: true })
+text += decoder.decode()
+```
+
+## 内嵌实验：只看 byte → text
+
+调整 byte split，观察 decoder 在收到半个字符时保持内部状态，直到后续 byte 到达才输出完整 Unicode。
+
+<LessonDemo demoId="utf8" presetId="utf8-byte-boundary" />
+
+## Solution diff
+
+```diff
++const decoder = new TextDecoder()
+ let text = ''
+ for (const chunk of chunks) {
+-  text += new TextDecoder().decode(chunk)
++  text += decoder.decode(chunk, { stream: true })
+ }
++text += decoder.decode()
+ return text
+```
+
+运行：
+
+```bash
+pnpm --filter stream-render-lab lesson 04 test
+```
+
+预期通过：
+
+```text
+✓ decodes UTF-8 across arbitrary byte splits
+Test Files  1 passed
+Tests       4 passed
+```
+
+再与 solution 对照：
+
+```bash
+pnpm --filter stream-render-lab lesson 04 solution
+```
+
+## Checkpoint：任意切法都成立
+
+- [ ] every-byte split 与整块输入得到同一 string。
+- [ ] 中文、emoji 和 ASCII 混合 fixture 中没有 `�`。
+- [ ] EOF 会 flush decoder 内部仍可完成的字符。
+
+**Invariant：** `decode(partition(bytes)) === decode([bytes])`，对任何 chunk partition 都成立。
+
+**Trade-off：** decoder 必须按 response 隔离并持有少量状态；换来 transport chunk 完全透明。
+
+**退化条件：** 全 ASCII 输入看不出错误，因为每字符只有一个 byte；因此它不是有效的边界 fixture。
+
+## 常见错误
+
+- 每个 chunk 都 `new TextDecoder()`：多 byte 字符被破坏。
+- 忘记 `{ stream: true }`：decoder 把每块当 EOF。
+- 忘记最后 `decode()`：末尾暂存状态没有 flush。
+- 把 byte offset 当 JavaScript string offset：后续 source range 会错位。
+
+## 挑战题
+
+枚举 `你好🙂` 编码后的每一个单 byte 切点，并证明结果一致。然后加入一个真正截断的末尾字符，记录 decoder 的替换行为；不要把“网络切片”与“响应截断”混为一谈。
+
+## 下一步映射
+
+04 输出连续 text，但 text chunk 仍不等于 event。05 会在它后面增加 line 与 SSE field 状态机；UTF-8 decoder 不改一行。
+
+## 面试时怎么讲
+
+> Fetch stream 给的是 bytes，不是 token 或字符。我复用一个 streaming TextDecoder 并在 EOF flush，用 every-byte partition test 证明任何传输切片都不会破坏 Unicode。
+
+[下一课：05 · WHATWG SSE →](/learn/05-sse)

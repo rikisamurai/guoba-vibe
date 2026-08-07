@@ -1,1 +1,10 @@
-["01-quick-start", "05-sse", "10-m1-frame-batching"]
+[
+  "00-quick-start",
+  "01-non-streaming-chat",
+  "02-string-replay-clock",
+  "03-m0-raw-visible",
+  "04-utf8",
+  "05-sse",
+  "06-chat-completions",
+  "10-m1-frame-batching"
+]

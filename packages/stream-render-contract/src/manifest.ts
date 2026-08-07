@@ -1,4 +1,24 @@
 export const LESSON_DEMOS = {
+  response: {
+    defaultPreset: 'complete-response',
+    label: '完整响应基线',
+    presets: ['complete-response'],
+  },
+  replay: {
+    defaultPreset: 'string-replay',
+    label: '可控字符串流',
+    presets: ['string-replay'],
+  },
+  m0: {
+    defaultPreset: 'm0-every-delta',
+    label: 'M0 raw / visible',
+    presets: ['m0-every-delta'],
+  },
+  utf8: {
+    defaultPreset: 'utf8-byte-boundary',
+    label: 'UTF-8 byte boundary',
+    presets: ['utf8-byte-boundary'],
+  },
   'quick-start': {
     defaultPreset: 'quick-start-burst',
     label: 'M0 与 M4 对照',
@@ -8,6 +28,11 @@ export const LESSON_DEMOS = {
     defaultPreset: 'sse-edge-cases',
     label: 'WHATWG SSE 边界实验',
     presets: ['sse-edge-cases'],
+  },
+  'chat-adapter': {
+    defaultPreset: 'chat-completions-wire',
+    label: 'Chat Completions adapter',
+    presets: ['chat-completions-wire'],
   },
   m1: {
     defaultPreset: 'm1-frame-batching',
@@ -31,7 +56,16 @@ export interface LessonDemoDefinition {
   presets: readonly LessonPresetId[]
 }
 
-const DEMO_IDS = ['quick-start', 'sse', 'm1'] as const satisfies readonly LessonDemoId[]
+const DEMO_IDS = [
+  'response',
+  'replay',
+  'm0',
+  'utf8',
+  'quick-start',
+  'sse',
+  'chat-adapter',
+  'm1',
+] as const satisfies readonly LessonDemoId[]
 
 export function isLessonDemoId(value: unknown): value is LessonDemoId {
   return typeof value === 'string' && DEMO_IDS.some((demoId) => demoId === value)

@@ -1,4 +1,5 @@
 [
-  { "text": "学习地图", "link": "/" },
-  { "text": "课程", "link": "/learn/01-quick-start" }
+  { "text": "课程首页", "link": "/" },
+  { "text": "00–06 · Mini Chat", "link": "/learn/00-quick-start" },
+  { "text": "10 · M1 黄金样板", "link": "/learn/10-m1-frame-batching" }
 ]

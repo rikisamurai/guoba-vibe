@@ -1,349 +1,197 @@
 ---
-title: 05 · WHATWG SSE：从任意字节切片还原事件
-description: 不靠 split 双换行，亲手实现 UTF-8、行、字段与事件四层状态机。
+title: 05 · WHATWG SSE：text chunk 也不是 event
+description: 从完整解码文本实现 line、field 与空行派发，不再 split 双换行。
 ---
 
 import { LessonDemo } from '../../components/lesson-demo'
 import { LessonMeta } from '../../components/lesson-meta'
 
-<p className="sr-kicker">CHAPTER 05 · BYTES ARE NOT EVENTS</p>
+<p className="sr-kicker">CHAPTER 05 · TEXT IS NOT AN EVENT</p>
 
-# SSE 不是 `split("\n\n")`
+# SSE parser 要按三层语义处理文本
 
-浏览器 Network 面板里的一块响应数据，可能只包含半个 emoji，也可能一次包含三个 SSE event。只要 parser 把 transport chunk 当成字符或事件边界，线上偶发的中文乱码、JSON parse error 和“回答突然截断”就会同时出现。
+04 已经安全得到 string，但一个 text chunk 可能只有半行，也可能包含三个 event。05 只负责 WHATWG SSE framing，不在这一层 `JSON.parse` provider payload。
 
 <LessonMeta
-  duration="70 分钟"
-  exercise="1 个可跨任意 byte split 的 SSE parser"
-  prerequisites={['AsyncIterable', 'Uint8Array', 'TextDecoder']}
+  duration="60 分钟"
+  exercise="实现可跨任意 text chunk 的 SSE 状态机"
+  prerequisites={['04 增量 UTF-8', '状态机', '数组与字符串']}
 />
 
-## 本章完成标准
-
-你不是要背一遍 SSE 字段，而是要实现并证明下面这条性质：
+## 本节新增文件
 
 ```text
-parse(partition(bytes, 任意切法)) === parse([bytes])
+workshop/mini-chat/05-sse/
+├── contract.ts
+├── fixture.ts
+├── exercise/
+│   ├── index.tsx
+│   └── sse.ts
+└── solution/
+    ├── index.tsx
+    └── sse.ts
 ```
 
-完成后，你应该能够：
-
-- 解释 transport chunk、UTF-8 code point、line 和 SSE event 四种边界为何互不相同。
-- 正确处理 BOM、CR、LF、CRLF、多行 `data`、comment、`id`、`retry` 和未知字段。
-- 说明为什么 EOF 前没有空行的残留 data 必须丢弃。
-- 从 Network 中的一串 bytes 追到 provider adapter 收到的 event。
-
-## 先制造一个线上才容易出现的失败
-
-很多 SSE 教程从这段代码开始：
+输入来自 04 的 decoder；输出是 parser-neutral event：
 
 ```ts
-for await (const chunk of response.body) {
-  const text = new TextDecoder().decode(chunk)
-  for (const event of text.split('\n\n')) {
-    consume(JSON.parse(event.replace('data: ', '')))
-  }
-}
-```
-
-它同时做错了三件事。
-
-### 错误一：每个 chunk 新建 decoder
-
-字符 `你` 的 UTF-8 是三个 byte，emoji `🙂` 是四个。网络可以在任何 byte 后切开：
-
-```text
-你  = E4 BD A0
-🙂 = F0 9F 99 82
-
-chunk A: E4 BD
-chunk B: A0 F0 9F
-chunk C: 99 82
-```
-
-每块单独 decode 会产生 replacement character `�`。正确做法是复用一个 decoder，并在中间调用 `decode(chunk, { stream: true })`。
-
-### 错误二：只认识 LF 双换行
-
-SSE 规范允许三种行结束：LF、CR、CRLF。更棘手的是 CRLF 自己也能跨 chunk：
-
-```text
-chunk A: "data: first\r"
-chunk B: "\ndata: second\r\n\r"
-chunk C: "\n"
-```
-
-`split("\n\n")` 既看不到独立 CR，也可能把跨块的 CRLF 拆错。
-
-### 错误三：一行不等于一个事件
-
-下面是**一个** message event：
-
-```text
-: heartbeat
-event: answer
-id: 42
-data: 第一行
-data: 第二行
-
-```
-
-它的 data 是 `第一行\n第二行`。comment 不产生事件，未知字段被忽略，空行才触发 dispatch。
-
-## 正确分层：四个状态机，不是一团字符串
-
-```text
-Uint8Array chunks
-  │  TextDecoder(stream=true)
-  ▼
-Unicode text fragments
-  │  CR / LF / CRLF line scanner
-  ▼
-complete lines
-  │  field parser + event buffer
-  ▼
-SSE message / retry control
-  │  provider-specific JSON adapter
-  ▼
-typed SourceEvent
-```
-
-每一层只做一件事，也只暴露一类错误。
-
-### Layer 1：增量 UTF-8
-
-一个 decoder 必须活完整条连接：
-
-```ts
-const decoder = new TextDecoder('utf-8')
-let text = ''
-
-for await (const chunk of chunks) {
-  text += decoder.decode(chunk, { stream: true })
-  // 只交出完整行，残留保留到下一块
-}
-
-text += decoder.decode()
-```
-
-默认 TextDecoder 会处理流开头的 UTF-8 BOM；不要对每个 chunk 手动删除 `\uFEFF`，否则中途真实出现的同字符也会被误删。
-
-### Layer 2：增量行扫描
-
-scanner 返回 `{ lines, rest }`。遇到末尾孤立 `\r` 时不能立即认定一行结束，因为下一块可能以 `\n` 开头。
-
-| 当前字符  | 下一字符 | 行结束长度 | 动作                 |
-| --------- | -------- | ---------- | -------------------- |
-| `\n`      | 任意     | 1          | 产出前面的 line      |
-| `\r`      | `\n`     | 2          | 产出一行，跳过两字符 |
-| `\r`      | 其他     | 1          | 产出一行             |
-| 末尾 `\r` | 尚未 EOF | 未知       | 留在 rest            |
-
-### Layer 3：字段与 buffer
-
-字段语法是“第一个冒号前为 name，冒号后可去掉**一个**前导空格”：
-
-```text
-data:test       → name=data, value=test
-data: test      → name=data, value=test
-data:  test     → name=data, value=" test"
-data            → name=data, value=""
-```
-
-状态至少包括：
-
-```ts
-interface EventState {
-  data: string[]
-  eventType: string
+interface SseEvent {
+  type: string
+  data: string
   lastEventId: string
-  hasLastEventId: boolean
 }
 ```
 
-- `data`：逐行追加，dispatch 时用 `\n` 连接。
-- `event`：只影响当前 buffered event，dispatch 后清空。
-- `id`：不能包含 NULL；有效值跨 event 持续存在，空值表示重置。
-- `retry`：只有全部为 ASCII 数字才有效，它更新重连等待，不必等 data dispatch。
-- `:` 开头：comment，通常承载 heartbeat，不进入 data。
+课程版 `parseEventStream` 在 response 结束后一次返回结果，先把 framing correctness 讲清楚；真实 Lab 会逐 chunk 推进相同状态。不要把这里的 batch return 误解为 transport chunk 有语义。
 
-### Layer 4：空行 dispatch
-
-空行不是 data，它是提交边界：
-
-```ts
-if (line === '') return dispatch(state)
-```
-
-如果没有 buffered data，空行不产生 message。dispatch 后清空 data 与 event type，但保留 last event ID。
-
-## EOF 为什么不是隐式空行
-
-考虑连接突然断在这里：
-
-```text
-data: {"partial": true
-```
-
-如果 parser 在 EOF 自动 dispatch，上层会把不完整 JSON 当成 provider event，然后报“payload malformed”。真实语义却是 transport 在 terminal proof 前截断。
-
-WHATWG 算法在 EOF 丢弃 pending data。渲染引擎随后依据“没有协议终态”产生：
-
-```ts
-{ kind: 'truncated', cause: 'eof', retryable: true }
-```
-
-这样协议错误与网络截断不会被混为一谈。
-
-## 本地练习：先让 every-byte test 失败
-
-练习目录：
-
-<p className="lesson-path">
-  <code>apps/stream-render-lab/workshop/05-sse/</code>
-</p>
-
-运行：
+## 先击穿 `split('\n\n')`
 
 ```bash
-pnpm --filter stream-render-lab lesson sse test
+pnpm --filter stream-render-lab lesson 05 test
 ```
 
-完成后运行同一套 contract 的参考实现：
-
-```bash
-pnpm --filter stream-render-lab lesson sse solution
-```
-
-关键文件：
+预期失败：
 
 ```text
-workshop/05-sse/exercise/parse-sse.ts        你要逐层完成的 parser
-workshop/05-sse/solution/parse-sse.ts        最小参考实现
-workshop/05-sse/fixtures/chat-completions.ts 包含 BOM、三种换行与多行 data
-workshop/05-sse/contract.ts                  六个独立行为 checkpoint
-workshop/05-sse/exercise/index.test.ts       exercise 入口（初始应失败）
-workshop/05-sse/solution/index.test.ts       solution 入口（应通过）
+× parses WHATWG SSE fields and drops EOF residue
+Expected 2 events, lastEventId "7", retryMs 1500
+Received 0 events and empty lastEventId
 ```
 
-Vitest 会分别报告 `decoder → line scanner → field → event assembly → EOF → partition` 六个用例。从第一个失败开始修；每完成一层就重跑命令，不需要等整个 parser 写完才得到反馈。
+错误实现只认识 LF 双换行。下面一个事件故意混用换行并跨 chunk：
 
-### TODO 1：让 decoder 跨 chunk 存活
+```text
+: heartbeat\r
+id: 42\r
+event: message\n
+data: first\r
+data: second\r
+\r
+```
 
-在 async generator 外创建一次 TextDecoder。每次 decode 都传 `{ stream: true }`，循环结束后调用无参数 `decode()` flush。
+正确结果的 `data` 是 `first\nsecond`；comment 不进入事件。
 
-`createLessonDecoder` 的第一个用例只喂入 BOM、一个中文和一个 emoji，而且每次只给一个 byte。它通过后再处理 line，不会被后面的 event state 噪音干扰。
+## 最小原理：chunk → line → field → event
 
-### TODO 2：只 drain 完整行
+```text
+text chunk
+  → line scanner        识别 CR / LF / CRLF
+  → field accumulator   处理 data / event / id / retry
+  → blank line          派发一个 event
+```
 
-实现：
+解析过程保存当前 event 字段与上一条有效 `id`；line scanner 则统一处理三种换行。transport chunk 在这里没有语义。
+
+### 六条必须写进测试的规则
+
+1. 开头的 UTF-8 BOM 只忽略一次。
+2. CR、LF、CRLF 都结束一行，CRLF 跨 chunk 仍算一次。
+3. 多行 `data` 用 `\n` 连接，派发前去掉最后追加的换行。
+4. `:` 开头是 comment；未知 field 忽略。
+5. `retry` 只有全十进制数字才更新；`id` 含 NUL 时忽略。
+6. **EOF 不是空行**：未被空行派发的残留 event 丢弃。
+
+## TODO：完成 line → field → event 三步
+
+打开 `05-sse/exercise/sse.ts`。starter 明确返回空结果：
 
 ```ts
-function drainLessonLines(
-  input: string,
-  eof: boolean,
-): {
-  lines: string[]
-  rest: string
+export function parseEventStream(_chunks: readonly Uint8Array[]): ParsedEventStream {
+  // TODO 05：decode complete lines, apply fields, dispatch on blank lines
+  return { events: [], lastEventId: '' }
 }
 ```
 
-扫描时维护 `start` 和 `index`，不要用会丢失 delimiter 语义的正则 split。其中一个 partition 专门切在每个 CR 之后，用来覆盖“chunk 以 CR 结束、下一块以 LF 开始”。
+先调用上一课的 `decodeUtf8Chunks`，再写 `completeLines`、`applyField`、`dispatch` 三个小函数。不要在每条 `data:` 后派发，也不要在 EOF 自动补空行。
 
-### TODO 3：按第一个冒号解析字段
+<details open>
+  <summary>手工 Demo：逐行写出 accumulator</summary>
 
-不要 `line.split(':')`，data 中的 URL、JSON 都可能继续包含冒号。找到第一个冒号即可：
+对 `data: A\ndata: B\n\n`，状态依次是：
 
-```ts
-const colon = line.indexOf(':')
-const field = colon === -1 ? line : line.slice(0, colon)
-let value = colon === -1 ? '' : line.slice(colon + 1)
-if (value.startsWith(' ')) value = value.slice(1)
+```text
+dataBuffer = "A\n"
+dataBuffer = "A\nB\n"
+blank line → emit data "A\nB" → clear event fields
 ```
 
-把这段做成 `parseLessonField(line)`。它先用字面量用例证明 URL 里的冒号不会丢失；随后 event assembly 再把字段写进 EventState，unknown field 什么也不做。
+再删掉最后一个 `\n`：EOF 时不应 emit。
 
-### TODO 4：把 EOF 与空行分开
+</details>
 
-EOF 时可以处理此前由换行结束的完整 line，但绝不能凭空调用 `dispatch(state)`。独立用例只输入 `data: must-not-dispatch`，期望空数组；真实 fixture 尾部还留有 `data: discarded at eof`，两层证据共同防止“看似友好”的隐式 dispatch。
+## 在 Lab 里改变真实 byte 切法
 
-### TODO 5：枚举 partition，而不是只测一种 chunk
-
-共享 contract 覆盖：
-
-```ts
-const partitions = [everyByte(bytes), splitAfterCr(bytes)]
-
-for (const partition of partitions) {
-  await expect(parse(partition)).resolves.toEqual(EXPECTED_EVENTS)
-}
-```
-
-one-chunk 已在 event assembly checkpoint 中证明字段语义；这两种对抗 partition 必须得到与它完全相同的 `SseEvent[]`。
-
-## 打开 wire inspector
-
-下面的实验不会先生成 typed `StreamEvent`。它从真实 `Uint8Array` 开始，允许你调整 chunk 范围，并依次观察 wire bytes、增量 decode 输出、完整 line 和最终 normalized event。
+调整 chunk 范围与 seed，切换 Raw/Wire 和 Events。无论切法如何，event 数、id 与多行 data 都应保持一致。
 
 <LessonDemo demoId="sse" presetId="sse-edge-cases" />
 
-建议按这个顺序操作：
-
-1. 点 `Every byte · 1B`（它会把 chunk min/max 设为 1，并关闭 delay），先不点开始。
-2. 反复点“单步”到 emoji 的四个 byte 和末尾 `\r`，确认 decoder 没有产出 `�`，line scanner 也没有提前产出。
-3. 继续到空行，观察两条 data 合成一个 event。
-4. 切到 Events，确认 `retry` control 不会被误当作 provider JSON；EOF residual 的丢弃由本地 workshop contract 精确验证。
-
-## 阅读 solution diff
-
-最重要的变化不是某个 if，而是 parser 开始保存跨 chunk 状态：
+## Solution diff
 
 ```diff
-- const text = new TextDecoder().decode(chunk)
-- if (text.startsWith('data:')) events.push({ data: text.slice(5).trimStart() })
-+ pending += decoder.push(chunk)
-+ const drained = drainLessonLines(pending, false)
-+ pending = drained.rest
-+ for (const line of drained.lines) {
-+   processLine(line, state, events)
-+ }
+-return { events: [], lastEventId: '' }
++const events = []
++const buffer = { data: '', type: '', lastEventId: '' }
++for (const line of completeLines(decodeUtf8Chunks(chunks))) {
++  if (line === '') dispatch(buffer, events)
++  else if (!line.startsWith(':')) applyField(line, buffer)
++}
++return {
++  events,
++  lastEventId: buffer.lastEventId,
++  ...(buffer.retryMs === undefined ? {} : { retryMs: buffer.retryMs }),
++}
 ```
 
-循环结束后的 diff 同样关键：
+真实 solution 还处理上述六条规则；这段 diff 只展示本课唯一 TODO 的核心。
 
-```diff
-+ pending += decoder.finish()
-+ const drained = drainLessonLines(pending, true)
-+ for (const line of drained.lines) processLine(line, state, events)
-+ // 不 dispatch 剩余 state.data
+```bash
+pnpm --filter stream-render-lab lesson 05 test
 ```
 
-## Invariant、成本与退化
+预期通过：
 
-### Invariant
+```text
+✓ parses WHATWG SSE fields and drops EOF residue
+Test Files  1 passed
+Tests       5 passed
+```
 
-任意 byte partition、任意合法 CR/LF/CRLF 组合，都不能改变 event 序列；provider adapter 看到的 JSON 字符串必须与 wire 中 dispatch 后的 data 完全一致。
+```bash
+pnpm --filter stream-render-lab lesson 05 solution
+```
 
-### Trade-off
+## Checkpoint：parser 不依赖 transport 分块
 
-parser 保存 decoder、text rest 和 event state，代码比 split 多。TextDecoder 内部的未完整 code point 是有界的，但未换行的 field 和未 dispatch 的 data event 都可能随输入增长；因此正确性之外还必须配置 line、event 和 body size limit。
+- [ ] same bytes 的 every-byte 与整块输入产生相同 events。
+- [ ] 多行 data 保留中间 `\n`。
+- [ ] comment 不派发，EOF residue 不派发。
+- [ ] CRLF 在 `\r | \n` 之间切开仍正确。
 
-### 退化与失败
+**Invariant：** parser 输出只由完整 SSE lines 与空行决定，与 byte/text chunk partition 无关。
 
-- 非法 UTF-8 默认被 TextDecoder 替换；如果产品要求硬失败，可启用 `{ fatal: true }`，但必须显式定义错误 outcome。
-- 单条永不换行的超大 field 会让 text rest 持续增长，需要由 transport/body limit 保护。
-- `retry` 是 EventSource 重连建议；你的 fetch proxy 是否自动重连，是 source 层的另一项产品决策。
-- terminal marker 已在未派发的 EOF 残留中时，仍然不能“猜测完成”，结果是 truncated。
+**Trade-off：** 状态机比 `split` 多保存少量状态，却能准确区分完整事件与截断残留。
+
+**退化条件：** 只有 LF、单行 data 的理想 fixture 会让错误实现看似正确，所以不能作为唯一测试。
+
+## 常见错误
+
+| 错误                   | 后果                              |
+| ---------------------- | --------------------------------- |
+| `trim()` 整行          | 改掉 data 中有意义的尾空格        |
+| EOF 自动 dispatch      | 把截断 payload 当成完整事件       |
+| parser 内 `JSON.parse` | 协议 framing 与 provider 语义耦合 |
+| CR 后立即发空行        | 跨 chunk CRLF 可能被算两次        |
 
 ## 挑战题
 
-1. 为 parser 增加 64 KiB 的单行上限。它应返回 failed，还是让 source 产生 truncated？说明分层理由。
-2. 构造一个 `id:` 空值 fixture，证明后续 event 的 ID 被重置为空字符串。
-3. 构造 `data:  x`，证明最终 data 保留一个前导空格。
-4. 如果 proxy 把 gzip 解压后的数据重新任意分块，你的 parser 是否需要改动？为什么？
+把 fixture 的每个 byte 都作为独立 chunk，输出 line 与 event trace。再加入 `retry: 12x`，证明它不会更新 retry。
+
+## 下一步映射
+
+05 只输出 `{ event, data }`。06 才认识 Chat Completions 的 JSON shape，把 `choices[i].delta.content` 映射成 mini-chat 能消费的 text delta。
 
 ## 面试时怎么讲
 
-> 我没有用双换行 split SSE，而是把 bytes → UTF-8 → lines → fields → provider JSON 分成独立状态机。TextDecoder 跨 chunk 保留多字节字符，line scanner 同时支持 CR/LF/CRLF，event buffer 处理多行 data、持久 id 与 retry。测试会枚举 every-byte partition，并证明 EOF residual 不 dispatch，从而把 transport truncated 与 provider malformed 分开。
+> 我按 WHATWG framing 写增量 SSE parser：UTF-8、line、field、event 四层分开；支持三种换行、多行 data、comment、id、retry，并明确丢弃 EOF 未派发残留。provider JSON 不进入 parser。
 
-下一课的 provider adapter 会消费这里产生的 message event；它不需要知道 byte 是怎样切开的。
+[下一课：06 · Chat Completions adapter →](/learn/06-chat-completions)

@@ -7,7 +7,16 @@ describe('stream render lesson contract', () => {
   it('keeps every registered demo and preset discoverable', () => {
     const demos = listLessonDemos()
 
-    expect(demos.map(({ demoId }) => demoId)).toEqual(['quick-start', 'sse', 'm1'])
+    expect(demos.map(({ demoId }) => demoId)).toEqual([
+      'response',
+      'replay',
+      'm0',
+      'utf8',
+      'quick-start',
+      'sse',
+      'chat-adapter',
+      'm1',
+    ])
     for (const demo of demos) {
       expect(demo.presets.length).toBeGreaterThan(0)
       expect(demo.presets.every((preset) => isDemoPresetPair(demo.demoId, preset))).toBe(true)
