@@ -1,21 +1,37 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { BrowserClock, type Cancel, type EngineClock } from '../engine/clock'
 import { createStreamingRenderEngine } from '../engine/create-engine'
 import type { RenderRun } from '../engine/types'
+import { CadenceClock } from './cadence-clock'
 import { ControlledWireSession } from './controlled-source'
-import type { LabConfig, LabSettledReport, LabState, LabTrace } from './types'
+import { EMPTY_TRACE, freezeTrace, mutableTrace, type MutableTrace } from './lab-trace'
+import { createTimelineRecorder, type LabTimelineRecorder } from './timeline-recorder'
+import type { LabConfig, LabSettledReport, LabState, LabTimelineSnapshot } from './types'
 import { buildWireChunks } from './wire'
 
-const EMPTY_TRACE: LabTrace = { wire: [], decoded: [], lines: [], sse: [], events: [] }
+const EMPTY_TIMELINE: LabTimelineSnapshot = {
+  elapsedMs: 0,
+  plannedDurationMs: 0,
+  arrivals: [],
+  publishes: {},
+}
 const INITIAL_STATE: LabState = {
   status: 'idle',
   progress: { current: 0, total: 0 },
   snapshots: {},
+  timeline: EMPTY_TIMELINE,
   trace: EMPTY_TRACE,
 }
 
-export function useLabSession(config: LabConfig, onSettled?: (report: LabSettledReport) => void) {
+interface LabSessionOptions {
+  recordTimeline?: boolean
+}
+
+export function useLabSession(
+  config: LabConfig,
+  onSettled?: (report: LabSettledReport) => void,
+  options: LabSessionOptions = {},
+) {
   const [state, setState] = useState<LabState>(INITIAL_STATE)
   const sessionRef = useRef<ControlledWireSession | null>(null)
   const runsRef = useRef<RenderRun[]>([])
@@ -23,6 +39,7 @@ export function useLabSession(config: LabConfig, onSettled?: (report: LabSettled
   const generationRef = useRef(0)
   const settledRef = useRef(onSettled)
   const traceRef = useRef<MutableTrace>(mutableTrace())
+  const timelineRef = useRef<LabTimelineRecorder | null>(null)
   const tracePublishPending = useRef(false)
   settledRef.current = onSettled
 
@@ -42,6 +59,7 @@ export function useLabSession(config: LabConfig, onSettled?: (report: LabSettled
       const trace = traceRef.current
       setState((current) => ({
         ...current,
+        timeline: timelineRef.current?.snapshot() ?? current.timeline,
         trace: freezeTrace(trace),
       }))
     })
@@ -53,18 +71,31 @@ export function useLabSession(config: LabConfig, onSettled?: (report: LabSettled
     const chunks = buildWireChunks(config)
     const clock = new CadenceClock(config.commitCadenceMs)
     const engine = createStreamingRenderEngine({ clock })
+    timelineRef.current = options.recordTimeline
+      ? createTimelineRecorder({
+          clock,
+          plannedDurationMs: chunks.reduce((total, chunk) => total + chunk.delayMs, 0),
+        })
+      : null
     traceRef.current = mutableTrace()
     setState({
       ...INITIAL_STATE,
       status: 'running',
       progress: { current: 0, total: chunks.length },
+      timeline: timelineRef.current?.snapshot() ?? EMPTY_TIMELINE,
     })
 
     const session = new ControlledWireSession(clock, chunks, config.transport, {
-      onStatus: (status) => setState((current) => ({ ...current, status })),
+      onStatus: (status) =>
+        setState((current) => ({
+          ...current,
+          status,
+          timeline: timelineRef.current?.snapshot() ?? current.timeline,
+        })),
       onProgress: (current, total) =>
         setState((value) => ({ ...value, progress: { current, total } })),
       onWire: (record) => {
+        timelineRef.current?.observeArrival(record)
         traceRef.current.wire.push(record)
         publishTrace()
       },
@@ -97,11 +128,15 @@ export function useLabSession(config: LabConfig, onSettled?: (report: LabSettled
     )
     runsRef.current = [...runs]
     runs.forEach((run, index) => {
-      const publish = () =>
+      const publish = () => {
+        const snapshot = run.state.getSnapshot()
+        timelineRef.current?.observePublish(profiles[index], snapshot)
         setState((current) => ({
           ...current,
-          snapshots: { ...current.snapshots, [profiles[index]]: run.state.getSnapshot() },
+          snapshots: { ...current.snapshots, [profiles[index]]: snapshot },
+          timeline: timelineRef.current?.snapshot() ?? current.timeline,
         }))
+      }
       publish()
       unsubscribeRef.current.push(run.state.subscribe(publish))
     })
@@ -111,7 +146,12 @@ export function useLabSession(config: LabConfig, onSettled?: (report: LabSettled
       const snapshots = Object.fromEntries(
         results.map((result, index) => [profiles[index], result.snapshot]),
       )
-      setState((current) => ({ ...current, status: 'settled', snapshots }))
+      setState((current) => ({
+        ...current,
+        status: 'settled',
+        snapshots,
+        timeline: timelineRef.current?.snapshot() ?? current.timeline,
+      }))
       const primary = results[1] ?? results[0]
       settledRef.current?.({
         runId: primary.snapshot.runId,
@@ -121,11 +161,12 @@ export function useLabSession(config: LabConfig, onSettled?: (report: LabSettled
       })
     })
     return session
-  }, [config, publishTrace, stopCurrent])
+  }, [config, options.recordTimeline, publishTrace, stopCurrent])
 
   const reset = useCallback(() => {
     stopCurrent('user reset')
     traceRef.current = mutableTrace()
+    timelineRef.current = null
     setState(INITIAL_STATE)
   }, [stopCurrent])
 
@@ -147,41 +188,5 @@ export function useLabSession(config: LabConfig, onSettled?: (report: LabSettled
     resume: () => sessionRef.current?.resume(),
     step,
     reset,
-  }
-}
-
-interface MutableTrace {
-  wire: LabTrace['wire'][number][]
-  decoded: LabTrace['decoded'][number][]
-  lines: string[]
-  sse: LabTrace['sse'][number][]
-  events: LabTrace['events'][number][]
-}
-
-function mutableTrace(): MutableTrace {
-  return { wire: [], decoded: [], lines: [], sse: [], events: [] }
-}
-
-function freezeTrace(trace: MutableTrace): LabTrace {
-  return {
-    wire: [...trace.wire],
-    decoded: [...trace.decoded],
-    lines: [...trace.lines],
-    sse: [...trace.sse],
-    events: [...trace.events],
-  }
-}
-
-class CadenceClock implements EngineClock {
-  private readonly browser = new BrowserClock()
-  constructor(private readonly cadenceMs: number) {}
-  now(): number {
-    return this.browser.now()
-  }
-  frame(task: (timestamp: number) => void): Cancel {
-    return this.browser.after(Math.max(1, this.cadenceMs), () => task(this.now()))
-  }
-  after(ms: number, task: () => void): Cancel {
-    return this.browser.after(ms, task)
   }
 }

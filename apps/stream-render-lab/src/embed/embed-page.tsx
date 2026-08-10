@@ -72,6 +72,7 @@ export default function EmbedPage() {
         <LabWorkbench
           embedded
           initialPreset={presetId}
+          presentation={demoId === 'quick-start' ? 'lesson-compare' : 'full'}
           onSettled={(report) =>
             postReport({
               version: 1,

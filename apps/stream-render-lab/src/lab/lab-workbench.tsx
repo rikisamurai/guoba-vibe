@@ -5,6 +5,7 @@ import { LabAdvanced } from './lab-advanced'
 import { LabControls } from './lab-controls'
 import { LabInspector } from './lab-inspector'
 import { LabLessonControls } from './lab-lesson-controls'
+import { LessonComparePanel } from './lesson-compare-panel'
 import { labPreset, presetConfig } from './presets'
 import type { LabConfig, LabInspectorTab, LabSettledReport } from './types'
 import { useLabSession } from './use-lab-session'
@@ -13,18 +14,21 @@ interface Props {
   embedded?: boolean
   initialPreset?: LessonPresetId
   onSettled?: (report: LabSettledReport) => void
+  presentation?: 'full' | 'lesson-compare'
 }
 
 export function LabWorkbench({
   embedded = false,
   initialPreset = 'quick-start-burst',
   onSettled,
+  presentation = 'full',
 }: Props) {
   const [config, setConfig] = useState(() => presetConfig(initialPreset))
   const [tab, setTab] = useState<LabInspectorTab>(
     initialPreset === 'sse-edge-cases' ? 'wire' : 'rendered',
   )
-  const session = useLabSession(config, onSettled)
+  const lessonCompare = presentation === 'lesson-compare'
+  const session = useLabSession(config, onSettled, { recordTimeline: lessonCompare })
   const locked = session.state.status === 'running' || session.state.status === 'paused'
   const preset = labPreset(config.presetId)
 
@@ -36,6 +40,26 @@ export function LabWorkbench({
     session.reset()
     setConfig(presetConfig(id))
     setTab(id === 'sse-edge-cases' ? 'wire' : 'rendered')
+  }
+
+  if (lessonCompare) {
+    return (
+      <div className="lab2-workbench is-embedded is-lesson-compare">
+        <LessonComparePanel
+          actions={{
+            onStart: session.start,
+            onPause: session.pause,
+            onResume: session.resume,
+            onStep: session.step,
+            onReset: session.reset,
+          }}
+          baseline={config.baseline}
+          challenger={config.challenger}
+          state={session.state}
+          timeline={session.state.timeline}
+        />
+      </div>
+    )
   }
 
   return (

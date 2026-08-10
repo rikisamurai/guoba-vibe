@@ -43,6 +43,25 @@ export interface WireChunkRecord {
   preview: string
 }
 
+export interface LabTimelineArrivalPoint extends WireChunkRecord {
+  atMs: number
+}
+
+export interface LabTimelinePublishPoint {
+  atMs: number
+  revision: number
+  rawLength: number
+  visibleLength: number
+  commits: number
+}
+
+export interface LabTimelineSnapshot {
+  elapsedMs: number
+  plannedDurationMs: number
+  arrivals: readonly LabTimelineArrivalPoint[]
+  publishes: Partial<Record<RenderProfile, readonly LabTimelinePublishPoint[]>>
+}
+
 export interface DecodedChunkRecord {
   index: number
   byteLength: number
@@ -61,6 +80,7 @@ export interface LabState {
   status: LabPlaybackStatus
   progress: { current: number; total: number }
   snapshots: Partial<Record<RenderProfile, RenderSnapshot>>
+  timeline: LabTimelineSnapshot
   trace: LabTrace
 }
 

@@ -25,7 +25,12 @@ export function buildWireChunks(config: LabConfig): WireChunk[] {
         : naturalEnd
     const chunk = bytes.slice(start, Math.max(start + 1, end))
     const burst = random() * 100 < config.burstiness
-    const delayMs = burst ? config.delayMin : randomInt(random, config.delayMin, config.delayMax)
+    const delayMs =
+      config.presetId === 'quick-start-burst'
+        ? 0
+        : burst
+          ? config.delayMin
+          : randomInt(random, config.delayMin, config.delayMax)
     chunks.push({
       bytes: chunk,
       index: chunks.length,
@@ -36,7 +41,67 @@ export function buildWireChunks(config: LabConfig): WireChunk[] {
     })
     start += chunk.byteLength
   }
+  if (config.presetId === 'quick-start-burst') applyQuickStartCadence(chunks, config)
   return chunks
+}
+
+function applyQuickStartCadence(chunks: WireChunk[], config: LabConfig): void {
+  const random = mulberry32(config.seed ^ 0x62757273)
+  const [minimumSize, maximumSize] = burstSizeRange(config.burstiness)
+  const groupSizes = balancedBurstSizes(chunks.length, minimumSize, maximumSize, random)
+  let chunkIndex = 0
+
+  for (const [groupIndex, groupSize] of groupSizes.entries()) {
+    const microDelayMaximum = intraBurstDelayMaximum(groupSize, config.commitCadenceMs)
+    for (let offset = 0; offset < groupSize; offset += 1) {
+      const chunk = chunks[chunkIndex]
+      if (!chunk) return
+      chunk.delayMs =
+        offset > 0
+          ? randomInt(random, 0, microDelayMaximum)
+          : groupIndex === 0
+            ? 0
+            : randomInt(random, config.delayMin, config.delayMax)
+      chunkIndex += 1
+    }
+  }
+}
+
+function intraBurstDelayMaximum(groupSize: number, commitCadenceMs: number): number {
+  if (groupSize <= 1) return 0
+  const frameBudget = Math.max(0, Math.floor(commitCadenceMs) - 1)
+  return Math.min(4, Math.floor(frameBudget / (groupSize - 1)))
+}
+
+function burstSizeRange(burstiness: number): [number, number] {
+  const bounded = Math.min(99, Math.max(0, burstiness))
+  const target = Math.min(12, Math.max(1, Math.round(100 / (100 - bounded))))
+  return [Math.max(1, target - 1), target + 1]
+}
+
+function balancedBurstSizes(
+  total: number,
+  minimumSize: number,
+  maximumSize: number,
+  random: () => number,
+): number[] {
+  if (total < minimumSize) return [total]
+  const minimumGroups = Math.ceil(total / maximumSize)
+  const maximumGroups = Math.floor(total / minimumSize)
+  const targetSize = Math.round((minimumSize + maximumSize) / 2)
+  const targetGroups = Math.ceil(total / targetSize)
+  const groupCount = Math.min(maximumGroups, Math.max(minimumGroups, targetGroups))
+  const sizes = Array.from({ length: groupCount }, () => minimumSize)
+  let remaining = total - groupCount * minimumSize
+
+  while (remaining > 0) {
+    const candidates = sizes.flatMap((size, index) => (size < maximumSize ? [index] : []))
+    const index = candidates[randomInt(random, 0, candidates.length - 1)]
+    if (index === undefined) break
+    sizes[index] += 1
+    remaining -= 1
+  }
+  return sizes
 }
 
 function providerWire(input: string, presetId: LessonPresetId): string {

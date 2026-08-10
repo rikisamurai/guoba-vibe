@@ -128,9 +128,9 @@ export const LAB_PRESETS: readonly LabPreset[] = [
       presetId: 'quick-start-burst',
       chunkMin: 48,
       chunkMax: 96,
-      delayMin: 80,
-      delayMax: 140,
-      burstiness: 20,
+      delayMin: 360,
+      delayMax: 450,
+      burstiness: 80,
     },
   },
   {
