@@ -22,6 +22,14 @@ describe('Lab wire generator', () => {
     expect(concatenate(everyByte)).toEqual(concatenate(largeChunks))
   })
 
+  it('keeps the Quick Start replay slow enough to inspect', () => {
+    const chunks = buildWireChunks(presetConfig('quick-start-burst'))
+    const totalDelay = chunks.reduce((sum, chunk) => sum + chunk.delayMs, 0)
+
+    expect(chunks.length).toBeGreaterThanOrEqual(12)
+    expect(totalDelay).toBeGreaterThanOrEqual(3_000)
+  })
+
   it('keeps every default teaching replay below a short deterministic budget', () => {
     for (const { id } of LAB_PRESETS) {
       const chunks = buildWireChunks(presetConfig(id))

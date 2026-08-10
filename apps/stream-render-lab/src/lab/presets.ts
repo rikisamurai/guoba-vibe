@@ -126,11 +126,11 @@ export const LAB_PRESETS: readonly LabPreset[] = [
     config: {
       ...BASE,
       presetId: 'quick-start-burst',
-      chunkMin: 2_048,
-      chunkMax: 4_096,
-      delayMin: 0,
-      delayMax: 0,
-      burstiness: 100,
+      chunkMin: 48,
+      chunkMax: 96,
+      delayMin: 80,
+      delayMax: 140,
+      burstiness: 20,
     },
   },
   {
