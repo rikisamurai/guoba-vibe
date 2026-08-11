@@ -1,5 +1,20 @@
 import { defineStep05Contract } from '../contract'
-import * as core from './index'
-import * as sse from './sse'
+import {
+  MiniChat,
+  createM0Renderer,
+  createVirtualClock,
+  decodeUtf8Chunks,
+  replayText,
+  sendNonStreamingTurn,
+} from './index'
+import { parseEventStream } from './sse'
 
-defineStep05Contract({ ...core, ...sse })
+defineStep05Contract({
+  MiniChat,
+  sendNonStreamingTurn,
+  createVirtualClock,
+  replayText,
+  createM0Renderer,
+  decodeUtf8Chunks,
+  parseEventStream,
+})

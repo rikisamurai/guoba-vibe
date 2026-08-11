@@ -1,4 +1,4 @@
 import { defineStep01Contract } from '../contract'
-import * as solution from './index'
+import { MiniChat, sendNonStreamingTurn } from './index'
 
-defineStep01Contract(solution)
+defineStep01Contract({ MiniChat, sendNonStreamingTurn })

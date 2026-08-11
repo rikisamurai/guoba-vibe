@@ -1,4 +1,16 @@
 import { defineStep03Contract } from '../contract'
-import * as solution from './index'
+import {
+  MiniChat,
+  createM0Renderer,
+  createVirtualClock,
+  replayText,
+  sendNonStreamingTurn,
+} from './index'
 
-defineStep03Contract(solution)
+defineStep03Contract({
+  MiniChat,
+  sendNonStreamingTurn,
+  createVirtualClock,
+  replayText,
+  createM0Renderer,
+})

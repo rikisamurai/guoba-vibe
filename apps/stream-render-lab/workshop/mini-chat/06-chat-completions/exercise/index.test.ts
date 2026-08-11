@@ -1,6 +1,22 @@
 import { defineStep06Contract } from '../contract'
-import * as chatCompletions from './chat-completions'
-import * as core from './index'
-import * as sse from './sse'
+import { adaptChatCompletions } from './chat-completions'
+import {
+  MiniChat,
+  createM0Renderer,
+  createVirtualClock,
+  decodeUtf8Chunks,
+  replayText,
+  sendNonStreamingTurn,
+} from './index'
+import { parseEventStream } from './sse'
 
-defineStep06Contract({ ...core, ...sse, ...chatCompletions })
+defineStep06Contract({
+  MiniChat,
+  sendNonStreamingTurn,
+  createVirtualClock,
+  replayText,
+  createM0Renderer,
+  decodeUtf8Chunks,
+  parseEventStream,
+  adaptChatCompletions,
+})

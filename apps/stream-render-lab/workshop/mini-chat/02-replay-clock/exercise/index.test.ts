@@ -1,4 +1,14 @@
 import { defineStep02Contract } from '../contract'
-import * as exercise from './index'
+import {
+  MiniChat,
+  createVirtualClock,
+  replayText,
+  sendNonStreamingTurn,
+} from './index'
 
-defineStep02Contract(exercise)
+defineStep02Contract({
+  MiniChat,
+  sendNonStreamingTurn,
+  createVirtualClock,
+  replayText,
+})

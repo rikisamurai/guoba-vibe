@@ -1,7 +1,24 @@
 import { defineStep10Contract } from '../contract'
-import * as chatCompletions from './chat-completions'
-import * as frameBatcher from './frame-batcher'
-import * as core from './index'
-import * as sse from './sse'
+import { adaptChatCompletions } from './chat-completions'
+import { createFrameBatcher } from './frame-batcher'
+import {
+  MiniChat,
+  createM0Renderer,
+  createVirtualClock,
+  decodeUtf8Chunks,
+  replayText,
+  sendNonStreamingTurn,
+} from './index'
+import { parseEventStream } from './sse'
 
-defineStep10Contract({ ...core, ...sse, ...chatCompletions, ...frameBatcher })
+defineStep10Contract({
+  MiniChat,
+  sendNonStreamingTurn,
+  createVirtualClock,
+  replayText,
+  createM0Renderer,
+  decodeUtf8Chunks,
+  parseEventStream,
+  adaptChatCompletions,
+  createFrameBatcher,
+})
