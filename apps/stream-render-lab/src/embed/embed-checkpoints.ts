@@ -6,6 +6,7 @@ export function labCheckpoints(
   demoId: LessonDemoId,
   report: LabSettledReport,
 ): readonly CheckpointResult[] {
+  if (demoId === 'quick-start') return quickStartCheckpoints(report)
   const snapshots = Object.values(report.snapshots)
   const raw = snapshots.map(
     (snapshot) => snapshot?.parts.find((part) => part.kind === 'answer')?.raw,
@@ -24,7 +25,51 @@ export function labCheckpoints(
     },
   ]
   if (demoId === 'sse') return [...common, ...sseCheckpoints(report)]
-  return [...common, ...renderCheckpoints(report, demoId === 'quick-start' ? 'M4' : 'M1')]
+  return [...common, ...renderCheckpoints(report, 'M1')]
+}
+
+function quickStartCheckpoints(report: LabSettledReport): CheckpointResult[] {
+  const baseline = report.snapshots.M0
+  const challenger = report.snapshots.M4
+  const baselineAnswer = baseline?.parts.find((part) => part.kind === 'answer')
+  const challengerAnswer = challenger?.parts.find((part) => part.kind === 'answer')
+  return [
+    {
+      id: 'complete-response',
+      label: '两种策略都处理到完整回复',
+      passed:
+        baseline?.phase === 'settled' &&
+        challenger?.phase === 'settled' &&
+        baseline.outcome?.kind === 'completed' &&
+        challenger.outcome?.kind === 'completed',
+    },
+    {
+      id: 'received-text-equivalent',
+      label: '最终接收文本完全相同',
+      passed:
+        baselineAnswer !== undefined &&
+        challengerAnswer !== undefined &&
+        baselineAnswer.raw === challengerAnswer.raw,
+    },
+    {
+      id: 'visible-text-equivalent',
+      label: '最终显示文本追平接收文本且彼此相同',
+      passed:
+        baselineAnswer !== undefined &&
+        challengerAnswer !== undefined &&
+        baselineAnswer.visible === baselineAnswer.raw &&
+        challengerAnswer.visible === challengerAnswer.raw &&
+        baselineAnswer.visible === challengerAnswer.visible,
+    },
+    {
+      id: 'visible-update-reduction',
+      label: 'M4 产生更少的显示文本状态更新',
+      passed:
+        report.visibleTextUpdates?.M0 !== undefined &&
+        report.visibleTextUpdates.M4 !== undefined &&
+        report.visibleTextUpdates.M4 < report.visibleTextUpdates.M0,
+    },
+  ]
 }
 
 function renderCheckpoints(report: LabSettledReport, candidate: 'M1' | 'M4'): CheckpointResult[] {

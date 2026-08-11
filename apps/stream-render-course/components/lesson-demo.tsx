@@ -60,7 +60,7 @@ export function LessonDemo({ demoId, presetId }: LessonDemoProps) {
     >
       <header className="lesson-demo__header">
         <div>
-          <span>LIVE LAB</span>
+          <span>互动实验</span>
           <strong>{LESSON_DEMOS[demoId].label}</strong>
         </div>
         <output data-state={state.kind}>{statusText(state)}</output>
@@ -80,7 +80,7 @@ export function LessonDemo({ demoId, presetId }: LessonDemoProps) {
       <footer className="lesson-demo__footer">
         <div aria-live="polite">
           {settled === undefined ? (
-            <p>运行结束后，这里会核对本章 invariant。</p>
+            <p>实验结束后，这里会核对本章检查项。</p>
           ) : (
             <CheckpointSummary report={settled} />
           )}
@@ -99,9 +99,10 @@ function CheckpointSummary({ report }: { report: Extract<DemoReport, { kind: 'ru
     <div className="lesson-demo__checks">
       <p>
         <strong>
-          {passed}/{report.checkpoints.length} checks
-        </strong>{' '}
-        · {report.outcome} · run {report.runId}
+          已通过 {passed}/{report.checkpoints.length} 项检查
+        </strong>
+        {' · '}
+        {outcomeText(report.outcome)}
       </p>
       <ul>
         {report.checkpoints.map((checkpoint) => (
@@ -119,7 +120,18 @@ function CheckpointSummary({ report }: { report: Extract<DemoReport, { kind: 'ru
 }
 
 function statusText(state: DemoState): string {
-  if (state.kind === 'waiting') return '等待 Lab'
+  if (state.kind === 'waiting') return '正在加载实验'
   if (state.kind === 'ready') return '可以运行'
-  return state.report.outcome
+  return outcomeText(state.report.outcome)
+}
+
+function outcomeText(outcome: Extract<DemoReport, { kind: 'run-settled' }>['outcome']): string {
+  const labels = {
+    cancelled: '实验已停止',
+    completed: '实验完成',
+    failed: '实验失败',
+    incomplete: '响应不完整',
+    truncated: '响应被截断',
+  } as const
+  return labels[outcome]
 }

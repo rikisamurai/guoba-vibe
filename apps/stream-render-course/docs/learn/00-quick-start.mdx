@@ -1,6 +1,6 @@
 ---
-title: 00 · Quick Start：先把地图和环境跑通
-description: 十分钟认识最终项目、两个站点与课程的练习循环。
+title: 00 · Quick Start：先看懂一次流式回答
+description: 跑通课程，用三个观察理解网络读取、模型文本增量与显示文本状态更新为什么不是同一件事。
 ---
 
 import { LessonDemo } from '../../components/lesson-demo'
@@ -8,197 +8,158 @@ import { LessonMeta } from '../../components/lesson-meta'
 
 <p className="sr-kicker">CHAPTER 00 · ORIENTATION</p>
 
-# 先跑通，再谈 Streaming
+# 先看懂一次流式回答
 
-这一课不要求你实现任何优化。你只要确认环境、找到将持续演进的 mini-chat，并能说出一段网络响应从 byte 到 React 的最短路径。
+这一课**不写代码，也不要求你记住渲染引擎的实现**。我们先把项目跑起来，再用一条符合 DeepSeek Chat Completions 数据格式的可重复 SSE 响应观察三个不同阶段。
 
 <LessonMeta
-  duration="10 分钟"
-  exercise="1 个真实 M0 / M4 对照 TODO"
-  prerequisites={['TypeScript', 'React', 'Promise', '基础 HTTP']}
+  duration="15 分钟"
+  exercise="完成 3 个观察检查点"
+  prerequisites={['TypeScript', 'Promise', '基础 HTTP']}
 />
 
-## 先看终点：同一份回答，为什么感受不同
+学完后，你应该能用自己的话解释：
 
-下面两列吃的是**同一条 trace**。M0 每到一小段就立即公开一次；M4 代表课程终点的优化版。现在不用懂它们怎么实现，只看四件事：
+> 浏览器读到一次数据，不等于模型新增一次文本，也不等于界面产生一次显示文本状态更新。
 
-- `arrival clock`：小段什么时候真正到达。
-- `raw`：程序已经收到的完整原文，不能因为渲染慢就丢字。
-- `display clock`：浏览器决定什么时候把新画面交给你。
-- `visible`：此刻屏幕上真正看得见的内容。
+## 第一步：先启动 Course 与 Lab
 
-<LessonDemo demoId="quick-start" presetId="quick-start-burst" />
-
-点击开始后，先看 `raw` 是否同速增长，再看 `visible` 和 commit 数。你应该得到第一个直觉：
-
-```text
-网络到达节奏 ≠ 屏幕更新节奏
-raw 是事实，visible 是当前发布给用户的版本
-```
-
-后面的每一课都只会解开这个对照里的一层，不会让你直接复制一个黑盒。
-
-## 本节新增文件
-
-00 有自己的观察型 workshop。它不会让你先实现 M4，而是用真实生产引擎把“课程起点”和“课程终点”放到同一个可重复实验里：
-
-```text
-apps/stream-render-lab/workshop/mini-chat/00-quick-start/
-├── fixture.ts                    # 一条有 4 个 delta 的 Replay trace
-├── run-profile.ts                # 真实 Engine + VirtualClock + ReplaySource
-├── contract.ts                   # 两边终态与 commit 断言
-├── exercise/run-comparison.ts    # 本节唯一 TODO
-└── solution/run-comparison.ts    # 参考答案
-```
-
-这里没有复制一个“教学版假引擎”。`run-profile.ts` 直接从 Lab 导入：
-
-```ts
-import { createStreamingRenderEngine, VirtualClock } from '../../../src/engine'
-import { ReplaySource } from '../../../src/replay'
-```
-
-因此你看到的 commit、raw 和 Render IR，正是后续 Lab 与真实 Chat 使用的那套语义。
-
-## 为什么从非流式 Chat 开始
-
-如果直接从一堆网络事件开始，你很难判断错误属于协议、状态还是渲染。我们的路线先建立一个“等完整字符串再显示”的正确版本，再一层层替换输入边界：
-
-```text
-bytes → UTF-8 text → SSE event → provider delta → chat state → React
-```
-
-这六层不能因为都包含“文本”就合成一个函数。后面的每个线上怪问题，都能落回其中一条边界。
-
-## 先观察一个可复现失败
-
-从仓库根目录运行 00 的 exercise：
+从 `guoba-vibe` 仓库根目录运行：
 
 ```bash
-pnpm --filter stream-render-lab lesson 00 test
-```
-
-你应该看到 3 个 contract 中前 2 个通过、最后 1 个失败：
-
-```text
-✓ 00 settles both views with the complete replay
-✓ 00 keeps final raw and render IR equivalent
-× 00 compares M0 with M4 and publishes fewer commits
-Expected: "M4"
-Received: "M0"
-
-Tests  1 failed | 2 passed
-```
-
-这不是引擎坏了。starter 故意把左右两边都跑成 M0：最终内容当然一致，但它没有真正比较优化后的 profile。
-
-## 启动 Course 与 Lab
-
-先确认 Node.js 与 pnpm 使用仓库要求的版本，再启动两个站点：
-
-```bash
-cd <guoba-vibe 仓库根目录>
 node --version          # 必须 >= 24
 corepack pnpm --version # 应为 11.3.0
 pnpm install
 pnpm dev:stream-render
 ```
 
-预期出现：
+终端应该给出两个地址：
 
 ```text
 stream-render-course  Local: http://localhost:5173/
 stream-render-lab     Local: http://localhost:5174/
 ```
 
-Course 是教程，Lab 是可操作实验。若脚本提示端口被占用，不要继续盯着旧页面：先用 `lsof -nP -iTCP:5173 -sTCP:LISTEN` 确认进程，再停止旧服务重新启动。
+- `5173` 是你正在阅读的 Course。
+- `5174` 是能暂停、单步和检查中间数据的 Lab。
 
-## 找到唯一 TODO
+如果页面与本文截图明显不同，先运行 `lsof -nP -iTCP:5173 -sTCP:LISTEN`。旧 worktree 的进程可能仍占着端口；停止旧进程后，再重新运行启动命令。
 
-打开 `exercise/run-comparison.ts`。完整问题只有一行：
+## 先说人话：同一个“流式”里有三种节奏
 
-```ts
-export async function runComparison(): Promise<QuickStartComparison> {
-  const baseline = await runProfile('M0')
-  // TODO 00: 用课程终点 profile 跑右侧，不要把 M0 结果重复比较一次。
-  const challenger = await runProfile('M0')
-  return { baseline, challenger }
-}
-```
-
-`baseline` 是从零开始学习时的基线；`challenger` 应该代表课程完成后的 M4。两次运行仍使用相同的 fixture、16 ms frame 和 direct reveal，所以唯一变量只能是 profile。
-
-<details>
-  <summary>提示：应该换成哪个字符串？</summary>
-
-在页面顶部的对照实验里，右列名称已经告诉你答案：`M4`。
-
-</details>
-
-## Contract 到底证明了什么
-
-不要只看“测试绿了”。这三个断言分别保护三件不同的事：
+假设浏览器先后读到下面两个 chunks：
 
 ```text
-两次 outcome 都是 completed
-→ 两次最终 raw 完整且相同
-→ 两次最终 Render IR 等价
-→ M4 用更少 commit 到达相同终点
+第 1 次读取：data: {"choices":[{"delta":{"content":"Hel
+第 2 次读取：lo"}}]}\n\n
 ```
 
-如果只断言 commit 更少，丢掉半句话也可能“性能更好”。所以性能结论必须排在正确性之后。
+第二次读取结束后，SSE 解析器才拿到空行，因而可以派发一条完整事件；DeepSeek 协议适配器再从 JSON 的 `choices[].delta.content` 中取出文本 `Hello`。渲染层还可以把它与紧随其后的文本增量合并，在下一次状态更新里一起显示。
 
-## Solution diff
-
-```diff
- const baseline = await runProfile('M0')
--const challenger = await runProfile('M0')
-+const challenger = await runProfile('M4')
-```
-
-## 验证本地 workshop
-
-先保存你的修改并重跑 `lesson 00 test`。然后用独立 solution 快照确认参考实现：
-
-```bash
-pnpm --filter stream-render-lab lesson 00 solution
-```
-
-预期关键行：
+所以这里可能发生：
 
 ```text
-✓ 00 settles both views with the complete replay
-✓ 00 keeps final raw and render IR equivalent
-✓ 00 compares M0 with M4 and publishes fewer commits
-Test Files  1 passed
-Tests       3 passed
+2 个 chunks
+→ 1 个 SSE event
+→ 1 个 DeepSeek choices[].delta.content："Hello"
+→ 可以先不更新，稍后与其他文本增量合并为 1 次显示文本状态更新
 ```
 
-## Checkpoint
+箭头两侧不是一一对应关系。读取边界可能切在 JSON 中间；一次读取也可能包含多条完整 SSE events；多个文本增量又可能合并为一次显示文本状态更新。
 
-- [ ] Course 与 Lab 都来自当前 worktree，而不是旧进程。
-- [ ] `lesson 00 test` 在修改前恰好 1 红，修改后 3 绿。
-- [ ] 你能解释为什么必须先比较 raw / IR，再比较 commit。
-- [ ] 你能不用看答案说出六层数据流顺序。
+## 这些词分别来自哪里
 
-## 常见错误
+| 词语                          | 来源                                                                                                                             | 在本课程中的准确含义                                                                                                                                   |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **chunk**                     | [WHATWG Streams 标准](https://streams.spec.whatwg.org/#model)                                                                    | 从 `ReadableStream` 一次读到的一段数据。HTTP 响应体中通常是 `Uint8Array`；边界是任意的，不对应一个 TCP segment（TCP 报文段），也不保证是一条完整消息。 |
+| **SSE event**                 | [WHATWG HTML 的 Server-Sent Events 规范](https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream) | `text/event-stream` 按行解析后派发的一条事件。多个 `data:` 行可以组成同一事件，空行通常表示事件结束。                                                  |
+| **`choices[].delta.content`** | [DeepSeek Chat Completions API](https://api-docs.deepseek.com/api/create-chat-completion)                                        | DeepSeek 流式事件中的文本增量字段。它是服务商接口字段，不是 Web 协议的统一名称。                                                                       |
+| **raw**                       | 本项目概念                                                                                                                       | 渲染引擎已经接受并按顺序拼接的模型正文。它记录内容事实，不因为显示较慢而丢字。                                                                         |
+| **visible**                   | 本项目概念                                                                                                                       | 当前准备交给界面显示的正文版本。它可以暂时落后于 `raw`，但响应结束时必须追平。                                                                         |
+| **显示文本状态更新**          | 本项目概念                                                                                                                       | 引擎把一个新的 `visible` 版本交给界面状态。它不等于 React 已提交 DOM 更新，也不等于浏览器已把像素绘制出来。                                            |
 
-| 现象            | 原因                         | 修复                         |
-| --------------- | ---------------------------- | ---------------------------- |
-| 5173 还是旧页面 | 旧 worktree 的 Vite 仍占端口 | 停止旧 PID 后重启            |
-| `pnpm` 版本不同 | 没通过 Corepack 使用仓库版本 | `corepack enable`            |
-| 找不到 package  | 没在这份 monorepo 中运行     | 找到根 `pnpm-workspace.yaml` |
+## 三步观察实验
 
-## 挑战题
+下面的实验使用同一份可重复输入，同时运行**逐增量更新（M0）**和**合并更新（M4）**。括号中的 M0、M4 只是本项目的策略编号，不是行业标准：前者更频繁地更新显示文本，后者会合并一部分更新；两者最后必须显示同一份回答。
 
-不看本文，画出六层数据流，并标出 `JSON.parse` 应属于哪一层。再解释为什么 UTF-8 decoder 不应该知道 JSON。
+<LessonDemo demoId="quick-start" presetId="quick-start-burst" />
 
-## 下一步会替换哪一层
+### 观察一：读到 chunk，不代表正文立刻增加
 
-01 只实现最后一段：`完整字符串 → chat state → React`。此时没有网络 chunk，方便先把“正确答案”钉住。
+1. 点击“读取下一个 chunk”。
+2. 看 chunk 计数和读取时间线是否已经出现记录。
+3. 再看已接收文本（项目字段 `raw`）：在完整 SSE event 形成前，它可能仍然没有增长。
+
+这是正常现象。一条 SSE event 可以被拆到多个 chunks 中；在事件结束标记到达前，SSE 解析器不能把半截 JSON 当作模型内容。
+
+**检查点：** 此时网络没有“卡住”，只是应用还没有得到一条可以安全解释的完整协议事件。
+
+### 观察二：已接收文本可以领先当前显示文本
+
+继续点击“读取下一个 chunk”，直到完整 SSE event 带来一个 DeepSeek `choices[].delta.content`。此时已接收文本（`raw`）先增长；如果界面状态还没有更新，当前显示文本（`visible`）会暂时落后。
+
+点击“显示已接收文本”后，再看 `visible` 是否追上。这个短暂差值表示**已经收到但尚未显示**的正文，不代表内容丢失。
+
+**检查点：** 如果 `raw` 是 104 个字符、`visible` 是 82 个字符，那么待显示的是 22 个字符，而不是又缺少了一条网络消息。
+
+### 观察三：先核对内容，再比较状态更新次数
+
+点击“继续到完整回复”，然后按顺序检查：
+
+1. 逐增量更新（M0）和合并更新（M4）的最终已接收文本是否完全相同；
+2. 两种策略的最终显示文本是否都追平已接收文本；
+3. 在前两项成立后，合并更新（M4）的显示文本状态更新次数是否更少。
+
+前两项证明内容正确，第三项才是性能线索。如果只看“更新更少”，一个丢掉半句话的实现也可能看起来更快。
+
+**检查点：** 本实验只能证明合并更新策略以更少的显示文本状态更新到达相同终点。它不等于 React commit（React 把变更提交到 DOM）的次数更少，也不等于 browser paint（浏览器绘制像素）一定更快；后面的性能分析页会分别测量这些阶段。
+
+## 你刚刚看见的完整边界
+
+```text
+ReadableStream 中的 chunk
+→ UTF-8 文本
+→ SSE event
+→ DeepSeek choices[].delta.content
+→ 已接收文本（raw）
+→ 当前显示文本（visible）
+→ 显示文本状态更新
+→ React 提交 DOM 与浏览器绘制画面
+```
+
+这一课只要求你能指出每条边界“输入是什么、输出是什么”。后续课程会从左到右逐层实现，而不是把所有带文本的东西塞进一个流式函数。
+
+## 自测：下面哪句话正确
+
+- [ ] 一次 `reader.read()` 一定对应一个 TCP segment（TCP 报文段）。
+- [ ] 一条 SSE event 一定只包含一个字符。
+- [x] 多个 DeepSeek `choices[].delta.content` 可以合并为一次显示文本状态更新。
+- [ ] `raw` 暂时大于 `visible` 就表示丢字。
+
+答案是第三项。chunk 的边界不表达协议语义；`choices[].delta.content` 的大小由 DeepSeek 决定；显示文本何时更新又属于渲染调度。
+
+## 本章 Checkpoint
+
+- [ ] Course 和 Lab 都从当前 worktree 启动。
+- [ ] 我能解释 chunk、SSE event 和 DeepSeek `choices[].delta.content` 分别属于哪一层。
+- [ ] 我知道 `raw`、`visible` 是本项目为了讨论渲染而定义的状态。
+- [ ] 我知道显示文本状态更新不等于 React 提交 DOM，也不等于浏览器绘制画面。
+- [ ] 我能解释为什么必须先验证最终内容一致，再比较状态更新次数。
+
+## 本章没有证明什么
+
+- 没有观察真实 TCP segment（TCP 报文段）；Lab 记录的是应用从 `ReadableStream` 读到的 chunk。
+- 没有证明一次显示文本状态更新等于一次 React commit 或一次 browser paint。
+- 没有证明合并更新（M4）在所有输入上都更快；这里只建立后续课程要验证的问题。
+
+## 下一课做什么
+
+01 先拿掉流式输入，只实现一次最小的非流式 AI 对话：用户消息立即出现，界面进入等待状态，`Promise<string>` 返回完整回答后再追加一条 assistant 消息。
+
+这样我们先得到一个正确的终点，再从 02 开始把“完整回答”逐步替换为可控的片段回放。
 
 ## 面试时怎么讲
 
-> 我学习流式渲染时先把 byte、文本、事件、provider 语义和 UI 状态分层。这样遇到乱码、丢事件或多次渲染时，能先定位是哪条边界失效，而不是把所有问题归因于 streaming。
+> 我会区分 ReadableStream 的 chunk、SSE event、DeepSeek 文本增量和显示文本状态更新。它们分别属于流读取、协议、服务商接口和渲染调度，边界并不一一对应。先把这些层分开，才能定位乱码、半截事件、丢内容和高频渲染分别发生在哪里。
 
 [下一课：01 · 非流式 Mini Chat →](/learn/01-non-streaming-chat)

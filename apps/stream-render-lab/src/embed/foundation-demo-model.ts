@@ -31,7 +31,7 @@ export function isFoundationDemo(demoId: LessonDemoId): demoId is FoundationDemo
   return FOUNDATION_DEMOS.some((candidate) => candidate === demoId)
 }
 
-export function runFoundationDemo(demoId: FoundationDemoId): FoundationTrace {
+export async function runFoundationDemo(demoId: FoundationDemoId): Promise<FoundationTrace> {
   if (demoId === 'response' || demoId === 'replay' || demoId === 'm0') {
     return runCoreFoundationDemo(demoId)
   }

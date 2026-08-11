@@ -1,5 +1,6 @@
+import type { ChatSnapshot } from '../../workshop/mini-chat/01-static-chat/contract'
 import { STATIC_CHAT_FIXTURE } from '../../workshop/mini-chat/01-static-chat/fixture'
-import { createStaticChat } from '../../workshop/mini-chat/01-static-chat/solution/index'
+import { sendNonStreamingTurn } from '../../workshop/mini-chat/01-static-chat/solution/index'
 import { REPLAY_FIXTURE } from '../../workshop/mini-chat/02-replay-clock/fixture'
 import {
   createVirtualClock,
@@ -11,47 +12,68 @@ import type { FoundationDemoId, FoundationFrame, FoundationTrace } from './found
 
 type CoreDemoId = Extract<FoundationDemoId, 'm0' | 'replay' | 'response'>
 
-export function runCoreFoundationDemo(demoId: CoreDemoId): FoundationTrace {
+export async function runCoreFoundationDemo(demoId: CoreDemoId): Promise<FoundationTrace> {
   if (demoId === 'response') return runResponse()
   if (demoId === 'replay') return runReplay()
   return runM0()
 }
 
-function runResponse(): FoundationTrace {
-  const chat = createStaticChat(STATIC_CHAT_FIXTURE)
-  const assistant = chat.messages.find((message) => message.role === 'assistant')
-  const visible = assistant?.text ?? ''
+async function runResponse(): Promise<FoundationTrace> {
+  const snapshots: ChatSnapshot[] = []
+  const frames: FoundationFrame[] = []
+
+  await sendNonStreamingTurn({
+    prompt: STATIC_CHAT_FIXTURE.prompt,
+    async complete() {
+      return STATIC_CHAT_FIXTURE.reply
+    },
+    publish(snapshot) {
+      snapshots.push(snapshot)
+      frames.push(responseFrame(snapshot, frames.length + 1))
+    },
+  })
+
   const expectedVisible = STATIC_CHAT_FIXTURE.reply
-  const frames: FoundationFrame[] = [
+  const expectedSnapshots: ChatSnapshot[] = [
     {
-      arrival: 'createStaticChat(fixture)',
-      event: 'assistant is not available yet',
-      note: '输入来自 01-static-chat/fixture，第一帧只显示请求。',
-      visible: '',
-      wire: JSON.stringify({ prompt: STATIC_CHAT_FIXTURE.prompt }),
+      phase: 'waiting',
+      messages: [{ role: 'user', text: STATIC_CHAT_FIXTURE.prompt }],
     },
     {
-      arrival: `${chat.messages.length} messages returned`,
-      event: JSON.stringify(assistant ?? null),
-      note: '最终帧直接读取 createStaticChat solution 的 assistant message。',
-      visible,
-      wire: JSON.stringify(STATIC_CHAT_FIXTURE),
+      phase: 'completed',
+      messages: [
+        { role: 'user', text: STATIC_CHAT_FIXTURE.prompt },
+        { role: 'assistant', text: STATIC_CHAT_FIXTURE.reply },
+      ],
     },
-  ]
-  const expectedMessages = [
-    { role: 'user', text: STATIC_CHAT_FIXTURE.prompt },
-    { role: 'assistant', text: STATIC_CHAT_FIXTURE.reply },
   ]
   return {
-    actualEventCount: chat.messages.length,
-    actualProof: JSON.stringify(chat.messages),
+    actualEventCount: snapshots.length,
+    actualProof: JSON.stringify(snapshots),
     demoId: 'response',
-    expectedEventCount: expectedMessages.length,
-    expectedProof: JSON.stringify(expectedMessages),
+    expectedEventCount: expectedSnapshots.length,
+    expectedProof: JSON.stringify(expectedSnapshots),
     expectedVisible,
     frames,
-    proofLabel: 'Static Chat solution 产出 fixture 约定的完整回复',
-    terminalObserved: assistant !== undefined,
+    proofLabel: '非流式 Chat 先进入 waiting，再一次发布完整回复',
+    terminalObserved: snapshots.at(-1)?.phase === 'completed',
+  }
+}
+
+function responseFrame(snapshot: ChatSnapshot, publishCount: number): FoundationFrame {
+  const assistant = snapshot.messages.find((message) => message.role === 'assistant')
+  return {
+    arrival: `publish ${publishCount} · ${snapshot.phase}`,
+    event: JSON.stringify(snapshot),
+    note:
+      snapshot.phase === 'waiting'
+        ? '用户消息已同步发布，完整回复仍在等待 Promise。'
+        : 'Promise resolve 后，assistant 回复只发布一次。',
+    visible: assistant?.text ?? '',
+    wire:
+      snapshot.phase === 'waiting'
+        ? JSON.stringify({ prompt: STATIC_CHAT_FIXTURE.prompt })
+        : JSON.stringify({ reply: assistant?.text ?? '' }),
   }
 }
 

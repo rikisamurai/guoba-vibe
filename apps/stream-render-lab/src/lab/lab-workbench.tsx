@@ -5,7 +5,6 @@ import { LabAdvanced } from './lab-advanced'
 import { LabControls } from './lab-controls'
 import { LabInspector } from './lab-inspector'
 import { LabLessonControls } from './lab-lesson-controls'
-import { LessonComparePanel } from './lesson-compare-panel'
 import { labPreset, presetConfig } from './presets'
 import type { LabConfig, LabInspectorTab, LabSettledReport } from './types'
 import { useLabSession } from './use-lab-session'
@@ -13,22 +12,21 @@ import { useLabSession } from './use-lab-session'
 interface Props {
   embedded?: boolean
   initialPreset?: LessonPresetId
+  onReset?: () => void
   onSettled?: (report: LabSettledReport) => void
-  presentation?: 'full' | 'lesson-compare'
 }
 
 export function LabWorkbench({
   embedded = false,
   initialPreset = 'quick-start-burst',
+  onReset,
   onSettled,
-  presentation = 'full',
 }: Props) {
   const [config, setConfig] = useState(() => presetConfig(initialPreset))
   const [tab, setTab] = useState<LabInspectorTab>(
     initialPreset === 'sse-edge-cases' ? 'wire' : 'rendered',
   )
-  const lessonCompare = presentation === 'lesson-compare'
-  const session = useLabSession(config, onSettled, { recordTimeline: lessonCompare })
+  const session = useLabSession(config, onSettled)
   const locked = session.state.status === 'running' || session.state.status === 'paused'
   const preset = labPreset(config.presetId)
 
@@ -37,29 +35,19 @@ export function LabWorkbench({
   }
 
   function selectPreset(id: LessonPresetId) {
-    session.reset()
+    resetSession()
     setConfig(presetConfig(id))
     setTab(id === 'sse-edge-cases' ? 'wire' : 'rendered')
   }
 
-  if (lessonCompare) {
-    return (
-      <div className="lab2-workbench is-embedded is-lesson-compare">
-        <LessonComparePanel
-          actions={{
-            onStart: session.start,
-            onPause: session.pause,
-            onResume: session.resume,
-            onStep: session.step,
-            onReset: session.reset,
-          }}
-          baseline={config.baseline}
-          challenger={config.challenger}
-          state={session.state}
-          timeline={session.state.timeline}
-        />
-      </div>
-    )
+  function resetSession() {
+    session.reset()
+    onReset?.()
+  }
+
+  function startSession() {
+    if (session.state.status === 'settled') onReset?.()
+    session.start()
   }
 
   return (
@@ -93,11 +81,11 @@ export function LabWorkbench({
         progress={session.state.progress}
         onPreset={selectPreset}
         onPatch={patchConfig}
-        onStart={session.start}
+        onStart={startSession}
         onPause={session.pause}
         onResume={session.resume}
         onStep={session.step}
-        onReset={session.reset}
+        onReset={resetSession}
       />
       {embedded ? null : <LabAdvanced config={config} disabled={locked} onPatch={patchConfig} />}
       {embedded ? (

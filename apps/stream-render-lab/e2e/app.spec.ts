@@ -175,7 +175,7 @@ test('公共预览明确禁用真实聊天发送', async ({ page }) => {
   await page.goto('/chat')
   await expect(page.getByText('LIVE DISABLED', { exact: true })).toBeVisible()
   await expect(page.getByText('PROTECTED', { exact: true })).toHaveCount(0)
-  await page.getByLabel('输入实验问题').fill('解释 display clock')
+  await page.getByLabel('输入实验问题').fill('解释显示调度')
   await expect(page.getByRole('button', { name: '发送' })).toBeDisabled()
   await expect(page.locator('#live-disabled-reason')).toContainText('ENABLE_LIVE_API=1')
   await expect(page.getByRole('complementary', { name: '消息检查器' })).toBeVisible()

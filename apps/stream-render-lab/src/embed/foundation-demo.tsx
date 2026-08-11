@@ -1,25 +1,62 @@
 import type { CheckpointResult } from '@stream-render/contract'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   foundationCheckpoints,
   runFoundationDemo,
   type FoundationDemoId,
+  type FoundationTrace,
 } from './foundation-demo-model'
 
 interface FoundationDemoProps {
   demoId: FoundationDemoId
+  onReset?: () => void
   onSettled: (checkpoints: readonly CheckpointResult[]) => void
 }
 
-export function FoundationDemo({ demoId, onSettled }: FoundationDemoProps) {
-  const trace = useMemo(() => runFoundationDemo(demoId), [demoId])
+export function FoundationDemo({ demoId, onReset, onSettled }: FoundationDemoProps) {
+  const [trace, setTrace] = useState<FoundationTrace>()
+
+  useEffect(() => {
+    let active = true
+    setTrace(undefined)
+    void runFoundationDemo(demoId).then((nextTrace) => {
+      if (active) setTrace(nextTrace)
+    })
+    return () => {
+      active = false
+    }
+  }, [demoId])
+
+  if (!trace) {
+    return (
+      <section className="foundation-demo" aria-busy="true">
+        <p role="status">正在准备真实练习结果…</p>
+      </section>
+    )
+  }
+
+  return (
+    <FoundationTracePlayer key={demoId} trace={trace} onReset={onReset} onSettled={onSettled} />
+  )
+}
+
+function FoundationTracePlayer({
+  onReset,
+  onSettled,
+  trace,
+}: {
+  onReset: FoundationDemoProps['onReset']
+  onSettled: FoundationDemoProps['onSettled']
+  trace: FoundationTrace
+}) {
   const frames = trace.frames
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const reported = useRef(false)
   const frame = frames[index]
   const settled = index === frames.length - 1
+  const labels = panelLabels(trace.demoId)
 
   useEffect(() => {
     if (!playing || settled) return undefined
@@ -39,6 +76,7 @@ export function FoundationDemo({ demoId, onSettled }: FoundationDemoProps) {
     reported.current = false
     setPlaying(false)
     setIndex(0)
+    onReset?.()
   }
 
   return (
@@ -83,22 +121,29 @@ export function FoundationDemo({ demoId, onSettled }: FoundationDemoProps) {
 
       <div className="foundation-demo__panels">
         <article>
-          <span>RAW / WIRE</span>
+          <span>{labels.input}</span>
           <strong>{frame.arrival}</strong>
           <pre>{frame.wire}</pre>
         </article>
         <article>
-          <span>TYPED EVENT</span>
+          <span>{labels.state}</span>
           <pre>{frame.event}</pre>
         </article>
         <article className="foundation-demo__answer">
-          <span>VISIBLE</span>
+          <span>{labels.output}</span>
           <strong aria-live="polite">{frame.visible || '等待可见内容…'}</strong>
         </article>
       </div>
       <p className="foundation-demo__note">{frame.note}</p>
     </section>
   )
+}
+
+function panelLabels(demoId: FoundationDemoId) {
+  if (demoId === 'response') {
+    return { input: 'INPUT', state: 'CHAT SNAPSHOT', output: 'DISPLAYED' } as const
+  }
+  return { input: 'RAW / WIRE', state: 'TYPED EVENT', output: 'VISIBLE' } as const
 }
 
 function SignalLane({

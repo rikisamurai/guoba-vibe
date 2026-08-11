@@ -171,7 +171,7 @@ export function createRenderRun(
     settled: completion.promise,
     cancel,
     inspect(): InspectionSnapshot {
-      return { snapshot: store.getSnapshot(), trace: [...trace] }
+      return { snapshot: model.snapshot(phase, outcome), trace: [...trace] }
     },
   }
 }

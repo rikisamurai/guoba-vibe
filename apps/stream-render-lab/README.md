@@ -32,7 +32,6 @@ pnpm --filter stream-render-lab dev
 pnpm --filter stream-render-lab test
 pnpm --filter stream-render-lab test:bench
 pnpm --filter stream-render-lab test:e2e
-pnpm --filter stream-render-lab lesson 00 test
 pnpm --filter stream-render-lab lesson 01 test
 pnpm --filter stream-render-lab lesson 04 test
 pnpm --filter stream-render-lab lesson 06 test
@@ -41,7 +40,7 @@ pnpm --filter stream-render-lab lesson 10 test
 
 页面入口：`/lab`、`/profiler`、`/chat`、`/bench`、`/embed/:demoId`。内部还保留 `/repro/:case` 故障复现路由。`/embed/:demoId` 仅接受 manifest 注册的 demo/preset；`/bench` 控制 iframe 中独立的 `bench-frame.html` entry，以减少文档 Shell、字体和 Router 对浏览器报告的干扰。
 
-`workshop/mini-chat/00-quick-start` 是观察型入口：直接使用生产 Engine、VirtualClock 与 ReplaySource，对同一条 trace 比较 M0 / M4。`01` 起才进入学习者持有的连续 Mini Chat，逐步长成 `06` 的真实 Chat Completions wire。`10` 是提前开放的 M1 frame batching 黄金样板，使用 06 的物理快照，不 import 旧 solution 或生产引擎。`test` 验证当前 exercise（只保留本课新增的一个预期失败）；将最后一个参数换成 `solution` 可验证参考实现。
+Quick Start 是 Course 中的纯观察实验，不提供需要改字符串的 00 练习。学习者持有的连续 Mini Chat 从 `01` 开始：先实现一次异步非流式 chat turn，再逐步长成 `06` 的真实 Chat Completions 响应链路。后续 starter 会复用前一课已经完成的能力；`10` 还会复用 01 的 `MiniChat` 与非流式 turn，但不会导入 Lab 生产引擎。`test` 验证当前 exercise（只保留本课新增的一个预期失败）；将最后一个参数换成 `solution` 可验证参考实现。
 
 ## DeepSeek live
 

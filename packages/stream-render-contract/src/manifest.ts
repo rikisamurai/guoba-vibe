@@ -21,7 +21,7 @@ export const LESSON_DEMOS = {
   },
   'quick-start': {
     defaultPreset: 'quick-start-burst',
-    label: 'M0 与 M4 对照',
+    label: '逐增量更新（M0）与合并更新（M4）',
     presets: ['quick-start-burst'],
   },
   sse: {

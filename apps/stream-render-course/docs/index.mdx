@@ -14,8 +14,8 @@ description: 从一个普通 Chat 开始，逐步走到真实 AI 流式渲染。
 <div className="roadmap-grid">
   <a className="roadmap-card" href="/learn/00-quick-start.html">
     <span>00 · START HERE</span>
-    <h3>先把环境和地图跑通</h3>
-    <p>10 分钟确认 Node、pnpm、两个站点和 workshop 命令。</p>
+    <h3>先看懂一次流式回答</h3>
+    <p>15 分钟跑通环境，再观察 chunk、SSE event、模型文本增量与显示更新。</p>
   </a>
   <a className="roadmap-card" href="/learn/01-non-streaming-chat.html">
     <span>01 · FIRST WORKING CHAT</span>
@@ -32,16 +32,16 @@ description: 从一个普通 Chat 开始，逐步走到真实 AI 流式渲染。
 ## 你最终会做出什么
 
 ```text
-Response bytes
-  → incremental UTF-8
-  → WHATWG SSE
-  → provider delta
-  → raw / visible state
-  → scheduled React commits
+HTTP response body chunks
+  → incremental UTF-8 decoding
+  → WHATWG SSE events
+  → DeepSeek choices[].delta.content
+  → received / displayed text state
+  → React DOM commit and browser paint
   → safe rich-text rendering
 ```
 
-最终项目不是一个漂亮但解释不清的黑盒：每层都有 fixture、可控时钟、失败示例和可观察指标。你能从 Network 中一个被切断的 emoji，一路解释到 React 为什么少 commit 一次。
+最终项目不是一个漂亮但解释不清的黑盒：每层都有 fixture、可控时钟、失败示例和可观察指标。你能从 Network 中一个被切断的 emoji，一路解释到引擎状态更新、React DOM commit 与浏览器绘制分别发生了什么。
 
 ## 开始前只需要这些
 

@@ -1,6 +1,6 @@
 ---
 title: 10 · M1 Frame Batching：一帧只发布一次
-description: 把 arrival 与 display 拆成两只时钟，用 VirtualClock 证明 drain 和 cancel 不丢字。
+description: 分开记录文本增量到达与显示更新的时机，用 VirtualClock 证明 drain 和 cancel 不丢字。
 ---
 
 import { LessonDemo } from '../../components/lesson-demo'
@@ -29,12 +29,12 @@ function onDelta(delta: string) {
 }
 ```
 
-arrival 发生了五次，用户在第一帧只能看到最后一个结果，但 React 仍可能做五次无法被看见的工作。
+文本增量到达了五次，用户在第一帧只能看到最后一个结果，但 React 仍可能做五次无法被看见的工作。
 
 ```text
-arrival:  0ms  3ms  6ms  9ms  12ms
-raw:      你   你好   你好，  你好，🙂  你好，🙂！
-display:                    16ms → 你好，🙂！
+增量到达:  0ms  3ms  6ms  9ms  12ms
+raw:       你   你好   你好，  你好，🙂  你好，🙂！
+动画帧:                     16ms → 显示“你好，🙂！”
 ```
 
 M1 不改 Markdown，只让一个 pending frame 拥有下次发布权。
@@ -49,7 +49,7 @@ workshop/mini-chat/10-m1-frame-batching/
 └── solution/frame-batcher.ts   # 参考快照
 ```
 
-`exercise/` 已物理复制 06 的完整快照；它不会 import 旧 solution 或 Lab 生产引擎。
+`exercise/` 保留了 02–06 已完成的实现，并复用 01 已完成的 `MiniChat` 与非流式 turn；本课只让你修改 frame batcher，不会导入 Lab 生产引擎。
 
 ## 跑出恰好一个红测试
 
@@ -69,12 +69,14 @@ Tests       1 failed | 6 passed
 
 现在 `push` 直接 `commit(delta)`，这正是 M0 的显示节奏。
 
-## 原理：两只时钟，一个所有者
+## 原理：两条时间线，一个所有者
 
 ```text
-arrival clock: delta 到达 → raw 立即追加 → pending 合并
-display clock: frame boundary → flush 一次 → visible 向 raw 追赶
+文本增量到达时间线: delta 到达 → raw 立即追加 → pending 合并
+显示更新时间线: animation frame → flush 一次 → visible 向 raw 追赶
 ```
+
+“文本增量到达时间线”和“显示更新时间线”只是本课用来对照两个时机的教学视图，不是浏览器或网络协议中的专有名词。真正使用的标准 API 是 `requestAnimationFrame`；`raw`、`visible` 仍是本项目的状态名称。
 
 `cancelFrame !== null` 表示“已经有一个 task 负责下次 flush”。后来的 delta 只进 `pending`，不再注册 frame。
 

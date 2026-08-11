@@ -13,9 +13,9 @@ export interface CoursePart {
 }
 
 export const orientationLesson = lesson(0, 'Quick Start', '/learn/00-quick-start', [
-  '找到课程与实验台入口',
-  '说清 byte 到 React 的路径',
-  '跑通第一条本地命令',
+  '区分 chunk 与 SSE event',
+  '识别 DeepSeek 文本增量字段',
+  '区分接收文本与显示文本',
 ])
 
 export const courseParts: readonly CoursePart[] = [
@@ -24,13 +24,13 @@ export const courseParts: readonly CoursePart[] = [
     title: '建立心智模型',
     lessons: [
       lesson(1, '非流式 Mini Chat', '/learn/01-non-streaming-chat', [
-        '完成最小请求与渲染',
-        '分离 source 与 view',
-        '为 streaming 留下 seam',
+        '先发布 user 与 waiting',
+        '等待 Promise 返回完整回复',
+        '只追加一条 assistant 消息',
       ]),
       lesson(2, 'Replay 与 Clock', '/learn/02-string-replay-clock', [
         '重放同一条 trace',
-        '控制 arrival clock',
+        '控制片段到达时间',
         '写出确定性测试',
       ]),
       lesson(3, 'M0 · Raw / Visible', '/learn/03-m0-raw-visible', [

@@ -9,7 +9,7 @@
 M1 以后存在两只钟：
 
 - ingest clock 持续把 delta 追加到 raw；
-- display clock 在 frame 中把 visible cursor 向 raw 推进。
+- 动画帧回调把 visible cursor 向 raw 推进。
 
 当 terminal event 恰好落在两个 display frame 之间，raw 已完整而 visible 仍有 backlog。如果此时直接 settled 或取消 frame，尾部会丢；如果先 settled、保留 frame，之后又会发生 late update。
 

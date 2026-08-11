@@ -46,16 +46,14 @@ pnpm --filter stream-render-lab dev
 
 自定义端口时只需设置 `STREAM_RENDER_COURSE_PORT` 和 `STREAM_RENDER_LAB_PORT`；根启动脚本会同步配置 Course/Lab 的互信 origin，避免 iframe 仍指向默认端口。
 
-00 先用真实生产引擎对照 M0 / M4；第一轮课程再让同一个 Mini Chat 连续完成非流式基线、可控 Replay、M0、UTF-8、SSE 与 Chat Completions adapter。后一课直接建立在前一课结果上；每课只有一个新失败、一个 TODO、一组共享 contract test：
+00 是纯观察课：先区分 `ReadableStream` 的 chunk、SSE event、DeepSeek `choices[].delta.content` 与本课程定义的显示文本状态更新，不要求修改代码。学习者的 Mini Chat workshop 从 01 开始，连续完成异步非流式基线、可控 Replay、M0、UTF-8、SSE 与 Chat Completions adapter。后一课直接建立在前一课结果上；每课只有一个新失败、一个 TODO、一组共享 contract test：
 
 ```bash
-pnpm --filter stream-render-lab lesson 00 test
 pnpm --filter stream-render-lab lesson 01 test
 pnpm --filter stream-render-lab lesson 04 test
 pnpm --filter stream-render-lab lesson 06 test
 
 # 对照参考实现
-pnpm --filter stream-render-lab lesson 00 solution
 pnpm --filter stream-render-lab lesson 01 solution
 pnpm --filter stream-render-lab lesson 04 solution
 pnpm --filter stream-render-lab lesson 06 solution

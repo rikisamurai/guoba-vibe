@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 
 import { LabWorkbench } from '../lab/lab-workbench'
+import { QuickStartGuide } from '../lab/quick-start-guide'
 import { labCheckpoints } from './embed-checkpoints'
 import { FoundationDemo } from './foundation-demo'
 import { isFoundationDemo } from './foundation-demo-model'
@@ -31,10 +32,13 @@ export default function EmbedPage() {
     },
     [targetOrigin],
   )
-
-  useEffect(() => {
+  const postReady = useCallback(() => {
     if (demoId) postReport({ version: 1, kind: 'ready', demoId })
   }, [demoId, postReport])
+
+  useEffect(() => {
+    postReady()
+  }, [postReady])
 
   if (!demoId || !presetId) {
     return (
@@ -49,14 +53,29 @@ export default function EmbedPage() {
     <main className="embed-page">
       <header>
         <div>
-          <span>LESSON DEMO</span>
+          <span>课程实验</span>
           <strong>{LESSON_DEMOS[demoId].label}</strong>
         </div>
         <Link to={`/lab?demo=${demoId}&preset=${presetId}`}>打开完整实验台 ↗</Link>
       </header>
-      {isFoundationDemo(demoId) ? (
+      {demoId === 'quick-start' ? (
+        <QuickStartGuide
+          onRestart={postReady}
+          onSettled={(report) =>
+            postReport({
+              version: 1,
+              kind: 'run-settled',
+              demoId,
+              runId: report.runId,
+              outcome: report.outcome,
+              checkpoints: labCheckpoints(demoId, report),
+            })
+          }
+        />
+      ) : isFoundationDemo(demoId) ? (
         <FoundationDemo
           demoId={demoId}
+          onReset={postReady}
           onSettled={(checkpoints) =>
             postReport({
               version: 1,
@@ -72,7 +91,7 @@ export default function EmbedPage() {
         <LabWorkbench
           embedded
           initialPreset={presetId}
-          presentation={demoId === 'quick-start' ? 'lesson-compare' : 'full'}
+          onReset={postReady}
           onSettled={(report) =>
             postReport({
               version: 1,

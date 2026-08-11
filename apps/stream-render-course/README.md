@@ -13,14 +13,14 @@ pnpm --filter stream-render-course build
 
 当前连续课程：
 
-- `00`：用真实 Engine、VirtualClock 与 ReplaySource 观察 M0 / M4 的共同终点与 commit 差异。
-- `01–03`：非流式 Mini Chat → 可控 Replay → M0 raw / visible。
+- `00`：纯观察 Quick Start；先理解 `ReadableStream` 的 chunk、SSE event、DeepSeek `choices[].delta.content` 和本课程定义的显示文本状态更新不是一一对应。
+- `01–03`：异步非流式 Mini Chat → 可控 Replay → M0 raw / visible。
 - `04–06`：任意 UTF-8 byte split → WHATWG SSE → Chat Completions adapter。
 - `10`：提前开放的 M1 frame batching 黄金样板；正式路径仍先完成 07–09。
 
 ```bash
-pnpm --filter stream-render-lab lesson 00 test
-pnpm --filter stream-render-lab lesson 00 solution
+pnpm --filter stream-render-lab lesson 01 test
+pnpm --filter stream-render-lab lesson 01 solution
 pnpm --filter stream-render-lab lesson 10 test
 pnpm --filter stream-render-lab lesson 10 solution
 ```

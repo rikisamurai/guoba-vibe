@@ -77,6 +77,7 @@ describe('StreamingRenderEngine', () => {
     await waitFor(() => run.state.getSnapshot().phase === 'draining')
     expect(run.state.getSnapshot().phase).toBe('draining')
     expect(run.state.getSnapshot().parts[0]?.visible).toBe('')
+    expect(run.inspect().snapshot.parts[0]?.raw).toBe('Hello **world**')
 
     clock.advanceFrame()
     const result = await run.settled

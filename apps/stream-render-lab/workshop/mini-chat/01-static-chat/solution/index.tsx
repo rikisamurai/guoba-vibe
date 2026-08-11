@@ -1,30 +1,19 @@
-import type { ChatMessage, StaticChat } from '../contract'
-import type { STATIC_CHAT_FIXTURE } from '../fixture'
+import type { NonStreamingTurnInput } from '../contract'
 
-export function createStaticChat(input: typeof STATIC_CHAT_FIXTURE): StaticChat {
-  return {
-    messages: [
-      { role: 'user', text: input.prompt },
-      { role: 'assistant', text: input.reply },
-    ],
-  }
-}
+export { MiniChat } from '../mini-chat'
 
-export function MiniChat({ chat }: { chat: StaticChat }) {
-  return (
-    <section aria-label="Mini Chat">
-      {chat.messages.map((message) => (
-        <Message key={message.role} message={message} />
-      ))}
-    </section>
-  )
-}
+export async function sendNonStreamingTurn({
+  complete,
+  prompt,
+  publish,
+}: NonStreamingTurnInput): Promise<void> {
+  const userMessage = { role: 'user' as const, text: prompt }
+  publish({ phase: 'waiting', messages: [userMessage] })
 
-function Message({ message }: { message: ChatMessage }) {
-  return (
-    <article data-role={message.role}>
-      <strong>{message.role === 'user' ? 'You' : 'Assistant'}</strong>
-      <p>{message.text}</p>
-    </article>
-  )
+  const reply = await complete(prompt)
+
+  publish({
+    phase: 'completed',
+    messages: [userMessage, { role: 'assistant', text: reply }],
+  })
 }
