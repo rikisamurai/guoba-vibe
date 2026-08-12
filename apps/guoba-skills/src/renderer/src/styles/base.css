@@ -1,0 +1,133 @@
+:root {
+  color: #e8eae5;
+  background: #0b0c0b;
+  font-family:
+    'Manrope Variable',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --bg: #0b0c0b;
+  --panel: #101210;
+  --panel-raised: #151815;
+  --panel-hover: #191c18;
+  --line: #272a26;
+  --line-soft: #1d201c;
+  --text: #e8eae5;
+  --muted: #858b81;
+  --dim: #5e635b;
+  --accent: #c7f464;
+  --accent-soft: #222c18;
+  --warning: #f3b562;
+  --danger: #f18b80;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  min-width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+body {
+  overflow: hidden;
+}
+button,
+input,
+select {
+  color: inherit;
+  font: inherit;
+}
+button {
+  border: 0;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 75%, transparent);
+  outline-offset: 2px;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+::selection {
+  color: #10150a;
+  background: var(--accent);
+}
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #30342f;
+  border: 3px solid transparent;
+  border-radius: 10px;
+  background-clip: padding-box;
+}
+
+.primary-button,
+.secondary-button,
+.icon-button {
+  align-items: center;
+  border-radius: 7px;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease;
+}
+.primary-button {
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 13px;
+  color: #12170b;
+  background: var(--accent);
+  font-size: 12px;
+  font-weight: 750;
+}
+.primary-button:not(:disabled):hover {
+  background: #d5ff79;
+  transform: translateY(-1px);
+}
+.secondary-button {
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  color: #c5c9c1;
+  background: #1b1e1a;
+  border: 1px solid #30342e;
+  font-size: 12px;
+  font-weight: 650;
+}
+.secondary-button:hover {
+  background: #232721;
+  border-color: #41463e;
+}
+.icon-button {
+  width: 34px;
+  height: 34px;
+  color: #a5aaa1;
+  background: #171a17;
+  border: 1px solid #292d28;
+}
+.icon-button:hover {
+  color: var(--text);
+  background: #20241f;
+  border-color: #383d35;
+}
+.mono,
+code,
+pre,
+kbd {
+  font-family: 'IBM Plex Mono', monospace;
+}

@@ -55,6 +55,9 @@ logs/
 # Build / temp
 dist/
 build/
+!apps/guoba-skills/build/
+!apps/guoba-skills/build/icon.icns
+!apps/guoba-skills/build/icon.svg
 output/
 tmp/
 temp/
@@ -75,3 +78,4 @@ coverage/
 apps/*/playwright-report/
 apps/*/test-results/
 apps/*/pnpm-lock.yaml
+apps/guoba-skills/release/

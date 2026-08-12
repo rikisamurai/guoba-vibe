@@ -1,0 +1,191 @@
+name: Guoba Skills Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: guoba-skills-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-15
+            builder-flag: --arm64
+          - arch: x64
+            runner: macos-15-intel
+            builder-flag: --x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Verify tag matches the app version
+        shell: bash
+        run: |
+          version=$(node -p "require('./apps/guoba-skills/package.json').version")
+          if [[ "$GITHUB_REF_NAME" != "v${version}" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match guoba-skills version $version"
+            exit 1
+          fi
+      - run: pnpm --filter guoba-skills build
+      - name: Select signing mode
+        id: signing
+        shell: bash
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          signing=false
+          notarization=false
+
+          if [[ -n "$CSC_LINK$CSC_KEY_PASSWORD" ]]; then
+            if [[ -z "$CSC_LINK" || -z "$CSC_KEY_PASSWORD" ]]; then
+              echo "::error::Set both CSC_LINK and CSC_KEY_PASSWORD, or neither"
+              exit 1
+            fi
+            signing=true
+          fi
+
+          if [[ -n "$APPLE_ID$APPLE_APP_SPECIFIC_PASSWORD$APPLE_TEAM_ID" ]]; then
+            if [[ -z "$APPLE_ID" || -z "$APPLE_APP_SPECIFIC_PASSWORD" || -z "$APPLE_TEAM_ID" ]]; then
+              echo "::error::Set APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, and APPLE_TEAM_ID together"
+              exit 1
+            fi
+            if [[ "$signing" != true ]]; then
+              echo "::error::Notarization requires signing secrets"
+              exit 1
+            fi
+            notarization=true
+          fi
+
+          echo "signing=$signing" >> "$GITHUB_OUTPUT"
+          echo "notarization=$notarization" >> "$GITHUB_OUTPUT"
+      - name: Package unsigned application
+        if: steps.signing.outputs.signing == 'false'
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: >-
+          pnpm --filter guoba-skills exec electron-builder
+          --mac ${{ matrix.builder-flag }} --publish never
+      - name: Package signed application
+        if: steps.signing.outputs.signing == 'true' && steps.signing.outputs.notarization == 'false'
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+        run: >-
+          pnpm --filter guoba-skills exec electron-builder
+          --mac ${{ matrix.builder-flag }} --publish never
+      - name: Package signed and notarized application
+        if: steps.signing.outputs.notarization == 'true'
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: >-
+          pnpm --filter guoba-skills exec electron-builder
+          --mac ${{ matrix.builder-flag }} --config.mac.notarize=true --publish never
+      - uses: actions/upload-artifact@v7
+        with:
+          name: guoba-skills-macos-${{ matrix.arch }}
+          path: |
+            apps/guoba-skills/release/*.dmg
+            apps/guoba-skills/release/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    needs: [build-macos, publish-cli]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: guoba-skills-macos-*
+          path: artifacts
+          merge-multiple: true
+      - name: Verify release assets
+        shell: bash
+        run: |
+          for asset in '*-arm64.dmg' '*-arm64.zip' '*-x64.dmg' '*-x64.zip'; do
+            if ! compgen -G "artifacts/$asset" > /dev/null; then
+              echo "::error::Missing release asset matching $asset"
+              exit 1
+            fi
+          done
+      - name: Create or update GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          assets=(artifacts/*.dmg artifacts/*.zip)
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "${assets[@]}" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "${assets[@]}" \
+              --verify-tag \
+              --generate-notes \
+              --title "Guoba Skills $GITHUB_REF_NAME"
+          fi
+
+  publish-cli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - name: Verify tag matches the CLI version
+        shell: bash
+        run: |
+          version=$(node -p "require('./apps/guoba-skills/package.json').version")
+          if [[ "$GITHUB_REF_NAME" != "v${version}" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match guoba-skills version $version"
+            exit 1
+          fi
+      - run: pnpm --filter guoba-skills build:cli
+      - run: pnpm --filter guoba-skills build:web
+      - name: Pack CLI tarball
+        run: pnpm --filter guoba-skills pack --pack-destination apps/guoba-skills/release/npm
+      - name: Publish CLI to npm
+        if: env.NODE_AUTH_TOKEN != ''
+        run: pnpm --filter guoba-skills publish --access public --provenance --no-git-checks
+      - name: Explain skipped npm publishing
+        if: env.NODE_AUTH_TOKEN == ''
+        run: echo "::notice::NPM_TOKEN is not configured; the CLI tarball is still attached as an artifact."
+      - uses: actions/upload-artifact@v7
+        with:
+          name: guoba-skills-cli
+          path: apps/guoba-skills/release/npm/*.tgz
+          if-no-files-found: error
+          retention-days: 7
