@@ -1,0 +1,12 @@
+{
+  "name": "handbook-search",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "uv run handbook-search serve",
+    "fetch": "uv run handbook-search fetch",
+    "index": "uv run handbook-search index",
+    "lint": "uv run --frozen ruff check .",
+    "test": "uv run --frozen pytest"
+  }
+}
