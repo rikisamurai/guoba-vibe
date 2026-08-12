@@ -1,0 +1,70 @@
+.sr-checkpoint {
+  margin: 0 18px 22px;
+  padding: 16px;
+  border: 1px solid var(--sr-line);
+  border-radius: 9px;
+  background: var(--sr-paper);
+}
+
+.sr-checkpoint__eyebrow {
+  color: var(--sr-orange);
+  font-family: var(--sr-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.sr-checkpoint h2 {
+  margin: 8px 0 4px;
+  color: var(--sr-ink);
+  font-size: 14px;
+}
+
+.sr-checkpoint p {
+  margin: 0;
+  color: var(--sr-muted);
+  font-size: 11px;
+}
+
+.sr-checkpoint ul {
+  display: grid;
+  gap: 9px;
+  margin: 14px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sr-checkpoint li {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 7px;
+  color: #4e5952;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.sr-checkpoint li i {
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
+  border: 1px solid #aeb6b0;
+  border-radius: 50%;
+}
+
+.sr-checkpoint > a {
+  color: var(--sr-cyan);
+  font-size: 11px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.sr-checkpoint + .rp-outline {
+  border-top: 1px solid var(--sr-line);
+  padding-top: 18px;
+}
+
+@media (width <= 1279px) {
+  .sr-checkpoint {
+    margin-inline: 20px;
+  }
+}

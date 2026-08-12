@@ -1,0 +1,181 @@
+---
+title: 02 · String Replay：让时间变得可重复
+description: 用 VirtualClock 播放字符串片段，第一次看见 arrival timeline。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+<p className="sr-kicker">CHAPTER 02 · CONTROL TIME</p>
+
+# 不接真实网络，先让字符串按时间到达
+
+真实网络既慢又不可重复。02 把完整 reply 切成带时间戳的片段，并用 `VirtualClock` 驱动它：时间不前进，就绝不会偷偷交付下一段。
+
+<LessonMeta
+  duration="35 分钟"
+  exercise="实现一条由 VirtualClock 控制的字符串 replay"
+  prerequisites={['01 transcript', 'callback', 'Promise']}
+/>
+
+## 本节新增文件：从 01 继承，再加 replay
+
+01 的最终 transcript 原样保留；只新增 replay 输入层：
+
+```text
+workshop/mini-chat/02-replay-clock/
+├── contract.ts
+├── fixture.ts
+├── exercise/index.tsx
+└── solution/index.tsx
+```
+
+fixture 不再只有一个 reply，而是等间隔片段：
+
+```ts
+const fixture = {
+  chunks: ['边', '到达', '，边', '显示。'],
+  intervalMs: 8,
+}
+```
+
+第 N 个片段在 `intervalMs * (N + 1)` 时到达，时间从 replay 开始计算，不是 wall-clock 时间。
+
+后续真实 source 会把相同交付语义暴露为 `AsyncIterable`；本课先用 callback 看清 Clock ordering，不同时学习两种抽象。
+
+## 失败现象：一启动，三段同时出现
+
+```bash
+pnpm --filter stream-render-lab lesson 02 test
+```
+
+预期关键失败：
+
+```text
+× replays text only when virtual time advances
+expected [] to deeply equal [ "8:边" ]
+```
+
+exercise 直接 resolve，完全没有登记任务。最终字符串与 timeline 都为空，这让测试准确指出 replay seam 尚未实现。
+
+## 最小原理：Clock 是依赖，不是全局环境
+
+```ts
+interface Clock {
+  now(): number
+  after(ms: number, task: () => void): void
+}
+```
+
+生产环境可以用 timer 实现；测试传入 `VirtualClock`。业务代码只依赖上面两个动作，所以测试无需 sleep，也不与机器负载竞争。
+
+```text
+clock = 7ms   nothing
+clock = 8ms   deliver "边"
+clock = 16ms  deliver "到达"
+clock = 32ms  deliver "显示。" and settle
+```
+
+## TODO：按相对时间登记任务
+
+打开 `02-replay-clock/exercise/index.tsx`：
+
+```ts
+export function replayText(_input: ReplayInput): Promise<void> {
+  // TODO 02：用注入的 clock 安排每个 chunk，并在最后一段后 resolve
+  return Promise.resolve()
+}
+```
+
+目标不是在循环里 `await sleep(8)`。那会让测试重新依赖真实时钟，也无法精确断言 7 ms 与 8 ms 两个 checkpoint。
+
+<details open>
+  <summary>VirtualClock Demo：先写下四个断言</summary>
+
+```ts
+const settled = replayText({ ...fixture, clock, onDelta })
+expect(visible).toBe('')
+clock.advanceBy(9)
+expect(visible).toBe('边')
+clock.advanceBy(7)
+expect(visible).toBe('边到达')
+```
+
+最后再前进 16 ms 并 `await settled`，才应该得到完整 reply。
+
+</details>
+
+## 内嵌实验：只有 Clock 前进，字符串才前进
+
+先单步推进，再一次跑完；对照 elapsed time 与已交付片段。重置后相同步骤必须得到相同 timeline。
+
+<LessonDemo demoId="replay" presetId="string-replay" />
+
+## Solution diff
+
+```diff
+-export function replayText(_input: ReplayInput): Promise<void> {
+-  return Promise.resolve()
++export function replayText(input: ReplayInput): Promise<void> {
++  return new Promise((resolve) => {
++    input.chunks.forEach((chunk, index) => {
++      input.clock.after(input.intervalMs * (index + 1), () => {
++        input.onDelta(chunk)
++        if (index === input.chunks.length - 1) resolve()
++      })
++    })
++  })
+ }
+```
+
+实现后运行：
+
+```bash
+pnpm --filter stream-render-lab lesson 02 test
+```
+
+预期通过：
+
+```text
+✓ replays text only when virtual time advances
+Test Files  1 passed
+Tests       2 passed
+```
+
+也可以验证官方答案：
+
+```bash
+pnpm --filter stream-render-lab lesson 02 solution
+```
+
+## Checkpoint：时间边界可证明吗
+
+- [ ] `advanceBy(7)` 不会提前交付第一段。
+- [ ] 再前进 1 ms 后只出现 `边`。
+- [ ] 前进到 32 ms 后，拼接结果精确为 `边到达，边显示。`。
+
+**Invariant：** 任何时刻 `t`，只交付 deadline 不晚于 `t` 的片段，并保持 chunks 顺序。
+
+**Trade-off：** 注入 Clock 增加一个 interface，却换来零 sleep、零 flaky 的 timeline 测试。
+
+**退化条件：** 同一毫秒有大量片段时会连续触发大量 callback；这一课如实保留，后面再合并显示工作。
+
+## 常见错误
+
+- 把第 N 段安排在 `intervalMs * N`，导致第一段 0 ms 提前出现。
+- 在测试里同时使用 fake timer 和 `VirtualClock`，产生两套时间源。
+- 为了“方便”调用 `Date.now()`，让 replay 无法完全控制。
+
+## 挑战题
+
+直接向 Clock 登记两条都位于 10 ms 的任务。它是否按登记顺序交付？这个顺序应该由哪里保证？
+
+## 下一步映射
+
+02 只有一份不断增长的字符串。03 会把“已经到达的 raw”与“此刻公开给界面的 visible”拆成两个字段，但仍沿用相同的可重复输入思路。
+
+## 面试时怎么讲
+
+> 我把 replay 和 scheduler 都建立在可注入 Clock 上。测试只推进虚拟时间并断言每个 checkpoint，不用 sleep；这样事件 ordering 和工作次数可以在 CI 中确定性复现。
+
+[下一课：03 · M0、raw 与 visible →](/learn/03-m0-raw-visible)

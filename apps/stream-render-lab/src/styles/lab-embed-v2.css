@@ -1,0 +1,108 @@
+.embed-page {
+  min-height: 100dvh;
+  padding: 12px;
+  background: var(--paper);
+}
+
+.embed-page > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 10px;
+}
+
+.embed-page > header span,
+.embed-page > header strong {
+  display: block;
+}
+
+.embed-page > header span {
+  color: var(--ink-faint);
+  font: 8px var(--font-mono);
+}
+
+.embed-page > header a {
+  color: var(--rust-dark);
+  font: 600 10px var(--font-mono);
+}
+
+.is-embedded .lab2-readout,
+.is-embedded .lab2-field--preset {
+  display: none;
+}
+
+.lab2-lesson-controls {
+  border-bottom: 1px solid var(--rule);
+  background: #f7f8f5;
+  padding: 10px 14px;
+}
+
+.lab2-lesson-controls header,
+.lab2-lesson-controls > div {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+}
+
+.lab2-lesson-controls header {
+  align-items: center;
+  margin-bottom: 8px;
+  font: 600 9px var(--font-mono);
+}
+
+.lab2-lesson-controls header small {
+  color: var(--ink-faint);
+}
+
+.lab2-lesson-controls label {
+  display: grid;
+  min-width: 110px;
+  gap: 4px;
+  color: var(--ink-faint);
+  font: 8px var(--font-mono);
+}
+
+.lab2-lesson-controls select,
+.lab2-lesson-controls input,
+.lab2-lesson-controls button {
+  min-height: 30px;
+  border: 1px solid var(--rule-dark);
+  background: #fff;
+  padding: 0 8px;
+  color: var(--ink);
+  font: 10px var(--font-mono);
+}
+
+.lab2-lesson-controls button {
+  color: var(--rust-dark);
+  font-weight: 600;
+}
+
+.embed-error {
+  display: grid;
+  min-height: 100dvh;
+  place-content: center;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .lab2-controls,
+  .lab2-main,
+  .lab2-rendered,
+  .lab2-wire-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lab2-advanced__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lab2-lesson-controls > div {
+    flex-wrap: wrap;
+  }
+
+  .lab2-inspector {
+    border-top: 1px solid var(--rule);
+    border-left: 0;
+  }
+}

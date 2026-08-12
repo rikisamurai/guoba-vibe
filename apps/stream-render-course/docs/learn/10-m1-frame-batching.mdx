@@ -1,0 +1,176 @@
+---
+title: 10 · M1 Frame Batching：一帧只发布一次
+description: 把 arrival 与 display 拆成两只时钟，用 VirtualClock 证明 drain 和 cancel 不丢字。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+<p className="sr-kicker">CHAPTER 10 · GOLDEN PREVIEW</p>
+
+# M1：一帧只发布一次，但一个字也不能丢
+
+> **黄金样板提前开放。** 你可以先预览这篇的教学深度；正式学习路径仍是完成 07–09 后再回来。
+
+<LessonMeta
+  duration="70 分钟"
+  exercise="1 个 frame batcher：同帧合并、终态 drain、取消 cancel"
+  prerequisites={['07–09 协议终态与 run lifecycle', 'M0 raw / visible', 'VirtualClock']}
+/>
+
+## 先看失败：`rAF` 不会自动帮你去重
+
+假设 12 ms 内连续到达 `你` `好` `，` `🙂` `！`，60 Hz 屏幕下一帧约在 16 ms。直观写法会排队五个 callback：
+
+```ts
+function onDelta(delta: string) {
+  raw += delta
+  requestAnimationFrame(() => publish(raw))
+}
+```
+
+arrival 发生了五次，用户在第一帧只能看到最后一个结果，但 React 仍可能做五次无法被看见的工作。
+
+```text
+arrival:  0ms  3ms  6ms  9ms  12ms
+raw:      你   你好   你好，  你好，🙂  你好，🙂！
+display:                    16ms → 你好，🙂！
+```
+
+M1 不改 Markdown，只让一个 pending frame 拥有下次发布权。
+
+## 本节新增什么
+
+```text
+workshop/mini-chat/10-m1-frame-batching/
+├── contract.ts                 # 同帧、drain、cancel 契约
+├── fixture.ts                  # 5 个 burst delta
+├── exercise/frame-batcher.ts   # 你唯一修改的 TODO
+└── solution/frame-batcher.ts   # 参考快照
+```
+
+`exercise/` 已物理复制 06 的完整快照；它不会 import 旧 solution 或 Lab 生产引擎。
+
+## 跑出恰好一个红测试
+
+```bash
+pnpm --filter stream-render-lab lesson 10 test
+```
+
+前六课的 contract 全绿，只有本课失败：
+
+```text
+× 10 commits once per frame, drains the tail, and cancels late work
+Expected: []
+Received: ["你", "好", "，", "🙂", "！"]
+Test Files  1 failed
+Tests       1 failed | 6 passed
+```
+
+现在 `push` 直接 `commit(delta)`，这正是 M0 的显示节奏。
+
+## 原理：两只时钟，一个所有者
+
+```text
+arrival clock: delta 到达 → raw 立即追加 → pending 合并
+display clock: frame boundary → flush 一次 → visible 向 raw 追赶
+```
+
+`cancelFrame !== null` 表示“已经有一个 task 负责下次 flush”。后来的 delta 只进 `pending`，不再注册 frame。
+
+```ts
+interface FrameBatcherState {
+  pending: string
+  cancelFrame: (() => void) | null
+}
+```
+
+Clock 是依赖而不是全局变量，所以 contract 能精确 `advanceFrame()`，不需要 sleep 或猜 CI 速度。
+
+## TODO：实现 frame ownership
+
+打开 `exercise/frame-batcher.ts`，完成唯一 TODO。你需要三个动作：
+
+```ts
+push(delta) // 追加 pending；只在无 owner 时申请 frame
+drain() // 取消 pending frame，同步 flush 已接受内容
+cancel() // 取消 frame，丢弃尚未发布的 pending
+```
+
+`flush` 要先放弃 owner，再取走 pending；否则 commit 期间到达的新 delta 无法预约下一帧。
+
+```ts
+function flush() {
+  cancelFrame = null
+  const batch = pending
+  pending = ''
+  if (batch !== '') commit(batch)
+}
+```
+
+## 为什么 terminal 不能只是取消 frame
+
+如果 `[DONE]` 在 13 ms 到达时直接 cancel，`raw` 已是完整答案，`visible` 却可能仍为空。所以协议终态走 `drain`；用户主动停止才走 `cancel`。
+
+```text
+terminal proof → drain pending → visible === raw → settled
+user cancel    → drop pending  → no late commit
+```
+
+## 内嵌 Demo：把 burst 放慢看
+
+<LessonDemo demoId="m1" presetId="m1-frame-batching" />
+
+对比 M0 / M1：两边 raw 应一致，M1 的 visible revision 更少；终态后两边最终文本仍必须相等。
+
+## Solution diff
+
+```diff
+-push(delta) { commit(delta) }
++push(delta) {
++  pending += delta
++  cancelFrame ??= clock.frame(flush)
++}
++drain() { cancelFrame?.(); flush() }
++cancel() { cancelFrame?.(); cancelFrame = null; pending = '' }
+```
+
+对照参考实现：
+
+```bash
+pnpm --filter stream-render-lab lesson 10 solution
+# Tests  7 passed
+```
+
+## Checkpoint
+
+- [ ] burst 入口时 raw 已完整，frame 前 commit 仍为 0。
+- [ ] 同帧只有 1 个 pending task，推进后只 commit 1 次。
+- [ ] drain 不丢尾部也不重复 commit；cancel 后无 late update。
+
+## Invariant / Trade-off / 退化条件
+
+- **Invariant：**每个 frame boundary 最多一次 preview commit；settled 前 `visible === raw`。
+- **Trade-off：**用最多一帧的可见延迟，换掉同帧内无法被看见的重复工作。
+- **退化：**delta 慢于帧率时收益很小；单次 parse 已超 frame budget 时，M1 也无法消除长任务。
+- **环境边界：**后台页签可暂停 rAF，因此终态必须有明确 drain 策略。
+
+## 常见错误
+
+| 现象              | 原因                     | 修复                            |
+| ----------------- | ------------------------ | ------------------------------- |
+| 同帧仍多次 commit | 每个 delta 都注册 frame  | 用 `cancelFrame ??=` 表达 owner |
+| drain 后重复一次  | 没取消原 frame           | 先 cancel handle 再 flush       |
+| cancel 后还更新   | handle 或 pending 未清空 | 取消 task 并清空所有权          |
+
+## 挑战题
+
+让 commit callback 在 flush 中同步 `push('next')`。新 delta 应由谁负责、何时可见？先画状态转移，再补 contract。
+
+## 下一步
+
+正式路线会先完成 07–09，把 provider terminal 和 run lifecycle 接上这个 primitive；11 再处理未闭合 Markdown 的 preview。
+
+## 面试时怎么讲
+
+> 我没把 `requestAnimationFrame` 当成自动节流，而是用 pending frame ownership 建模。delta 立即进 raw，同帧只有一个 flush owner；terminal 先 drain，cancel 则清理 task。注入 VirtualClock 后，我能确定性证明 commit 上限和零 late update。
