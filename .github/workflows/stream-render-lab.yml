@@ -1,0 +1,34 @@
+name: Stream Render Lab
+
+on:
+  pull_request:
+    paths:
+      - 'apps/stream-render-lab/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/stream-render-lab.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/stream-render-lab/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/stream-render-lab.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.3.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter stream-render-lab lint
+      - run: pnpm --filter stream-render-lab test
+      - run: pnpm --filter stream-render-lab build
+      - run: pnpm --filter stream-render-lab exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm --filter stream-render-lab exec playwright test

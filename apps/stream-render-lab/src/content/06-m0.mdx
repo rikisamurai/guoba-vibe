@@ -1,0 +1,29 @@
+## 观察失败
+
+每来一个 delta 就对当前 raw 执行完整 Markdown parse 并重建 React tree。输出越长，单次工作越大，累计 parsed code units 呈二次增长。
+
+<Checkpoint label="慢基线仍然有价值" tone="note">
+  M0 是后续 preview 正确性的 oracle。没有它，优化后的“看起来没问题”很难被证明。
+</Checkpoint>
+
+## 实现一个增量
+
+先组装 canonical pipeline：`unified + remark-parse + remark-gfm + remark-math`，再投影为 sanitized、parser-neutral 的 Render IR。每个 delta 调用它。
+
+```text
+raw growth → full parse → Render IR → React commit
+```
+
+## 确定性验证
+
+对任意 chunk partition，终态 IR 必须等于一次性 canonical parse。用 8K、16K、32K、64K corpus 记录 preview parsed code units，确认规模翻倍时工作量接近四倍。
+
+## 浏览器观察
+
+在 production build 的 Profiler 里同时观察 parse work 与 React commit；输入变长时，M0 的单次 parse duration 和累计工作会一起上升。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：Render IR 只来自当前 raw，不执行 raw HTML。
+- **Trade-off**：实现最简单，但 preview work 可达 O(n²)。
+- **退化**：M0 本身就是 correctness-first fallback，不承担长输出的性能目标。

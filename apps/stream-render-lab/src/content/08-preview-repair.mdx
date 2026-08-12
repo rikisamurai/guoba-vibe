@@ -1,0 +1,32 @@
+## 观察失败
+
+流式 Markdown 常停在 `**bold`、` ```ts `、`[label](` 或数学定界符中间。直接 parse 可能将本应是富文本的部分暂时降级为普通文本，造成反复翻转。本阶段只修补可保守证明的 emphasis、fence 与 block math；半截 link destination 作为观察案例，但明确不修补。
+
+<Checkpoint label="raw 是事实" tone="alert">
+  repair 只是 preview projection。合成的闭合符必须带 synthetic range，不得回写 raw、复制文本或最终
+  parse。
+</Checkpoint>
+
+## 实现一个增量
+
+在 preview parse 前识别少量已声明的未闭合构造，追加临时定界符。记录 raw range 与 synthetic range，终态时丢弃全部 repair，只对 raw 做 canonical full parse。
+
+```text
+raw:     **stream
+preview: **stream**  // synthetic suffix
+```
+
+## 确定性验证
+
+对每个 committed prefix 断言 repair 只影响 preview IR，`snapshot.raw` 始终等于有序 delta 拼接。每种 outcome 后 synthetic node 数量必须归零。
+
+## 浏览器观察
+
+在半截强调到达时观察 preview，再等 settled 后检查 canonical 输出；两者可以暂时不同，但 raw 与终态必须没有 synthetic suffix。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：repair 永不进入 raw 或终态 canonical parse。
+- **Trade-off**：中间态更稳定，但 preview 不再是 raw 的直接可见形式。
+- **退化**：不确定的语法不修补；宁可短暂显示普通文本，也不伪造错误结构。
+- **支持边界**：`[label](` 暂不 repair，因为 URL、括号嵌套和 title 的中间态需要更完整的 delimiter/context 证明。

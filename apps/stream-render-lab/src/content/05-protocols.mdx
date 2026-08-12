@@ -1,0 +1,29 @@
+## 观察失败
+
+用一个 `seq` 同时表示 Responses `sequence_number`、Anthropic `index` 和引擎事件顺序，会把结构地址误判为乱序。只看 EOF 也无法区分 completed、incomplete 和 truncated。
+
+<Checkpoint label="归一化不等于丢信息" tone="alert">
+  内部序号、provider cursor、content address 和 React revision 必须分开建模。
+</Checkpoint>
+
+## 实现一个增量
+
+为 Chat Completions、Responses 和 Anthropic Messages 分别写 adapter，统一输出 typed `SourceEvent`。只有 internal sequencer 生成 `internalSeq`；Responses 额外校验严格递增的 cursor。
+
+```text
+provider event → 0..n SourceEvent → internalSeq 0,1,2…
+```
+
+## 确定性验证
+
+重放三份真实 wire-format fixture。断言 raw 等于有序 delta 拼接，Responses cursor 倒退会失败，Anthropic block index 不用于全局排序。
+
+## 浏览器观察
+
+展开 Inspector 的 trace，比较 source ordinal、provider 地址与 internal sequence；它们增长方式不同，也不能与 React revision 互换。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：每个 run 恰好有一个 outcome。
+- **Trade-off**：adapter 更多，core interface 更小且 provider-neutral。
+- **退化**：未知 payload 是 `failed`；无 terminal proof 的断开是 `truncated`；provider 明示未完成是 `incomplete`。

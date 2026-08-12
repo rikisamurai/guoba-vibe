@@ -1,0 +1,29 @@
+## 观察失败
+
+即使 parser 仍然全文重算，React 也不必为尾部新增的一个字重画前面数十个已完成段落。如果 block key 只用数组下标，结构翻转还会误复用节点。
+
+<Checkpoint label="identity 是渲染契约" tone="note">
+  稳定 block 保留对象 identity；脏 block 只在 source range、kind 或内容改变时更新 revision。
+</Checkpoint>
+
+## 实现一个增量
+
+为 root block 建立由 source range 和语义组成的 identity，对未变化前缀进行 structural sharing。React 层使用 memoized block renderer，将 revision 作为重型任务的过期判据。
+
+```text
+[stable A][stable B][dirty C·r7]
+```
+
+## 确定性验证
+
+追加只影响最后段落的 delta，断言 A/B 对象与 React render count 不变。将 tight list 追加空行变为 loose list，断言整个 root list revision 更新。
+
+## 浏览器观察
+
+用 React Profiler 查看尾部增长时的 committed subtree；稳定块应跳过 render，而会改变 list looseness 的输入必须让整个 root list 更新。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：语义未变的 stable block 保留 identity。
+- **Trade-off**：降低 reconcile/render work，但 parser work 仍可能是 O(n²)。
+- **退化**：Setext、table 和 list looseness 会改变前一个结构，必须扩大 dirty root，不能硬保 identity。

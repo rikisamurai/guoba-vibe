@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/*": {
+      "maxDuration": 60,
+      "supportsCancellation": true
+    }
+  },
+  "rewrites": [
+    { "source": "/learn/:path*", "destination": "/index.html" },
+    { "source": "/lab", "destination": "/index.html" },
+    { "source": "/profiler", "destination": "/index.html" },
+    { "source": "/repro/:path*", "destination": "/index.html" },
+    { "source": "/chat", "destination": "/index.html" },
+    { "source": "/bench", "destination": "/index.html" }
+  ]
+}
