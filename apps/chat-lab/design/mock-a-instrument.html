@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>chat-lab · Mock A · Instrument</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0b0d0f;
+        --surface: #12151a;
+        --surface-2: #171b21;
+        --hairline: #242a32;
+        --ink: #e7ebee;
+        --muted: #8b949e;
+        --faint: #5c6670;
+        --accent: #45e0a2;
+        --accent-dim: rgba(69, 224, 162, 0.12);
+        --sans: 'Schibsted Grotesk', sans-serif;
+        --mono: 'IBM Plex Mono', monospace;
+      }
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.35;
+        background-image: radial-gradient(circle at 1px 1px, #1b2027 1px, transparent 0);
+        background-size: 26px 26px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 14px 22px;
+        border-bottom: 1px solid var(--hairline);
+        position: relative;
+        z-index: 1;
+      }
+      .wordmark {
+        font-family: var(--mono);
+        font-weight: 600;
+        font-size: 15px;
+        letter-spacing: 0.04em;
+      }
+      .wordmark .tick {
+        color: var(--accent);
+      }
+      .word-sub {
+        font-size: 11px;
+        color: var(--faint);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-left: 2px;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .provider {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 8px;
+        padding: 7px 12px;
+        color: var(--ink);
+      }
+      .provider .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .provider .chev {
+        color: var(--faint);
+        font-size: 10px;
+      }
+
+      .shell {
+        flex: 1;
+        display: flex;
+        min-height: 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ---- chat column ---- */
+      .chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .stream {
+        flex: 1;
+        overflow: hidden;
+        padding: 30px 0;
+      }
+      .msgs {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+      }
+      .msg-user {
+        align-self: flex-end;
+        max-width: 78%;
+        background: var(--surface-2);
+        border: 1px solid var(--hairline);
+        padding: 12px 16px;
+        border-radius: 14px 14px 4px 14px;
+        font-size: 14.5px;
+        line-height: 1.55;
+      }
+      .msg-ai {
+        max-width: 100%;
+      }
+      .msg-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .phase {
+        color: var(--accent);
+        background: var(--accent-dim);
+        border-radius: 4px;
+        padding: 2px 7px;
+        letter-spacing: 0.08em;
+      }
+      .prose {
+        font-size: 14.5px;
+        line-height: 1.65;
+        color: var(--ink);
+      }
+      .prose h3 {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0 0 10px;
+      }
+      .prose p {
+        margin: 0 0 12px;
+      }
+      .prose p b {
+        font-weight: 600;
+      }
+      .prose code {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        background: var(--surface-2);
+        border: 1px solid var(--hairline);
+        border-radius: 5px;
+        padding: 1px 5px;
+      }
+      .prose ul {
+        margin: 0 0 12px;
+        padding-left: 20px;
+      }
+      .prose li {
+        margin-bottom: 5px;
+      }
+      .codeblock {
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 10px;
+        margin: 14px 0;
+        overflow: hidden;
+      }
+      .codebar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--faint);
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--hairline);
+      }
+      .codebar .lang {
+        color: var(--muted);
+      }
+      pre {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.6;
+        padding: 14px 16px;
+        overflow: hidden;
+      }
+      .tok-k {
+        color: #7fd6ff;
+      }
+      .tok-f {
+        color: #d3a8ff;
+      }
+      .tok-s {
+        color: #a8e6c1;
+      }
+      .tok-c {
+        color: #5c6670;
+      }
+      .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 15px;
+        background: var(--accent);
+        vertical-align: -2px;
+        border-radius: 1px;
+      }
+
+      .composer {
+        padding: 18px 28px 22px;
+        border-top: 1px solid var(--hairline);
+      }
+      .composer-box {
+        max-width: 720px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        padding: 12px 12px 12px 18px;
+      }
+      .composer-box .hint {
+        flex: 1;
+        color: var(--faint);
+        font-size: 14px;
+      }
+      .btn-stop {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--bg);
+        background: var(--accent);
+        border: 0;
+        border-radius: 8px;
+        padding: 9px 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-stop .sq {
+        width: 9px;
+        height: 9px;
+        background: var(--bg);
+        border-radius: 2px;
+      }
+
+      /* ---- lab panel ---- */
+      aside {
+        width: 300px;
+        border-left: 1px solid var(--hairline);
+        background: var(--surface);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .sect {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--hairline);
+      }
+      .sect-title {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--faint);
+        margin-bottom: 14px;
+      }
+      .mode {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        margin-bottom: 4px;
+        border: 1px solid transparent;
+      }
+      .mode .id {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--faint);
+        width: 22px;
+      }
+      .mode .name {
+        font-size: 13.5px;
+        font-weight: 500;
+      }
+      .mode .desc {
+        display: block;
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .mode.active {
+        background: var(--accent-dim);
+        border-color: rgba(69, 224, 162, 0.35);
+      }
+      .mode.active .id {
+        color: var(--accent);
+      }
+      .slider-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .slider {
+        flex: 1;
+        margin: 0 12px;
+        height: 3px;
+        background: var(--hairline);
+        border-radius: 2px;
+        position: relative;
+      }
+      .slider::after {
+        content: '';
+        position: absolute;
+        left: 42%;
+        top: -4.5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .slider-val {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--ink);
+      }
+      .seg {
+        display: flex;
+        background: var(--surface-2);
+        border: 1px solid var(--hairline);
+        border-radius: 8px;
+        padding: 3px;
+        margin-bottom: 12px;
+      }
+      .seg div {
+        flex: 1;
+        text-align: center;
+        font-size: 12.5px;
+        padding: 6px 0;
+        border-radius: 6px;
+        color: var(--muted);
+      }
+      .seg .on {
+        background: var(--bg);
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .field {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12.5px;
+        color: var(--muted);
+        padding: 8px 0;
+      }
+      .field .val {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ink);
+        background: var(--surface-2);
+        border: 1px solid var(--hairline);
+        border-radius: 6px;
+        padding: 4px 9px;
+      }
+      .chips {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .chip {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        padding: 4px 9px;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        color: var(--muted);
+      }
+      .chip.on {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .metrics {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--hairline);
+        border-bottom: 1px solid var(--hairline);
+      }
+      .tile {
+        background: var(--surface);
+        padding: 16px 18px;
+      }
+      .tile .k {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .tile .v {
+        font-family: var(--mono);
+        font-size: 24px;
+        font-weight: 500;
+        margin-top: 8px;
+      }
+      .tile .v small {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 400;
+        margin-left: 3px;
+      }
+      .tile .sub {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="wordmark">chat<span class="tick">/</span>lab</div>
+        <div class="word-sub">streaming render bench</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="provider">
+        <span class="dot"></span> DeepSeek · deepseek-chat <span class="chev">▾</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <main class="chat">
+        <div class="stream">
+          <div class="msgs">
+            <div class="msg-user">
+              Show me how a streaming markdown renderer stays stable while tokens are still
+              arriving.
+            </div>
+            <div class="msg-ai">
+              <div class="msg-meta">
+                <span class="phase">streaming</span><span>M2 · blocks</span><span>commit #47</span>
+              </div>
+              <div class="prose">
+                <h3>Two clocks, one pipeline</h3>
+                <p>
+                  The network has its own rhythm; the UI should have another. Deltas land in a
+                  <b>raw buffer</b> immediately, while a scheduler decides how much becomes
+                  <code>visibleText</code> per frame.
+                </p>
+                <ul>
+                  <li>Completed blocks are frozen with stable ids — they never re-render.</li>
+                  <li>Only the <b>dirty tail</b> is re-parsed on each commit.</li>
+                  <li>Heavy nodes get their own clock entirely.</li>
+                </ul>
+                <div class="codeblock">
+                  <div class="codebar">
+                    <span class="lang">ts · streaming</span><span>block #9 · dirty</span>
+                  </div>
+                  <pre><span class="tok-k">function</span> <span class="tok-f">commitFrame</span>(budget: <span class="tok-k">number</span>) {
+  <span class="tok-c">// take whole graphemes only</span>
+  visible += <span class="tok-f">takeGraphemes</span>(buffer, budget)
+  <span class="tok-k">if</span> (<span class="tok-f">boundaryReached</span>()) <span class="tok-f">reparseTail</span>(<span class="tok-s">'dirty'</span>)<span class="cursor"></span></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="composer">
+          <div class="composer-box">
+            <span class="hint">Ask anything…</span>
+            <button class="btn-stop"><span class="sq"></span> Stop</button>
+          </div>
+        </div>
+      </main>
+
+      <aside>
+        <div class="sect">
+          <div class="sect-title">Renderer</div>
+          <div class="mode">
+            <span class="id">M0</span
+            ><span
+              ><span class="name">Naive</span><span class="desc">full reparse per token</span></span
+            >
+          </div>
+          <div class="mode">
+            <span class="id">M1</span
+            ><span
+              ><span class="name">Throttled</span
+              ><span class="desc">merged commits + tail repair</span></span
+            >
+          </div>
+          <div class="mode active">
+            <span class="id">M2</span
+            ><span
+              ><span class="name">Blocks</span
+              ><span class="desc">stable prefix · dirty tail</span></span
+            >
+          </div>
+          <div class="mode">
+            <span class="id">M3</span
+            ><span
+              ><span class="name">Scheduled</span
+              ><span class="desc">heavy nodes on own clock</span></span
+            >
+          </div>
+          <div class="slider-row">
+            <span>commit</span>
+            <div class="slider"></div>
+            <span class="slider-val">48ms</span>
+          </div>
+        </div>
+        <div class="sect">
+          <div class="sect-title">Source</div>
+          <div class="seg">
+            <div>Live API</div>
+            <div class="on">Simulator</div>
+          </div>
+          <div class="field"><span>Corpus</span><span class="val">code-heavy tour ▾</span></div>
+          <div class="field" style="padding-bottom: 0"><span>Profile</span></div>
+          <div class="chips">
+            <span class="chip">ideal</span><span class="chip on">jitter</span
+            ><span class="chip">burst</span><span class="chip">boundary</span>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="tile">
+            <div class="k">Commits / s</div>
+            <div class="v">12.4</div>
+            <div class="sub">avg 2s window</div>
+          </div>
+          <div class="tile">
+            <div class="k">Raw→Visible</div>
+            <div class="v">64<small>ms</small></div>
+            <div class="sub">p95 118ms</div>
+          </div>
+          <div class="tile">
+            <div class="k">Tail parse</div>
+            <div class="v">1.8<small>ms</small></div>
+            <div class="sub">p95 4.2ms</div>
+          </div>
+          <div class="tile">
+            <div class="k">Stable blocks</div>
+            <div class="v">8/9</div>
+            <div class="sub">88% frozen</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </body>
+</html>
