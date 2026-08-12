@@ -1,0 +1,61 @@
+import { ReplayDemo } from '../../components/replay-demo'
+
+# 回放模拟器：不可信的 demo 与可复现的恶意
+
+几乎每个流式渲染 demo 都用同一种流：固定 3 字符、固定 25ms。**这种 demo 测不出任何问题**——它的切分永远落在安全位置，节奏永远均匀。真实世界的流长这样：
+
+- 大小从 1 字节到几 KB 不等的 chunk
+- 停顿 900ms 后 40 个 chunk 挤在 2ms 间隔内到达（代理缓冲）
+- 切口正好落在 `**` 中间、汉字的第 2 个字节、SSE 帧的一半
+
+渲染器的 bug 全部藏在这些地方。回放模拟器的职责就是**把这些恶意场景变成可复现、可组合、零成本的一等测试设施**。
+
+## 架构：两级切分
+
+关键设计是把"切"分成两层，各自独立、可自由组合：
+
+| 层           | 输入 → 输出                 | 模拟的是谁     | 策略                          |
+| ------------ | --------------------------- | -------------- | ----------------------------- |
+| **内容切分** | markdown 原文 → delta 序列  | 模型的吐字节奏 | 均匀 / 恶意（语法标记后切刀） |
+| **线级切割** | SSE 字节流 → 带时序的 chunk | 网络与代理     | 均匀 / jitter / burst         |
+
+中间用 `buildSseTranscript` 把 delta 序列编码成**真实的 OpenAI 兼容 SSE 字节流**（含 `[DONE]`）。这一步是回放保真度的来源：
+
+```ts
+const deltas = splitAdversarial(FIXTURE_MARKDOWN) // ① 内容切分
+const transcript = buildSseTranscript(deltas) // ② 编码为 SSE 线格式
+const chunks = sliceJitter(transcript, { seed: 42 }) // ③ 字节级二次切割
+const body = wireChunksToStream(chunks, speed) // ④ 按时间线回放
+```
+
+第 ④ 步产出的是一个 `ReadableStream<Uint8Array>`——**与 `fetch` 响应体同构**。下游的 SSE 解析、批处理、渲染代码一行都不用改，甚至不知道自己在被回放。
+
+## 策略细节
+
+**恶意内容切分**（`splitAdversarial`）：在每个语法标记字符（`* ` \` ` | [ ] ( # ~` 和换行）之后立刻切一刀。效果是 `**bold**` 被劈成 `*`、`*`、`bold*`、`*`——前视歧义的最坏情况被系统性制造出来。
+
+**jitter 线级切割**（`sliceJitter`）：chunk 大小 1~160 字节、间隔 5~220ms 均为伪随机。要点是**用种子化 PRNG（mulberry32）而非 `Math.random`**——同一个 seed 产出完全相同的时间线。"我这边能复现"在这里是数学保证：
+
+```ts
+sliceJitter(transcript, { seed: 42 }) // 任何机器、任何时刻，逐字节相同
+```
+
+**burst 线级切割**（`sliceBurst`）：静默 900ms，然后一串 chunk 以 2ms 间隔倾泻——这是代理/网关缓冲的真实画像，专治"每个 chunk 一次提交"型实现。
+
+## 全开控制台
+
+自由组合玩一下（速度调到 16x 可以快速过完样本；恶意 + burst 是最凶的组合）：
+
+<ReplayDemo view="markdown" controls />
+
+## 压力样本本身也是设计出来的
+
+`FIXTURE_MARKDOWN` 不是随手写的 lorem ipsum，每一段都对准一类高危结构：跨行的强调与链接（前视歧义）、表格（跨行语义）、长代码围栏（长期未闭合）、mermaid 围栏（重型节点）、CJK + emoji + 组合字符（grapheme 边界），以及一个**故意永不闭合的 `**`\*\* 收尾（final parse 的试金石）。
+
+## 回放的三重身份
+
+1. **调试器**：渲染层出了怪状？固定 seed 反复回放同一时间线，直到看清哪一帧出的问题。不烧一个 token。
+2. **回归测试**：第 2 章末尾的往返不变量测试就是回放设施驱动的——恶意切分 + jitter/均匀/burst 三种画像下，重组结果必须逐字节等于原文。
+3. **评测基准**（P1 之后）：同一条 chunk 时间线喂给 P0 和 P1，对比 UI 提交次数、抖动、最终 DOM——升级是否真的有效，用同一份输入说话。
+
+> 下一章（撰写中）：P1——显示调度器、块级切分与稳定前缀，让"闪变"和"尾部裸奔"消失。

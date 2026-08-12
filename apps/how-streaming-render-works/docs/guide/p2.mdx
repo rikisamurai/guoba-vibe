@@ -1,0 +1,75 @@
+import { ReplayDemo } from '../../components/replay-demo'
+
+# P2：重型节点——Shiki 与 Mermaid
+
+P1 解决了文本的流式渲染，但富文本里最贵的三类节点——**语法高亮、图表、公式**——每一个的渲染成本都是普通文本的几十到几百倍。把它们塞进主渲染循环，前几章的所有优化会被一个代码块吃光。
+
+P2 的原则只有一条：**重型节点走自己的时钟**。文本该多快多快，重活在独立的调度通道里 debounce、懒加载、可失败。
+
+先看效果（P2 渲染器：TypeScript 围栏有 Shiki 高亮，Mermaid 围栏闭合后渲染成图）：
+
+<ReplayDemo view="markdown" renderer="p2" />
+
+## 通道一：Shiki 高亮
+
+反模式清单第一名：**每个字符到达都全量重新高亮**。Shiki 的一次 `codeToHtml` 对几十行代码要花几毫秒到几十毫秒，逐字符触发等于把 CPU 点着。
+
+P2 的 `CodeBlock` 组件用三层递进：
+
+1. **素排立即可见**——代码字符一到就以等宽字体显示，永不阻塞流
+2. **streaming 中 150ms debounce**——增量到达重置定时器，静默 150ms 才跑一次高亮
+3. **闭合/final 立即高亮**——围栏闭合是确定性时刻，马上出最终结果
+
+还有一个容易忽略的细节：高亮是异步的，结果返回时代码可能又长了。此时**宁可回退素排，也不显示旧的高亮结果**——过期的彩色代码比无色代码更误导：
+
+```ts
+if (result === null || result.forCode !== code) {
+  return <pre><code>{code}</code></pre> // 高亮落后于代码，回退素排
+}
+```
+
+## 通道二：Mermaid 的两种策略
+
+Mermaid 比高亮更麻烦：它的输出是一整张 SVG 图，**每次重渲染都是完整的重新布局**——图形跳动、高度突变、CLS 爆表。文档点名的坑：「Mermaid 每行重布局」。
+
+P2 把两种策略都做了出来，用开关切换：
+
+**默认策略（稳）**：streaming 中显示源码 + 「图表生成中…」标记，围栏闭合后一次性渲染。图只画一次，零抖动。代价是用户在图表生成期间看到的是代码。
+
+<ReplayDemo view="markdown" renderer="p2" speed={16} />
+
+**live 实验策略（激进）**：streaming 中每 400ms 尝试渲染一次。关键在失败处理——半截图定义 parse 失败是常态，此时**保持上一帧**而不是显示错误：
+
+<ReplayDemo view="markdown" renderer="p2" mermaidLive speed={16} />
+
+两个 demo 用同一条时间线，肉眼对比：live 模式图表更早出现，但成形过程中会跳动几次。这是产品决策而非技术决策——聊天场景通常选稳，监控看板类场景可能选激进。
+
+## Mermaid 的安全面
+
+图表定义来自模型输出，同样不可信。初始化时一并锁死：
+
+```ts
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: 'strict', // 禁用 click 绑定与危险内容
+  theme: 'dark',
+})
+```
+
+`strict` 模式下图表内的 `click` 事件绑定、外链跳转全部失效——一张流程图不应该有能力执行代码。
+
+## 装进 P1 的管线
+
+P2 组件复用 P1 的全部机制（调度器、块级切分、稳定前缀缓存、尾部修补），只在块渲染处分流：
+
+```tsx
+if (block.fence) {
+  const code = fenceCode(block)
+  if (block.lang === 'mermaid')
+    return <MermaidBlock code={code} closed={block.closed} final={final} live={mermaidLive} />
+  return <CodeBlock code={code} lang={block.lang} closed={block.closed} final={final} />
+}
+// 其余块：稳定前缀缓存，同 P1
+```
+
+块级切分早就把「围栏是否闭合」「围栏语言」标注好了（`MdBlock.fence/closed/lang`）——P1 打的地基在这里全部兑现。KaTeX 公式通道没有实现（进 backlog），但它就是第三个 `if` 分支：同样的 debounce、同样的独立时钟、外加一条「渲染后高度突变要预留占位」的 CLS 功课。
