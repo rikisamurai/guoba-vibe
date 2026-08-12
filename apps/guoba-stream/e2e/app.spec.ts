@@ -27,6 +27,38 @@ test('gate blocks until a valid code is entered', async ({ page }) => {
   await expect(page.getByPlaceholder('https://x.com/…/status/…')).toBeVisible()
 })
 
+test('clears a pasted URL during fetch without cancelling the result', async ({ page }) => {
+  await seedAccessKey(page)
+  let releaseResolve!: () => void
+  const resolveAllowed = new Promise<void>((resolve) => {
+    releaseResolve = resolve
+  })
+  await page.route('**/api/resolve*', async (route) => {
+    await resolveAllowed
+    await route.fulfill({ json: RESOLVED_TWEET })
+  })
+  await page.goto('/')
+
+  const input = page.getByPlaceholder('https://x.com/…/status/…')
+  const clearButton = page.getByRole('button', { name: 'Clear URL' })
+  await expect(clearButton).toHaveCount(0)
+  await input.fill(TWEET_URL)
+  await expect(clearButton).toBeVisible()
+
+  const fetchButton = page.getByRole('button', { name: 'Fetch' })
+  await fetchButton.click()
+  await expect(fetchButton).toBeDisabled()
+  await clearButton.click()
+
+  const labelledInput = page.getByRole('textbox', { name: 'Tweet URL' })
+  await expect(labelledInput).toHaveValue('')
+  await expect(labelledInput).toBeFocused()
+  await expect(clearButton).toHaveCount(0)
+
+  releaseResolve()
+  await expect(page.getByText('@sana_films')).toBeVisible()
+})
+
 test('resolves a post into selectable media cards', async ({ page }) => {
   await seedAccessKey(page)
   await page.route('**/api/resolve*', (route) => route.fulfill({ json: RESOLVED_TWEET }))
