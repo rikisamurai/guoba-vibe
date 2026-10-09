@@ -1,0 +1,280 @@
+---
+title: 01 · 做出一次完整回答
+description: 按步骤完成 做出一次完整回答，从观察现象到修改代码，再验证结果。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+# 做出一次完整回答
+
+**动手练习 · 每次只增加一个能力。** 不熟悉异步或类型标记，可以先看 [预备知识](/basics)。
+
+## 第一步：看见现象
+
+<LessonDemo demoId="response" presetId="complete-response" />
+
+## 第二步：打开你要修改的文件
+
+从仓库根目录找到：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/01-static-chat/exercise/index.tsx
+```
+
+只修改本课 exercise；solution 是独立的参考答案。后续练习自带前一阶段能力，不会自动读取你上一课的修改。
+
+## 第三步：先运行，再一步步修好
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+```
+
+1. 先播放下面的实验：用户消息应立即出现，助手要等结果返回才出现。
+2. 打开 exercise/index.tsx，找到 sendNonStreamingTurn。prompt 是问题，complete 是异步取回答的函数，publish 把完整对话状态交给页面。
+3. 运行测试。当前代码只进入等待，没有发布完成状态，所以应失败。
+4. 把 await complete(prompt) 的返回值保存成 reply，再发布包含 user 和 assistant 的 completed 状态。不要 trim 或改写 reply。
+5. 重跑测试，确认等待期间只有用户消息，完成后恰好追加一条助手消息。
+
+## 第四步：检查关键代码
+
+下面是本次修改的核心片段；需要上下文时展开本页末尾的详细实现。
+
+```ts
+const reply = await complete(prompt)
+publish({
+  phase: 'completed',
+  messages: [userMessage, { role: 'assistant', text: reply }],
+})
+```
+
+## 第五步：验证你的结果
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+pnpm --filter stream-render-lab lesson 01 solution
+```
+
+第一条检查你写的代码，第二条检查参考答案。两条通过才说明这一步在测试覆盖的边界内成立；课内实验运行参考逻辑，不会自动热更新为你的 exercise。
+
+## 完成检查
+
+- 我能解释刚才测试为什么失败，以及修改解决了什么问题。
+- 我的 exercise 测试通过，没有靠删断言跳过错误。
+- 我能指出本课结果如何交给下一层。
+
+[下一步 →](/learn/02-string-replay-clock)
+
+<details>
+<summary>深入理解：完整实现、测试解释与边界</summary>
+
+这一课还不处理 chunk。你会实现一次最小但真实的**异步 chat turn**（一条用户消息及其对应的一次 assistant 回答）：用户提交 prompt，程序等待一个 `Promise<string>`，拿到完整 reply 后再更新对话。
+
+<LessonMeta
+  duration="30 分钟"
+  exercise="实现 sendNonStreamingTurn"
+  prerequisites={['完成 00', 'async / await', 'TypeScript 函数参数']}
+/>
+
+## 这一课要建立什么基线
+
+DeepSeek Chat Completions 在非流式模式下会返回一条完整 assistant message；其 API 中 `stream` 默认为 `false`。具体响应结构可查看 [DeepSeek Create Chat Completion](https://api-docs.deepseek.com/api/create-chat-completion)。
+
+我们暂时用可控的 `complete(prompt): Promise<string>` 代替真实 HTTP 请求，但保留请求最重要的异步边界：调用后不能立刻得到回答，必须等待 Promise 完成。
+
+一次对话只经过三个 UI 状态：
+
+```text
+idle      用户还没有发送
+  ↓ send
+waiting   用户消息已经显示，正在等待完整回答
+  ↓ await complete(prompt)
+completed 用户消息后追加一条完整 assistant 消息
+```
+
+`idle / waiting / completed` 是本课定义的 **UI 状态**，不是 DeepSeek 协议中的事件名称。
+
+## 先看最终交互
+
+播放下面这次对话 trace。你应该先看到 user 消息和等待提示；完整 reply 返回后，assistant 消息一次出现。这里没有逐字增长，这正是后续 streaming 版本的正确性基线。
+
+观察时只回答两个问题：
+
+1. 等待期间，用户刚发送的 prompt 有没有保留在界面上？
+2. 完成后，assistant 是否只出现一条，而且内容没有被修改？
+
+## 本节新增文件
+
+```text
+apps/stream-render-lab/workshop/mini-chat/01-static-chat/
+├── contract.ts          # ChatSnapshot 类型与行为测试
+├── fixture.ts           # 固定的 prompt 和完整 reply
+├── mini-chat.tsx        # 已完成的最小界面
+├── exercise/index.tsx   # 你只修改这里
+└── solution/index.tsx   # 参考实现
+```
+
+这一课只实现状态变化，不要求你同时写网络请求和 React 组件。这样测试失败时，你知道问题就在这个 chat turn，而不是其他层。
+
+## 读懂三个输入
+
+打开 `exercise/index.tsx`，函数签名如下：
+
+```ts
+sendNonStreamingTurn({ prompt, complete, publish }): Promise<void>
+```
+
+`ChatSnapshot` 是本项目对“某一时刻完整对话状态”的命名。三个参数分别代表：
+
+| 参数       | 含义                                                                                                        |
+| ---------- | ----------------------------------------------------------------------------------------------------------- |
+| `prompt`   | 用户刚刚发送的原始文本。                                                                                    |
+| `complete` | 模拟非流式 AI 请求的异步函数。传入 prompt，最终返回完整 reply。                                             |
+| `publish`  | 本项目传入的状态回调：每调用一次，就把一个新的 `ChatSnapshot`（对话状态快照）交给界面。它不是网络协议术语。 |
+
+函数返回 `Promise<void>`，表示调用者可以等待这次 chat turn 完成；真正的对话结果通过 `publish` 交给界面。
+
+## 先运行失败的 exercise
+
+从仓库根目录运行：
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+```
+
+当前 starter 已经做对了前半段：
+
+```ts
+const userMessage = { role: 'user' as const, text: prompt }
+publish({ phase: 'waiting', messages: [userMessage] })
+
+await complete(prompt)
+// TODO 01: publish the completed snapshot with the unchanged reply.
+```
+
+测试失败的原因不是“请求没有返回”，而是 `await` 的结果被丢掉了：程序只发布过 `waiting`，从未发布 `completed`。
+
+## 先预测，再写代码
+
+假设 `complete(prompt)` 还没有完成，此时唯一合法的 snapshot 是：
+
+```ts
+{
+  phase: 'waiting',
+  messages: [{ role: 'user', text: prompt }],
+}
+```
+
+assistant 消息不能提前出现，因为你还没有 reply。等 Promise 完成后，第二个 snapshot 才能是：
+
+```ts
+{
+  phase: 'completed',
+  messages: [
+    { role: 'user', text: prompt },
+    { role: 'assistant', text: reply },
+  ],
+}
+```
+
+注意第二次不是只发布 assistant。一个 snapshot 描述的是**当前完整对话状态**，所以原来的 user 消息仍然存在。
+
+## 实现唯一 TODO
+
+把 `await complete(prompt)` 的返回值保存为 `reply`，然后发布完成状态：
+
+```ts
+const reply = await complete(prompt)
+
+publish({
+  phase: 'completed',
+  messages: [userMessage, { role: 'assistant', text: reply }],
+})
+```
+
+这里不要 `trim()`、拆分或重新拼接 `reply`。非流式 API 已经给出了完整正文，本课的职责只是把它原样放进 assistant message。
+
+## Contract 如何检查“等待”真的发生过
+
+测试没有让 `complete` 立即返回。它先创建一个暂未完成的 Promise，然后调用你的函数：
+
+```ts
+const settled = sendNonStreamingTurn({ prompt, complete, publish })
+
+expect(published).toEqual([waitingSnapshot])
+
+completion.resolve(reply)
+await settled
+
+expect(published).toEqual([waitingSnapshot, completedSnapshot])
+```
+
+这证明了两件不同的事：
+
+1. `complete` 完成前，user 已经出现，phase 是 `waiting`；
+2. `complete` 完成后，恰好再发布一次，phase 是 `completed`。
+
+如果测试只等待函数结束再看最终数组，它就无法发现“等待期间界面还是空白”这种体验问题。
+
+## Solution diff
+
+```diff
+-await complete(prompt)
+-// TODO 01: publish the completed snapshot with the unchanged reply.
++const reply = await complete(prompt)
++
++publish({
++  phase: 'completed',
++  messages: [userMessage, { role: 'assistant', text: reply }],
++})
+```
+
+保存后重新运行 exercise，再验证独立的参考实现：
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+pnpm --filter stream-render-lab lesson 01 solution
+```
+
+两条命令都应通过同一份 contract。
+
+## 本章 Checkpoint
+
+- [ ] 我能解释为什么 `complete` 返回 Promise，而不是直接返回 string。
+- [ ] Promise 完成前，snapshot 中已经有 user 消息和 `waiting` 状态。
+- [ ] Promise 完成后，只追加一条完整 assistant 消息。
+- [ ] assistant 文本逐字等于 `complete` 返回的 reply。
+
+**Invariant：** 完成状态中的消息顺序始终是 user → assistant，assistant `text` 与完整 reply 完全相同。
+
+**Trade-off：** 状态和实现都很简单，但用户必须等完整 reply 返回后才能看到答案。
+
+**退化条件：** 模型生成时间越长，`waiting` 保持越久；内容正确性不变，等待体验会变差。
+
+## 常见错误
+
+| 错误                                    | 会发生什么                             |
+| --------------------------------------- | -------------------------------------- |
+| `await complete(prompt)` 但不保存返回值 | 请求完成了，assistant 仍不会进入状态。 |
+| 等 reply 返回后才第一次 `publish`       | 等待期间用户自己的消息也看不见。       |
+| 第二次只发布 assistant message          | user 消息从完整 snapshot 中消失。      |
+| 对 reply 调用 `trim()`                  | 悄悄改变 Provider 返回的内容。         |
+| 调用两次 `complete(prompt)`             | 同一个 turn 被重复请求。               |
+
+## 挑战题
+
+不要改代码，先回答：如果 `complete` 的 Promise 一直没有完成，界面应该停在哪个状态？此时 messages 中应该有什么？
+
+答案应是 `waiting`，并保留一条 user 消息。我们会在后面的产品化课程再讨论停止、错误和重试；本课只钉住成功路径。
+
+## 下一步：让完整回答变成片段
+
+02 保留同样的 user → assistant 最终结果，但不再等待一个完整 string。它会把回答拆成多个片段，按可控时间逐个送入状态，让你第一次观察“到达时间”和“显示时间”。
+
+## 面试时怎么讲
+
+> 我先用非流式 Promise 建立 chat turn 的最小状态机：发送时立即发布 waiting 和 user 消息，完整回复返回后再发布 completed 和 assistant 消息。这个终态是后续 streaming 实现的正确性基线（correctness baseline）；引入增量后，最终 transcript 仍必须与它一致。
+
+[继续课程：02 · String Replay 与 Clock →](/learn/02-string-replay-clock)
+
+</details>

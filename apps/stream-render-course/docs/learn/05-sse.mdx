@@ -1,0 +1,253 @@
+---
+title: 05 · 拼出完整的 SSE 事件
+description: 按步骤完成 拼出完整的 SSE 事件，从观察现象到修改代码，再验证结果。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+# 拼出完整的 SSE 事件
+
+**动手练习 · 每次只增加一个能力。** 不熟悉异步或类型标记，可以先看 [预备知识](/basics)。
+
+## 第一步：看见现象
+
+<LessonDemo demoId="sse-lab" presetId="sse-lab" />
+
+## 第二步：打开你要修改的文件
+
+从仓库根目录找到：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/05-sse/exercise/sse.ts
+```
+
+只修改本课 exercise；solution 是独立的参考答案。后续练习自带前一阶段能力，不会自动读取你上一课的修改。
+
+## 第三步：先运行，再一步步修好
+
+```bash
+pnpm --filter stream-render-lab lesson 05 test
+```
+
+1. 先读取第一段，再读第二段。看事件数量什么时候从 0 变成 1。
+2. 勾选“去掉结尾空行”，重跑。即使连接结束，也不应该把半条事件派发出去。
+3. 打开 parseEventStream，运行测试。当前返回空数组，所有真实事件都被忽略。
+4. 先复用上一课的 UTF-8 解码；按 LF、CR、CRLF 切完整行；冒号前是字段名，冒号后最多去掉一个前导空格。
+5. 累积 data 行，遇到空行再派发。多行 data 用换行连接；注释行忽略，id 要保留，retry 只接受数字。
+6. 参考下方逐段实现完成函数，再运行测试。此练习一次接收全部 chunks；真实 HTTP 版本在第 07 课使用持续保留状态的解析器。
+
+## 第四步：检查关键代码
+
+下面是本次修改的核心片段；需要上下文时展开本页末尾的详细实现。
+
+```ts
+if (field === 'data') buffer.data += `${value}\n`
+if (line === '') dispatch(buffer, events)
+```
+
+## 第五步：验证你的结果
+
+```bash
+pnpm --filter stream-render-lab lesson 05 test
+pnpm --filter stream-render-lab lesson 05 solution
+```
+
+第一条检查你写的代码，第二条检查参考答案。两条通过才说明这一步在测试覆盖的边界内成立；课内实验运行参考逻辑，不会自动热更新为你的 exercise。
+
+## 完成检查
+
+- 我能解释刚才测试为什么失败，以及修改解决了什么问题。
+- 我的 exercise 测试通过，没有靠删断言跳过错误。
+- 我能指出本课结果如何交给下一层。
+
+[下一步 →](/learn/06-chat-completions)
+
+<details>
+<summary>深入理解：完整实现、测试解释与边界</summary>
+
+04 已经安全得到 string，但一个 text chunk 可能只有半行，也可能包含三个 event。05 只负责 WHATWG SSE framing，不在这一层 `JSON.parse` provider payload。
+
+<LessonMeta
+  duration="60 分钟"
+  exercise="实现可跨任意 text chunk 的 SSE 状态机"
+  prerequisites={['04 增量 UTF-8', '状态机', '数组与字符串']}
+/>
+
+## 本节新增文件
+
+```text
+workshop/mini-chat/05-sse/
+├── contract.ts
+├── fixture.ts
+├── exercise/
+│   ├── index.tsx
+│   └── sse.ts
+└── solution/
+    ├── index.tsx
+    └── sse.ts
+```
+
+输入来自 04 的 decoder；输出是 parser-neutral event：
+
+```ts
+interface SseEvent {
+  type: string
+  data: string
+  lastEventId: string
+}
+```
+
+课程版 `parseEventStream` 在 response 结束后一次返回结果，先把 framing correctness 讲清楚；真实 Lab 会逐 chunk 推进相同状态。不要把这里的 batch return 误解为 transport chunk 有语义。
+
+## 先击穿 `split('\n\n')`
+
+```bash
+pnpm --filter stream-render-lab lesson 05 test
+```
+
+预期失败：
+
+```text
+× parses WHATWG SSE fields and drops EOF residue
+Expected 2 events, lastEventId "7", retryMs 1500
+Received 0 events and empty lastEventId
+```
+
+错误实现只认识 LF 双换行。下面一个事件故意混用换行并跨 chunk：
+
+```text
+: heartbeat\r
+id: 42\r
+event: message\n
+data: first\r
+data: second\r
+\r
+```
+
+正确结果的 `data` 是 `first\nsecond`；comment 不进入事件。
+
+## 最小原理：chunk → line → field → event
+
+```text
+text chunk
+  → line scanner        识别 CR / LF / CRLF
+  → field accumulator   处理 data / event / id / retry
+  → blank line          派发一个 event
+```
+
+解析过程保存当前 event 字段与上一条有效 `id`；line scanner 则统一处理三种换行。transport chunk 在这里没有语义。
+
+### 六条必须写进测试的规则
+
+1. 开头的 UTF-8 BOM 只忽略一次。
+2. CR、LF、CRLF 都结束一行，CRLF 跨 chunk 仍算一次。
+3. 多行 `data` 用 `\n` 连接，派发前去掉最后追加的换行。
+4. `:` 开头是 comment；未知 field 忽略。
+5. `retry` 只有全十进制数字才更新；`id` 含 NUL 时忽略。
+6. **EOF 不是空行**：未被空行派发的残留 event 丢弃。
+
+## TODO：完成 line → field → event 三步
+
+打开 `05-sse/exercise/sse.ts`。starter 明确返回空结果：
+
+```ts
+export function parseEventStream(_chunks: readonly Uint8Array[]): ParsedEventStream {
+  // TODO 05：decode complete lines, apply fields, dispatch on blank lines
+  return { events: [], lastEventId: '' }
+}
+```
+
+先调用上一课的 `decodeUtf8Chunks`，再写 `completeLines`、`applyField`、`dispatch` 三个小函数。不要在每条 `data:` 后派发，也不要在 EOF 自动补空行。
+
+<details open>
+  <summary>手工 Demo：逐行写出 accumulator</summary>
+
+对 `data: A\ndata: B\n\n`，状态依次是：
+
+```text
+dataBuffer = "A\n"
+dataBuffer = "A\nB\n"
+blank line → emit data "A\nB" → clear event fields
+```
+
+再删掉最后一个 `\n`：EOF 时不应 emit。
+
+</details>
+
+## 在 Lab 里改变真实 byte 切法
+
+调整 chunk 范围与 seed，切换 Raw/Wire 和 Events。无论切法如何，event 数、id 与多行 data 都应保持一致。
+
+## Solution diff
+
+```diff
+-return { events: [], lastEventId: '' }
++const events = []
++const buffer = { data: '', type: '', lastEventId: '' }
++for (const line of completeLines(decodeUtf8Chunks(chunks))) {
++  if (line === '') dispatch(buffer, events)
++  else if (!line.startsWith(':')) applyField(line, buffer)
++}
++return {
++  events,
++  lastEventId: buffer.lastEventId,
++  ...(buffer.retryMs === undefined ? {} : { retryMs: buffer.retryMs }),
++}
+```
+
+真实 solution 还处理上述六条规则；这段 diff 只展示本课唯一 TODO 的核心。
+
+```bash
+pnpm --filter stream-render-lab lesson 05 test
+```
+
+预期通过：
+
+```text
+✓ parses WHATWG SSE fields and drops EOF residue
+Test Files  1 passed
+Tests       5 passed
+```
+
+```bash
+pnpm --filter stream-render-lab lesson 05 solution
+```
+
+## Checkpoint：parser 不依赖 transport 分块
+
+- [ ] same bytes 的 every-byte 与整块输入产生相同 events。
+- [ ] 多行 data 保留中间 `\n`。
+- [ ] comment 不派发，EOF residue 不派发。
+- [ ] CRLF 在 `\r | \n` 之间切开仍正确。
+
+**Invariant：** parser 输出只由完整 SSE lines 与空行决定，与 byte/text chunk partition 无关。
+
+**Trade-off：** 状态机比 `split` 多保存少量状态，却能准确区分完整事件与截断残留。
+
+**退化条件：** 只有 LF、单行 data 的理想 fixture 会让错误实现看似正确，所以不能作为唯一测试。
+
+## 常见错误
+
+| 错误                   | 后果                              |
+| ---------------------- | --------------------------------- |
+| `trim()` 整行          | 改掉 data 中有意义的尾空格        |
+| EOF 自动 dispatch      | 把截断 payload 当成完整事件       |
+| parser 内 `JSON.parse` | 协议 framing 与 provider 语义耦合 |
+| CR 后立即发空行        | 跨 chunk CRLF 可能被算两次        |
+
+## 挑战题
+
+把 fixture 的每个 byte 都作为独立 chunk，输出 line 与 event trace。再加入 `retry: 12x`，证明它不会更新 retry。
+
+## 下一步映射
+
+05 只输出 `{ event, data }`。06 才认识 Chat Completions 的 JSON shape，把 `choices[i].delta.content` 映射成 mini-chat 能消费的 text delta。
+
+## 面试时怎么讲
+
+> 我按 WHATWG framing 写增量 SSE parser：UTF-8、line、field、event 四层分开；支持三种换行、多行 data、comment、id、retry，并明确丢弃 EOF 未派发残留。provider JSON 不进入 parser。
+
+[继续课程：06 · Chat Completions adapter →](/learn/06-chat-completions)
+
+</details>

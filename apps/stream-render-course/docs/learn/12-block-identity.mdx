@@ -1,0 +1,48 @@
+---
+title: 12 · 让没变化的段落保持不变
+description: 从对象引用理解 React 复用，而不是盲目加 memo。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 后面新增一句，前面为什么又刷新？
+
+**进阶源码实验。** 先打开 `apps/stream-render-lab/src/markdown/preview.ts` 的 reuseStableBlocks。
+
+## 第一步：观察一篇多段回答
+
+在 <LabLink path="/lab">进阶实验台</LabLink> 输入三段文字，段间留空行，用 M1 和 M2 对比回放。打开 blocks 检查结构，观察尾段增长时前面段落的标识。
+
+本课的问题是复用不变的显示结构，不是减少网络请求。
+
+## 第二步：认识“内容相同”与“同一个对象”
+
+```js
+const a = { text: '你好' }
+const b = { text: '你好' }
+console.log(a === b) // false
+```
+
+即使字相同，重建对象也会改变引用。解析器若能复用没有变化的 block，React memo 才更容易跳过无意义工作。
+
+## 第三步：理解复用条件
+
+源码先检查类型、原文和位置，再检查节点语义。只比较 raw 不够：后面到达的链接定义可能改变前面的含义。
+
+找到 render-document.tsx 的 BlockView，读 memo 的比较函数。它还会检查终态和重型渲染结果；不能为了少刷新忽略这些输入。
+
+## 第四步：用测试验证
+
+打开 markdown.test.ts 的 keeps unchanged block identity 用例。在已有第一段后追加第二段，检查第一段是否保持同一个引用。再检查尾段变成 Setext 标题的情况，尾段必须重新解释。
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/markdown/markdown.test.ts src/rendering/render-document.test.tsx
+```
+
+## 第五步：明确收益边界
+
+对象复用可以减少渲染工作，但 M2 仍可能全文解析。更新次数、解析字符量、React commit 次数要分别观察，不能把“复用了 block”直接写成“线性复杂度”。
+
+预期：追加尾段时，语义未变的前缀块保持引用；会改变语义的尾段必须重新解析。
+
+[下一步：13 · 只重算需要变化的尾部 →](/learn/13-suffix-reparse)

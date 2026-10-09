@@ -1,0 +1,33 @@
+{
+  "name": "stream-render-course",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && rspress build",
+    "dev": "rspress dev",
+    "lint": "oxlint",
+    "preview": "rspress preview --host 0.0.0.0 --port 4173",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "validate": "node scripts/validate-lessons.mjs",
+    "verify": "pnpm lint && pnpm validate && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@fontsource-variable/schibsted-grotesk": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@rspress/core": "2.0.19",
+    "@stream-render/contract": "workspace:*",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^24.12.4",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "oxlint": "catalog:",
+    "typescript": "^5",
+    "vitest": "^4.1.7"
+  }
+}

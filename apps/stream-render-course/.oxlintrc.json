@@ -1,0 +1,33 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "unicorn", "oxc", "import", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true,
+    "maxWarnings": 0,
+    "reportUnusedDisableDirectives": "error"
+  },
+  "env": { "builtin": true, "browser": true, "node": true },
+  "ignorePatterns": ["doc_build"],
+  "rules": {
+    "import/no-unassigned-import": "off",
+    "react/react-in-jsx-scope": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.{ts,tsx}"],
+      "rules": {
+        "max-lines": ["error", { "max": 200, "skipBlankLines": true, "skipComments": true }]
+      }
+    },
+    {
+      "files": ["**/*.test.{ts,tsx}"],
+      "rules": { "max-lines": "off" }
+    }
+  ]
+}

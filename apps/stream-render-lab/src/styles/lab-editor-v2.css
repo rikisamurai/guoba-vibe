@@ -1,0 +1,30 @@
+.lab2-main {
+  display: grid;
+  min-height: 590px;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 2fr);
+}
+
+.lab2-editor {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+  background: var(--scope);
+}
+
+.lab2-editor > span {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--scope-rule);
+  color: var(--signal-soft);
+}
+
+.lab2-editor textarea {
+  min-height: 540px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #d9e5df;
+  padding: 20px;
+  font: 12px/1.75 var(--font-mono);
+  tab-size: 2;
+}

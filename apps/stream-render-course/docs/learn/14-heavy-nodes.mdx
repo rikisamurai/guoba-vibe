@@ -1,0 +1,46 @@
+---
+title: 14 · 高亮、公式和图表别抢跑
+description: 为昂贵的异步工作安排时机，并拒绝过期结果。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 代码还没收完，就开始画图了吗？
+
+**进阶源码实验。** 文件入口：`apps/stream-render-lab/src/heavy/task-gate.ts`、coordinator.ts。
+
+## 第一步：观察重型内容
+
+在 <LabLink path="/lab">进阶实验台</LabLink> 输入代码围栏、公式或 Mermaid，比较 M3 与 M4。使用相同切分和速度，观察预览和最终结果。
+
+高亮和绘图可能比普通文本昂贵。不是每次正文增加都值得重做一次。
+
+## 第二步：分清三种安排
+
+- 按帧合并：减少状态发布频率。
+- debounce：等输入稍微安静再启动昂贵任务。
+- revision 检查：异步结果返回时，确认它仍属于当前内容版本。
+
+减少任务次数与拒绝过期结果是两个独立问题，都要处理。
+
+## 第三步：理解“先发后到”
+
+任务 A 处理旧代码，任务 B 处理新代码。如果 B 先完成、A 后完成，直接显示 A 就会把页面倒退到旧版本。
+
+找到任务键与版本检查，再找到 dispose：停止或卸载后，结果也不能写回。
+
+## 第四步：亲自验证竞态
+
+打开 task-gate.test.ts 的 never commits a stale async result。按代码顺序标出发起 A、发起 B、完成 B、完成 A，再核对最终提交的版本。
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/heavy/task-gate.test.ts src/heavy/incremental-highlighter.test.ts
+```
+
+练习：把完成顺序改为 A 后 B，结果仍应符合“只显示当前版本”的约束；不要为了测试通过取消版本检查。
+
+## 第五步：别让失败任务拖住结束
+
+重型任务也可能失败或超时。源码中的 deadline 与错误路径让它停止等待，并输出诊断。不能为了等待一张图永远不结束整个回答。
+
+[下一步：15 · 把实验变成能用的聊天 →](/learn/15-chat-behavior)

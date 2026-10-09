@@ -1,0 +1,238 @@
+---
+title: 03 · 分清收到的文字与显示的文字
+description: 按步骤完成 分清收到的文字与显示的文字，从观察现象到修改代码，再验证结果。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+import { LessonMeta } from '../../components/lesson-meta'
+
+# 分清收到的文字与显示的文字
+
+**动手练习 · 每次只增加一个能力。** 不熟悉异步或类型标记，可以先看 [预备知识](/basics)。
+
+## 第一步：看见现象
+
+<LessonDemo demoId="m0" presetId="m0-every-delta" />
+
+## 第二步：打开你要修改的文件
+
+从仓库根目录找到：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/03-m0-baseline/exercise/index.tsx
+```
+
+只修改本课 exercise；solution 是独立的参考答案。后续练习自带前一阶段能力，不会自动读取你上一课的修改。
+
+## 第三步：先运行，再一步步修好
+
+```bash
+pnpm --filter stream-render-lab lesson 03 test
+```
+
+1. 播放实验，分别看输入片段、累积原文与显示结果。
+2. 打开 createM0Renderer。raw 是接收到的文字，visible 是本练习的显示字符串，parseCount 记录解析次数。
+3. 运行测试：当前代码用上一次 raw 做解析，显示结果会落后一个片段。
+4. 先把 delta 追加到 raw，再把新的 raw 交给 parseTinyMarkdown。
+5. 重新测试，确认最后一段不会漏掉。这个小解析器只用于练习，不是安全的通用 Markdown 渲染器，不能直接拿去显示模型 HTML。
+
+## 第四步：检查关键代码
+
+下面是本次修改的核心片段；需要上下文时展开本页末尾的详细实现。
+
+```ts
+const raw = snapshot.raw + delta
+snapshot = {
+  raw,
+  visible: parseTinyMarkdown(raw),
+  parseCount: snapshot.parseCount + 1,
+}
+```
+
+## 第五步：验证你的结果
+
+```bash
+pnpm --filter stream-render-lab lesson 03 test
+pnpm --filter stream-render-lab lesson 03 solution
+```
+
+第一条检查你写的代码，第二条检查参考答案。两条通过才说明这一步在测试覆盖的边界内成立；课内实验运行参考逻辑，不会自动热更新为你的 exercise。
+
+## 完成检查
+
+- 我能解释刚才测试为什么失败，以及修改解决了什么问题。
+- 我的 exercise 测试通过，没有靠删断言跳过错误。
+- 我能指出本课结果如何交给下一层。
+
+[下一步 →](/learn/04-utf8)
+
+<details>
+<summary>深入理解：完整实现、测试解释与边界</summary>
+
+02 已经能按时间送来字符串。03 每到一段就重新解析**全部 raw**，建立最直接的 M0 基线。raw 保存 Markdown 原文，visible 保存这个 prefix 的渲染结果。
+
+<LessonMeta
+  duration="40 分钟"
+  exercise="记录每个片段对应的 M0 snapshot"
+  prerequisites={['02 replay', '不可变对象', 'React render 基础']}
+/>
+
+## 本节新增文件
+
+```text
+workshop/mini-chat/03-m0-baseline/
+├── contract.ts
+├── fixture.ts
+├── exercise/index.tsx
+└── solution/index.tsx
+```
+
+这一步复用 02 的 trace 和 Clock。新增的是 `Snapshot`，而不是新 transport：
+
+```ts
+interface Snapshot {
+  raw: string
+  visible: string
+  parseCount: number
+}
+```
+
+## 两个字段分别回答什么
+
+| 字段       | 问题                           | 谁能改变它  |
+| ---------- | ------------------------------ | ----------- |
+| raw        | 引擎已经接受了哪些真实 delta？ | ingest      |
+| visible    | 完整解析当前 raw 后展示什么？  | M0 parser   |
+| parseCount | 到目前为止完整解析了几次？     | M0 renderer |
+
+输入 `**流式` 时标记未闭合，tiny parser 暂时原样显示；补上 `渲染**` 后，visible 变为 `<strong>流式渲染</strong>`。两个字段从此不应混为一个 string。
+
+## 先运行错误实现
+
+```bash
+pnpm --filter stream-render-lab lesson 03 test
+```
+
+预期失败：
+
+```text
+× keeps raw and visible separate in M0
+Expected final visible: "<strong>流式渲染</strong>"
+Received final visible: "**流式"
+```
+
+exercise 先算出新 `raw`，却错误地解析旧 `snapshot.raw`。结果 visible 永远落后一个 delta——典型的 stale state bug。
+
+## 最小 M0 数据流
+
+```text
+delta arrives
+  → raw = raw + delta
+  → visible = fullParse(raw)
+  → parseCount = parseCount + 1
+  → publish immutable snapshot
+```
+
+M0 刻意在每个 delta 后发布。它以后可能很慢，但逻辑最容易验证，所以会成为其他策略的 oracle。
+
+Profiler 会把每次完整解析的输入长度累加为 `previewParsedCodeUnits`。本课只记录 `parseCount`，先理解“每段都全量解析”，后面再量化总工作量。
+
+## TODO：解析这一次的新 raw
+
+打开 `03-m0-baseline/exercise/index.tsx`：
+
+```ts
+const raw = snapshot.raw + delta
+snapshot = {
+  raw,
+  // TODO 03：这里不能读取上一版 snapshot.raw
+  visible: parseTinyMarkdown(snapshot.raw),
+  parseCount: snapshot.parseCount + 1,
+}
+```
+
+<details open>
+  <summary>Snapshot Demo：手算前三次 commit</summary>
+
+输入 `['**流式', '渲染**']`，应该产生：
+
+```text
+parse 1  raw="**流式"       visible="**流式"
+parse 2  raw="**流式渲染**" visible="<strong>流式渲染</strong>"
+```
+
+如果第二次 visible 仍是 `**流式`，你解析了上一版 snapshot，而不是本次局部变量 `raw`。
+
+</details>
+
+## 内嵌实验：逐 delta 查看两个字段
+
+使用 Step 逐次前进。对照 Raw 与 Rendered：原文保留 Markdown 标记，visible 则是每次完整解析后的结果；parse count 每段增加 1。
+
+## Solution diff
+
+```diff
+ const raw = snapshot.raw + delta
+ snapshot = {
+   raw,
+-  visible: parseTinyMarkdown(snapshot.raw),
++  visible: parseTinyMarkdown(raw),
+   parseCount: snapshot.parseCount + 1,
+ }
+```
+
+验证 exercise：
+
+```bash
+pnpm --filter stream-render-lab lesson 03 test
+```
+
+预期输出：
+
+```text
+✓ keeps raw and visible separate in M0
+Test Files  1 passed
+Tests       3 passed
+```
+
+官方 solution 使用同一 contract：
+
+```bash
+pnpm --filter stream-render-lab lesson 03 solution
+```
+
+## Checkpoint：你能读懂 timeline 吗
+
+- [ ] 第一次 push 后 `parseCount === 1`。
+- [ ] 未闭合 `**` 暂时原样显示，raw 一字不改。
+- [ ] 第二次 push 解析完整 raw，visible 变成 `<strong>`。
+
+**Invariant：** 每次 push 后 `raw = orderedConcat(deltas)`，`visible = fullParse(raw)`；raw 永远不含 parser 产物。
+
+**Trade-off：** 每个 delta 都发布，正确性直观，parse/React 工作可能随 delta 数快速增长。
+
+**退化条件：** provider 一次返回完整 reply 时，M0 自然退化成 01 的单次提交。
+
+## 常见错误
+
+| 症状                     | 根因                          |
+| ------------------------ | ----------------------------- |
+| raw 对、visible 落后一段 | 解析了旧 snapshot             |
+| raw 里出现 `<strong>`    | 把渲染结果写回原文            |
+| parseCount 少一次        | 某个 delta 没经过 M0 baseline |
+
+## 挑战题
+
+在 `publish` 中保存 `raw.length`。输入规模翻倍且每次只到一个字符时，所有 snapshot 处理过的字符总数如何增长？先写公式，不需要现在优化。
+
+## 下一步映射
+
+目前 trace 已经是 JavaScript string。04 会把输入向网络方向退一层：同样的中文 reply 先编码成 bytes，再以任意位置切开；M0 后半段保持不变。
+
+## 面试时怎么讲
+
+> 我把 raw 视为不可改写的 provider truth，把 visible 视为显示策略。即使最简单模式里两者总相等，也分别建模；这样后续做批处理或平滑显示时，不会为了 UI 效果污染原始内容。
+
+[继续课程：04 · 任意 byte split 与 UTF-8 →](/learn/04-utf8)
+
+</details>

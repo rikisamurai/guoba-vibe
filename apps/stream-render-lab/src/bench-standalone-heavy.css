@@ -1,0 +1,37 @@
+.heavy-result {
+  margin-top: 34px;
+  padding: 20px;
+  border: 1px solid #314039;
+}
+
+.heavy-result h2 {
+  margin: 0;
+  color: #f2f0e8;
+  font-family: system-ui, sans-serif;
+  font-size: 18px;
+}
+
+.heavy-result dl {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 20px 0 0;
+}
+
+.heavy-result dt {
+  color: #82968e;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.heavy-result dd {
+  margin: 6px 0 0;
+  color: #baf36d;
+  font-size: 12px;
+}
+
+@media (max-width: 680px) {
+  .heavy-result dl {
+    grid-template-columns: 1fr 1fr;
+  }
+}

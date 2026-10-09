@@ -1,0 +1,104 @@
+.chat-page {
+  background: var(--paper-light);
+}
+.chat-page__intro {
+  display: flex;
+  min-height: 112px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 16px clamp(20px, 4.5vw, 72px);
+  border-bottom: 1px solid var(--rule-dark);
+}
+.chat-page__intro small {
+  color: var(--rust-dark);
+  font: 600 9px/1 var(--font-mono);
+  letter-spacing: 0.16em;
+}
+.chat-page__intro h1 {
+  margin-top: 8px;
+  font-size: clamp(26px, 3vw, 40px);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+.chat-page__intro p {
+  margin-top: 6px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.chat-capability {
+  min-width: 230px;
+  padding: 14px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: #fff;
+}
+.chat-capability strong,
+.chat-capability small {
+  display: block;
+  font-family: var(--font-mono);
+}
+.chat-capability strong {
+  color: var(--rust-dark);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+}
+.chat-capability small {
+  margin-top: 3px;
+  color: var(--ink-faint);
+  font-size: 8px;
+}
+.chat-capability--enabled strong {
+  color: #087b68;
+}
+.chat-workspace {
+  display: grid;
+  min-height: 720px;
+  grid-template-columns: minmax(0, 1fr) 365px;
+}
+.chat-surface {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border-right: 1px solid var(--scope-rule);
+  background: #fff;
+}
+.chat-surface__bar {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(18px, 3vw, 44px);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-faint);
+  font: 9px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.chat-surface__bar i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--signal-soft);
+}
+.chat-transcript {
+  display: flex;
+  min-height: 0;
+  overflow-y: auto;
+  flex: 1;
+  flex-direction: column;
+  gap: 30px;
+  padding: 28px clamp(20px, 6vw, 78px) 220px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

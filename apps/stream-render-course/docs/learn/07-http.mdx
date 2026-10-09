@@ -1,0 +1,89 @@
+---
+title: 07 · 真正发一次 HTTP 流式请求
+description: 通过本地服务理解持续响应、缓冲和浏览器读取。
+---
+
+import { LabLink } from '../../components/lab-link'
+import { Pipeline } from '../../components/pipeline'
+
+# 从模拟片段，走到真正的 HTTP
+
+前面已经会解码字节、解析 SSE、取出正文。这一课把固定输入换成真正的响应体。**这是源码实验，不是新的 TODO 练习。**
+
+## 第一步：先运行成功的版本
+
+按 [安装步骤](/setup) 启动两个服务，打开 <LabLink path="/project">Mini Chat</LabLink>，选择“分段发送”，点击发送。应先出现“你好！”，随后正文增长。
+
+现在暂时不关心 React。我们只追踪：浏览器从哪里拿到字节？
+
+<Pipeline />
+
+## 第二步：直接观察服务器
+
+新开一个终端，在服务仍然运行时执行：
+
+```bash
+curl -N 'http://localhost:5174/api/teaching?mode=stream'
+```
+
+你会陆续看到以 data: 开头的行。每个事件后有空行，最后是 [DONE]。curl 的 -N 关闭自身输出缓冲，不会替你关闭所有代理的缓冲。
+
+再执行：
+
+```bash
+curl -N 'http://localhost:5174/api/teaching?mode=buffered'
+```
+
+内容相同，但要等到后面才一起出现。这个服务故意积攒内容，模拟缓冲现象；它不是对你当前 CDN 的诊断。
+
+## 第三步：找到发送端
+
+打开 `apps/stream-render-lab/api/teaching.ts`。找到 `controller.enqueue`：这行把编码后的内容交给响应流。找到 `setTimeout`：本例每 160 ms 产生一段固定内容。
+
+```ts
+controller.enqueue(encoder.encode(packet))
+```
+
+把间隔临时改成 400，重试发送。正文增长应变慢；改回 160。服务端入队不保证浏览器一次读取恰好收到这一段，网络中间层可能再次合并或切分。
+
+## 第四步：找到读取端
+
+打开 `apps/stream-render-lab/src/learn-project/read-answer.ts`，从 `getReader()` 向下读：
+
+```ts
+const { done, value } = await reader.read()
+```
+
+value 是一段字节，done 表示这个可读流结束。本项目把字节依次交给前面学过的解码器、SSE 解析器和正文适配器。fetch 得到响应对象时，响应体可能尚未结束；`await response.text()` 则会等待整个正文读完。
+
+## 第五步：厘清几个相近的词
+
+| 名称                   | 负责什么               | 不代表什么                                |
+| ---------------------- | ---------------------- | ----------------------------------------- |
+| HTTP                   | 请求与响应的语义       | 不要求整个响应准备好才能发送              |
+| HTTP/1.1 chunked       | 一种响应体传输分帧方式 | 不是 SSE，也不是每次 read 的边界          |
+| HTTP/2 DATA 帧         | HTTP/2 中承载数据      | 不使用 HTTP/1.1 chunked 编码              |
+| SSE                    | 文本事件的格式         | 不是新的底层传输协议                      |
+| EventSource            | 浏览器消费 SSE 的 API  | 不适合所有需要自定义 POST body 的模型请求 |
+| fetch + ReadableStream | 读取响应体的方式       | 不自动替你解析 SSE 或模型 JSON            |
+| WebSocket              | 建连后的双向消息通道   | 单向模型回答不必为了流式而改成它          |
+
+本课 GET 端点不接收 prompt；真实模型通常通过 POST 发送消息，读取响应体的分层思路相同。
+
+## 第六步：验证与排错
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/learn-project/read-answer.test.ts
+```
+
+应全部通过。测试验证正文与终态，不声称浏览器一定按固定包大小读取。
+
+如果 Network 已有响应而正文不动：先看是否拿到了完整 SSE 事件，再看是否提取到正文；不要第一时间改 React 节流。
+
+## 完成检查
+
+你能指出服务器的 enqueue、浏览器的 read，以及为什么两者次数不一定相同。能把“服务器晚生成”“中间层缓冲”“客户端晚显示”分开排查。
+
+标准参考：[Fetch 响应体](https://fetch.spec.whatwg.org/)、[SSE](https://html.spec.whatwg.org/multipage/server-sent-events.html)。
+
+[下一步：08 · 停止、错误与重试 →](/learn/08-lifecycle)

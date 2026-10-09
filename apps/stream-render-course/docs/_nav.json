@@ -1,0 +1,18 @@
+[
+  {
+    "text": "开始学习",
+    "link": "/learn/00-quick-start"
+  },
+  {
+    "text": "环境安装",
+    "link": "/setup"
+  },
+  {
+    "text": "完整项目",
+    "link": "/learn/18-capstone"
+  },
+  {
+    "text": "网络边界",
+    "link": "/reference/network-boundaries"
+  }
+]

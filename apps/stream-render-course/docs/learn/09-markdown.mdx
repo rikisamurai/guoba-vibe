@@ -1,0 +1,54 @@
+---
+title: 09 · 把文字显示成 Markdown
+description: 从安全的纯文本输出开始，再理解 Markdown 预览与原文的区别。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 文字收到了，怎样变成粗体和列表？
+
+**类型：项目源码实验。** 打开 `src/learn-project/answer-view.tsx`（下面 src 均指 apps/stream-render-lab/src）。
+
+## 第一步：先对照原文和显示结果
+
+在 <LabLink path="/project">Mini Chat</LabLink> 完成一次回答，再展开“查看收到的原文”。原文中有两个星号包围的“流式回答”，显示区域应是粗体；列表以短横线开头。
+
+Markdown 是描述文本结构的语法。它既不是 SSE，也不改变网络如何传送字节。
+
+## 第二步：找到解析与显示的边界
+
+```ts
+const document = parseCanonical(text)
+```
+
+parseCanonical 把原文转成结构化文档。RenderDocumentView 负责把文档节点变成 React 元素。先解析、后显示，便于分别测试两层。
+
+打开 `src/markdown/canonical.ts` 和 `src/rendering/render-document.tsx`，指出哪一行读取原文、哪一处循环渲染 blocks。
+
+## 第三步：让半截语法出现
+
+在服务端 teaching.ts 中，把一个粗体片段临时拆成两段：“**流式”和“回答**”。重试发送，在两段之间观察显示变化，然后恢复示例。
+
+只收到前半段时，Markdown 结构可能尚未完整。本项目使用 parsePreview 构造临时视图，完成时重新用 parseCanonical 解析原文。
+
+## 第四步：保留原文作为事实
+
+answer-view.tsx 中两条路径分别负责预览与终态。练习：临时把预览路径换成 parseCanonical，再观察半截粗体；恢复后比较体验。两种方式都不应该改写收到的 text。
+
+不要把为了预览补上的星号写回消息历史；否则下一段真正的星号到达时，原文就被破坏了。
+
+## 第五步：检查安全边界
+
+不要使用 dangerouslySetInnerHTML 直接显示模型内容。项目渲染器按节点类型创建元素，把原始 HTML 当作惰性文本，并检查链接协议。
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/markdown/markdown.test.ts src/rendering/render-document.test.tsx
+```
+
+测试应通过；其中包含 HTML 与不安全链接的用例。安全不由“看起来像 Markdown”保证。
+
+## 完成检查
+
+能分别找到原文、解析结果和显示组件。知道临时修补不能修改原文，也知道 Markdown 每次全文解析可能带来额外工作。
+
+[下一步：10 · 合并更新，减少重复工作 →](/learn/10-m1-frame-batching)
