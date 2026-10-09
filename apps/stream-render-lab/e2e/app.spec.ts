@@ -1,15 +1,15 @@
 import { expect, test } from '@playwright/test'
 
-test('Lab 根路由重定向进入真实实验台', async ({ page }) => {
+test('Lab 根路由重定向进入新手 Playground', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page).toHaveURL(/\/lab$/)
+  await expect(page).toHaveURL(/\/playground$/)
   await expect(
-    page.getByRole('heading', { level: 1, name: '一条输入，拆开看每一层变化' }),
+    page.getByRole('heading', { level: 1, name: '动手试一次，比记住术语更重要' }),
   ).toBeVisible()
 })
 
-test('主导航在 Course 与三个工具间划分责任', async ({ page }) => {
+test('主导航连接课程、新手实践与进阶工具', async ({ page }) => {
   await page.goto('/lab')
 
   const navigation = page.getByRole('navigation', { name: '主导航' })
@@ -17,7 +17,15 @@ test('主导航在 Course 与三个工具间划分责任', async ({ page }) => {
     'href',
     'http://localhost:5173',
   )
-  await expect(navigation.getByRole('link', { name: '实验台', exact: true })).toHaveAttribute(
+  await expect(navigation.getByRole('link', { name: 'Playground', exact: true })).toHaveAttribute(
+    'href',
+    '/playground',
+  )
+  await expect(navigation.getByRole('link', { name: 'Mini Chat', exact: true })).toHaveAttribute(
+    'href',
+    '/project',
+  )
+  await expect(navigation.getByRole('link', { name: '进阶实验台', exact: true })).toHaveAttribute(
     'href',
     '/lab',
   )
