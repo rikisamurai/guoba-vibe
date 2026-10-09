@@ -55,6 +55,7 @@ export function LessonDemo({ demoId, presetId }: LessonDemoProps) {
   return (
     <section
       className="lesson-demo"
+      data-beginner={['first-look', 'byte-lab', 'sse-lab', 'batch-lab'].includes(demoId)}
       data-compact={demoId !== 'quick-start' && demoId !== 'm1'}
       aria-label={`${LESSON_DEMOS[demoId].label}交互实验`}
     >

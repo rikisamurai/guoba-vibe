@@ -34,7 +34,7 @@ export function createDemoUrls(
   const query = new URLSearchParams({ preset: presetId })
   return {
     embed: `${origin}/embed/${encodeURIComponent(demoId)}?${query}`,
-    fullLab: `${origin}/lab?${new URLSearchParams({ demo: demoId, preset: presetId })}`,
+    fullLab: `${origin}/${['first-look', 'byte-lab', 'sse-lab', 'batch-lab'].includes(demoId) ? 'playground' : 'lab'}?${new URLSearchParams({ demo: demoId, preset: presetId })}`,
     origin,
   }
 }

@@ -1,0 +1,41 @@
+.project-turns {
+  margin: 20px 0;
+  border-block: 1px solid #dce0d8;
+}
+.project-turns article {
+  padding: 20px 0;
+  overflow-wrap: anywhere;
+}
+.project-turns article + article {
+  border-top: 1px solid #dce0d8;
+}
+.project-turns h2 {
+  margin: 0 0 8px;
+  color: #626c65;
+  font-size: 13px;
+}
+.project-turns article > p + h2 {
+  margin-top: 20px;
+}
+.project-turns [role='status'] {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #626c65;
+}
+.project-turns .render-document ul,
+.project-turns .render-document ol {
+  padding-left: 24px;
+  margin: 8px 0;
+}
+.project-turns .render-document ul {
+  list-style: disc;
+}
+.project-turns .render-document ol {
+  list-style: decimal;
+}
+.project-turns .render-document p + p {
+  margin-top: 8px;
+}
+.beginner-page > .beginner-demo {
+  margin: 20px 0;
+}

@@ -60,3 +60,28 @@
     background: var(--sr-paper-deep);
   }
 }
+
+html:root {
+  --rp-sidebar-width: 244px;
+  --rp-content-padding-x: 40px;
+}
+@media (width >= 1280px) {
+  .rp-doc-layout__outline,
+  .rp-doc-layout__outline-placeholder {
+    display: none;
+  }
+  .rp-doc-layout__doc-container {
+    max-width: 960px;
+  }
+}
+@media (width <= 768px) {
+  html:root {
+    --rp-content-padding-x: 20px;
+  }
+}
+.sr-rail-resource {
+  display: block;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: var(--sr-muted);
+}

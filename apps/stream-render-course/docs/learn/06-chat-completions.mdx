@@ -1,14 +1,72 @@
 ---
-title: 06 · Chat Completions：从 SSE data 到 text delta
-description: 用 provider adapter 隔离 JSON shape、choice address 与终态证据。
+title: 06 · 从事件里取出回答正文
+description: 按步骤完成 从事件里取出回答正文，从观察现象到修改代码，再验证结果。
 ---
 
 import { LessonDemo } from '../../components/lesson-demo'
 import { LessonMeta } from '../../components/lesson-meta'
 
-<p className="sr-kicker">CHAPTER 06 · PROVIDER SEMANTICS</p>
+# 从事件里取出回答正文
 
-# SSE event 还不是 Chat 消息
+**动手练习 · 每次只增加一个能力。** 不熟悉异步或类型标记，可以先看 [预备知识](/basics)。
+
+## 第一步：看见现象
+
+<LessonDemo demoId="chat-adapter" presetId="chat-completions-wire" />
+
+## 第二步：打开你要修改的文件
+
+从仓库根目录找到：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/06-chat-completions/exercise/chat-completions.ts
+```
+
+只修改本课 exercise；solution 是独立的参考答案。后续练习自带前一阶段能力，不会自动读取你上一课的修改。
+
+## 第三步：先运行，再一步步修好
+
+```bash
+pnpm --filter stream-render-lab lesson 06 test
+```
+
+1. 播放实验，观察完整事件中有正文、推理字段，也有只表示结束的消息。
+2. 打开 adaptChatCompletions；上一课已经把 SSE 外壳拆掉，event.data 现在是字符串。
+3. 运行测试。当前总是返回空数组，没有把任何正文交给聊天层。
+4. 先单独处理 [DONE]，再对其他事件 JSON.parse。检查 choices 和 delta 的结构，不要无条件读取任意对象字段。
+5. 将 content 转为正文增量，将 reasoning_content 单独保存，将 finish_reason 转为结束信息。空字段不应凭空生成文字。
+6. 重跑测试。练习只覆盖文中定义的协议子集；完整 Lab 适配器还处理更多终态和工具消息。
+
+## 第四步：检查关键代码
+
+下面是本次修改的核心片段；需要上下文时展开本页末尾的详细实现。
+
+```ts
+if (event.data === '[DONE]') {
+  output.push({ kind: 'done' })
+  continue
+}
+```
+
+## 第五步：验证你的结果
+
+```bash
+pnpm --filter stream-render-lab lesson 06 test
+pnpm --filter stream-render-lab lesson 06 solution
+```
+
+第一条检查你写的代码，第二条检查参考答案。两条通过才说明这一步在测试覆盖的边界内成立；课内实验运行参考逻辑，不会自动热更新为你的 exercise。
+
+## 完成检查
+
+- 我能解释刚才测试为什么失败，以及修改解决了什么问题。
+- 我的 exercise 测试通过，没有靠删断言跳过错误。
+- 我能指出本课结果如何交给下一层。
+
+[下一步 →](/learn/07-http)
+
+<details>
+<summary>深入理解：完整实现、测试解释与边界</summary>
 
 05 只保证 `data` 字符串完整。06 的 adapter 才理解 Chat Completions：解析 JSON、选择 choice、提取 reasoning/content，并识别 `[DONE]`。这样 mini-chat 不需要知道 provider payload 长什么样。
 
@@ -105,8 +163,6 @@ adapter 可以为一个 provider event 返回多个 internal event，因为同�
 
 先在 Raw/Wire 找到 JSON，再切 Events 看归一化 delta，最后确认 Rendered 只出现 answer；reasoning 保持独立通道。
 
-<LessonDemo demoId="chat-adapter" presetId="chat-completions-wire" />
-
 ## Solution diff
 
 ```diff
@@ -179,3 +235,5 @@ pnpm --filter stream-render-lab lesson 06 solution
 > 我把协议 framing 与 provider 语义分开：SSE parser 只产出字段，Chat adapter 处理 JSON、choice address、reasoning/content 与 `[DONE]`。这样 transport 任意切片不会渗透到 UI，三种 API 也能共享同一引擎。
 
 [回到课程地图 →](/)
+
+</details>

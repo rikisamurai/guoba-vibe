@@ -1,0 +1,171 @@
+---
+title: 18 · 一步步组装完整 Mini Chat
+description: 从服务端响应到 React 页面，按文件顺序组装、运行并验收一个完整教学项目。
+---
+
+import { LabLink } from '../../components/lab-link'
+import { Pipeline } from '../../components/pipeline'
+
+# 把学过的东西，接成一个完整项目
+
+**目标：** 一个可以发送、停止、重试、显示 Markdown、区分错误与截断的聊天页面。默认固定回答，无需 API Key。已有完整参考实现可随时运行；下面按依赖顺序重建它。
+
+**先完成：** 01–10、15–16。11–14 的高阶渲染不是跑通本项目的前提。
+
+## Step 0：先把参考项目跑起来
+
+从仓库根目录执行：
+
+```bash
+pnpm install
+pnpm dev:stream-render
+```
+
+打开 <LabLink path="/project">Mini Chat</LabLink>，在“分段发送”场景发送消息。应看见等待、正文增长、已完成。展开“查看收到的原文”，应保留 Markdown 标记。
+
+这一步建立终点。接下来每步都能与它比较，不需要猜最终行为。
+
+## Step 1：先认识五个文件的职责
+
+所有源码位于 apps/stream-render-lab：
+
+```text
+api/teaching.ts                    固定内容的 HTTP SSE 服务
+src/learn-project/read-answer.ts    字节 → SSE → 正文与终态
+src/learn-project/use-mini-chat.ts  当前请求、历史与界面更新
+src/learn-project/project-page.tsx  输入、显示、停止和重试
+src/learn-project/answer-view.tsx   Markdown 预览与原文
+```
+
+协议解析复用 src/protocol；安全渲染复用 src/markdown 与 src/rendering。完整项目包含这些依赖，不要只复制一个页面后期待它独立运行。
+
+想亲自从空白做一遍：先复制 learn-project 为 practice-chat，再在 app-router.tsx 临时添加 /practice 路由指向你的页面。逐步替换复制文件的实现；原 /project 始终是对照答案。练习结束后可删除自己的 /practice 路由，不要覆盖唯一可运行的参考版本。
+
+## Step 2：让服务器发出一条消息
+
+先只读 teaching.ts 中的 delta 函数。一次事件有两层包装：SSE 的 data 行，以及里面的 JSON。
+
+```ts
+function delta(text: string): string {
+  return `data: ${JSON.stringify({
+    choices: [{ index: 0, delta: { content: text }, finish_reason: null }],
+  })}\n\n`
+}
+```
+
+末尾两个换行表示空行。把字符串编码为字节后 enqueue；使用定时器逐段发送，结束时发送 finish_reason 与 [DONE]，最后关闭流。
+
+```bash
+curl -N 'http://localhost:5174/api/teaching?mode=stream'
+```
+
+预期：data 行陆续出现，最后出现 [DONE]。如果这个命令都不能返回，先检查服务，不要改 React。
+
+## Step 3：只读取字节，暂时不显示界面
+
+在你的读取函数中，先检查 response.ok 和 response.body，再获取 reader。
+
+```ts
+const reader = response.body.getReader()
+while (true) {
+  const { done, value } = await reader.read()
+  if (done) break
+  console.log(value.byteLength)
+}
+```
+
+这只是观察代码，完整版本还要在 finally 取消并释放 reader。每次读到的是 Uint8Array，不可以直接 JSON.parse(value)。验证能持续读到数据后，删除临时日志。
+
+## Step 4：把已学过的解析层接起来
+
+<Pipeline />
+
+read-answer.ts 的核心循环把前面各层组合起来：
+
+```ts
+const events = adaptChatCompletions(parseSse(readBytes(response.body, options)))
+for await (const { event } of events) {
+  options.signal.throwIfAborted()
+  if (event.type === 'part.delta' && event.delta.kind === 'text') {
+    // 完整实现还会筛选 answer，避免混入 reasoning。
+    options.onText(event.delta.text)
+  }
+  if (event.type === 'response.end') return event.outcome
+}
+```
+
+这里的 parseSse 已经包含 UTF-8 解码。不要再重复解码，也不要自己用 split('data:') 代替解析器。
+
+运行数据链测试：
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/learn-project/read-answer.test.ts
+```
+
+它检查普通发送、缓冲发送、截断、HTTP 错误和取消。先保证这一层正确，再接界面。
+
+## Step 5：把收到的正文放进一条回答
+
+use-mini-chat.ts 在每轮创建独立的 text，onText 只做追加。练习版本可以先直接发布，每段刷新一次：
+
+```ts
+let text = ''
+onText(delta) {
+  text += delta
+  // 把当前 text 发布给本轮 assistant 消息
+}
+```
+
+再参考第 10 课，把多次追加合并到 requestAnimationFrame 中发布。请求完成时必须发布最后的 text；finally 取消尚未执行的帧回调。
+
+验收：完整回答只属于这一轮，下一轮不会把上一轮正文再次拼进去。
+
+## Step 6：接上停止与重试
+
+每轮创建 AbortController，把 signal 传给 fetch 和读取层。停止按钮调用 abort；每轮分配递增编号，发布前核对仍是当前编号。
+
+重试应使用上一轮的问题创建新尝试。不能盲目把重试结果接到旧半截文字后面，也不能未经服务协议支持就标成续传。
+
+验收：中途停止后文字不再增长，已收到的部分仍在；再次发送能正常完成。
+
+## Step 7：接上 React 页面与 Markdown
+
+project-page.tsx 使用 form 的 onSubmit 统一处理按钮点击与 Enter。busy 时禁用发送，空输入不能提交。
+
+answer-view.tsx 使用 parsePreview 显示流式中间态，停止或结束后使用 parseCanonical。通过 RenderDocumentView 渲染结构化节点，同时保留折叠的原文对照。
+
+历史回答用 memo 避免随着当前回答每次增长而无意义地重新渲染。不要把原始模型 HTML 直接交给 DOM。
+
+## Step 8：逐项验收
+
+| 操作           | 预期                                 |
+| -------------- | ------------------------------------ |
+| 分段发送       | 文字逐步出现，最终已完成             |
+| 缓冲后一次发送 | 更晚出现正文，最终文字与普通场景相同 |
+| 中途断开       | 保留部分正文，明确显示连接中断       |
+| HTTP 503       | 显示错误，发送按钮恢复可用           |
+| 接收中停止     | 保留已收到的文字，后续不会再追加     |
+| 重试上一条     | 新增一次尝试，不把正文拼到旧回答后面 |
+| 连续两轮       | 历史保留，当前轮独立增长             |
+| 手机宽度与键盘 | 输入、发送、停止都可操作             |
+
+```bash
+pnpm --filter stream-render-lab test
+pnpm --filter stream-render-lab build
+pnpm --filter stream-render-course verify
+pnpm --filter stream-render-course test:e2e
+```
+
+独立 01–06 与 10 的 exercise 初始测试故意失败，不属于上面 solution 回归测试的失败。你写完练习后应单独运行对应 lesson test。
+
+## Step 9：可选接入真实模型
+
+先完整读 Lab README 的 DeepSeek live 部分。配置服务端 .env.local，再打开 <LabLink path="/chat">真实模型聊天</LabLink>。不要把真实 Key 写进源码、前端环境变量或截图。
+
+教学项目默认不包括登录、历史持久化、附件和工具执行。它完成的是流式网络到显示的端到端闭环，不伪装成完整 AI 产品。
+
+## 最后自己讲一遍
+
+从点击发送开始，依次指出请求、字节读取、字符解码、事件解析、正文提取、状态更新、Markdown 渲染和终态。能定位每个阶段的故障，就真正掌握了这条链路。
+
+[继续深入性能优化 →](/learn/11-preview-repair) · [查看网络边界细节](/reference/network-boundaries)

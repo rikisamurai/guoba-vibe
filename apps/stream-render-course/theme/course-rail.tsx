@@ -36,14 +36,15 @@ export function CourseRail() {
 
   return (
     <nav className="sr-course-rail" aria-label="课程章节">
-      <section className="sr-progress" aria-label={`正式课进度 ${progress} / 18`}>
-        <span>正式课进度</span>
-        <strong>{String(progress).padStart(2, '0')} / 18</strong>
-        <div aria-hidden="true">
-          <i style={{ width: `${(progress / 18) * 100}%` }} />
-        </div>
-      </section>
-
+      <p className="sr-rail-location">
+        {activeLesson ? `正在阅读第 ${progress} 课` : '从直观概念到完整项目'}
+      </p>
+      <Link className="sr-rail-resource" to="/setup">
+        环境安装与运行
+      </Link>
+      <Link className="sr-rail-resource" to="/basics">
+        JavaScript 预备知识
+      </Link>
       <section className="sr-rail__part sr-rail__part--start">
         <h2>
           <span>START HERE</span>

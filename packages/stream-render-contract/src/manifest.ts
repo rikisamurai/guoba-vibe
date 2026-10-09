@@ -1,4 +1,12 @@
 export const LESSON_DEMOS = {
+  'first-look': {
+    defaultPreset: 'first-look',
+    label: '完整返回与流式返回',
+    presets: ['first-look'],
+  },
+  'byte-lab': { defaultPreset: 'byte-lab', label: '中文拆包', presets: ['byte-lab'] },
+  'sse-lab': { defaultPreset: 'sse-lab', label: '拼出完整事件', presets: ['sse-lab'] },
+  'batch-lab': { defaultPreset: 'batch-lab', label: '合并更新', presets: ['batch-lab'] },
   response: {
     defaultPreset: 'complete-response',
     label: '完整响应基线',
@@ -57,6 +65,10 @@ export interface LessonDemoDefinition {
 }
 
 const DEMO_IDS = [
+  'first-look',
+  'byte-lab',
+  'sse-lab',
+  'batch-lab',
   'response',
   'replay',
   'm0',

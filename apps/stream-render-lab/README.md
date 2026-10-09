@@ -40,7 +40,22 @@ pnpm --filter stream-render-lab lesson 10 test
 
 页面入口：`/lab`、`/profiler`、`/chat`、`/bench`、`/embed/:demoId`。内部还保留 `/repro/:case` 故障复现路由。`/embed/:demoId` 仅接受 manifest 注册的 demo/preset；`/bench` 控制 iframe 中独立的 `bench-frame.html` entry，以减少文档 Shell、字体和 Router 对浏览器报告的干扰。
 
-Quick Start 是 Course 中的纯观察实验，不提供需要改字符串的 00 练习。学习者持有的连续 Mini Chat 从 `01` 开始：先实现一次异步非流式 chat turn，再逐步长成 `06` 的真实 Chat Completions 响应链路。后续 starter 会复用前一课已经完成的能力；`10` 还会复用 01 的 `MiniChat` 与非流式 turn，但不会导入 Lab 生产引擎。`test` 验证当前 exercise（只保留本课新增的一个预期失败）；将最后一个参数换成 `solution` 可验证参考实现。
+## 新手入口与完整项目
+
+- `/playground`：完整返回对比、UTF-8 字节切分、SSE 边界、合并更新四个实验。
+- `/project`：真实 HTTP 固定教学回答，支持停止、重试、Markdown、缓冲、截断和 HTTP 错误。
+- `/api/teaching?mode=stream`：GET SSE 教学端点，不读取 Key，不调用模型，不根据用户问题生成答案。
+- `/chat`：可选真实模型入口。
+
+Quick Start 只解释“更早开始阅读”；原来的多层网络观察保留在课程 `/reference/network-boundaries`。
+01–06 和 10 的 exercise 保留待实现 TODO，后续课自带上一阶段参考能力。其他章节通过源码实验、故障模式和完整项目逐步组装；课程不会声称每章都有独立 TODO。
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/beginner/models.test.ts src/learn-project/read-answer.test.ts
+curl -N 'http://localhost:5174/api/teaching?mode=stream'
+```
+
+教学端点可选模式：stream、buffered、truncated、error。缓冲由教学服务主动模拟；浏览器的读取次数和时间才是本机 HTTP 观察，不能据此推断 TCP 分段或真实供应商延迟。
 
 ## DeepSeek live
 

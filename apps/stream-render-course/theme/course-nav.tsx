@@ -24,9 +24,9 @@ export function ProductNav() {
       <Link className={pathname === '/' ? 'is-active' : ''} to="/">
         课程
       </Link>
-      <a href={`${labOrigin}/lab`}>实验台</a>
-      <a href={`${labOrigin}/profiler`}>性能分析</a>
-      <a href={`${labOrigin}/chat`}>真实 Chat</a>
+      <a href={`${labOrigin}/playground`}>Playground</a>
+      <a href={`${labOrigin}/project`}>Mini Chat</a>
+      <a href={`${labOrigin}/lab`}>进阶实验台</a>
     </nav>
   )
 }

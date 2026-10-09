@@ -2,147 +2,70 @@ export interface CourseLesson {
   number: number
   title: string
   shortTitle: string
-  href?: string
-  checkpoints: readonly string[]
+  href: string
 }
-
 export interface CoursePart {
   label: string
   title: string
   lessons: readonly CourseLesson[]
 }
-
-export const orientationLesson = lesson(0, 'Quick Start', '/learn/00-quick-start', [
-  '区分 chunk 与 SSE event',
-  '识别 DeepSeek 文本增量字段',
-  '区分接收文本与显示文本',
-])
-
+export const orientationLesson = lesson(0, '先看见流式的区别', '00-quick-start')
 export const courseParts: readonly CoursePart[] = [
   {
-    label: 'PART 1',
-    title: '建立心智模型',
+    label: '阶段 1',
+    title: '先做出来',
     lessons: [
-      lesson(1, '非流式 Mini Chat', '/learn/01-non-streaming-chat', [
-        '先发布 user 与 waiting',
-        '等待 Promise 返回完整回复',
-        '只追加一条 assistant 消息',
-      ]),
-      lesson(2, 'Replay 与 Clock', '/learn/02-string-replay-clock', [
-        '重放同一条 trace',
-        '控制片段到达时间',
-        '写出确定性测试',
-      ]),
-      lesson(3, 'M0 · Raw / Visible', '/learn/03-m0-raw-visible', [
-        '保存 canonical raw',
-        '发布 visible snapshot',
-        '记录全文重算基线',
-      ]),
+      lesson(1, '做出一次完整回答', '01-non-streaming-chat'),
+      lesson(2, '让文字分段出现', '02-string-replay-clock'),
+      lesson(3, '收到与显示的文字', '03-m0-raw-visible'),
     ],
   },
   {
-    label: 'PART 2',
-    title: '穿过网络管线',
+    label: '阶段 2',
+    title: '理解网络',
     lessons: [
-      lesson(4, '增量 UTF-8', '/learn/04-utf8', [
-        '跨 chunk 保留 decoder',
-        '通过 every-byte test',
-        '正确 flush EOF',
-      ]),
-      lesson(5, 'WHATWG SSE', '/learn/05-sse', ['识别三种换行', '合并多行 data', '区分空行与 EOF']),
-      lesson(6, 'Chat Completions', '/learn/06-chat-completions', [
-        '映射 content delta',
-        '识别 finish reason',
-        '证明 terminal outcome',
-      ]),
-      lesson(7, 'Responses', undefined, [
-        '验证 sequence number',
-        '区分 completed / incomplete',
-        '保留 provider origin',
-      ]),
-      lesson(8, 'Anthropic Messages', undefined, [
-        '定位 content block',
-        '累积 partial JSON',
-        '映射 message_stop',
-      ]),
+      lesson(4, '中文为什么乱码', '04-utf8'),
+      lesson(5, '拼出完整 SSE 事件', '05-sse'),
+      lesson(6, '取出回答正文', '06-chat-completions'),
+      lesson(7, '真正发一次 HTTP 请求', '07-http'),
     ],
   },
   {
-    label: 'PART 3',
-    title: '构建渲染管线',
+    label: '阶段 3',
+    title: '可靠与流畅',
     lessons: [
-      lesson(9, 'Run lifecycle', undefined, [
-        '分离 phase 与 outcome',
-        '证明唯一 settled',
-        '区分 incomplete / truncated',
-      ]),
-      lesson(10, 'M1 · Frame batching · 黄金样板', '/learn/10-m1-frame-batching', [
-        '每帧至多一次 commit',
-        '安全 drain pending delta',
-        'cancel 后无 late update',
-      ]),
-      lesson(11, 'Preview repair', undefined, [
-        '修补未闭合语法',
-        '标记 synthetic range',
-        '终态回到 raw truth',
-      ]),
-      lesson(12, 'M2 · Block identity', undefined, [
-        '保持稳定 block id',
-        '复用未变化 IR',
-        '验证 React memo',
-      ]),
-      lesson(13, 'M3 · Suffix reparse', undefined, [
-        '找到 quiescent checkpoint',
-        '拼接 stable prefix',
-        '记录 fallback 原因',
-      ]),
-      lesson(14, 'M4 · Heavy nodes', undefined, [
-        '增量高亮代码',
-        'debounce 重型节点',
-        '拒绝 stale result',
-      ]),
+      lesson(8, '停止、错误与重试', '08-lifecycle'),
+      lesson(9, '显示 Markdown', '09-markdown'),
+      lesson(10, '合并更新', '10-m1-frame-batching'),
     ],
   },
   {
-    label: 'PART 4',
-    title: '产品化与证明',
+    label: '阶段 4',
+    title: '渲染进阶（可稍后学习）',
     lessons: [
-      lesson(15, 'Chat 产品行为', undefined, [
-        '保持滚动与选择',
-        '分离 reasoning',
-        '批量播报 aria-live',
-      ]),
-      lesson(16, '安全与终态', undefined, [
-        'sanitize render IR',
-        '处理 truncated',
-        '证明唯一 settled',
-      ]),
-      lesson(17, 'Profiler 与 Bench', undefined, [
-        '设计可信 A/B',
-        '读懂 parse 与 commit',
-        '验证渐近工作量',
-      ]),
-      lesson(18, 'Capstone 与面试', undefined, [
-        '交付完整 Mini Chat',
-        '复盘三次工程事故',
-        '讲清架构 trade-off',
-      ]),
+      lesson(11, '半截 Markdown 的预览', '11-preview-repair'),
+      lesson(12, '复用不变的段落', '12-block-identity'),
+      lesson(13, '只重算变化的尾部', '13-suffix-reparse'),
+      lesson(14, '高亮、公式与图表', '14-heavy-nodes'),
+    ],
+  },
+  {
+    label: '阶段 5',
+    title: '完成项目',
+    lessons: [
+      lesson(15, '聊天交互与阅读', '15-chat-behavior'),
+      lesson(16, '安全与终态', '16-safety'),
+      lesson(17, '验证优化效果', '17-measurement'),
+      lesson(18, '组装完整 Mini Chat', '18-capstone'),
     ],
   },
 ]
-
-function lesson(
-  number: number,
-  title: string,
-  href: string | undefined,
-  checkpoints: readonly string[],
-): CourseLesson {
-  return { number, title, shortTitle: title.split(' · ')[0], href, checkpoints }
+function lesson(number: number, title: string, path: string): CourseLesson {
+  return { number, title, shortTitle: title, href: `/learn/${path}` }
 }
-
 export function findLesson(pathname: string): CourseLesson | undefined {
-  const cleanPath = pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/'
+  const path = pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/'
   return [orientationLesson, ...courseParts.flatMap((part) => part.lessons)].find(
-    (item) => item.href === cleanPath,
+    (item) => item.href === path,
   )
 }

@@ -1,0 +1,47 @@
+---
+title: 11 · 半截 Markdown 怎么显示
+description: 只修补预览，不修改真实收到的正文。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 补一个括号之前，先分清两份文字
+
+**进阶源码实验。** 首次学习可以先做 [最终项目](/learn/18-capstone)，再回到这里。文件入口：`apps/stream-render-lab/src/markdown/repair.ts`。
+
+## 第一步：观察未闭合语法
+
+打开 <LabLink path="/lab">进阶实验台</LabLink>，输入包含未闭合代码围栏的 Markdown。选择 Baseline M1、Challenger M2，点击开始回放，再暂停在代码块中途。比较渲染和原文。
+
+M1 主要改变更新时间，M2 引入预览修补等能力；不要把两者所有差异都归因于性能。
+
+## 第二步：写下不可破坏的规则
+
+原文是已接收内容；预览可以临时补全语法。两者可以不同，但完成时以原文为准。
+
+```ts
+const repair = repairPreview(raw)
+// repair.text 用于预览；raw 保持不变
+```
+
+找到 syntheticRanges：它标记哪些内容是系统补的。不能把它们说成模型真实生成的文字。
+
+## 第三步：用一个反例理解实现
+
+打开 markdown.test.ts，找到 adds synthetic closers 用例。输入未闭合的语法，分别检查原文、预览和合成区间。
+
+再看 ignores emphasis markers inside inline code spans：代码里的星号不一定是粗体标记，不能简单统计字符数量决定补什么。
+
+## 第四步：做一个小修改
+
+复制现有预览测试，换成你自己的未闭合粗体或代码片段。断言原文不变，再断言补完真正的结束标记后不需要多余修补。
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/markdown/markdown.test.ts
+```
+
+## 完成检查
+
+你能解释为什么“显示稳定”不能以修改模型原文为代价。修补是体验策略，不是完整 Markdown 语法证明；遇到不支持的结构，应选择保守显示。
+
+[下一步：12 · 让没变化的段落保持不变 →](/learn/12-block-identity)

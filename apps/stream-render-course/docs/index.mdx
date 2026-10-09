@@ -1,109 +1,58 @@
 ---
-title: Streaming Render Course
-description: 从一个普通 Chat 开始，逐步走到真实 AI 流式渲染。
+title: 从第一段文字到完整聊天项目
+description: 面向会基础 JavaScript 的新手，按步骤理解流式网络、实现聊天、验证渲染优化。
 ---
 
-<p className="sr-kicker">COURSE / LAB · BUILD ONE MINI CHAT</p>
+import { LabLink } from '../components/lab-link'
 
-# 从“等完整答案”开始，亲手造出 Streaming Chat
+<p className="sr-kicker">STREAMING · 从理解到实现</p>
 
-这不是 API 名词手册，也不是把完成品拆成 18 篇介绍。你会一直维护**同一个 mini-chat**：先渲染一条完整回复，再加入可重复播放、增量 UTF-8、SSE、provider adapter，最后才讨论调度、Markdown 与性能。
+# 从第一段文字，到一个完整的聊天项目
 
-每一课只增加一个能力，`starter(N) = solution(N-1)`。先复现失败，再填一个 TODO，用同一组 contract test 证明这一步真的成立。
+先看见效果，再理解原因，然后亲手实现。一路使用同一个聊天场景，学会网络数据怎么来、界面为什么会卡、怎样证明优化没有丢字。
 
-<div className="roadmap-grid">
-  <a className="roadmap-card" href="/learn/00-quick-start.html">
-    <span>00 · START HERE</span>
-    <h3>先看懂一次流式回答</h3>
-    <p>15 分钟跑通环境，再观察 chunk、SSE event、模型文本增量与显示更新。</p>
-  </a>
-  <a className="roadmap-card" href="/learn/01-non-streaming-chat.html">
-    <span>01 · FIRST WORKING CHAT</span>
-    <h3>先做非流式回复</h3>
-    <p>从一份完整字符串开始，建立可信的最终结果。</p>
-  </a>
-  <a className="roadmap-card" href="/learn/04-utf8.html">
-    <span>04 · FIRST NETWORK BUG</span>
-    <h3>让中文跨 byte split 也不乱码</h3>
-    <p>第一次进入真实网络边界：chunk 不等于字符。</p>
-  </a>
-</div>
+[开始 5 分钟体验 →](/learn/00-quick-start) · [安装与运行](/setup) · <LabLink path="/project">先看看最终项目</LabLink>
 
-## 你最终会做出什么
+## 这门课适合谁
 
-```text
-HTTP response body chunks
-  → incremental UTF-8 decoding
-  → WHATWG SSE events
-  → DeepSeek choices[].delta.content
-  → received / displayed text state
-  → React DOM commit and browser paint
-  → safe rich-text rendering
-```
+会基本 JavaScript，但没写过流式请求的同学。前几课不要求你认识 SSE、ReadableStream 或 React 性能分析。
 
-最终项目不是一个漂亮但解释不清的黑盒：每层都有 fixture、可控时钟、失败示例和可观察指标。你能从 Network 中一个被切断的 emoji，一路解释到引擎状态更新、React DOM commit 与浏览器绘制分别发生了什么。
+不熟悉函数、数组或 async / await？先用 [预备知识](/basics) 的短代码热身。React 和 TypeScript 只在需要时解释。
 
-## 开始前只需要这些
+## 学习路线
 
-- Node.js `>= 24`
-- pnpm `11.3.0`（仓库的 `packageManager` 会固定版本）
-- 会 TypeScript、React state、Promise 和基础 HTTP
+| 阶段             | 你会解决的问题                   | 完成后能做什么                     |
+| ---------------- | -------------------------------- | ---------------------------------- |
+| 00–03 先做出来   | 等待和分段显示有什么区别？       | 写出可回放的最小聊天               |
+| 04–07 理解网络   | 中文为什么乱码？半截消息怎么办？ | 从真实 HTTP 响应中读出正文         |
+| 08–10 可靠与流畅 | 停止后还更新？每个字都重算？     | 取消请求并合并显示更新             |
+| 11–14 渲染进阶   | Markdown 闪烁，长回答越来越慢？  | 理解预览修补、稳定块和重型任务     |
+| 15–18 组装项目   | 如何把这些能力接起来？           | 完整 Mini Chat、故障排查与性能验证 |
 
-在 **guoba-vibe 仓库根目录**运行：
+**推荐路线：** 首次学习先完成 00–10，再走 15、16、18 做出完整项目。11–14、17 是性能进阶，完成项目后再回来深入。你不需要实现三种服务商协议才能写出第一版聊天。
 
-```bash
-node --version
-corepack pnpm --version
-pnpm install
-pnpm dev:stream-render
-```
+## 每次只走一小步
 
-看到下面两行就说明入口正确：
+1. 先在课内实验观察现象，写下预测。
+2. 打开文中指定文件，理解输入和预期输出。
+3. 完成一处练习或有明确预期的修改。
+4. 运行本课命令，核对结果。
+5. 对照参考实现，解释为什么成立，再进入下一课。
 
-```text
-stream-render-course  Local: http://localhost:5173/
-stream-render-lab     Local: http://localhost:5174/
-```
+01–06 与 10 是带 TODO 的独立练习；其他章节是源码实验和项目组装，文中会明确区分。每课练习自带上一阶段的参考能力，不会自动读取你在上一课写的代码。
 
-打开 Course `http://localhost:5173/` 阅读；打开 Lab `http://localhost:5174/` 做实验。若端口被占用，启动脚本会直接报告冲突端口；确认并停止旧进程，或分别指定 `STREAM_RENDER_COURSE_PORT`、`STREAM_RENDER_LAB_PORT` 后启动。
+## 最终会得到什么
 
-## 你会一直编辑的目录
+<LabLink path="/project">Mini Chat</LabLink> 默认用固定教学回答：真实
+HTTP、中文、Markdown、停止、重试、缓冲和截断场景。无需购买 API
+服务。它不会根据你的问题生成答案，也不持久化历史。
 
-```text
-apps/stream-render-lab/workshop/mini-chat/
-├── 01-static-chat/
-├── 02-replay-clock/
-├── 03-m0-baseline/
-├── 04-utf8/
-├── 05-sse/
-└── 06-chat-completions/
-```
+理解完整链路后，再接入 <LabLink path="/chat">真实模型聊天</LabLink>。密钥留在服务端，课程客户端不保存密钥。
 
-每层都有 `exercise/`、`solution/`、`fixture.ts` 和 `contract.ts`。只改 `exercise/`；卡住时先看提示，再看 solution diff，不要一上来复制答案。
+## 随时回来实验
 
-## 第一阶段：六次连续增量
+<LabLink path="/playground">新手 Playground</LabLink>：一次改变一个变量。
+<LabLink path="/lab">进阶实验台</LabLink>：比较渲染策略。
+<LabLink path="/profiler">性能分析</LabLink>：在正确性成立后定位工作量。
 
-| 课  | 只新增的能力             | 完成后的证据                    |
-| --- | ------------------------ | ------------------------------- |
-| 01  | 完整字符串回复           | 一条 user + assistant 消息      |
-| 02  | Replay + VirtualClock    | 时间不前进，文本就不前进        |
-| 03  | raw / visible            | 到达事实与屏幕状态分别记录      |
-| 04  | 增量 UTF-8               | 任意 byte split 都不乱码        |
-| 05  | WHATWG SSE               | 字段、空行和 EOF 语义正确       |
-| 06  | Chat Completions adapter | wire event 变成 mini-chat delta |
-
-## 后续地图（尚未交付）
-
-07 Responses · 08 Anthropic · 09 生命周期 · 10 帧批处理 · 11 Preview repair · 12 Block identity · 13 Suffix reparse · 14 代码与重型节点 · 15 Chat 产品行为 · 16 安全 · 17 Profiler · 18 Capstone。
-
-这些课目前只代表依赖顺序，不是假装已经写完的空壳。先把 00–06 做透，再扩展下一段。
-
-## 每课固定循环
-
-1. 运行 exercise，确认它以文档写明的方式失败。
-2. 在 Browser checkpoint 里先写下预测。
-3. 只填本课的 TODO，再运行同一个测试。
-4. 对照 solution diff，解释 invariant 与 trade-off。
-5. 通过 checkpoint 后再进入下一课。
-
-[从 00 · Quick Start 开始 →](/learn/00-quick-start)
+[从 00 · 先看见流式的区别开始 →](/learn/00-quick-start)

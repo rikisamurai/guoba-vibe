@@ -1,0 +1,73 @@
+---
+title: 只学马上用得上的 JavaScript
+description: 用五个短例子理解字符串、回调、异步、状态与 TypeScript。
+---
+
+# 写流式之前，先会这五件事
+
+不用先读完一本 JavaScript 教材。打开浏览器开发者工具的 Console，逐段执行下面的代码；不同例子使用不同变量名，避免重复声明。
+
+## 1. 把片段接成字符串
+
+```js
+let answer = ''
+answer += '你'
+answer += '好'
+console.log(answer) // 你好
+```
+
+流式正文最基本的操作就是保留之前的文字，再追加新片段。练习：再追加一个感叹号，结果应该是“你好！”，不是只剩“！”。
+
+## 2. 函数也可以作为参数
+
+```js
+function receive(text, show) {
+  show(text)
+}
+receive('你好', console.log)
+```
+
+show 是调用方给你的函数。课程中的 publish 也是函数：调用它，就把当前结果交给界面。它不是网络协议。
+
+## 3. 等待一个尚未完成的结果
+
+```js
+async function getReply() {
+  return '完整回答'
+}
+const reply = await getReply()
+console.log(reply)
+```
+
+async 函数返回 Promise，表示一个未来结果；await 等待它。练习：去掉 await，看看控制台得到的是字符串还是 Promise。等待不会让整个浏览器停止工作。
+
+## 4. 先显示等待，再显示结果
+
+```js
+async function send() {
+  console.log('等待中')
+  const result = await getReply()
+  console.log(result)
+}
+await send()
+```
+
+输出顺序应该是等待中、完整回答。React 中会把 console.log 换成状态更新，再由 React 更新页面。setState 不是立刻把像素画到屏幕的指令。
+
+## 5. 看懂最少的类型标记
+
+```ts
+function append(previous: string, delta: string): string {
+  return previous + delta
+}
+```
+
+冒号后的 string 说明值是文字。这段 TypeScript 放进项目文件，由构建器处理，不能原样粘进普通浏览器 Console。Promise&lt;string&gt; 表示将来得到文字。
+
+## 自测
+
+你有旧文字“早上”，收到新片段“好”。应该覆盖旧文字，还是拼接？请求还没完成时应该立刻显示成功，还是先显示等待？
+
+能回答“拼接、等待”，就可以开始第 01 课。后面首次出现 Uint8Array、TextDecoder、SSE 时再学习它们。
+
+[开始实现一次完整回答 →](/learn/01-non-streaming-chat)

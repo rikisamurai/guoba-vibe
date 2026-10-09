@@ -1,14 +1,71 @@
 ---
-title: 04 · UTF-8：网络 chunk 不是字符串
-description: 复用一个 TextDecoder，让中文与 emoji 跨任意 byte split 仍可还原。
+title: 04 · 中文为什么会乱码
+description: 按步骤完成 中文为什么会乱码，从观察现象到修改代码，再验证结果。
 ---
 
 import { LessonDemo } from '../../components/lesson-demo'
 import { LessonMeta } from '../../components/lesson-meta'
 
-<p className="sr-kicker">CHAPTER 04 · BYTES ARE NOT CHARACTERS</p>
+# 中文为什么会乱码
 
-# 第一个真实网络边界：半个 emoji 也会先到
+**动手练习 · 每次只增加一个能力。** 不熟悉异步或类型标记，可以先看 [预备知识](/basics)。
+
+## 第一步：看见现象
+
+<LessonDemo demoId="byte-lab" presetId="byte-lab" />
+
+## 第二步：打开你要修改的文件
+
+从仓库根目录找到：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/04-utf8/exercise/index.tsx
+```
+
+只修改本课 exercise；solution 是独立的参考答案。后续练习自带前一阶段能力，不会自动读取你上一课的修改。
+
+## 第三步：先运行，再一步步修好
+
+```bash
+pnpm --filter stream-render-lab lesson 04 test
+```
+
+1. 拖动下面的字节切分位置，先找到“每次新建解码器”出现替换字符的位置。
+2. 打开 decodeUtf8Chunks。Uint8Array 是字节数组，不是文字数组；中文和 emoji 可以占多个字节。
+3. 运行测试：当前代码每段都新建 TextDecoder，跨段字符失去前半部分。
+4. 把 decoder 放到循环外，循环中使用 stream: true，结束时再调用一次不带参数的 decode。
+5. 重跑测试。任意位置切分都应该还原完整原文，而不只是你手动选的一个位置。
+
+## 第四步：检查关键代码
+
+下面是本次修改的核心片段；需要上下文时展开本页末尾的详细实现。
+
+```ts
+const decoder = new TextDecoder()
+let text = ''
+for (const chunk of chunks) text += decoder.decode(chunk, { stream: true })
+return text + decoder.decode()
+```
+
+## 第五步：验证你的结果
+
+```bash
+pnpm --filter stream-render-lab lesson 04 test
+pnpm --filter stream-render-lab lesson 04 solution
+```
+
+第一条检查你写的代码，第二条检查参考答案。两条通过才说明这一步在测试覆盖的边界内成立；课内实验运行参考逻辑，不会自动热更新为你的 exercise。
+
+## 完成检查
+
+- 我能解释刚才测试为什么失败，以及修改解决了什么问题。
+- 我的 exercise 测试通过，没有靠删断言跳过错误。
+- 我能指出本课结果如何交给下一层。
+
+[下一步 →](/learn/05-sse)
+
+<details>
+<summary>深入理解：完整实现、测试解释与边界</summary>
 
 之前的 replay 直接交付 string。真实 `Response.body` 交付的是 `Uint8Array`，切点由网络决定，完全不尊重中文字符、JSON 或 token 边界。
 
@@ -88,8 +145,6 @@ text += decoder.decode()
 
 调整 byte split，观察 decoder 在收到半个字符时保持内部状态，直到后续 byte 到达才输出完整 Unicode。
 
-<LessonDemo demoId="utf8" presetId="utf8-byte-boundary" />
-
 ## Solution diff
 
 ```diff
@@ -154,4 +209,6 @@ pnpm --filter stream-render-lab lesson 04 solution
 
 > Fetch stream 给的是 bytes，不是 token 或字符。我复用一个 streaming TextDecoder 并在 EOF flush，用 every-byte partition test 证明任何传输切片都不会破坏 Unicode。
 
-[下一课：05 · WHATWG SSE →](/learn/05-sse)
+[继续课程：05 · WHATWG SSE →](/learn/05-sse)
+
+</details>

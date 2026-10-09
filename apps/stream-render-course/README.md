@@ -1,28 +1,32 @@
 # Streaming Render Course
 
-Rspress 教程站。课程通过 `@stream-render/contract` 与 Lab 的 `/embed/:demoId` 通信，不导入 Lab 引擎源码。
+面向会基本 JavaScript 的新手：观察 → 小练习 → 网络 → 可靠交互 → 渲染优化 → 完整项目。
+
+## 本地运行
+
+从仓库根目录运行 `pnpm install`、`pnpm dev:stream-render`。
+
+- Course：http://localhost:5173/
+- Playground：http://localhost:5174/playground
+- 完整教学 Mini Chat：http://localhost:5174/project
+- 工程实验台：http://localhost:5174/lab
+
+默认固定回答，无需 Key。/project 使用真实本地 HTTP，不根据 prompt 生成答案。
+
+## 学习路径
+
+00 体验；01–03 最小显示；04–07 网络；08–10 可靠性与调度；11–14 渲染进阶；15–18 交互、安全、性能与项目。
+
+01–06、10 提供 exercise / solution；其他课是可运行的源码实验与项目步骤，不伪装成独立 TODO。首次学习可在 10 后先完成 15、16、18，再深入性能。环境与预备知识见 /setup、/basics。
+
+## 验证
 
 ```bash
-pnpm --filter stream-render-course dev
-pnpm --filter stream-render-course validate
-pnpm --filter stream-render-course test
-pnpm --filter stream-render-course build
+pnpm --filter stream-render-course verify
+pnpm --filter stream-render-course test:e2e
+pnpm --filter stream-render-lab test
 ```
 
-开发默认使用 `http://localhost:5174` 的 Lab。部署前通过 `PUBLIC_LAB_ORIGIN` 设置受信任的 Lab origin；`LessonDemo` 会同时校验 `message.origin`、`message.source`、协议版本和 `demoId`。
+Course 不导入 Lab 引擎。Demo ID、preset 和 postMessage 校验由共享 contract 维护。部署配置 PUBLIC_LAB_ORIGIN 与 VITE_COURSE_ORIGIN 必须匹配实际源；本地不要混用 localhost 和 127.0.0.1。
 
-当前连续课程：
-
-- `00`：纯观察 Quick Start；先理解 `ReadableStream` 的 chunk、SSE event、DeepSeek `choices[].delta.content` 和本课程定义的显示文本状态更新不是一一对应。
-- `01–03`：异步非流式 Mini Chat → 可控 Replay → M0 raw / visible。
-- `04–06`：任意 UTF-8 byte split → WHATWG SSE → Chat Completions adapter。
-- `10`：提前开放的 M1 frame batching 黄金样板；正式路径仍先完成 07–09。
-
-```bash
-pnpm --filter stream-render-lab lesson 01 test
-pnpm --filter stream-render-lab lesson 01 solution
-pnpm --filter stream-render-lab lesson 10 test
-pnpm --filter stream-render-lab lesson 10 solution
-```
-
-`pnpm dev:stream-render` 会先检查 `5173 / 5174`。若旧 worktree 的 dev server 仍占端口，脚本会明确失败，避免浏览器继续展示旧站却被误认为新 Course。
+UI 改动记录见 UI-CHANGES.md。

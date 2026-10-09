@@ -1,14 +1,73 @@
 ---
-title: 03 · M0：把 raw 与 visible 分开记录
-description: 建立逐片段提交的基线，并区分到达事实与屏幕版本。
+title: 03 · 分清收到的文字与显示的文字
+description: 按步骤完成 分清收到的文字与显示的文字，从观察现象到修改代码，再验证结果。
 ---
 
 import { LessonDemo } from '../../components/lesson-demo'
 import { LessonMeta } from '../../components/lesson-meta'
 
-<p className="sr-kicker">CHAPTER 03 · TWO PIECES OF STATE</p>
+# 分清收到的文字与显示的文字
 
-# raw 是原文，visible 是对当前 raw 的完整解析结果
+**动手练习 · 每次只增加一个能力。** 不熟悉异步或类型标记，可以先看 [预备知识](/basics)。
+
+## 第一步：看见现象
+
+<LessonDemo demoId="m0" presetId="m0-every-delta" />
+
+## 第二步：打开你要修改的文件
+
+从仓库根目录找到：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/03-m0-baseline/exercise/index.tsx
+```
+
+只修改本课 exercise；solution 是独立的参考答案。后续练习自带前一阶段能力，不会自动读取你上一课的修改。
+
+## 第三步：先运行，再一步步修好
+
+```bash
+pnpm --filter stream-render-lab lesson 03 test
+```
+
+1. 播放实验，分别看输入片段、累积原文与显示结果。
+2. 打开 createM0Renderer。raw 是接收到的文字，visible 是本练习的显示字符串，parseCount 记录解析次数。
+3. 运行测试：当前代码用上一次 raw 做解析，显示结果会落后一个片段。
+4. 先把 delta 追加到 raw，再把新的 raw 交给 parseTinyMarkdown。
+5. 重新测试，确认最后一段不会漏掉。这个小解析器只用于练习，不是安全的通用 Markdown 渲染器，不能直接拿去显示模型 HTML。
+
+## 第四步：检查关键代码
+
+下面是本次修改的核心片段；需要上下文时展开本页末尾的详细实现。
+
+```ts
+const raw = snapshot.raw + delta
+snapshot = {
+  raw,
+  visible: parseTinyMarkdown(raw),
+  parseCount: snapshot.parseCount + 1,
+}
+```
+
+## 第五步：验证你的结果
+
+```bash
+pnpm --filter stream-render-lab lesson 03 test
+pnpm --filter stream-render-lab lesson 03 solution
+```
+
+第一条检查你写的代码，第二条检查参考答案。两条通过才说明这一步在测试覆盖的边界内成立；课内实验运行参考逻辑，不会自动热更新为你的 exercise。
+
+## 完成检查
+
+- 我能解释刚才测试为什么失败，以及修改解决了什么问题。
+- 我的 exercise 测试通过，没有靠删断言跳过错误。
+- 我能指出本课结果如何交给下一层。
+
+[下一步 →](/learn/04-utf8)
+
+<details>
+<summary>深入理解：完整实现、测试解释与边界</summary>
 
 02 已经能按时间送来字符串。03 每到一段就重新解析**全部 raw**，建立最直接的 M0 基线。raw 保存 Markdown 原文，visible 保存这个 prefix 的渲染结果。
 
@@ -110,8 +169,6 @@ parse 2  raw="**流式渲染**" visible="<strong>流式渲染</strong>"
 
 使用 Step 逐次前进。对照 Raw 与 Rendered：原文保留 Markdown 标记，visible 则是每次完整解析后的结果；parse count 每段增加 1。
 
-<LessonDemo demoId="m0" presetId="m0-every-delta" />
-
 ## Solution diff
 
 ```diff
@@ -176,4 +233,6 @@ pnpm --filter stream-render-lab lesson 03 solution
 
 > 我把 raw 视为不可改写的 provider truth，把 visible 视为显示策略。即使最简单模式里两者总相等，也分别建模；这样后续做批处理或平滑显示时，不会为了 UI 效果污染原始内容。
 
-[下一课：04 · 任意 byte split 与 UTF-8 →](/learn/04-utf8)
+[继续课程：04 · 任意 byte split 与 UTF-8 →](/learn/04-utf8)
+
+</details>

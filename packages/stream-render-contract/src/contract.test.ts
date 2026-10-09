@@ -8,6 +8,10 @@ describe('stream render lesson contract', () => {
     const demos = listLessonDemos()
 
     expect(demos.map(({ demoId }) => demoId)).toEqual([
+      'first-look',
+      'byte-lab',
+      'sse-lab',
+      'batch-lab',
       'response',
       'replay',
       'm0',

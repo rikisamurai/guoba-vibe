@@ -22,7 +22,7 @@ test('入门课与 Lab 完成 ready → run-settled 跨应用闭环', async ({ p
 })
 
 test('Quick Start 逐层观察 chunk、SSE event 与显示文本状态更新', async ({ page }) => {
-  await page.goto('/learn/00-quick-start')
+  await page.goto('/reference/network-boundaries')
 
   const demo = page.getByRole('region', {
     name: '逐增量更新（M0）与合并更新（M4）交互实验',

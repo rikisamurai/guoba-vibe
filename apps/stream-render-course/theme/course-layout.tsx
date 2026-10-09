@@ -1,6 +1,5 @@
 import { Layout as OriginalLayout, type LayoutProps } from '@rspress/core/theme-original'
 
-import { ChapterCheckpoint } from './chapter-checkpoint'
 import { CourseBrand, ProductNav } from './course-nav'
 import { CourseRail } from './course-rail'
 
@@ -22,12 +21,7 @@ export function Layout(props: LayoutProps) {
         </>
       }
       beforeDocContent={props.beforeDocContent}
-      beforeOutline={
-        <>
-          <ChapterCheckpoint />
-          {props.beforeOutline}
-        </>
-      }
+      beforeOutline={props.beforeOutline}
     />
   )
 }

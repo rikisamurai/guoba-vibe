@@ -7,6 +7,7 @@ import {
 import { useCallback, useEffect, useMemo } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 
+import { BeginnerDemo, isBeginnerDemo } from '../beginner/beginner-demo'
 import { LabWorkbench } from '../lab/lab-workbench'
 import { QuickStartGuide } from '../lab/quick-start-guide'
 import { labCheckpoints } from './embed-checkpoints'
@@ -56,9 +57,28 @@ export default function EmbedPage() {
           <span>课程实验</span>
           <strong>{LESSON_DEMOS[demoId].label}</strong>
         </div>
-        <Link to={`/lab?demo=${demoId}&preset=${presetId}`}>打开完整实验台 ↗</Link>
+        <Link
+          to={`/${isBeginnerDemo(demoId) ? 'playground' : 'lab'}?demo=${demoId}&preset=${presetId}`}
+        >
+          打开完整实验台 ↗
+        </Link>
       </header>
-      {demoId === 'quick-start' ? (
+      {isBeginnerDemo(demoId) ? (
+        <BeginnerDemo
+          demoId={demoId}
+          onReset={postReady}
+          onSettled={(checkpoints) =>
+            postReport({
+              version: 1,
+              kind: 'run-settled',
+              demoId,
+              runId: crypto.randomUUID(),
+              outcome: 'completed',
+              checkpoints,
+            })
+          }
+        />
+      ) : demoId === 'quick-start' ? (
         <QuickStartGuide
           onRestart={postReady}
           onSettled={(report) =>

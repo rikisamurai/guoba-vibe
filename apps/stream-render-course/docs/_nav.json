@@ -1,5 +1,18 @@
 [
-  { "text": "课程首页", "link": "/" },
-  { "text": "00–06 · Mini Chat", "link": "/learn/00-quick-start" },
-  { "text": "10 · M1 黄金样板", "link": "/learn/10-m1-frame-batching" }
+  {
+    "text": "开始学习",
+    "link": "/learn/00-quick-start"
+  },
+  {
+    "text": "环境安装",
+    "link": "/setup"
+  },
+  {
+    "text": "完整项目",
+    "link": "/learn/18-capstone"
+  },
+  {
+    "text": "网络边界",
+    "link": "/reference/network-boundaries"
+  }
 ]

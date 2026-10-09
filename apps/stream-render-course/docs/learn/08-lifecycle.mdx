@@ -1,0 +1,65 @@
+---
+title: 08 · 停止、错误与重试
+description: 保留已经收到的文字，并阻止旧请求继续修改界面。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 用户点了停止，程序还要做什么？
+
+**前置：第 07 课能收到真实 HTTP 回答。类型：项目源码实验。** 本课修改入口是 `apps/stream-render-lab/src/learn-project/use-mini-chat.ts`。
+
+## 第一步：制造一个中途停止
+
+打开 <LabLink path="/project">Mini Chat</LabLink>，选择分段发送。看到“你好！”后点击停止。预期：已有文字保留，状态变为已停止，发送按钮重新可用。
+
+再切换“中途断开”并发送。这次不是用户取消：应显示“连接中断，保留已收内容”。不要把两种状态都显示成成功。
+
+## 第二步：沿着按钮找到取消信号
+
+在 use-mini-chat.ts 找到 AbortController。每次发送创建一个新的 controller，并把 signal 交给 fetch 和 readAnswer：
+
+```ts
+const controller = new AbortController()
+const response = await fetch(url, { signal: controller.signal })
+```
+
+点击停止调用 abort。read-answer.ts 会取消 reader，finally 释放读取锁。只隐藏加载图标不会停止请求；只取消动画也不会停止网络。
+
+## 第三步：防止上一轮结果污染下一轮
+
+异步任务可能已经进入回调，所以还需要请求编号。
+
+```ts
+const id = ++sequence.current
+const current = () => sequence.current === id
+```
+
+每次发布状态前检查编号。组件卸载时先推进编号，再取消请求，旧任务即使返回也不能写入新状态。
+
+动手：先搜索所有 current() 的调用位置，再临时在 publish 前打印 id。快速停止并重新发送，确认旧编号不再修改新回答，完成后移除日志。
+
+## 第四步：不要丢掉已经收到的尾部
+
+按帧更新时，text 可能领先屏幕。停止或完成前，最后发布一次已接受的 text，并取消待执行的 animation frame。否则最后几个字可能消失，或者“已停止”被旧回调改回“接收中”。
+
+状态发布与动画取消的顺序见 use-mini-chat.ts 的 try / catch / finally；第 10 课会单独实现这个调度问题。
+
+## 第五步：验证错误与重试
+
+1. 选择 HTTP 503 错误，点击发送：应看到明确的 HTTP 503。
+2. 切换为分段发送，再点击重试上一条。
+3. 新尝试单独追加一轮，前一轮错误记录保留。
+4. 完成后核对文字没有被追加两遍。
+
+这里重试是重新请求，不是断点续传。真实生成没有可靠的事件 ID 或重放协议时，不能假装从上次最后一个字继续。
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/learn-project/read-answer.test.ts src/engine/engine.test.ts
+```
+
+## 完成检查
+
+能区分成功、服务报错、协议不完整、连接截断与用户停止。已有文字不丢失，停止后不会再增长，下一轮不被旧回调覆盖。
+
+[下一步：09 · 把文字显示成 Markdown →](/learn/09-markdown)

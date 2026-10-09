@@ -1,14 +1,72 @@
 ---
-title: 01 · 实现一次非流式 AI 对话
-description: 用 Promise 完成第一个真实的异步 chat turn：先显示用户消息，等待完整回答，再追加 assistant 消息。
+title: 01 · 做出一次完整回答
+description: 按步骤完成 做出一次完整回答，从观察现象到修改代码，再验证结果。
 ---
 
 import { LessonDemo } from '../../components/lesson-demo'
 import { LessonMeta } from '../../components/lesson-meta'
 
-<p className="sr-kicker">CHAPTER 01 · NON-STREAMING BASELINE</p>
+# 做出一次完整回答
 
-# Streaming 之前，先完成一次正确的非流式对话
+**动手练习 · 每次只增加一个能力。** 不熟悉异步或类型标记，可以先看 [预备知识](/basics)。
+
+## 第一步：看见现象
+
+<LessonDemo demoId="response" presetId="complete-response" />
+
+## 第二步：打开你要修改的文件
+
+从仓库根目录找到：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/01-static-chat/exercise/index.tsx
+```
+
+只修改本课 exercise；solution 是独立的参考答案。后续练习自带前一阶段能力，不会自动读取你上一课的修改。
+
+## 第三步：先运行，再一步步修好
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+```
+
+1. 先播放下面的实验：用户消息应立即出现，助手要等结果返回才出现。
+2. 打开 exercise/index.tsx，找到 sendNonStreamingTurn。prompt 是问题，complete 是异步取回答的函数，publish 把完整对话状态交给页面。
+3. 运行测试。当前代码只进入等待，没有发布完成状态，所以应失败。
+4. 把 await complete(prompt) 的返回值保存成 reply，再发布包含 user 和 assistant 的 completed 状态。不要 trim 或改写 reply。
+5. 重跑测试，确认等待期间只有用户消息，完成后恰好追加一条助手消息。
+
+## 第四步：检查关键代码
+
+下面是本次修改的核心片段；需要上下文时展开本页末尾的详细实现。
+
+```ts
+const reply = await complete(prompt)
+publish({
+  phase: 'completed',
+  messages: [userMessage, { role: 'assistant', text: reply }],
+})
+```
+
+## 第五步：验证你的结果
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+pnpm --filter stream-render-lab lesson 01 solution
+```
+
+第一条检查你写的代码，第二条检查参考答案。两条通过才说明这一步在测试覆盖的边界内成立；课内实验运行参考逻辑，不会自动热更新为你的 exercise。
+
+## 完成检查
+
+- 我能解释刚才测试为什么失败，以及修改解决了什么问题。
+- 我的 exercise 测试通过，没有靠删断言跳过错误。
+- 我能指出本课结果如何交给下一层。
+
+[下一步 →](/learn/02-string-replay-clock)
+
+<details>
+<summary>深入理解：完整实现、测试解释与边界</summary>
 
 这一课还不处理 chunk。你会实现一次最小但真实的**异步 chat turn**（一条用户消息及其对应的一次 assistant 回答）：用户提交 prompt，程序等待一个 `Promise<string>`，拿到完整 reply 后再更新对话。
 
@@ -39,8 +97,6 @@ completed 用户消息后追加一条完整 assistant 消息
 ## 先看最终交互
 
 播放下面这次对话 trace。你应该先看到 user 消息和等待提示；完整 reply 返回后，assistant 消息一次出现。这里没有逐字增长，这正是后续 streaming 版本的正确性基线。
-
-<LessonDemo demoId="response" presetId="complete-response" />
 
 观察时只回答两个问题：
 
@@ -219,4 +275,6 @@ pnpm --filter stream-render-lab lesson 01 solution
 
 > 我先用非流式 Promise 建立 chat turn 的最小状态机：发送时立即发布 waiting 和 user 消息，完整回复返回后再发布 completed 和 assistant 消息。这个终态是后续 streaming 实现的正确性基线（correctness baseline）；引入增量后，最终 transcript 仍必须与它一致。
 
-[下一课：02 · String Replay 与 Clock →](/learn/02-string-replay-clock)
+[继续课程：02 · String Replay 与 Clock →](/learn/02-string-replay-clock)
+
+</details>

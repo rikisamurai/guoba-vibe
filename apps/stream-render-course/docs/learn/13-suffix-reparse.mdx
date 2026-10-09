@@ -1,0 +1,47 @@
+---
+title: 13 · 只重算需要变化的尾部
+description: 理解稳定前缀、尾部重算和必须回退的情况。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 一万字的回答，每来一个字都重算？
+
+**进阶源码实验。** 文件入口：`apps/stream-render-lab/src/markdown/preview.ts` 的 parseM3。
+
+## 第一步：先看工作量
+
+在 <LabLink path="/lab">进阶实验台</LabLink> 选择 Baseline M2、Challenger M3。使用多个短段落的长文本回放，观察解析工作量。保持同一输入、切分、seed，只改变策略。
+
+每次重算全文，会反复处理已经完成的前缀；只重算变化的后缀有机会减少累计解析字符量。
+
+## 第二步：找稳定边界
+
+parseM3 会从上一份文档最后一个根块附近重新解析，保留之前的块。读 dirtyStart、parsedTail 和最终 blocks 的拼接。
+
+不能机械地截最后 100 个字符：Markdown 的列表、引用、表格等结构可能跨越这个位置。
+
+## 第三步：制造必须全文回退的例子
+
+在原文前面写一个引用链接，末尾再追加它的定义。后面的定义可以改变前面的链接含义。找到 global_definition_fallback，观察系统选择全文重算。
+
+再试一个没有段落边界的超长段落，观察 no_quiescent_checkpoint。回退是正确性策略，不是测试失败。
+
+## 第四步：对照正确性基线
+
+打开 markdown.test.ts，阅读 matches the M2 oracle at every adversarial append checkpoint：每个追加点都要与完整解析基线对照，不能只检查最后一个结果。
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/markdown/markdown.test.ts
+pnpm --filter stream-render-lab test:bench
+```
+
+练习：新增一个嵌套列表文本，逐段追加，验证最终语义不变，并记录是否触发回退。
+
+## 完成检查
+
+你能说明哪些输入有收益、哪些会退化，以及为何必须暴露退化原因。不要宣称所有 Markdown 都能严格线性增量解析。
+
+预期：短段落语料减少累计解析工作量；全局定义或缺少边界时正确回退，最终语义仍与基线一致。
+
+[下一步：14 · 延后昂贵的高亮与图表 →](/learn/14-heavy-nodes)

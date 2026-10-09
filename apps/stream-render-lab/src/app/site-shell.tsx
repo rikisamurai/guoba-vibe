@@ -1,7 +1,9 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 
 const NAV_ITEMS = [
-  { label: '实验台', to: '/lab' },
+  { label: 'Playground', to: '/playground' },
+  { label: 'Mini Chat', to: '/project' },
+  { label: '进阶实验台', to: '/lab' },
   { label: '性能分析', to: '/profiler' },
   { label: '真实聊天', to: '/chat' },
 ]

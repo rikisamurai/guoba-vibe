@@ -5,6 +5,7 @@ import type { Plugin } from 'vite'
 import { GET as capabilities } from './api/capabilities'
 import { POST as chat } from './api/chat'
 import { declaredBodyIsTooLarge, MAX_REQUEST_BODY_BYTES } from './api/request-body'
+import { GET as teaching } from './api/teaching'
 
 type Handler = (request: Request) => Promise<Response> | Response
 type ResolveHandler = (route: string, method: string) => Promise<Handler | null>
@@ -139,7 +140,7 @@ function handlerFrom(module: Record<string, unknown>, method: string): Handler |
 export function createApiMiddleware(resolveHandler: ResolveHandler) {
   return (request: IncomingMessage, response: ServerResponse, next: () => void): void => {
     const route = (request.url ?? '').split('?')[0].replaceAll('/', '')
-    if (route !== 'chat' && route !== 'capabilities') return next()
+    if (route !== 'chat' && route !== 'capabilities' && route !== 'teaching') return next()
     const controller = new AbortController()
     response.on('close', () => controller.abort())
     readBody(request)
@@ -180,6 +181,7 @@ export function devApiPlugin(): Plugin {
       server.middlewares.use(
         '/api',
         createApiMiddleware(async (route, method) => {
+          if (route === 'teaching' && method === 'GET') return teaching
           if (route === 'chat' && method === 'POST') return chat
           if (route === 'capabilities' && method === 'GET') return capabilities
           return null

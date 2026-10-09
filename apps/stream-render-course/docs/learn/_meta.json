@@ -6,5 +6,16 @@
   "04-utf8",
   "05-sse",
   "06-chat-completions",
-  "10-m1-frame-batching"
+  "07-http",
+  "08-lifecycle",
+  "09-markdown",
+  "10-m1-frame-batching",
+  "11-preview-repair",
+  "12-block-identity",
+  "13-suffix-reparse",
+  "14-heavy-nodes",
+  "15-chat-behavior",
+  "16-safety",
+  "17-measurement",
+  "18-capstone"
 ]

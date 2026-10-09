@@ -1,14 +1,72 @@
 ---
-title: 10 · M1 Frame Batching：一帧只发布一次
-description: 分开记录文本增量到达与显示更新的时机，用 VirtualClock 证明 drain 和 cancel 不丢字。
+title: 10 · 合并更新，减少重复工作
+description: 按步骤完成 合并更新，减少重复工作，从观察现象到修改代码，再验证结果。
 ---
 
 import { LessonDemo } from '../../components/lesson-demo'
 import { LessonMeta } from '../../components/lesson-meta'
 
-<p className="sr-kicker">CHAPTER 10 · GOLDEN PREVIEW</p>
+# 合并更新，减少重复工作
 
-# M1：一帧只发布一次，但一个字也不能丢
+**动手练习 · 每次只增加一个能力。** 不熟悉异步或类型标记，可以先看 [预备知识](/basics)。
+
+## 第一步：看见现象
+
+<LessonDemo demoId="m1" presetId="m1-frame-batching" />
+
+## 第二步：打开你要修改的文件
+
+从仓库根目录找到：
+
+```text
+apps/stream-render-lab/workshop/mini-chat/10-m1-frame-batching/exercise/frame-batcher.ts
+```
+
+只修改本课 exercise；solution 是独立的参考答案。后续练习自带前一阶段能力，不会自动读取你上一课的修改。
+
+## 第三步：先运行，再一步步修好
+
+```bash
+pnpm --filter stream-render-lab lesson 10 test
+```
+
+1. 在实验中比较 M0 与 M1：同一帧内多段文字到达，可以只发布一次显示状态。
+2. 打开 createFrameBatcher。push 接收文字，drain 把尾部全部交出去，cancel 清掉尚未提交的任务。
+3. 运行测试。当前 push 每次直接 commit，所以没有合并；cancel 也不能阻止迟到更新。
+4. 用 pending 累积文字。只在没有待执行帧时申请一个 frame；执行时取出 pending、清空缓存，再 commit。
+5. drain 先取消原帧再立即 flush；cancel 取消原帧并清空 pending。用户停止时要先由上层决定是否 drain 已收到的尾部，再 cancel，不能混淆两个动作。
+6. 重跑测试，确认空输入不提交、尾部不丢、取消后无迟到更新。
+
+## 第四步：检查关键代码
+
+下面是本次修改的核心片段；需要上下文时展开本页末尾的详细实现。
+
+```ts
+push(delta) {
+  pending += delta
+  cancelFrame ??= clock.frame(flush)
+}
+```
+
+## 第五步：验证你的结果
+
+```bash
+pnpm --filter stream-render-lab lesson 10 test
+pnpm --filter stream-render-lab lesson 10 solution
+```
+
+第一条检查你写的代码，第二条检查参考答案。两条通过才说明这一步在测试覆盖的边界内成立；课内实验运行参考逻辑，不会自动热更新为你的 exercise。
+
+## 完成检查
+
+- 我能解释刚才测试为什么失败，以及修改解决了什么问题。
+- 我的 exercise 测试通过，没有靠删断言跳过错误。
+- 我能指出本课结果如何交给下一层。
+
+[下一步 →](/learn/11-preview-repair)
+
+<details>
+<summary>深入理解：完整实现、测试解释与边界</summary>
 
 > **黄金样板提前开放。** 你可以先预览这篇的教学深度；正式学习路径仍是完成 07–09 后再回来。
 
@@ -121,8 +179,6 @@ user cancel    → drop pending  → no late commit
 
 ## 内嵌 Demo：把 burst 放慢看
 
-<LessonDemo demoId="m1" presetId="m1-frame-batching" />
-
 对比 M0 / M1：两边 raw 应一致，M1 的 visible revision 更少；终态后两边最终文本仍必须相等。
 
 ## Solution diff
@@ -176,3 +232,5 @@ pnpm --filter stream-render-lab lesson 10 solution
 ## 面试时怎么讲
 
 > 我没把 `requestAnimationFrame` 当成自动节流，而是用 pending frame ownership 建模。delta 立即进 raw，同帧只有一个 flush owner；terminal 先 drain，cancel 则清理 task。注入 VirtualClock 后，我能确定性证明 commit 上限和零 late update。
+
+</details>

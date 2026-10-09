@@ -1,0 +1,89 @@
+---
+title: 环境安装与运行
+description: 从打开终端到看到课程、实验和完整 Mini Chat，逐步检查每个结果。
+---
+
+# 第一次运行：一步一步来
+
+**目标：** 在本机打开课程和实验。下面所有命令都在仓库根目录执行，不是在浏览器里输入。
+
+## 第一步：准备代码
+
+已有本项目的目录就直接打开它，不要再克隆一次。新同学需要先通过课程提供的仓库版本拿到代码：当前教学内容在开发分支，未合入的本地改动不会出现在远端下载中。
+
+```bash
+git clone https://github.com/rikisamurai/guoba-vibe.git
+cd guoba-vibe
+```
+
+若你拿到的是压缩包，用编辑器打开解压后的根目录。确认这里有 package.json、pnpm-workspace.yaml 和 apps 文件夹。课程发布者需要交付包含 stream-render-course、stream-render-lab、stream-render-contract 的同一版本。
+
+## 第二步：检查运行环境
+
+```bash
+node --version
+corepack pnpm --version
+```
+
+Node.js 需要 **24 或更新版本**，pnpm 使用仓库指定的 **11.3.0**。未安装 Node 时，先从 [Node.js 官方下载页](https://nodejs.org/en/download) 安装满足版本要求的版本，重开终端再检查。
+
+若提示 corepack 不存在，可先安装 pnpm：
+
+```bash
+npm install --global pnpm@11.3.0
+pnpm --version
+```
+
+这条命令安装开发工具，不会启动课程。若系统报权限错误，优先使用你的 Node 版本管理器，不要盲目给命令加 sudo。
+
+## 第三步：安装依赖
+
+```bash
+pnpm install
+```
+
+等命令结束后再继续。依赖是项目要用的 React、构建器和测试工具，不需要逐个安装。下载失败时先检查网络与错误信息，不要删除锁文件碰运气。
+
+## 第四步：同时启动两个服务
+
+```bash
+pnpm dev:stream-render
+```
+
+保持这个终端运行，看到地址后打开：
+
+- http://localhost:5173/：课程。
+- http://localhost:5174/playground：新手实验。
+- http://localhost:5174/project：完整 Mini Chat。
+
+关闭时在终端按 Ctrl+C。第二次启动无需重复安装依赖。
+
+## 第五步：做一次连通性检查
+
+在 Mini Chat 里保留“分段发送”，点击发送。应看到“你好！”先出现，然后正文继续增长，最后显示“已完成”。这里使用本地固定回答，**不需要 API Key**。
+
+再打开浏览器 Network，找到 /api/teaching?mode=stream。它的 Content-Type 应包含 text/event-stream。HTTP 正常不代表课程练习已经做对；本步只验证环境。
+
+## 第六步：运行你的第一条测试
+
+```bash
+pnpm --filter stream-render-lab lesson 01 test
+```
+
+starter 故意留下一个 TODO，首次失败是正常的。跟随第 01 课补完后再跑同一条命令。只看参考实现是否可用，可以运行：
+
+```bash
+pnpm --filter stream-render-lab lesson 01 solution
+```
+
+## 常见问题
+
+| 现象                   | 先检查什么                                                    |
+| ---------------------- | ------------------------------------------------------------- |
+| 端口被占用             | 启动脚本会报告 5173 或 5174；确认是自己的旧进程后再关闭       |
+| 实验一直加载           | Course 与 Lab 是否都运行；两个地址是否都使用 localhost        |
+| 找不到 package.json    | 终端是否在仓库根目录                                          |
+| /api/teaching 返回 404 | 是否启动了当前版本的 Lab dev server，修改服务端插件后是否重启 |
+| Live Chat 显示未启用   | 它是可选真实模型入口；新手请先用 /project                     |
+
+[准备好了，去第一课 →](/learn/01-non-streaming-chat)
