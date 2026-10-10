@@ -74,4 +74,5 @@ apps/*/storybook-static/
 coverage/
 apps/*/playwright-report/
 apps/*/test-results/
+apps/*/.playwright-cli/
 apps/*/pnpm-lock.yaml

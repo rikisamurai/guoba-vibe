@@ -1,0 +1,30 @@
+## 观察失败
+
+每个 code delta 都全量跑 Shiki，每次 Mermaid 文本改变都重画 SVG，会让重型工作数跟 delta 数一起增长。旧 Promise 后返回时，还可能覆盖新内容。
+
+<Checkpoint label="异步结果必须证明新鲜" tone="alert">
+  只有 `(runId, blockId, revision)` 全部匹配的 heavy result 才能公布。取消只是优化，revision guard
+  才是正确性。
+</Checkpoint>
+
+## 实现一个增量
+
+Shiki tokenizer 只 `enqueue` 新增 code suffix，分开 stable token 与可变 token。Mermaid/KaTeX 通过 Clock debounce 运行，期间显示 last-good result；最终状态完成或取消尚未发布的 heavy work。
+
+```text
+delta → revision++ → debounce → compute → guard → publish
+```
+
+## 确定性验证
+
+用 VirtualClock 在 debounce window 内追加多个 delta，断言 heavy job 数受 revision/window 约束。制造旧任务晚于新任务返回，断言旧结果不会提交。Shiki 累计 enqueue 长度等于 code source growth。
+
+## 浏览器观察
+
+在 Performance 面板定位 Shiki、Mermaid 与 KaTeX 任务，确认它们没有随每个 delta 启动；终态后也不应再出现 late update。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：过期 heavy result 不得发布，settled 后无 late update。
+- **Trade-off**：使用 last-good 保持稳定，代价是图表可短暂落后于 raw。
+- **退化**：未闭合或无法解析的重型块显示安全源文本，不阻塞其他 block 可见。

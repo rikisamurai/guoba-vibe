@@ -1,0 +1,31 @@
+## 观察失败
+
+直接使用 `requestAnimationFrame` 和 `setTimeout` 的测试会受机器、后台 tab 和负载影响。“每帧最多一次 commit”和“debounce 窗口内只做一次 heavy work”无法稳定断言。
+
+<Checkpoint label="时间也是输入" tone="alert">
+  只要业务结果受当前时刻、帧或 timer 影响，Clock 就必须是可注入边界。
+</Checkpoint>
+
+## 实现一个增量
+
+建立 `EngineClock` 的三个最小能力：`now`、`frame` 和 `after`。生产环境使用 `BrowserClock`，课程、Replay 和单测共享同一个 `VirtualClock`。
+
+```ts
+clock.advanceFrame()
+clock.advanceBy(120)
+clock.runUntilIdle()
+```
+
+## 确定性验证
+
+安排两个同时 timer、一个 frame 和 frame 中新建的 timer，逐步推进 Clock，断言执行顺序。运行 settled 后，`runUntilIdle()` 不得产生新快照。
+
+## 浏览器观察
+
+右侧样本改用 BrowserClock 后，观察 frame 间距会随浏览器调度波动；这正是 VirtualClock 只证明 ordering、不证明 wall-clock 的原因。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：Core 不直接调用原生时钟 API。
+- **Trade-off**：多一层 seam，换来可重放的 ordering 与 work count。
+- **退化**：VirtualClock 不模拟真实主线程竞争，性能结论仍需 BrowserClock 报告。

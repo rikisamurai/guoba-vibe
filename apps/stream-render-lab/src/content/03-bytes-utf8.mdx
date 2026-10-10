@@ -1,0 +1,30 @@
+## 观察失败
+
+对每个 `Uint8Array` 单独调用普通 decode，会在多字节字符被切开时产生 `�`。代理的分块策略一变，原本“正常”的中英文和 emoji 就可能损坏。
+
+<Checkpoint label="不要把 chunk 当字符串" tone="alert">
+  Transport 交付的是任意字节片段。字符边界只能由有状态的 UTF-8 decoder 确认。
+</Checkpoint>
+
+## 实现一个增量
+
+使用单个 `TextDecoder('utf-8')`，中间 chunk 传入 `{ stream: true }`，终态再 flush。它保留未完成的 code point，上层只看到完整文本。
+
+```text
+F0 9F | A7 AA → 🧪
+ E4 | BD A0   → 你
+```
+
+## 确定性验证
+
+将包含 ASCII、汉字、emoji 和换行的 fixture 编码，枚举 every-byte split。每种 partition 合并后都必须与原文完全一致。
+
+## 浏览器观察
+
+在 Network 与 Live Inspector 对照 byte 到达和 Unicode delta；浏览器视图只能展示 decoder 已接受的字符，不能把 network chunk 当字符边界。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：byte partition 不改变 decode 后的文本。
+- **Trade-off**：decoder 需要保留少量未完成状态。
+- **退化**：输入本身含非法 UTF-8 时可失败或替换，但诊断必须区分“切片”与“坏字节”。

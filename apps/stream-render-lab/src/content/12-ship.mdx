@@ -1,0 +1,34 @@
+## 观察失败
+
+一个在本机 Chrome 中“很快”的 demo，可能仍在逐 token 播报 aria-live、跟用户抢滚动位置、执行 raw HTML，或把偶然 wall-clock 数字当 CI 门槛。
+
+<Checkpoint label="发布的是系统，不是算法" tone="proof">
+  协议终态、渲染排空、安全边界、可访问性和测量方法需要同时成立。
+</Checkpoint>
+
+## 实现一个增量
+
+将 production profile 定为 M4 + direct frame-batched reveal。`aria-live` 按段落或终态批量播报；只有接近底部时自动滚动；reduced-motion 关闭 smooth reveal；所有 URL、HTML 和 SVG 走安全策略。
+
+```text
+deterministic tests → browser profiler → public replay
+```
+
+## 确定性验证
+
+Vitest 证明规则和 work count；Chrome、Firefox、WebKit 做正确性 smoke；Chromium production build 生成 wall-clock 报告。记录 p50/p95、React commit、long task 与 CV/RME，但不把跨机器时间作为硬 CI 门槛。
+
+## 浏览器观察
+
+只在 production build 采集正式报告，同时记录浏览器版本、fixture、seed、CV/RME 与能力缺失项，让读者能复现而不是只相信截图。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：无论 outcome，已接受 raw 都经过唯一 canonical settle，且没有过期任务更新页面。
+- **Trade-off**：direct reveal 是稳健默认值；smooth reveal 留作可关闭实验。
+- **退化**：公共站只开 deterministic replay；live API 未启用时明确返回 `live_disabled`。
+
+<Checkpoint label="你应能讲清的故事" tone="proof">
+  从任意 byte split 讲到 canonical settle，并能用 fixture、work curve 和 Profiler
+  证明每一层优化没有换掉正确性。
+</Checkpoint>

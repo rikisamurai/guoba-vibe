@@ -1,0 +1,35 @@
+@theme {
+  --font-sans: 'Schibsted Grotesk Variable', ui-sans-serif, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --color-paper: #f1eadb;
+  --color-paper-light: #faf6ec;
+  --color-ink: #20231f;
+  --color-rust: #bf552f;
+  --color-scope: #0d1714;
+  --color-signal: #baf36d;
+}
+
+:root {
+  --paper: #f1eadb;
+  --paper-light: #faf6ec;
+  --paper-deep: #e4dac5;
+  --ink: #20231f;
+  --ink-soft: #565950;
+  --ink-faint: #87877c;
+  --rule: #cfc4ae;
+  --rule-dark: #aaa08d;
+  --rust: #bf552f;
+  --rust-dark: #87361e;
+  --scope: #0d1714;
+  --scope-raised: #15231f;
+  --scope-rule: #2a4139;
+  --signal: #baf36d;
+  --signal-soft: #77d7c2;
+  --warning: #f5bd66;
+  --shadow-paper: 0 18px 48px rgb(60 48 31 / 12%);
+  --shadow-scope: 0 24px 64px rgb(18 24 19 / 26%);
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  color-scheme: light;
+}

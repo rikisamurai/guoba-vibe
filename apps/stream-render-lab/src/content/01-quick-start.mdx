@@ -1,0 +1,31 @@
+## 观察失败
+
+把同一份 Markdown trace 同时交给 M0 和 M4。M0 每到一段 delta 就重新解析全文；M4 合并显示帧，只让脏尾部和必要的重型节点变化。
+
+<Checkpoint label="先记录，后解释" tone="alert">
+  打开实验台后先看 commit 数、parsed code units 和 raw 到 visible
+  的延迟。不要先用“感觉更流畅”下结论。
+</Checkpoint>
+
+## 实现一个增量
+
+这一章只建立对照面板：固定 trace、固定 chunk 时间、同时启动 M0/M4，并展示 ingest clock 与 visible clock。暂时不改 parser。
+
+```text
+same trace → M0 baseline
+           └→ M4 production profile
+```
+
+## 确定性验证
+
+重放两次同一 seed。两次的 raw、最终 Render IR、outcome 和 work counters 必须一致。真实 wall-clock 只做报告，不做正确性 oracle。
+
+## 浏览器观察
+
+运行右侧 Live Inspector，再到 Profiler 对照 M0/M4 的 commit 数、parse work 与 raw → visible p95；不要用“感觉更流畅”代替读数。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：所有 profile 的最终 canonical Render IR 相同。
+- **Trade-off**：M4 的体感和工作量更好，但状态与调度复杂度更高。
+- **退化**：没有稳定 checkpoint 时，M4 的 Markdown 部分允许回到全文解析。

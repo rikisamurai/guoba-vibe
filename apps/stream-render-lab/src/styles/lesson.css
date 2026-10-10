@@ -1,0 +1,177 @@
+.chapter-number {
+  padding-right: 12px;
+  color: var(--rust);
+  font-family: var(--font-mono);
+  font-size: clamp(58px, 9vw, 126px);
+  font-weight: 600;
+  letter-spacing: -0.08em;
+  line-height: 0.8;
+}
+
+.chapter-number span {
+  display: block;
+  margin-top: 18px;
+  color: var(--ink-faint);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-align: right;
+}
+
+.lesson-layout {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr) 250px;
+  gap: clamp(30px, 5vw, 72px);
+  padding-block: 64px;
+}
+
+.margin-note {
+  align-self: start;
+  position: sticky;
+  top: 24px;
+  padding-top: 6px;
+  border-top: 3px solid var(--rust);
+}
+
+.margin-note > p,
+.case-nav > span {
+  margin-top: 12px;
+  color: var(--rust-dark);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+}
+
+.margin-note ol {
+  display: grid;
+  gap: 13px;
+  margin: 24px 0;
+  padding: 0;
+  color: var(--ink-faint);
+  font-size: 12px;
+  list-style-position: inside;
+}
+
+.margin-note li.is-current {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.margin-note a {
+  color: var(--rust-dark);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.lesson-copy {
+  max-width: 760px;
+}
+
+.lesson-copy > p {
+  color: var(--ink-soft);
+  font-size: 17px;
+  line-height: 1.82;
+}
+
+.lesson-copy .dropcap::first-letter {
+  float: left;
+  margin: 8px 10px 0 0;
+  color: var(--rust);
+  font-size: 64px;
+  font-weight: 650;
+  line-height: 0.72;
+}
+
+.lesson-copy h2 {
+  margin: 54px 0 14px;
+  font-size: 30px;
+  letter-spacing: -0.04em;
+}
+
+.lesson-copy code {
+  padding: 2px 5px;
+  background: var(--paper-deep);
+  color: var(--rust-dark);
+  font-size: 0.86em;
+}
+
+.wire-sample {
+  margin: 34px 0;
+  overflow: hidden;
+  border: 1px solid var(--scope-rule);
+  border-radius: var(--radius-md);
+  background: var(--scope);
+  box-shadow: var(--shadow-scope);
+  color: #d8e4de;
+}
+
+.wire-sample div {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  border-bottom: 1px solid var(--scope-rule);
+}
+
+.wire-sample div:last-child {
+  border-bottom: 0;
+}
+
+.wire-sample span,
+.wire-sample code {
+  display: block;
+  padding: 13px;
+  background: transparent;
+}
+
+.wire-sample span {
+  border-right: 1px solid var(--scope-rule);
+  color: var(--signal-soft);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.wire-sample code {
+  color: var(--signal);
+  font-size: 12px;
+}
+
+.lesson-copy .scope {
+  margin-top: 36px;
+}
+
+.evidence-stack {
+  display: grid;
+  align-content: start;
+  border-top: 1px solid var(--rule-dark);
+}
+
+.evidence-stack .manual-card {
+  min-height: auto;
+  grid-template-columns: 30px 1fr;
+  padding: 24px 4px;
+  border-right: 0;
+  background: transparent;
+}
+
+.evidence-stack .manual-card__index {
+  font-size: 16px;
+}
+
+.evidence-stack .manual-card h2 {
+  margin-top: 8px;
+  font-size: 17px;
+}
+
+.chapter-nav,
+.case-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  border-block: 1px solid var(--rule-dark);
+  color: var(--rust-dark);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}

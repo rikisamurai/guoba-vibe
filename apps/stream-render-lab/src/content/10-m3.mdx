@@ -1,0 +1,32 @@
+## 观察失败
+
+“保留最后两个 block”是没有语义根据的魔法数字。Markdown 存在 nested container、lazy continuation、Setext/table 回看，以及可以影响全文的 definition。
+
+<Checkpoint label="M3 不是 resumable parser" tone="alert">
+  Phase 1 只在 root-level quiescent checkpoint 切 raw suffix，对尾部完整重 parse 再
+  stitching。不读取 micromark 私有状态。
+</Checkpoint>
+
+## 实现一个增量
+
+稳定前缀只包含最后一个完整 root child 之前的节点。从最后 root child 的 source start 对 dirty tail 完整 parse，重映射 line/column/UTF-16 offset 后拼接。
+
+```text
+[stable prefix] | [dirty root ancestor ... EOF]
+```
+
+出现 link/footnote definition 或未声明 incremental-safe 的全文 transform 时，回退 M2 full preview parse 并记录原因。
+
+## 确定性验证
+
+每个 committed prefix 都比较 `normalize(M3.preview)` 与 `normalize(M2.fullPreview)`。同时断言 stable/dirty source ranges 无 gap、无 overlap。对 checkpoint-rich corpus 观察近线性工作增长。
+
+## 浏览器观察
+
+比较 checkpoint-rich 与单个巨型 block：前者的 parse work 应呈 suffix 增长，后者应出现 `no_quiescent_checkpoint` 并诚实退化。
+
+## Invariant、trade-off 与退化条件
+
+- **Invariant**：每个 M3 preview 与 M2 oracle 语义等价。
+- **Trade-off**：大多数多段落输出减少 parse work，代价是 checkpoint 与 offset 管理。
+- **退化**：巨型 paragraph、fence、list/blockquote 没有 checkpoint，M3 允许等同 M2，但必须发出 `no_quiescent_checkpoint`。

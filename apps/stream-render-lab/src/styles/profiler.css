@@ -1,0 +1,253 @@
+.profile-board {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+  gap: 18px;
+  padding-top: 38px;
+}
+
+.profile-status {
+  width: fit-content;
+  margin-top: 22px;
+  padding: 6px 10px;
+  border: 1px solid var(--rule-dark);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.profile-rerun {
+  padding: 0;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  background: transparent;
+}
+
+.profile-rerun:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.profile-summary {
+  overflow: hidden;
+}
+
+.profile-summary__title {
+  position: relative;
+  padding: 28px;
+}
+
+.profile-summary__title h2 {
+  margin-top: 7px;
+  font-size: 27px;
+  letter-spacing: -0.04em;
+}
+
+.quality-stamp {
+  position: absolute;
+  top: 22px;
+  right: 25px;
+  display: grid;
+  width: 70px;
+  height: 70px;
+  place-items: center;
+  border: 1px solid var(--signal);
+  border-radius: 50%;
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  line-height: 1.25;
+  text-align: center;
+  rotate: 7deg;
+}
+
+.quality-stamp--review {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.profile-summary .metric-grid {
+  border-inline: 0;
+  border-radius: 0;
+}
+
+.budget-ruler {
+  position: relative;
+  height: 46px;
+  margin: 25px;
+  border: 1px solid var(--scope-rule);
+  background: repeating-linear-gradient(90deg, transparent 0 19px, #233a32 19px 20px);
+}
+
+.budget-ruler span {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  padding-left: 10px;
+  background: rgb(186 243 109 / 22%);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.budget-ruler i {
+  position: absolute;
+  top: -18px;
+  right: 0;
+  color: #72877e;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-style: normal;
+}
+
+.trace-panel {
+  padding: 28px;
+}
+
+.trace-panel h2 {
+  margin-top: 7px;
+  font-size: 27px;
+}
+
+.trace-panel > header > span {
+  color: #71867d;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.profile-output {
+  max-height: 210px;
+  margin-top: 22px;
+  padding: 18px;
+  overflow: auto;
+  border: 1px solid var(--scope-rule);
+  background: #09100e;
+  color: #dbe6e0;
+  font-size: 12px;
+}
+
+.profile-output ul {
+  padding-left: 20px;
+}
+
+.profile-output pre {
+  overflow-x: auto;
+  color: var(--signal-soft);
+}
+
+.profile-method-note {
+  margin-top: 18px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.trace-timeline {
+  display: grid;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trace-event {
+  display: grid;
+  min-height: 82px;
+  grid-template-columns: 48px 16px 1fr auto;
+  align-items: start;
+  gap: 13px;
+}
+
+.trace-event time {
+  color: #91a59c;
+  font-size: 11px;
+}
+
+.trace-event time small {
+  display: block;
+  color: #60736c;
+  font-size: 7px;
+}
+
+.trace-event__node {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  margin-top: 4px;
+  border: 2px solid var(--signal-soft);
+  border-radius: 50%;
+}
+
+.trace-event:not(:last-child) .trace-event__node::after {
+  position: absolute;
+  top: 9px;
+  left: 2px;
+  width: 1px;
+  height: 68px;
+  background: var(--scope-rule);
+  content: '';
+}
+
+.trace-event--commit .trace-event__node {
+  border-color: var(--signal);
+  background: var(--signal);
+  box-shadow: 0 0 9px rgb(186 243 109 / 45%);
+}
+
+.trace-event div strong,
+.trace-event div span {
+  display: block;
+}
+
+.trace-event div strong {
+  font-size: 13px;
+}
+
+.trace-event div span,
+.trace-event > code {
+  margin-top: 3px;
+  color: #758981;
+  font-size: 10px;
+}
+
+.reading-guide {
+  display: grid;
+  grid-template-columns: 0.4fr 1fr;
+  gap: 40px;
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule-dark);
+}
+
+.reading-guide h2 {
+  font-size: 29px;
+  letter-spacing: -0.04em;
+}
+
+.reading-guide > div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.reading-guide p {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.reading-guide p span,
+.reading-guide p strong {
+  display: block;
+}
+
+.reading-guide p span {
+  color: var(--rust);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.reading-guide p strong {
+  margin: 7px 0;
+  color: var(--ink);
+}
