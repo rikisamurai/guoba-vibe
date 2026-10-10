@@ -1,0 +1,119 @@
+name: Guoba Skills CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/guoba-skills-ci.yml'
+      - '.github/workflows/guoba-skills-release.yml'
+      - 'apps/guoba-skills/**'
+      - '.npmrc'
+      - '.nvmrc'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+  workflow_dispatch:
+
+concurrency:
+  group: guoba-skills-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check formatting
+        run: >-
+          pnpm exec oxfmt --check
+          apps/guoba-skills
+          .github/workflows/guoba-skills-ci.yml
+          .github/workflows/guoba-skills-release.yml
+      - run: pnpm --filter guoba-skills typecheck
+      - run: pnpm --filter guoba-skills lint
+      - run: pnpm --filter guoba-skills test
+      - run: pnpm --filter guoba-skills exec playwright install --with-deps chromium
+      - run: pnpm --filter guoba-skills test:e2e:web
+      - name: Pack installable CLI
+        run: |
+          pnpm --filter guoba-skills build:cli
+          pnpm --filter guoba-skills build:web
+          pnpm --filter guoba-skills pack --pack-destination apps/guoba-skills/release/npm
+      - uses: actions/upload-artifact@v7
+        with:
+          name: guoba-skills-cli
+          path: apps/guoba-skills/release/npm/*.tgz
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: guoba-skills-web-playwright-report
+          path: |
+            apps/guoba-skills/playwright-report/
+            apps/guoba-skills/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  electron:
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-15
+            builder-flag: --arm64
+            app-dir: mac-arm64
+          - arch: x64
+            runner: macos-15-intel
+            builder-flag: --x64
+            app-dir: mac
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter guoba-skills test:e2e:electron
+      - name: Package unsigned macOS application
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: >-
+          pnpm --filter guoba-skills exec electron-builder
+          --mac ${{ matrix.builder-flag }} --publish never
+      - name: Smoke-test packaged application
+        env:
+          GUOBA_SKILLS_PACKAGED_APP: ${{ github.workspace }}/apps/guoba-skills/release/${{ matrix.app-dir }}/Guoba Skills.app/Contents/MacOS/Guoba Skills
+        run: pnpm --filter guoba-skills exec playwright test --project electron
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: guoba-skills-electron-playwright-report-${{ matrix.arch }}
+          path: |
+            apps/guoba-skills/playwright-report/
+            apps/guoba-skills/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+      - uses: actions/upload-artifact@v7
+        with:
+          name: guoba-skills-macos-${{ matrix.arch }}
+          path: |
+            apps/guoba-skills/release/*.dmg
+            apps/guoba-skills/release/*.zip
+          if-no-files-found: error
+          retention-days: 14

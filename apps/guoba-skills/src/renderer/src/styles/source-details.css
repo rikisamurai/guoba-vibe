@@ -1,0 +1,119 @@
+.file-browser {
+  display: grid;
+  gap: 11px;
+}
+.file-list {
+  overflow: hidden;
+  border: 1px solid #242724;
+  border-radius: 9px;
+}
+.file-list > button {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 39px;
+  width: 100%;
+  padding: 0 12px;
+  color: #9da39a;
+  background: #111311;
+  border-bottom: 1px solid #20231f;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+}
+.file-list > button:hover {
+  color: #d3dfbd;
+  background: #171a16;
+}
+.file-list > button:last-child {
+  border-bottom: 0;
+}
+.file-list svg {
+  color: #727b6b;
+}
+.file-list em {
+  padding: 2px 6px;
+  color: #93b960;
+  background: #1b2416;
+  border-radius: 7px;
+  font-family: 'Manrope Variable', sans-serif;
+  font-size: 7px;
+  font-style: normal;
+}
+.file-preview {
+  max-height: 360px;
+  min-height: 150px;
+  overflow: auto;
+  margin: 0;
+  padding: 13px;
+  color: #b9c1b1;
+  background: #0d0f0d;
+  border: 1px solid #232622;
+  border-radius: 9px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  margin: 0;
+}
+.source-grid > div {
+  min-width: 0;
+  padding: 13px;
+  background: #111311;
+  border: 1px solid #232622;
+  border-radius: 8px;
+}
+.source-grid dt {
+  color: #555b53;
+  font-size: 8px;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+.source-grid dd {
+  overflow: hidden;
+  margin: 6px 0 0;
+  color: #b7bcb3;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.source-grid dd.mono {
+  color: #aabd89;
+  font-size: 9px;
+}
+.source-grid > a {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  color: #acd36d;
+  font-size: 9px;
+  text-decoration: none;
+}
+.source-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 55px 20px;
+  color: #555b53;
+  text-align: center;
+}
+.source-empty h3 {
+  margin: 13px 0 5px;
+  color: #9ba197;
+  font-size: 13px;
+}
+.source-empty p {
+  max-width: 330px;
+  margin: 0;
+  font-size: 9px;
+  line-height: 1.6;
+}

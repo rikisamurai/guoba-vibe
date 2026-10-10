@@ -1,0 +1,97 @@
+{
+  "name": "guoba-skills",
+  "version": "0.1.0",
+  "description": "A focused Skill manager for Codex and Claude",
+  "author": "Riki",
+  "bin": {
+    "guoba-skills": "dist/cli/index.js"
+  },
+  "files": [
+    "dist/cli",
+    "dist/web",
+    "README.md"
+  ],
+  "type": "module",
+  "main": "out/main/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "pnpm build:desktop && pnpm build:cli && pnpm build:web",
+    "build:cli": "tsup src/cli/index.ts --format esm --platform node --target node24 --out-dir dist/cli --clean",
+    "build:desktop": "electron-vite build",
+    "build:web": "vite build --config vite.web.config.ts",
+    "cli": "tsx src/cli/index.ts",
+    "dev": "electron-vite dev",
+    "dev:web": "vite --config vite.web.config.ts",
+    "lint": "oxlint",
+    "package:mac": "pnpm build && electron-builder --mac --publish never",
+    "start": "electron-vite preview",
+    "test": "vitest run",
+    "test:e2e": "pnpm build && playwright test",
+    "test:e2e:electron": "pnpm build && playwright test --project electron",
+    "test:e2e:web": "pnpm build && playwright test --project web",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "commander": "^15.0.0",
+    "diff": "^9.0.0",
+    "ink": "^7.1.0",
+    "lucide-react": "^1.24.0",
+    "open": "^11.0.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "yaml": "^2.9.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@tailwindcss/vite": "^4.3.2",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "electron": "43.1.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "jsdom": "^29.1.1",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "tailwindcss": "^4.3.2",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.1.4",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "build": {
+    "appId": "dev.guoba.skills",
+    "productName": "Guoba Skills",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "hardenedRuntime": true,
+      "icon": "build/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "artifactName": "${productName}-${version}-${arch}.${ext}"
+  }
+}
