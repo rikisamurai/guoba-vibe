@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>chat-lab · Mock C · Console Dock</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #eef0f2;
+        --surface: #ffffff;
+        --panel: #fafbfc;
+        --hairline: #dde2e7;
+        --ink: #171b1f;
+        --muted: #5f6b76;
+        --faint: #97a1ab;
+        --accent: #2c5ef6;
+        --accent-soft: rgba(44, 94, 246, 0.08);
+        --sans: 'Instrument Sans', sans-serif;
+        --mono: 'JetBrains Mono', monospace;
+      }
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 24px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--hairline);
+      }
+      .wordmark {
+        font-family: var(--mono);
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .wordmark span {
+        color: var(--accent);
+      }
+      .env {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: var(--faint);
+        border: 1px solid var(--hairline);
+        border-radius: 4px;
+        padding: 3px 7px;
+        text-transform: uppercase;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .provider {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid var(--hairline);
+        border-radius: 8px;
+        padding: 7px 12px;
+        background: var(--surface);
+      }
+      .provider .logo {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        background: var(--accent);
+        display: inline-block;
+      }
+      .provider .chev {
+        color: var(--faint);
+        font-size: 10px;
+      }
+
+      .stream {
+        flex: 1;
+        overflow: hidden;
+        padding: 28px 0;
+      }
+      .msgs {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 0 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      .msg-user {
+        align-self: flex-end;
+        max-width: 75%;
+        background: var(--ink);
+        color: #f4f6f8;
+        padding: 12px 16px;
+        border-radius: 12px 12px 3px 12px;
+        font-size: 14px;
+        line-height: 1.55;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        padding: 20px 24px;
+        box-shadow: 0 1px 3px rgba(23, 27, 31, 0.04);
+      }
+      .msg-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--faint);
+      }
+      .phase {
+        color: var(--accent);
+        background: var(--accent-soft);
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-weight: 500;
+      }
+      .prose {
+        font-size: 14px;
+        line-height: 1.65;
+      }
+      .prose h3 {
+        font-size: 16.5px;
+        font-weight: 700;
+        margin: 0 0 10px;
+      }
+      .prose p {
+        margin: 0 0 12px;
+      }
+      .prose code {
+        font-family: var(--mono);
+        font-size: 12px;
+        background: var(--bg);
+        border-radius: 4px;
+        padding: 1.5px 5px;
+      }
+      .prose ul {
+        margin: 0 0 12px;
+        padding-left: 20px;
+      }
+      .prose li {
+        margin-bottom: 5px;
+      }
+      .codeblock {
+        background: var(--panel);
+        border: 1px solid var(--hairline);
+        border-radius: 8px;
+        margin: 14px 0;
+        overflow: hidden;
+      }
+      .codebar {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--faint);
+        padding: 7px 14px;
+        border-bottom: 1px solid var(--hairline);
+      }
+      pre {
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.6;
+        padding: 13px 16px;
+        overflow: hidden;
+      }
+      .tok-k {
+        color: #9333ea;
+      }
+      .tok-f {
+        color: #2c5ef6;
+      }
+      .tok-s {
+        color: #16803c;
+      }
+      .tok-c {
+        color: #97a1ab;
+      }
+      .cursor {
+        display: inline-block;
+        width: 7px;
+        height: 14px;
+        background: var(--accent);
+        vertical-align: -2px;
+        border-radius: 1px;
+      }
+
+      .composer {
+        padding: 0 28px 16px;
+      }
+      .composer-box {
+        max-width: 760px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 10px;
+        padding: 11px 11px 11px 16px;
+        box-shadow: 0 1px 3px rgba(23, 27, 31, 0.05);
+      }
+      .composer-box .hint {
+        flex: 1;
+        color: var(--faint);
+        font-size: 14px;
+      }
+      .btn-stop {
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        background: var(--ink);
+        border: 0;
+        border-radius: 7px;
+        padding: 9px 16px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .btn-stop .sq {
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        border-radius: 1.5px;
+      }
+
+      /* ---- bottom dock ---- */
+      .dock {
+        height: 220px;
+        background: var(--surface);
+        border-top: 1px solid var(--hairline);
+        display: flex;
+        flex-direction: column;
+      }
+      .dock-bar {
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        border-bottom: 1px solid var(--hairline);
+      }
+      .dock-tab {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--faint);
+        padding: 10px 14px;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+      }
+      .dock-tab.on {
+        color: var(--ink);
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+      .dock-bar .run {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .dock-cols {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1.15fr 1fr 1.35fr;
+      }
+      .dock-col {
+        padding: 16px 20px;
+        border-right: 1px solid var(--hairline);
+      }
+      .dock-col:last-child {
+        border-right: 0;
+      }
+      .col-title {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--faint);
+        margin-bottom: 12px;
+      }
+      .mode-row {
+        display: flex;
+        gap: 6px;
+      }
+      .mode-card {
+        flex: 1;
+        border: 1px solid var(--hairline);
+        border-radius: 8px;
+        padding: 10px 10px;
+      }
+      .mode-card .id {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--faint);
+      }
+      .mode-card .nm {
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 3px;
+      }
+      .mode-card.on {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+      .mode-card.on .id {
+        color: var(--accent);
+      }
+      .slider-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .slider {
+        flex: 1;
+        height: 3px;
+        background: var(--hairline);
+        border-radius: 2px;
+        position: relative;
+      }
+      .slider::after {
+        content: '';
+        position: absolute;
+        left: 42%;
+        top: -4px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .mono-val {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink);
+      }
+      .seg {
+        display: flex;
+        background: var(--bg);
+        border: 1px solid var(--hairline);
+        border-radius: 7px;
+        padding: 2.5px;
+        margin-bottom: 10px;
+      }
+      .seg div {
+        flex: 1;
+        text-align: center;
+        font-size: 12px;
+        padding: 5px 0;
+        border-radius: 5px;
+        color: var(--muted);
+      }
+      .seg .on {
+        background: var(--surface);
+        color: var(--ink);
+        font-weight: 600;
+        box-shadow: 0 1px 2px rgba(23, 27, 31, 0.08);
+      }
+      .field {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--muted);
+        padding: 5px 0;
+        align-items: center;
+      }
+      .field .val {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink);
+      }
+      .chips {
+        display: flex;
+        gap: 5px;
+        margin-top: 4px;
+      }
+      .chip {
+        font-family: var(--mono);
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        color: var(--muted);
+      }
+      .chip.on {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
+      .tiles {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .tile {
+        border: 1px solid var(--hairline);
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+      .tile .k {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .tile .v {
+        font-family: var(--mono);
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .tile .v small {
+        font-size: 10.5px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .tile .sub {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wordmark">chat-lab<span>_</span></div>
+      <span class="env">bench</span>
+      <div class="spacer"></div>
+      <div class="provider">
+        <span class="logo"></span> DeepSeek · deepseek-chat <span class="chev">▾</span>
+      </div>
+    </header>
+
+    <div class="stream">
+      <div class="msgs">
+        <div class="msg-user">
+          Show me how a streaming markdown renderer stays stable while tokens are still arriving.
+        </div>
+        <div class="card">
+          <div class="msg-meta">
+            <span class="phase">streaming</span><span>M2 · blocks</span><span>commit #47</span>
+          </div>
+          <div class="prose">
+            <h3>Two clocks, one pipeline</h3>
+            <p>
+              The network has its own rhythm; the UI should have another. Deltas land in a
+              <b>raw buffer</b> immediately, while a scheduler decides how much becomes
+              <code>visibleText</code> per frame.
+            </p>
+            <ul>
+              <li>Completed blocks are frozen with stable ids — they never re-render.</li>
+              <li>Only the <b>dirty tail</b> is re-parsed on each commit.</li>
+            </ul>
+            <div class="codeblock">
+              <div class="codebar"><span>ts · streaming</span><span>block #9 · dirty</span></div>
+              <pre><span class="tok-k">function</span> <span class="tok-f">commitFrame</span>(budget: <span class="tok-k">number</span>) {
+  <span class="tok-c">// take whole graphemes only</span>
+  visible += <span class="tok-f">takeGraphemes</span>(buffer, budget)<span class="cursor"></span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <div class="composer-box">
+        <span class="hint">Ask anything…</span>
+        <button class="btn-stop"><span class="sq"></span> Stop</button>
+      </div>
+    </div>
+
+    <div class="dock">
+      <div class="dock-bar">
+        <div class="dock-tab on">Lab</div>
+        <div class="dock-tab">Raw stream</div>
+        <div class="dock-tab">Blocks</div>
+        <div class="run">run #12 · sim/jitter · 2,148 chars</div>
+      </div>
+      <div class="dock-cols">
+        <div class="dock-col">
+          <div class="col-title">Renderer</div>
+          <div class="mode-row">
+            <div class="mode-card">
+              <div class="id">M0</div>
+              <div class="nm">Naive</div>
+            </div>
+            <div class="mode-card">
+              <div class="id">M1</div>
+              <div class="nm">Throttled</div>
+            </div>
+            <div class="mode-card on">
+              <div class="id">M2</div>
+              <div class="nm">Blocks</div>
+            </div>
+            <div class="mode-card">
+              <div class="id">M3</div>
+              <div class="nm">Heavy</div>
+            </div>
+          </div>
+          <div class="slider-row">
+            <span>commit</span>
+            <div class="slider"></div>
+            <span class="mono-val">48ms</span>
+          </div>
+        </div>
+        <div class="dock-col">
+          <div class="col-title">Source</div>
+          <div class="seg">
+            <div>Live API</div>
+            <div class="on">Simulator</div>
+          </div>
+          <div class="field"><span>Corpus</span><span class="val">code-heavy ▾</span></div>
+          <div class="field"><span>Profile</span></div>
+          <div class="chips">
+            <span class="chip">ideal</span><span class="chip on">jitter</span
+            ><span class="chip">burst</span><span class="chip">boundary</span>
+          </div>
+        </div>
+        <div class="dock-col">
+          <div class="col-title">Metrics</div>
+          <div class="tiles">
+            <div class="tile">
+              <div class="k">Commits/s</div>
+              <div class="v">12.4</div>
+            </div>
+            <div class="tile">
+              <div class="k">Raw→Visible</div>
+              <div class="v">64<small>ms</small></div>
+              <div class="sub">p95 118</div>
+            </div>
+            <div class="tile">
+              <div class="k">Tail parse</div>
+              <div class="v">1.8<small>ms</small></div>
+              <div class="sub">p95 4.2</div>
+            </div>
+            <div class="tile">
+              <div class="k">Stable</div>
+              <div class="v">8/9</div>
+              <div class="sub">88% frozen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
