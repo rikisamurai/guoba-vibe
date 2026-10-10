@@ -1,0 +1,79 @@
+import { ReplayDemo } from '../../components/replay-demo'
+
+# P0：最小可用基线
+
+P0 是能跑通全链路的最小实现，只有四个部件：
+
+```text
+SSE 增量 ──▶ raw buffer（append-only） ──▶ 合并提交（32~80ms） ──▶ 全文重解析 ──▶ 流结束后 final parse
+```
+
+它故意简单——但每个部件都对应一条不可省略的基线。
+
+## raw buffer：原文永远是干净的
+
+所有到达的增量只做一件事：追加到 `rawText`。渲染层后面无论做什么修补、截断、假闭合，**都不允许写回原文**。复制、持久化、重新发送给模型，读的都是 `rawText`。这条纪律现在看是小题大做，到 P1 做尾部修补时就是生死线。
+
+## 合并提交：display clock 的最小实现
+
+反模式：每个网络 chunk 触发一次 React 提交。真实网络下 chunk 可能一毫秒来十个（burst），UI 会被提交风暴淹没。
+
+P0 的解法是一个 20 行的批处理器（`schedule/delta-batcher.ts`）：增量先进队列，定时器每 48ms 冲刷一次：
+
+```ts
+const batcher = createDeltaBatcher<ChatDelta>((batch) => {
+  // 这里才真正 setState —— 每 48ms 至多一次
+}, 48)
+for await (const delta of chatDeltas(body)) batcher.push(delta)
+batcher.flush() // 流结束时排空
+```
+
+这是"两只时钟"解耦的最小形态。实测效果（DeepSeek 真实回复，一段带表格和代码块的长文）：**1954 个 SSE 事件被合并为 202 次 UI 提交**，约 10:1。人眼对 48ms 的批量完全无感——60fps 的一帧是 16.7ms，48ms 不过三帧。
+
+## 全文重解析：正确性白给，性能后付
+
+每次提交，把 `rawText` 整体交给 markdown-it 重新 parse，`dangerouslySetInnerHTML` 全量替换：
+
+```tsx
+export function StreamMarkdownP0({ text, className }: StreamMarkdownP0Props) {
+  const html = useMemo(() => md.render(text), [text])
+  return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />
+}
+```
+
+好处：**正确性是白给的**。markdown-it 每次看到的都是完整前缀，不存在增量状态出错的可能。代价：O(n) 的 parse × O(n) 次提交 = O(n²) 的总工作量，长文会逐渐卡顿；且 DOM 全量替换会摧毁文本选区、丢掉视频播放状态。短消息完全够用，这就是它在谱系里的位置。
+
+## final parse：收口
+
+流结束（含取消）后用原始全文做最后一次 parse。P0 里它和平时的提交没有区别，但这个步骤必须现在就成为管线的固定环节——P1 之后，它负责去掉所有假闭合和 loading 标记，是"永不回改"妥协的最终清算点。
+
+## 安全基线：模型输出不是可信模板
+
+安全不是 P2 的装饰，从 P0 第一天就要有：
+
+- **`html: false`**——模型输出里的原样 HTML 一律转义。`<img src=x onerror=…>` 到达页面时是文本，不是标签
+- **链接协议校验**——markdown-it 内置 `validateLink` 拒绝 `javascript:`/`vbscript:`/`file:`/`data:`（`data:image` 除外），拒绝方式是让链接语法整体不成立、按纯文本输出
+
+```ts
+export const md: MarkdownIt = new MarkdownIt({
+  html: false,
+  linkify: true,
+})
+```
+
+这两条都有单测钉死（`render/markdown.test.ts`）。
+
+## 亲眼看 P0 的极限
+
+用均匀切分（每 3 字符一个 delta，教科书式的"理想流"）播放，P0 表现体面：
+
+<ReplayDemo view="markdown" content="uniform" wire="uniform" />
+
+换成恶意切分 + jitter，注意观察两个 P0 治不了的症状：
+
+<ReplayDemo view="markdown" content="adversarial" wire="jitter" />
+
+1. **尾部裸奔**：`**` 在闭合前以原始字符示人，样本结尾故意留了一个永不闭合的 `**`，final parse 后它就永远以字面量存在——P1 的尾部修补要解决的就是这个
+2. **闪变**：粗体、链接、表格在"原始字符 → 成形"之间跳变，长文下伴随滚动抖动——P1 的稳定前缀要冻结的就是这些已完成区域
+
+还有一个 demo 里看不出来但值得记住的：这里的 mermaid 围栏只能以源码形态呈现，代码块没有语法高亮——重型节点是 P2 的战场。

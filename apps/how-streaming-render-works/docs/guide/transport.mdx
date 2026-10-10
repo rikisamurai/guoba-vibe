@@ -1,0 +1,101 @@
+import { ReplayDemo } from '../../components/replay-demo'
+
+# 传输层：手写 SSE 解析
+
+模型的流式输出经由 **SSE（Server-Sent Events）** 到达浏览器。所有 AI SDK 都替你解析了这一层——也顺手藏掉了所有值得学的坑。这一章我们徒手解析。
+
+## SSE 协议 30 秒入门
+
+SSE 是跑在一条普通 HTTP 长连接上的文本协议。服务器不断写入"事件"，事件之间用**空行**分隔，每行以字段名开头：
+
+```text
+data: {"choices":[{"delta":{"content":"你"}}]}
+
+data: {"choices":[{"delta":{"content":"好"}}]}
+
+: 这是注释行，常用作心跳
+
+data: [DONE]
+
+```
+
+OpenAI 兼容协议只用 `data:` 字段：每个事件的载荷是一个 JSON（增量在 `choices[0].delta.content`），流末尾以字面量 `[DONE]` 收场。Kimi k2.5 这类思考模型还会先吐 `delta.reasoning_content`（思考流），再吐 `delta.content`（正文）——解析层必须区分两者。
+
+## 三个必踩的坑
+
+**坑一：chunk 在任意字节处截断。** 网络层不关心你的协议。一个 TCP 分段可能停在 `data: {"cho` 的中间，甚至停在汉字"你"（3 字节）的第 2 个字节处。用 `TextDecoder` 的 `stream: true` 模式，跨 chunk 的半个字符会被缓存到下一次调用：
+
+```ts
+const decoder = new TextDecoder('utf-8')
+buffer += done ? decoder.decode() : decoder.decode(value, { stream: true })
+```
+
+**坑二：半个事件。** 解码成字符串后，缓冲区里可能有零个、半个或多个事件。唯一正确的做法是：只在看到事件边界（空行）时才切出事件，剩余部分留在缓冲区等下一个 chunk：
+
+```ts
+let boundary: number
+while ((boundary = buffer.search(/\n\n|\r\n\r\n/)) !== -1) {
+  const rawEvent = buffer.slice(0, boundary)
+  buffer = buffer.slice(boundary + (buffer[boundary] === '\r' ? 4 : 2))
+  const data = parseEventData(rawEvent)
+  if (data !== null) yield data
+}
+```
+
+**坑三：协议的宽容度。** `data:` 后的空格是可选的；一个事件可以有多条 `data:` 行（用 `\n` 拼接）；`event:`/`id:`/`retry:` 字段和 `:` 注释行要跳过；行分隔符可能是 `\n` 也可能是 `\r\n`。这些在规范里都有，真实代理和网关也真的会打出来。
+
+完整实现约 50 行（`packages/stream-render-core/src/transport/sse.ts`），它是一个 `AsyncGenerator`——字节流进，`data` 载荷串出。
+
+## 看它工作
+
+下面的 demo 用**恶意切分 + jitter 字节切割**的回放流喂给这个解析器：内容在语法标记后被切刀，字节流又在任意位置（包括汉字中间、SSE 帧中间）被二次切割。观察输出——每个事件依然完整无损：
+
+<ReplayDemo view="events" />
+
+## JSON 层：不要让一条坏数据杀死整个流
+
+SSE 层保证事件完整后，JSON 解析就简单了。唯一的原则：**单条畸形载荷按跳过处理**，不中断整个流（`transport/openai.ts`）：
+
+```ts
+for await (const data of sseDataEvents(body)) {
+  if (data === '[DONE]') return
+  let payload: unknown
+  try {
+    payload = JSON.parse(data)
+  } catch {
+    continue // 跳过，而非 throw
+  }
+  // 提取 delta.content / delta.reasoning_content …
+}
+```
+
+## 取消：一根信号线贯穿全链路
+
+用户点"停止"时，要停的不只是 UI——上游的 token 生成也应立刻停止（那是真金白银）。链路是：
+
+1. 浏览器：`AbortController.abort()` → `fetch` 中断
+2. 服务端（Hono）：把请求自身的 `signal` 透传给上游 `fetch`——客户端断开时上游请求同步取消：
+
+```ts
+const upstream = await fetch(`${provider.baseUrl}/chat/completions`, {
+  // …
+  signal: c.req.raw.signal,
+})
+```
+
+服务端做的另一件事是**透传**：上游本身就是 SSE 字节流，原样 `return new Response(upstream.body, …)`，一个字节都不解析——协议解析全部留给客户端，这正是我们要学的东西。
+
+## 怎么测：往返不变量
+
+这一层的测试哲学是一个不变量：**任何切分方式下，重组结果必须等于原文**。
+
+```ts
+const deltas = splitAdversarial(FIXTURE_MARKDOWN) // 语法标记后切刀
+const wire = buildSseTranscript(deltas) // 编码为 SSE 字节流
+const chunks = sliceJitter(wire, { seed: 42 }) // 字节级随机二次切割
+let text = ''
+for await (const d of chatDeltas(wireChunksToStream(chunks))) text += d.content ?? ''
+expect(text).toBe(FIXTURE_MARKDOWN) // 无损还原
+```
+
+这条测试覆盖了传输层的全部代码路径——第 4 章会展开这套回放设施本身。
