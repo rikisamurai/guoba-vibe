@@ -1,0 +1,36 @@
+{
+  "run_at": "2026-07-14",
+  "source_commit": "eb7f028cc25d3dd8cdfbe7b0b4f834c79a64d7cb",
+  "corpus": {
+    "pages": 4114,
+    "chunks": 54233,
+    "index_build_seconds": 247.08,
+    "peak_memory_gb": 1.68
+  },
+  "retrieval": {
+    "lexical": "SQLite FTS5 BM25",
+    "dense": "intfloat/multilingual-e5-small",
+    "fusion": "RRF(k=60)",
+    "reranker": null
+  },
+  "metrics": {
+    "recall@1": 0.3333333333,
+    "recall@5": 0.6,
+    "recall@10": 0.6,
+    "mrr": 0.4444444444
+  },
+  "slices": {
+    "en": {
+      "cases": 18,
+      "recall@10": 0.7222222222
+    },
+    "zh": {
+      "cases": 12,
+      "recall@10": 0.4166666667
+    }
+  },
+  "warm_latency_ms": {
+    "mean": 62.44,
+    "p95": 89.48
+  }
+}

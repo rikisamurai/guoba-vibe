@@ -1,0 +1,42 @@
+{
+  "run_at": "2026-07-16",
+  "source_commit": "eb7f028cc25d3dd8cdfbe7b0b4f834c79a64d7cb",
+  "retrieval": {
+    "query_rewriter": "Helsinki-NLP/opus-mt-zh-en for CJK queries",
+    "lexical": "SQLite FTS5 BM25",
+    "dense": "intfloat/multilingual-e5-small",
+    "fusion": "RRF(k=60)",
+    "reranker": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
+    "rerank_candidates": 40
+  },
+  "metrics": {
+    "recall@1": 0.7,
+    "recall@5": 0.9,
+    "recall@10": 0.9,
+    "ndcg@10": 0.8026462957,
+    "mrr": 0.7705555556
+  },
+  "slices": {
+    "en": {
+      "cases": 18,
+      "recall@10": 0.9444444444
+    },
+    "zh": {
+      "cases": 12,
+      "recall@10": 0.8333333333
+    }
+  },
+  "warm_latency_ms": {
+    "mean": 512.46,
+    "p95": 984.05
+  },
+  "evidence_gate": {
+    "cases": 40,
+    "accuracy": 0.85,
+    "rejection_precision": 0.8888888889,
+    "rejection_recall": 0.6153846154,
+    "false_accepts": 5,
+    "false_rejects": 1
+  },
+  "notes": "Model load and one warm-up query are excluded. Warm latency keeps the conservative saved baseline rather than the faster rerun. The small reviewed set is diagnostic, not a production gate."
+}

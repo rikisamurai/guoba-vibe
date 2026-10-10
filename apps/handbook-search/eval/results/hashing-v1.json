@@ -1,0 +1,36 @@
+{
+  "run_at": "2026-07-14",
+  "source_commit": "eb7f028cc25d3dd8cdfbe7b0b4f834c79a64d7cb",
+  "corpus": {
+    "pages": 4114,
+    "chunks": 54233
+  },
+  "retrieval": {
+    "lexical": "SQLite FTS5 BM25",
+    "dense": "hashing-v1",
+    "fusion": "RRF(k=60)",
+    "reranker": null
+  },
+  "reviewed_cases": 30,
+  "metrics": {
+    "recall@1": 0.2,
+    "recall@5": 0.4,
+    "recall@10": 0.4,
+    "mrr": 0.2594444444
+  },
+  "slices": {
+    "en": {
+      "cases": 18,
+      "recall@10": 0.6666666667
+    },
+    "zh": {
+      "cases": 12,
+      "recall@10": 0.0
+    }
+  },
+  "latency_ms": {
+    "mean": 37.99,
+    "p95": 79.15
+  },
+  "notes": "Smoke baseline only; hashing embeddings are not a production model."
+}
