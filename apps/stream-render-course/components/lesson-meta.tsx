@@ -7,6 +7,27 @@ interface LessonMetaProps {
 }
 
 export function LessonMeta({ duration, exercise, prerequisites }: LessonMetaProps) {
+  if (import.meta.env.SSG_MD) {
+    return (
+      <section>
+        <h2>本章学习信息</h2>
+        <ul>
+          <li>
+            <strong>预计时间：</strong>
+            {duration}
+          </li>
+          <li>
+            <strong>你会完成：</strong>
+            {exercise}
+          </li>
+          <li>
+            <strong>前置知识：</strong>
+            {prerequisites.join(' + ')}
+          </li>
+        </ul>
+      </section>
+    )
+  }
   return (
     <dl className="lesson-meta" aria-label="本章学习信息">
       <div>

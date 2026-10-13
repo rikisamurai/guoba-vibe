@@ -9,15 +9,19 @@ import type {
   AbProfileConfig,
   AbProfileReport,
   ProfileRunSample,
+  ProfileRole,
   ProfileTimelineSample,
 } from './ab-types'
 import { aggregateReport } from './aggregate-report'
+import { checkProfileCorrectness } from './profile-correctness'
+import { buildProfileText } from './profile-fixtures'
 import {
   appendEngineTiming,
   appendRenderTimeline,
   createEngineTimingCursor,
   observeLongTasks,
 } from './profile-observation'
+import { resolveProfile } from './profile-options'
 import { createProfileRunPlan } from './profile-run-plan'
 import { createProfileSource } from './profile-wire-source'
 
@@ -98,24 +102,32 @@ export function useAbProfile(): AbProfileState {
         for (const planned of plan) {
           if (generationRef.current !== generation) return
           // oxlint-disable-next-line no-await-in-loop -- A/B runs are intentionally isolated
-          const sample = await executeRun(planned.profile, planned.cycle, planned.measured, config)
+          const sample = await executeRun(
+            planned.profile,
+            planned.role,
+            planned.cycle,
+            planned.measured,
+            config,
+          )
           if (generationRef.current !== generation) return
           if (sample) samples.push(sample)
           completed += 1
           setProgress({ completed, total })
         }
-        setReport(aggregateReport(samples))
+        setReport(aggregateReport(samples, config))
         setRunning(false)
         setCurrentProfile(null)
       })()
 
       async function executeRun(
         profile: AbProfile,
+        role: ProfileRole,
         cycle: number,
         measured: boolean,
         input: AbProfileConfig,
       ): Promise<ProfileRunSample | null> {
         const startedAt = clock.now()
+        let firstVisibleMs: number | null = null
         const timeline: ProfileTimelineSample[] = []
         const timingCursor = createEngineTimingCursor()
         const active: ActiveMeasurement = { profile, measured, startedAt, commits: [] }
@@ -124,7 +136,7 @@ export function useAbProfile(): AbProfileState {
         const longTasks = observeLongTasks(startedAt)
         const nextRun = engine.start({
           source: createProfileSource(clock, input, (item) => timeline.push(item)),
-          profile,
+          profile: resolveProfile(profile),
           reveal: 'direct',
           trace: 'full',
         })
@@ -132,6 +144,9 @@ export function useAbProfile(): AbProfileState {
         setSnapshot(nextRun.state.getSnapshot())
         unsubscribeRef.current = nextRun.state.subscribe(() => {
           const next = nextRun.state.getSnapshot()
+          if (firstVisibleMs === null && next.parts.some((part) => part.visible.length > 0)) {
+            firstVisibleMs = clock.now() - startedAt
+          }
           appendEngineTiming(timeline, timingCursor, {
             observedAtMs: clock.now() - startedAt,
             previewParseMs: next.metrics.previewParseDurationMs,
@@ -150,9 +165,13 @@ export function useAbProfile(): AbProfileState {
         appendRenderTimeline(timeline, active, longTasks.entries)
         return {
           profile,
+          resolvedProfile: resolveProfile(profile),
+          role,
           index: cycle - input.warmups + 1,
           elapsedMs,
+          firstVisibleMs,
           snapshot: result.snapshot,
+          correctness: checkProfileCorrectness(result.snapshot, buildProfileText(input)),
           longTasksSupported: longTasks.supported,
           reactCommits: active.commits.length,
           reactDurationMs: active.commits.reduce((duration, item) => duration + item.duration, 0),

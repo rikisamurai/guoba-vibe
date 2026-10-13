@@ -6,8 +6,7 @@ import type { SourceEvent } from '../protocol/types'
 import { decodeUtf8 } from '../protocol/utf8'
 import { TimedReplay } from '../replay/replay-source'
 import type { AbProfileConfig, ProfileTimelineSample } from './ab-types'
-
-const MARKDOWN_BLOCK = `## Streaming Markdown\n\n网络到达频率不等于浏览器适合提交 UI 的频率。\n\n- raw 是事实源\n- visible 服从显示时钟\n\n\`\`\`ts\nrequestAnimationFrame(() => commit(raw))\n\`\`\`\n\n`
+import { buildProfileText } from './profile-fixtures'
 
 export type TimelineRecorder = (sample: ProfileTimelineSample) => void
 
@@ -19,7 +18,7 @@ export function createProfileSource(
   return {
     async *open(signal: AbortSignal): AsyncGenerator<SourceEvent> {
       const startedAt = clock.now()
-      const wire = buildChatWire(config.sizeKb, config.chunkSize)
+      const wire = buildChatWire(buildProfileText(config), config.chunkSize)
       const chunks = splitBytes(new TextEncoder().encode(wire), config.chunkSize * 4)
       const replay = new TimedReplay(
         clock,
@@ -42,9 +41,7 @@ export function createProfileSource(
   }
 }
 
-function buildChatWire(sizeKb: number, deltaSize: number): string {
-  const target = sizeKb * 1024
-  const raw = MARKDOWN_BLOCK.repeat(Math.ceil(target / MARKDOWN_BLOCK.length)).slice(0, target)
+function buildChatWire(raw: string, deltaSize: number): string {
   const deltas = splitText(raw, deltaSize)
   const frames = deltas.map((content, index) =>
     frame({

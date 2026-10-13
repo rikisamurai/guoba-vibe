@@ -1,50 +1,51 @@
 ---
-title: 16 · 安全地显示，并正确结束
-description: 识别不可信内容，区分流结束和回答成功。
+title: B4 · 安全显示与协议终态
+description: 验证不可信输出、EOF 与完成证据，保持真实模型密钥在服务端。
 ---
 
 import { LabLink } from '../../components/lab-link'
 
-# 能显示，不代表可以直接信任
+# 两条边界：能显示，不等于可信；读完，不等于成功
 
-**类型：故障实验。** 本课检查输入内容、终态与密钥三个边界。
+**自己的文件：** `src/my-chat/read-event.ts`、`read-answer.ts`。安全显示由共享 `src/rendering/` 负责；路径均相对 `apps/stream-render-lab/`。
 
-## 第一步：显示一段不可信内容
+## 第一步：用协议反例验收自己的终态
 
-在 <LabLink path="/lab">进阶实验台</LabLink> 输入原始 HTML 标签，或一个使用 javascript: 协议的 Markdown 链接。预期：不能执行脚本，链接不会成为可执行入口。
+```bash
+pnpm --filter stream-render-lab practice test provider
+pnpm --filter stream-render-lab practice test lifecycle
+```
 
-打开 `apps/stream-render-lab/src/rendering/safe-url.ts`，检查允许的协议；打开 render-node.tsx，检查 HTML 节点如何变成惰性文本。
+对每一个结束用例写出原因：有明确完成证据、服务商说不完整、还是在证据到达前 EOF？预期这些状态不能全变成 completed。
 
-## 第二步：验证安全测试
+在 <LabLink path="/project?source=mine">我的 Mini Chat</LabLink> 用中途断开验证可见结果。保留已经收到的正文，明确展示未完整结束；不要用空字符串代替错误诊断。
+
+## 第二步：输入不可信 Markdown
+
+打开 <LabLink path="/lab">渲染实验台</LabLink>，输入原始 HTML 与 `javascript:` 协议链接。预期标签不执行脚本，危险链接不会成为可执行入口。
+
+找到 `src/rendering/safe-url.ts` 和 `render-node.tsx`：检查 URL 允许列表与原始 HTML 的惰性显示。正文来自模型也仍是不可信输入，不能直接 dangerouslySetInnerHTML。
+
+## 第三步：加一条具体安全用例
+
+在渲染器测试中加入大小写混合或含空白的危险链接，验证允许列表经过解析仍生效，再运行：
 
 ```bash
 pnpm --filter stream-render-lab exec vitest run src/rendering/render-document.test.tsx
 ```
 
-在已有测试中添加一个大小写混合或带空白的不安全协议用例，确保检查不依赖简单的字符串前缀。
+这条测试验证共享显示边界，不覆盖服务端权限。不要把前端安全显示测试扩大为整套产品安全认证。
 
-## 第三步：连接断了不等于回答完成
+## 第四步：保持终态之前的最后一次发布
 
-在 <LabLink path="/project">Mini Chat</LabLink> 选择中途断开。你会收到部分正文和 EOF，但没有完整协议结束证据。预期状态是截断，不能显示“已完成”。
+读完 `src/my-chat/publish.ts` 的结束与取消接口。完成时需要交出已接受但未显示的尾部；停止也要由上层决定先保留尾部，再取消后续工作。C1 将用虚拟时钟验证这个时序。
 
-再选分段发送：适配器识别结束事件，才得到 completed。不同服务商的终态规则不同；不要把一种协议的 [DONE] 生搬到另一种协议。
+如果错误状态出现后又回到接收中，检查剩余帧回调，不能只修状态文案。
 
-## 第四步：先处理尾部，再宣告完成
+## 第五步：划清真实服务边界
 
-帧更新队列中可能还有文字。正常结束要显示尾部，停止也要保留已接收内容；之后取消迟到回调。第 08 与 10 课的测试分别覆盖请求取消与显示队列。
+固定教学端点无需 Key。可选真实模型从服务端 `.env.local` 读取密钥，前端不保存。公开部署前另需鉴权、并发与资源限制；功能开关不是访问控制。
 
-```bash
-pnpm --filter stream-render-lab exec vitest run src/learn-project/read-answer.test.ts src/engine/engine.test.ts
-```
+**验收：** 能解释协议结束与 EOF 的差异，能证明不可信 HTML / URL 不执行，也知道测试覆盖的是哪一层。
 
-## 第五步：真实模型的密钥放哪里
-
-默认教学端点不调用模型。可选 Live Chat 从服务端环境变量读取 Key，不在浏览器输入框或 localStorage 中保存。
-
-ENABLE_LIVE_API 只是功能开关，不是访问控制。公开部署真实接口时还需要鉴权与资源限制；本课不自动开启或部署真实服务。
-
-## 完成检查
-
-能说明 HTML 为什么不能直插 DOM，EOF 为什么不能直接判成功，以及服务端 Key 与客户端代码的边界。
-
-[下一步：17 · 用证据说明优化效果 →](/learn/17-measurement)
+[下一课：B5 · 验收我的 Mini Chat →](/learn/18-capstone)

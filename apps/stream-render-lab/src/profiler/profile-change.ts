@@ -36,21 +36,25 @@ export function formatLowerIsBetterChange(
     : { compact: `+${value}%`, direction, sentence: `回归 ${value}%` }
 }
 
-export function describeProfileOutcome(directions: readonly ChangeDirection[]): string {
-  if (directions.length === 0) return '当前样本不足以比较 M0 与 M1'
+export function describeProfileOutcome(
+  directions: readonly ChangeDirection[],
+  baseline = 'M0',
+  challenger = 'M1',
+): string {
+  if (directions.length === 0) return `当前样本不足以比较 ${baseline} 与 ${challenger}`
   if (directions.every((item) => item === 'unavailable')) {
-    return '当前样本不足以比较 M0 与 M1'
+    return `当前样本不足以比较 ${baseline} 与 ${challenger}`
   }
   if (directions.every((item) => item === 'unchanged')) {
-    return 'M1 与 M0 的重复工作指标没有变化'
+    return `${challenger} 与 ${baseline} 的重复工作指标没有变化`
   }
   const hasImprovement = directions.includes('improvement')
   const hasRegression = directions.includes('regression')
-  if (hasImprovement && hasRegression) return 'M1 的重复工作指标出现了取舍'
-  if (hasRegression) return 'M1 在本次样本中出现工作量回归'
+  if (hasImprovement && hasRegression) return `${challenger} 的重复工作指标出现了取舍`
+  if (hasRegression) return `${challenger} 在本次样本中出现工作量回归`
   return directions.every((item) => item === 'improvement')
-    ? 'M1 在本次样本中减少了重复工作'
-    : 'M1 在本次样本中减少了部分重复工作'
+    ? `${challenger} 在本次样本中减少了重复工作`
+    : `${challenger} 在本次样本中减少了部分重复工作`
 }
 
 function formatPercent(value: number): string {

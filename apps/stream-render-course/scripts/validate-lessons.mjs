@@ -15,6 +15,14 @@ const exerciseFolders = {
   '06': '06-chat-completions',
   10: '10-m1-frame-batching',
 }
+const practiceFiles = [
+  'decode.ts',
+  'parse-events.ts',
+  'read-event.ts',
+  'read-answer.ts',
+  'publish.ts',
+  'render-policy.ts',
+]
 async function walk(folder) {
   const entries = await readdir(folder, { withFileTypes: true })
   const files = await Promise.all(
@@ -51,7 +59,7 @@ await Promise.all(
     for (const match of source.matchAll(/from ['"](\.[^'"]+)['"]/g)) {
       const target = path.resolve(path.dirname(file), match[1])
       // oxlint-disable-next-line no-await-in-loop -- small import checks keep diagnostics tied to the current document
-    const found = await Promise.all(
+      const found = await Promise.all(
         ['', '.ts', '.tsx'].map((ext) =>
           access(target + ext).then(
             () => true,
@@ -81,10 +89,19 @@ await Promise.all(
     }),
   ),
 )
+await Promise.all(
+  practiceFiles.map(async (file) => {
+    try {
+      await access(path.join(lab, 'src/my-chat', file))
+    } catch {
+      issues.push(`Missing shared browser/practice learner entry: ${file}`)
+    }
+  }),
+)
 if (issues.length) {
   console.error(issues.join('\n'))
   process.exitCode = 1
 } else
   console.log(
-    `Validated ${files.length} documents, 19 lesson routes, local links, imports and exercise tests.`,
+    `Validated ${files.length} documents, 19 lesson routes, local links, imports, learner entries and supplementary exercises.`,
   )

@@ -8,6 +8,7 @@
     "dev": "rspress dev",
     "lint": "oxlint",
     "preview": "rspress preview --host 0.0.0.0 --port 4173",
+    "sync:wiki": "node scripts/sync-wiki.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "validate": "node scripts/validate-lessons.mjs",

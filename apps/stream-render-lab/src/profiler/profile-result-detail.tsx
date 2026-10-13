@@ -5,6 +5,7 @@ import type {
   ProfileTimelineSample,
 } from './ab-types'
 import { formatLowerIsBetterChange } from './profile-change'
+import { profileLabel } from './profile-options'
 
 const LAYERS: readonly ProfileLayer[] = [
   'network',
@@ -18,10 +19,11 @@ const LAYERS: readonly ProfileLayer[] = [
 ]
 
 export function ProfileResultDetail({ report }: { report: AbProfileReport }) {
-  const latest = report.runs.toReversed().find((run) => run.profile === 'M1')
+  const latest = report.runs.toReversed().find((run) => run.role === 'challenger')
   return (
     <div className="profile-result-detail">
       <Timeline
+        label={profileLabel(report.challenger.profile, report.challenger.resolvedProfile)}
         longTasksSupported={latest?.longTasksSupported ?? false}
         samples={latest?.timeline ?? []}
       />
@@ -31,9 +33,11 @@ export function ProfileResultDetail({ report }: { report: AbProfileReport }) {
 }
 
 function Timeline({
+  label,
   longTasksSupported,
   samples,
 }: {
+  label: string
   longTasksSupported: boolean
   samples: readonly ProfileTimelineSample[]
 }) {
@@ -42,7 +46,7 @@ function Timeline({
     <article className="profile-lanes">
       <header>
         <div>
-          <strong>最近一次 M1 时间线</strong>
+          <strong>最近一次 {label} 时间线</strong>
           <span>network = synthetic replay arrival；点为事件，线段为可测 duration</span>
         </div>
       </header>
@@ -74,20 +78,20 @@ function Timeline({
 }
 
 function RunTable({ report }: { report: AbProfileReport }) {
-  const baseline = report.runs.filter((run) => run.profile === 'M0')
-  const challenger = report.runs.filter((run) => run.profile === 'M1')
+  const baseline = report.runs.filter((run) => run.role === 'baseline')
+  const challenger = report.runs.filter((run) => run.role === 'challenger')
   return (
     <article className="profile-run-table">
       <header>
-        <strong>{baseline.length} 次测量</strong>
+        <strong>{baseline.length} 次测量 · React actualDuration 总和</strong>
         <span>CV {formatCv(report.challenger)}</span>
       </header>
       <table>
         <thead>
           <tr>
             <th>RUN</th>
-            <th>M0</th>
-            <th>M1</th>
+            <th>{profileLabel(report.baseline.profile, report.baseline.resolvedProfile)}</th>
+            <th>{profileLabel(report.challenger.profile, report.challenger.resolvedProfile)}</th>
             <th>DIFF</th>
           </tr>
         </thead>

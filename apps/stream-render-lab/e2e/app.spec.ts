@@ -1,15 +1,15 @@
 import { expect, test } from '@playwright/test'
 
-test('Lab 根路由重定向进入新手 Playground', async ({ page }) => {
+test('Lab 根路由重定向进入网络 Playground', async ({ page }) => {
   await page.goto('/')
 
   await expect(page).toHaveURL(/\/playground$/)
   await expect(
-    page.getByRole('heading', { level: 1, name: '动手试一次，比记住术语更重要' }),
+    page.getByRole('heading', { level: 1, name: '把一次读取，追到屏幕上的文字' }),
   ).toBeVisible()
 })
 
-test('主导航连接课程、新手实践与进阶工具', async ({ page }) => {
+test('主导航连接课程、贯穿项目与进阶工具', async ({ page }) => {
   await page.goto('/lab')
 
   const navigation = page.getByRole('navigation', { name: '主导航' })
@@ -156,6 +156,8 @@ test('性能页保持 idle，显式开始后分开聚合与单次结果', async 
 
   await expect(page.getByText('尚未开始', { exact: true })).toBeVisible()
   await expect(page.getByLabel('Fixture')).toHaveValue('mixed-markdown')
+  await expect(page.getByLabel('基线策略')).toHaveValue('M0')
+  await expect(page.getByLabel('对照策略')).toHaveValue('mine')
   await expect(page.getByLabel('内容规模')).toHaveValue('16')
   await expect(page.getByLabel('Warmup')).toHaveValue('1')
   await expect(page.getByLabel('Measurements')).toHaveValue('5')
@@ -166,15 +168,19 @@ test('性能页保持 idle，显式开始后分开聚合与单次结果', async 
   }
 
   await page.getByLabel('内容规模').selectOption('4')
+  await page.getByLabel('基线策略').selectOption('M2')
+  await page.getByLabel('对照策略').selectOption('M3')
+  await page.getByLabel('Fixture').selectOption('stable-paragraphs')
   await page.getByLabel('Delta size').selectOption('192')
   await page.getByLabel('Warmup').selectOption('0')
   await page.getByLabel('Measurements').selectOption('3')
   await page.getByRole('button', { name: '开始 A/B 采样' }).click()
-  await expect(page.getByRole('heading', { level: 2, name: /M1 .*重复工作/ })).toBeVisible({
+  await expect(page.getByRole('heading', { level: 2, name: /M3 .*重复工作/ })).toBeVisible({
     timeout: 20_000,
   })
   await expect(page.locator('.profile-result-cards')).toContainText('RAW → VISIBLE P95')
-  await expect(page.locator('.profile-lanes')).toContainText('最近一次 M1 时间线')
+  await expect(page.getByRole('region', { name: '最终正确性' })).toContainText('6/6 次通过')
+  await expect(page.locator('.profile-lanes')).toContainText('最近一次 M3 时间线')
   await expect(page.locator('.profile-run-table')).toContainText('3 次测量')
   await expect(page.getByRole('button', { name: '重新采样' })).toBeVisible()
 })

@@ -8,7 +8,7 @@ export function ProfileIdlePanel({ completed, total }: { completed: number; tota
         <p className="eyebrow eyebrow--cyan">BEFORE YOU RUN</p>
         <h2>先写下你的预测</h2>
       </header>
-      <p>如果 M1 真正合并了同一帧内的更新，哪两个指标应该先变化？</p>
+      <p>先选一个优化策略。以 M0 → M1 为例，合并同一帧内的更新会先改变什么？</p>
       <div className="profile-predictions">
         <button
           aria-pressed={prediction === 'latency'}
@@ -45,7 +45,10 @@ export function ProfileIdlePanel({ completed, total }: { completed: number; tota
         </div>
         <section>
           <h3>{total === 0 ? '结果区仍为空' : '正在执行隔离的 A/B run'}</h3>
-          <p>先完成 warmup，再交替运行 M0 与 M1。结果会明确区分单次读数与多次聚合。</p>
+          <p>
+            先 warmup，再按 AB/BA 交替运行所选策略。「我的实现」从 M0
+            开始；改配置后重跑，允许用相同策略做 A/A 对照。
+          </p>
         </section>
       </div>
     </article>
@@ -54,7 +57,7 @@ export function ProfileIdlePanel({ completed, total }: { completed: number; tota
 
 export function MetricReadingGuide() {
   const items = [
-    ['RAW → VISIBLE', '用户等了多久？', '比较 synthetic replay arrival 与 React 发布时间。'],
+    ['RAW → VISIBLE', '发布等了多久？', '从模拟 delta 到达到可见引擎快照；不是浏览器绘制时间。'],
     ['PARSE WORK', '重复做了多少工作？', 'parsed code units 比 wall-clock 更稳定。'],
     ['ENGINE COMMITS', '发布是否被合并？', 'snapshot commit 应受显示帧而不是 delta 数约束。'],
     [

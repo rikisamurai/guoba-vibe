@@ -39,3 +39,70 @@
 .beginner-page > .beginner-demo {
   margin: 20px 0;
 }
+.project-source {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.project-source label {
+  display: grid;
+  gap: 8px;
+}
+.project-source p {
+  margin: 8px 0;
+}
+.practice-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.practice-heading h2 {
+  margin-top: 8px;
+}
+.practice-panel output {
+  display: block;
+  margin: 12px 0;
+  font-weight: 600;
+}
+.practice-panel details {
+  padding: 12px 0;
+  border-top: 1px solid #dce0d8;
+}
+.practice-checks {
+  margin-top: 12px;
+}
+.practice-checks li {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 12px;
+  margin: 16px 0;
+}
+.practice-checks li > div {
+  min-width: 0;
+}
+.practice-checks small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.practice-pass {
+  color: #237468;
+}
+.practice-fail {
+  color: #a83b25;
+}
+@media (max-width: 620px) {
+  .project-source {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .project-source code {
+    overflow-wrap: anywhere;
+  }
+  .beginner-controls label,
+  .beginner-controls input {
+    max-width: 100%;
+  }
+}

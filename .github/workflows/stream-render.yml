@@ -30,6 +30,10 @@ jobs:
       - run: pnpm --filter @stream-render/contract test
       - run: pnpm --filter @stream-render/contract build
       - run: pnpm --filter stream-render-course verify
+      - name: Export Obsidian course notes
+        run: |
+          mkdir -p "$RUNNER_TEMP/streaming-course-vault/.obsidian"
+          pnpm --filter stream-render-course sync:wiki --target "$RUNNER_TEMP/streaming-course-vault/agent-wiki/streaming-render-course"
       - run: pnpm --filter stream-render-lab test
       - run: pnpm --filter stream-render-lab build
       - run: pnpm --filter stream-render-lab exec playwright install --with-deps chromium firefox webkit

@@ -1,4 +1,37 @@
-# Streaming 新手课程 UI 改动记录
+# Streaming 课程 UI 改动记录
+
+## 2026-10-13：同步 Obsidian 课件
+
+Riki 已批准同源同步方案。仅在 Markdown 构建中，将 Pipeline 的交互切换改为完整五层静态说明，将 LessonMeta 改为独立标题和列表；网页布局与交互保持不变。课件保留实验链接、实现文件与验收命令，个人笔记不纳入同步覆盖。
+
+- Lab 最新完整回归：269 项工程测试、28 项旧参考练习及独立参考验收 16 项通过；Chromium / Firefox / WebKit 共 69 项浏览器测试通过。
+- Course verify：22 份文档校验、20 项测试（含 15 项同步保护与 3 项静态输出）、类型检查、lint 和生产构建通过。
+- CI 新增临时 Obsidian vault 的真实课件导出，验证完整构建到同步的链路。
+
+## 2026-10-13：批准 After 后实施
+
+Riki 已批准 `streaming-before-after.html` 的 After：面向有经验的前端开发者，同一个 Mini Chat 贯穿课程，练习和验收调用学员自己的代码。
+
+- 课程导航：A 网络与协议 → B 可靠聊天 → C 渲染优化；保留旧 URL，将语法及回放热身降为补充阅读。
+- Mini Chat：区分运行输出、实现来源、练习验收；默认加载 `src/my-chat/`，可切到独立参考实现。
+- 网络实验：真实 HTTP 的 read → 字节 → 解码 → SSE → 正文联动观察；缓冲、拆包、截断由服务场景触发。
+- 性能实验：同输入比较 M0–M4，显示最终一致性、工作量与可见延迟；学员策略配置同时连接聊天和性能实验。
+- 起点验收故意暴露尚待实现的边界，显示真实失败；参考实现独立跑同一套断言。浏览器、CLI 指向相同模块。
+- 改前截图：本任务 visualizations 下 `audience-before.jpg`、`audience-after.jpg`、`project-after.png`；最终保存实际页面截图。
+
+### 本轮验收
+
+- Course verify：22 份文档、19 路由、链接及 learner 入口校验、2 单测、类型检查、lint、生产构建通过。
+- Lab：全量工程测试 263 项及旧参考练习 28 项通过；随后新增的停止/尾帧回归与绑定测试共 11 项通过；类型检查、lint、生产构建通过。
+- 浏览器：Lab 的 Chromium / Firefox / WebKit 共 69 项通过；课程跨应用 8 个场景通过（6 项首轮通过，2 项更新状态定位器后复跑通过）。
+- 参考实现同一套练习 16/16；学员起点实际 7/16，9 个边界失败明确作为课程练习，未伪装成全绿。
+- 内置浏览器：我的实现普通 HTTP 回答正常；真实拆分场景逐条展示四层数据；网络观察器 390px 宽无横向溢出。
+- 性能页手动验证：同一稳定段落语料 M2/M3，6/6 最终正确性通过；页面明确标注 development 和模拟输入，不将本次时延当正式性能结论。
+- 实际改后截图：`course-project-path-after.jpg`、`mini-chat-learner-after.jpg`、`network-observer-full-after.jpg`、`network-observer-mobile-after.jpg`、`render-profile-after.jpg`，位于本任务 visualizations 目录。
+
+## 2026-10-13：受众调整
+
+Riki 在浏览器批注中明确课程面向有经验的前端开发者，要求移除 JavaScript 预备知识。按这一明确修改移除侧栏入口与基础语法页面，清理课程内相关引导；其他章节位置不变。改前截图已保存为 audience-before.jpg。
 
 2026-10-09。Riki 已认可三页视觉提案，并授权实现课程、Lab 与共享协议的重构。
 

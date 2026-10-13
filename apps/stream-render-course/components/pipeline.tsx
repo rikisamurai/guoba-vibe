@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import { LabLink } from './lab-link'
+
 const stages = [
   {
     title: 'HTTP 响应体',
@@ -10,20 +12,20 @@ const stages = [
   {
     title: 'UTF-8 解码',
     input: '任意切分的字节',
-    output: 'data: {"text":"你好"}↵↵',
+    output: 'data: {"choices":[{"index":0,"delta":{"content":"你好"}}]}↵↵',
     note: '保留同一个解码器，跨片段拼出完整字符。',
   },
   {
     title: 'SSE 解析',
     input: '可能只有半行的文本',
-    output: '{"text":"你好"}',
+    output: '{"choices":[{"index":0,"delta":{"content":"你好"}}]}',
     note: '先按行读取字段，再用空行派发事件；一次读取可以没有事件，也可以有多条事件。',
   },
   {
     title: '提取正文',
     input: '完整事件中的 JSON',
     output: '你好',
-    note: '此处 text 是教学字段。真实模型需按服务商协议提取，例如 choices[].delta.content。',
+    note: '教学端点使用 Chat Completions 格式：读取 index 为 0 的 choice.delta.content。事件也可能只有角色、用量或结束信息。',
   },
   {
     title: '更新界面',
@@ -36,8 +38,36 @@ const stages = [
 export function Pipeline() {
   const [index, setIndex] = useState(0)
   const stage = stages[index]
+  const observerLink = (
+    <LabLink path="/playground?demo=network-inspector&source=mine">
+      观察一次真实 HTTP 的读取记录 →
+    </LabLink>
+  )
+  if (import.meta.env.SSG_MD) {
+    return (
+      <section>
+        <h2>文字从网络到屏幕的旅程</h2>
+        <p>概念示意 · 展示各层的数据形态，不是本次请求的测量记录。</p>
+        {stages.map((item, position) => (
+          <section key={item.title}>
+            <h3>
+              {position + 1}. {item.title}
+            </h3>
+            <p>输入：{item.input}</p>
+            <p>输出：</p>
+            <pre>
+              <code>{item.output}</code>
+            </pre>
+            <p>{item.note}</p>
+          </section>
+        ))}
+        {observerLink}
+      </section>
+    )
+  }
   return (
     <section className="course-pipeline" aria-label="文字从网络到屏幕的旅程">
+      <p>概念示意 · 展示各层的数据形态，不是本次请求的测量记录。</p>
       <nav aria-label="查看数据层级">
         {stages.map((item, position) => (
           <button
@@ -55,6 +85,7 @@ export function Pipeline() {
         <pre>{stage.output}</pre>
         <p>{stage.note}</p>
       </div>
+      {observerLink}
     </section>
   )
 }

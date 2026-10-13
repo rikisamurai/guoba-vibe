@@ -1,89 +1,74 @@
 ---
-title: 07 · 真正发一次 HTTP 流式请求
-description: 通过本地服务理解持续响应、缓冲和浏览器读取。
+title: A1 · HTTP：第一段数据从哪来
+description: 从真实请求开始，区分服务端写入、浏览器读取、协议事件和界面更新。
 ---
 
 import { LabLink } from '../../components/lab-link'
 import { Pipeline } from '../../components/pipeline'
 
-# 从模拟片段，走到真正的 HTTP
+# 服务端在发，为什么页面还没有字？
 
-前面已经会解码字节、解析 SSE、取出正文。这一课把固定输入换成真正的响应体。**这是源码实验，不是新的 TODO 练习。**
+**本课源码入口：** `apps/stream-render-lab/src/my-chat/read-answer.ts`，它调用共享 `src/practice/consume-response.ts` 读取响应。先观察边界，后续课程再完善自己的解码和协议；不要同时改 React。
 
-## 第一步：先运行成功的版本
+## 第一步：发出真实请求
 
-按 [安装步骤](/setup) 启动两个服务，打开 <LabLink path="/project">Mini Chat</LabLink>，选择“分段发送”，点击发送。应先出现“你好！”，随后正文增长。
+启动服务后打开 <LabLink path="/project?source=mine">我的 Mini Chat</LabLink>，用“分段发送”发送一条消息。在 Network 中找到 `/api/teaching?mode=stream`，检查状态码与 `Content-Type: text/event-stream`。
 
-现在暂时不关心 React。我们只追踪：浏览器从哪里拿到字节？
+再选择缓冲场景。预期：最终内容相同，首次看到正文更晚。固定内容来自本地服务，不调用模型。
 
-<Pipeline />
-
-## 第二步：直接观察服务器
-
-新开一个终端，在服务仍然运行时执行：
+## 第二步：把浏览器与服务端分开观察
 
 ```bash
 curl -N 'http://localhost:5174/api/teaching?mode=stream'
-```
-
-你会陆续看到以 data: 开头的行。每个事件后有空行，最后是 [DONE]。curl 的 -N 关闭自身输出缓冲，不会替你关闭所有代理的缓冲。
-
-再执行：
-
-```bash
 curl -N 'http://localhost:5174/api/teaching?mode=buffered'
 ```
 
-内容相同，但要等到后面才一起出现。这个服务故意积攒内容，模拟缓冲现象；它不是对你当前 CDN 的诊断。
+`-N` 关闭 curl 自身输出缓冲，不会关闭代理缓冲。若 curl 也迟迟没有内容，先查发送端；若 curl 有内容、页面没有，再沿客户端链路排查。
 
-## 第三步：找到发送端
+打开 `apps/stream-render-lab/api/teaching.ts`，找到编码与 `controller.enqueue`。服务端的每次入队不保证对应浏览器的一次 read；途中可能被合并或切分。
 
-打开 `apps/stream-render-lab/api/teaching.ts`。找到 `controller.enqueue`：这行把编码后的内容交给响应流。找到 `setTimeout`：本例每 160 ms 产生一段固定内容。
+## 第三步：记录一次读取实际给了什么
 
-```ts
-controller.enqueue(encoder.encode(packet))
-```
-
-把间隔临时改成 400，重试发送。正文增长应变慢；改回 160。服务端入队不保证浏览器一次读取恰好收到这一段，网络中间层可能再次合并或切分。
-
-## 第四步：找到读取端
-
-打开 `apps/stream-render-lab/src/learn-project/read-answer.ts`，从 `getReader()` 向下读：
+从自己的 `read-answer.ts` 跟进 `consumeResponse`，在 `src/practice/consume-response.ts` 找到 `reader.read()`。临时打印 `value?.byteLength` 与 `done`，重新发送；记录后删除日志。
 
 ```ts
 const { done, value } = await reader.read()
+// value 是 Uint8Array；done 表示响应体读取结束。
 ```
 
-value 是一段字节，done 表示这个可读流结束。本项目把字节依次交给前面学过的解码器、SSE 解析器和正文适配器。fetch 得到响应对象时，响应体可能尚未结束；`await response.text()` 则会等待整个正文读完。
+不要改成 `await response.text()`：它会等完整正文后才返回。`fetch()` 得到 Response 时，正文仍可能继续到达。
 
-## 第五步：厘清几个相近的词
+把 `signal` 的传递路径也标出来：它是 `AbortSignal`，传给 fetch / 读取逻辑以协作取消，**不是服务器发回的一条消息或数据段**。
 
-| 名称                   | 负责什么               | 不代表什么                                |
-| ---------------------- | ---------------------- | ----------------------------------------- |
-| HTTP                   | 请求与响应的语义       | 不要求整个响应准备好才能发送              |
-| HTTP/1.1 chunked       | 一种响应体传输分帧方式 | 不是 SSE，也不是每次 read 的边界          |
-| HTTP/2 DATA 帧         | HTTP/2 中承载数据      | 不使用 HTTP/1.1 chunked 编码              |
-| SSE                    | 文本事件的格式         | 不是新的底层传输协议                      |
-| EventSource            | 浏览器消费 SSE 的 API  | 不适合所有需要自定义 POST body 的模型请求 |
-| fetch + ReadableStream | 读取响应体的方式       | 不自动替你解析 SSE 或模型 JSON            |
-| WebSocket              | 建连后的双向消息通道   | 单向模型回答不必为了流式而改成它          |
+## 第四步：给这些边界分清名字
 
-本课 GET 端点不接收 prompt；真实模型通常通过 POST 发送消息，读取响应体的分层思路相同。
+<Pipeline />
 
-## 第六步：验证与排错
+| 你看到的东西             | 这层的含义                             | 不可以据此推断                             |
+| ------------------------ | -------------------------------------- | ------------------------------------------ |
+| `reader.read()` 的 value | 浏览器本次交付的字节片段（read chunk） | 一个 TCP 包、一个 SSE 事件、一个模型 token |
+| 解码后的字符串           | 可能只有半行的 Unicode 文本            | JSON 已完整                                |
+| SSE event                | 空行结束的一组字段                     | 一定包含正文，或等于一个 token             |
+| `delta.content`          | 协议中的正文增量                       | 一定恰好一个字或一个 token                 |
+| React 状态发布           | 把当前正文交给界面                     | 浏览器已经完成绘制                         |
+
+HTTP 是请求响应协议；SSE 是响应体中的事件格式。HTTP/1.1 chunked、HTTP/2 DATA 帧与 read chunk 属于不同层。EventSource 自动处理 SSE；需要 POST body 的模型请求常用 fetch 读取响应体。单向回答不必为了流式改用 WebSocket。
+
+## 第五步：将真实观测与固定验收对照
+
+打开 <LabLink path="/playground?demo=network-inspector&source=mine">网络观察器</LabLink>，选择“刻意拆分中文与事件”，发起请求并点选 read 记录。它记录真实 reader.read；服务端虽然刻意拆分，浏览器仍可能合并。没有看到乱码不能证明边界已经正确。
+
+回到 <LabLink path="/project?source=mine">Mini Chat</LabLink> 的“运行当前实现验收”，或运行下面命令。它们用固定字节切分复现错误，和网络观测共用你的实现。
 
 ```bash
-pnpm --filter stream-render-lab exec vitest run src/learn-project/read-answer.test.ts
+pnpm --filter stream-render-lab practice test utf8
+pnpm --filter stream-render-lab practice test utf8 --reference
 ```
 
-应全部通过。测试验证正文与终态，不声称浏览器一定按固定包大小读取。
+初始 mine 在跨字节字符上失败；reference 应通过。下一课修复这层。真实 HTTP 的读取次数可能变化，但正确实现不应依赖它的切法。
 
-如果 Network 已有响应而正文不动：先看是否拿到了完整 SSE 事件，再看是否提取到正文；不要第一时间改 React 节流。
+**本课验收：** 能找到发送端 enqueue、自己的 reader.read 和 signal；能说明“响应到了但没显示”还可能卡在解码、事件或发布层。
 
-## 完成检查
+标准参考：[Fetch 响应体](https://fetch.spec.whatwg.org/)、[SSE 格式](https://html.spec.whatwg.org/multipage/server-sent-events.html)。
 
-你能指出服务器的 enqueue、浏览器的 read，以及为什么两者次数不一定相同。能把“服务器晚生成”“中间层缓冲”“客户端晚显示”分开排查。
-
-标准参考：[Fetch 响应体](https://fetch.spec.whatwg.org/)、[SSE](https://html.spec.whatwg.org/multipage/server-sent-events.html)。
-
-[下一步：08 · 停止、错误与重试 →](/learn/08-lifecycle)
+[下一课：A2 · 字节：中文被切开了 →](/learn/04-utf8)

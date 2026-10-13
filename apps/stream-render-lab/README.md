@@ -40,22 +40,25 @@ pnpm --filter stream-render-lab lesson 10 test
 
 页面入口：`/lab`、`/profiler`、`/chat`、`/bench`、`/embed/:demoId`。内部还保留 `/repro/:case` 故障复现路由。`/embed/:demoId` 仅接受 manifest 注册的 demo/preset；`/bench` 控制 iframe 中独立的 `bench-frame.html` entry，以减少文档 Shell、字体和 Router 对浏览器报告的干扰。
 
-## 新手入口与完整项目
+## 贯穿课程的 Mini Chat
 
-- `/playground`：完整返回对比、UTF-8 字节切分、SSE 边界、合并更新四个实验。
-- `/project`：真实 HTTP 固定教学回答，支持停止、重试、Markdown、缓冲、截断和 HTTP 错误。
-- `/api/teaching?mode=stream`：GET SSE 教学端点，不读取 Key，不调用模型，不根据用户问题生成答案。
-- `/chat`：可选真实模型入口。
+- `/project?source=mine`：默认运行 `src/my-chat/`，通过真实 HTTP 接收固定回答；支持停止、重试、Markdown、缓冲、截断和 HTTP 错误。
+- `/project?source=reference`：独立参考实现，调用同一套验收；不会覆盖学员代码。
+- `/playground?demo=network-inspector&source=mine`：把真实 read 的 bytes → decoded text → SSE data → 正文对应起来；原有四个单概念实验保留。
+- `/profiler`：同一输入比较 M0–M4；“我的实现”加载 `src/my-chat/render-policy.ts`，与 Mini Chat 共用策略。它选择已有引擎策略，不测学员的 HTTP/SSE 解析耗时。
 
-Quick Start 只解释“更早开始阅读”；原来的多层网络观察保留在课程 `/reference/network-boundaries`。
-01–06 和 10 的 exercise 保留待实现 TODO，后续课自带上一阶段参考能力。其他章节通过源码实验、故障模式和完整项目逐步组装；课程不会声称每章都有独立 TODO。
+课程按 A 网络与协议 → B 可靠聊天 → C 渲染优化推进。浏览器、网络观察和 CLI 直接导入同一组学员函数。旧 `lesson` 独立习题保留作补充，不作为贯穿项目的验收。
 
 ```bash
-pnpm --filter stream-render-lab exec vitest run src/beginner/models.test.ts src/learn-project/read-answer.test.ts
-curl -N 'http://localhost:5174/api/teaching?mode=stream'
+pnpm dev:stream-render
+pnpm --filter stream-render-lab practice test utf8
+pnpm --filter stream-render-lab practice test
+pnpm --filter stream-render-lab practice test --reference
 ```
 
-教学端点可选模式：stream、buffered、truncated、error。缓冲由教学服务主动模拟；浏览器的读取次数和时间才是本机 HTTP 观察，不能据此推断 TCP 分段或真实供应商延迟。
+`practice test` 检查当前学员代码，可限定 `utf8`、`sse`、`provider`、`lifecycle`、`batch`。起点能跑普通回答，但故意留有边界缺口，初始失败属于练习；修改对应文件再验收。页面按钮与 CLI 使用同一个断言集。工程 `test` 检查参考契约及装配，不能替代自己的 practice 验收。
+
+教学端点 `/api/teaching?mode=stream` 不读取 Key、不调用模型、不根据输入生成答案。模式有 stream、split、buffered、truncated、error。服务端主动模拟缓冲或拆分；实际 reader.read 可能合并，不能据此推断 TCP 分段。验收另用固定切分与虚拟帧时钟复现边界，不是网络或绘制测速。
 
 ## DeepSeek live
 

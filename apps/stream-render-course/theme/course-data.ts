@@ -3,65 +3,60 @@ export interface CourseLesson {
   title: string
   shortTitle: string
   href: string
+  marker: string
 }
 export interface CoursePart {
   label: string
   title: string
   lessons: readonly CourseLesson[]
 }
-export const orientationLesson = lesson(0, '先看见流式的区别', '00-quick-start')
+export const orientationLesson = lesson(0, '开始：同一个 Mini Chat', '00-quick-start', '00')
 export const courseParts: readonly CoursePart[] = [
   {
-    label: '阶段 1',
-    title: '先做出来',
+    label: 'A',
+    title: '读懂真实网络',
     lessons: [
-      lesson(1, '做出一次完整回答', '01-non-streaming-chat'),
-      lesson(2, '让文字分段出现', '02-string-replay-clock'),
-      lesson(3, '收到与显示的文字', '03-m0-raw-visible'),
+      lesson(7, 'HTTP：第一段数据从哪来', '07-http', 'A1'),
+      lesson(4, '字节：中文被切开了', '04-utf8', 'A2'),
+      lesson(5, 'SSE：半行不是一个事件', '05-sse', 'A3'),
+      lesson(6, '正文：事件不是 token', '06-chat-completions', 'A4'),
     ],
   },
   {
-    label: '阶段 2',
-    title: '理解网络',
+    label: 'B',
+    title: '让同一个聊天可靠',
     lessons: [
-      lesson(4, '中文为什么乱码', '04-utf8'),
-      lesson(5, '拼出完整 SSE 事件', '05-sse'),
-      lesson(6, '取出回答正文', '06-chat-completions'),
-      lesson(7, '真正发一次 HTTP 请求', '07-http'),
+      lesson(8, '停止、截断与重试', '08-lifecycle', 'B1'),
+      lesson(9, '从正文到 Markdown', '09-markdown', 'B2'),
+      lesson(15, '接收时也能正常阅读', '15-chat-behavior', 'B3'),
+      lesson(16, '安全显示与协议终态', '16-safety', 'B4'),
+      lesson(18, '验收我的 Mini Chat', '18-capstone', 'B5'),
     ],
   },
   {
-    label: '阶段 3',
-    title: '可靠与流畅',
+    label: 'C',
+    title: '测量后再优化',
     lessons: [
-      lesson(8, '停止、错误与重试', '08-lifecycle'),
-      lesson(9, '显示 Markdown', '09-markdown'),
-      lesson(10, '合并更新', '10-m1-frame-batching'),
+      lesson(10, '合并更新与尾帧', '10-m1-frame-batching', 'C1'),
+      lesson(11, '半截 Markdown 的预览', '11-preview-repair', 'C2'),
+      lesson(12, '复用语义不变的块', '12-block-identity', 'C3'),
+      lesson(13, '只重算变化的尾部', '13-suffix-reparse', 'C4'),
+      lesson(14, '延后昂贵的渲染', '14-heavy-nodes', 'C5'),
+      lesson(17, '提交一份性能结论', '17-measurement', 'C6'),
     ],
   },
   {
-    label: '阶段 4',
-    title: '渲染进阶（可稍后学习）',
+    label: '补充',
+    title: '最小模型（按需阅读）',
     lessons: [
-      lesson(11, '半截 Markdown 的预览', '11-preview-repair'),
-      lesson(12, '复用不变的段落', '12-block-identity'),
-      lesson(13, '只重算变化的尾部', '13-suffix-reparse'),
-      lesson(14, '高亮、公式与图表', '14-heavy-nodes'),
-    ],
-  },
-  {
-    label: '阶段 5',
-    title: '完成项目',
-    lessons: [
-      lesson(15, '聊天交互与阅读', '15-chat-behavior'),
-      lesson(16, '安全与终态', '16-safety'),
-      lesson(17, '验证优化效果', '17-measurement'),
-      lesson(18, '组装完整 Mini Chat', '18-capstone'),
+      lesson(1, '完整返回的最小模型', '01-non-streaming-chat', 'S1'),
+      lesson(2, '可重复的时间与回放', '02-string-replay-clock', 'S2'),
+      lesson(3, '已收到与已显示', '03-m0-raw-visible', 'S3'),
     ],
   },
 ]
-function lesson(number: number, title: string, path: string): CourseLesson {
-  return { number, title, shortTitle: title, href: `/learn/${path}` }
+function lesson(number: number, title: string, path: string, marker: string): CourseLesson {
+  return { number, title, shortTitle: title, href: `/learn/${path}`, marker }
 }
 export function findLesson(pathname: string): CourseLesson | undefined {
   const path = pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/'

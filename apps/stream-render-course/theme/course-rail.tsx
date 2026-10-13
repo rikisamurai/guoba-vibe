@@ -5,7 +5,7 @@ import { courseParts, findLesson, orientationLesson, type CourseLesson } from '.
 function LessonLink({ lesson, active }: { lesson: CourseLesson; active: boolean }) {
   const content = (
     <>
-      <span className="sr-rail__number">{String(lesson.number).padStart(2, '0')}</span>
+      <span className="sr-rail__number">{lesson.marker}</span>
       <span>{lesson.title}</span>
     </>
   )
@@ -32,18 +32,16 @@ function LessonLink({ lesson, active }: { lesson: CourseLesson; active: boolean 
 export function CourseRail() {
   const { pathname } = useLocation()
   const activeLesson = findLesson(pathname)
-  const progress = activeLesson?.number ?? 0
 
   return (
     <nav className="sr-course-rail" aria-label="课程章节">
       <p className="sr-rail-location">
-        {activeLesson ? `正在阅读第 ${progress} 课` : '从直观概念到完整项目'}
+        {activeLesson
+          ? `正在阅读 ${activeLesson.marker} · ${activeLesson.shortTitle}`
+          : '同一个项目，逐步解决真实问题'}
       </p>
       <Link className="sr-rail-resource" to="/setup">
         环境安装与运行
-      </Link>
-      <Link className="sr-rail-resource" to="/basics">
-        JavaScript 预备知识
       </Link>
       <section className="sr-rail__part sr-rail__part--start">
         <h2>

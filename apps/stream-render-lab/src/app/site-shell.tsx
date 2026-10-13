@@ -13,8 +13,12 @@ export function SiteShell() {
   const status = location.pathname.startsWith('/chat')
     ? 'LIVE SOURCE'
     : location.pathname.startsWith('/profiler')
-      ? 'PROFILER IDLE'
-      : 'DETERMINISTIC'
+      ? 'PROFILER'
+      : location.pathname.startsWith('/project')
+        ? 'TEACHING HTTP'
+        : location.pathname.startsWith('/playground')
+          ? 'PLAYGROUND'
+          : 'DETERMINISTIC'
   const courseOrigin = import.meta.env.VITE_COURSE_ORIGIN ?? 'http://localhost:5173'
   return (
     <div className="site-shell">
