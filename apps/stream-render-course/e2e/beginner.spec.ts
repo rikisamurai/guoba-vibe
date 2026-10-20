@@ -5,7 +5,7 @@ test('课程主线先真实 HTTP，项目切换来源后重新验收', async ({ 
   const rail = page.getByRole('navigation', { name: '课程章节' })
   await expect(rail.getByRole('link', { name: /JavaScript/ })).toHaveCount(0)
   await rail.getByRole('link', { name: /A1.*HTTP：第一段数据从哪来/ }).click()
-  await expect(page).toHaveURL(/\/learn\/07-http$/)
+  await expect(page).toHaveURL(/\/learn\/a1-http$/)
 
   await page.goto('http://127.0.0.1:5274/project?source=mine')
   const checks = page.getByRole('region', { name: '当前实现验收' })

@@ -4,14 +4,18 @@ import { STATIC_CHAT_FIXTURE } from '../../workshop/mini-chat/01-static-chat/fix
 import { REPLAY_FIXTURE } from '../../workshop/mini-chat/02-replay-clock/fixture'
 import { M0_FIXTURE } from '../../workshop/mini-chat/03-m0-baseline/fixture'
 import { createM0Renderer } from '../../workshop/mini-chat/03-m0-baseline/solution/index'
-import { UTF8_FIXTURE_CHUNKS, UTF8_FIXTURE_TEXT } from '../../workshop/mini-chat/04-utf8/fixture'
-import { decodeUtf8Chunks, decodeUtf8Steps } from '../../workshop/mini-chat/04-utf8/solution/index'
-import { SSE_FIXTURE_CHUNKS } from '../../workshop/mini-chat/05-sse/fixture'
-import { parseEventStream } from '../../workshop/mini-chat/05-sse/solution/sse'
-import { CHAT_COMPLETIONS_FIXTURE_CHUNKS } from '../../workshop/mini-chat/06-chat-completions/fixture'
-import { adaptChatCompletions } from '../../workshop/mini-chat/06-chat-completions/solution/chat-completions'
-import { parseEventStream as parseChatStream } from '../../workshop/mini-chat/06-chat-completions/solution/sse'
 import { FOUNDATION_DEMOS, foundationCheckpoints, runFoundationDemo } from './foundation-demo-model'
+import {
+  adaptChatCompletions,
+  CHAT_COMPLETIONS_FIXTURE_CHUNKS,
+} from './foundation/chat-completions'
+import { parseEventStream, SSE_FIXTURE_CHUNKS } from './foundation/sse'
+import {
+  decodeUtf8Chunks,
+  decodeUtf8Steps,
+  UTF8_FIXTURE_CHUNKS,
+  UTF8_FIXTURE_TEXT,
+} from './foundation/utf8'
 
 describe('foundation lesson demos', () => {
   it('executes every fixture and solution before checkpoints pass', async () => {
@@ -65,7 +69,7 @@ describe('foundation lesson demos', () => {
   })
 
   it('builds Chat adapter frames from typed solution events', async () => {
-    const parsed = parseChatStream(CHAT_COMPLETIONS_FIXTURE_CHUNKS)
+    const parsed = parseEventStream(CHAT_COMPLETIONS_FIXTURE_CHUNKS)
     const actual = adaptChatCompletions(parsed.events)
     const trace = await runFoundationDemo('chat-adapter')
 

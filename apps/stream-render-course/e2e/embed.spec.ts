@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('入门课与 Lab 完成 ready → run-settled 跨应用闭环', async ({ page }) => {
-  await page.goto('/learn/01-non-streaming-chat')
+  await page.goto('/learn/s1-non-streaming-chat')
 
   const demo = page.getByRole('region', { name: '完整响应基线交互实验' })
   await demo.scrollIntoViewIfNeeded()
@@ -67,7 +67,7 @@ test('Quick Start 逐层观察 chunk、SSE event 与显示文本状态更新', a
 })
 
 test('通用 Lab 再次回放时清除上一轮课程结果', async ({ page }) => {
-  await page.goto('/learn/10-m1-frame-batching')
+  await page.goto('/learn/c1-frame-batching')
 
   const demo = page.getByRole('region', { name: 'M1 帧批处理实验交互实验' })
   await demo.scrollIntoViewIfNeeded()

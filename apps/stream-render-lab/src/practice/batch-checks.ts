@@ -73,4 +73,21 @@ export const batchChecks: PracticeCheck[] = [
       return output
     },
   },
+  {
+    id: 'batch-next-frame',
+    group: 'batch',
+    title: '一帧发布后，后续输入申请新的帧',
+    file: 'publish.ts',
+    expected: ['你', '你好'],
+    run(impl) {
+      const output: string[] = []
+      const time = frameClock()
+      const publisher = impl.createPublisher((text) => output.push(text), time.clock)
+      publisher.push('你')
+      time.tick()
+      publisher.push('你好')
+      time.tick()
+      return output
+    },
+  },
 ]

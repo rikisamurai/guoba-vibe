@@ -28,11 +28,12 @@
 ```bash
 pnpm --filter stream-render-lab practice test
 pnpm --filter stream-render-lab practice test --reference
+pnpm --filter stream-render-lab practice measure
 pnpm --filter stream-render-course verify
 pnpm --filter stream-render-course test:e2e
 ```
 
-practice 支持 utf8、sse、provider、lifecycle、batch 单独验收。初始自己的全量验收失败是学习任务；工程回归验证参考与现有运行结构，不要求课程自动替学员补完实现。
+practice 支持 utf8、sse、provider、lifecycle、batch 单独验收；`practice measure` 在虚拟帧上测量学员 publish.ts 的发布次数与等待。初始自己的全量验收失败是学习任务；工程回归验证参考与现有运行结构，不要求课程自动替学员补完实现。
 
 Course 不导入 Lab 引擎。Demo ID、preset 和 postMessage 校验由共享 contract 维护。部署配置 PUBLIC_LAB_ORIGIN 与 VITE_COURSE_ORIGIN 必须匹配实际源；本地不要混用 localhost 和 127.0.0.1。
 

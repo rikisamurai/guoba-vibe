@@ -75,7 +75,9 @@ test('Mini Chat 的当前代码、浏览器验收与网络入口保持同一来�
   await expect(page).toHaveURL(/source=reference/)
   await expect(acceptance.locator('output')).toContainText('尚未运行')
   await acceptance.getByRole('button', { name: '运行当前实现验收' }).click()
-  await expect(acceptance.locator('output')).toHaveText('已通过 16/16 项 · 参考实现')
+  await expect(acceptance.locator('output')).toHaveText(
+    `已通过 ${mineChecks.length}/${mineChecks.length} 项 · 参考实现`,
+  )
   const chat = page.getByRole('region', { name: '教学聊天项目' })
   await chat.getByLabel('服务场景').selectOption('buffered')
   await chat.getByRole('button', { name: '发送', exact: true }).click()

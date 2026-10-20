@@ -1,0 +1,66 @@
+---
+title: A3 · SSE：半行不是一个事件
+description: 在同一个项目中解析 SSE 行、字段与事件边界，拒绝按网络 chunk 直接 JSON.parse。
+---
+
+import { LabLink } from '../../components/lab-link'
+import { LessonDemo } from '../../components/lesson-demo'
+
+# 字符已经正确，JSON 为什么还是解析失败？
+
+**修改文件：** `apps/stream-render-lab/src/my-chat/parse-events.ts`。先通过 A2 的 UTF-8 验收，再处理字符层的事件边界。
+
+## 第一步：复现拆行和 CRLF
+
+```bash
+pnpm --filter stream-render-lab practice test sse
+```
+
+在 <LabLink path="/project?source=mine">我的 Mini Chat</LabLink> 运行当前实现验收，检查 CRLF 跨切分、单独 CR、注释、多行 data 与冒号后空格用例。初始实现的简单分隔无法覆盖这些边界。CRLF 用例特意把 CR 和 LF 拆在两次读取里：若把末尾的 CR 立即当成行尾，后面的 LF 会变成空行，一条多行事件会被提前拆成两条。再到 <LabLink path="/playground?demo=network-inspector&source=mine">网络观察器</LabLink> 查看真实读取中是否出现半行或多条事件。
+
+网络 chunk 结束不等于 SSE event 结束。不要对每次 decode 的结果直接 JSON.parse，也不要用 split('data:')。
+
+## 第二步：先区分行与事件
+
+```text
+data: {"message":"hello"}
+
+```
+
+`data:` 是字段名；冒号后可去掉一个可选空格。空行结束一个事件。多条 data 行用换行拼接；以冒号开头的行是注释，不能混进 JSON。
+
+SSE 支持 LF、CRLF 和 CR 行结束。一个 chunk 可能恰好停在 CR 与 LF 之间，解析器要保留跨片段状态。
+
+## 第三步：修改自己的解析器
+
+在 `parse-events.ts` 按下面顺序处理，保持当前接口不变：
+
+1. 拼接上次未结束的行与新文本，逐行消费；留下半行。
+2. 处理注释和字段；为当前事件累积 data。
+3. 遇到空行时，按规则派发事件并重置事件状态。
+4. EOF 不补造一个不存在的空行；未完整派发的事件不能冒充成功数据。
+
+先让拆行测试通过，再处理换行形式、注释、多 data 行和一个 chunk 多事件。每次只修一类边界。
+
+## 第四步：对照空行的效果
+
+这个独立参考实验展示“去掉最后空行”的差别，不是自己实现的验收：
+
+<LessonDemo demoId="sse-lab" presetId="sse-lab" />
+
+预期：读完所有片段也未必有完整事件。随后回到 Mini Chat 的“运行当前实现验收”，确认你的解析器也遵守同一边界。
+
+## 第五步：跑自己的验收
+
+```bash
+pnpm --filter stream-render-lab practice test sse
+pnpm --filter stream-render-lab practice test sse --reference
+```
+
+预期：改变字节与文本切分不改变最终派发的事件序列；注释不会生成正文；缺失空行不会被当成完整事件。
+
+SSE 的 event / id / retry 是协议字段；模型 JSON 里的 choices 是下一层。一个完整 SSE event 也可能只携带角色、用量或结束信息，不一定有字可显示。
+
+参考：[WHATWG SSE 解析规则](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation)。
+
+[下一课：A4 · 正文：事件不是 token →](/learn/a4-chat-completions)

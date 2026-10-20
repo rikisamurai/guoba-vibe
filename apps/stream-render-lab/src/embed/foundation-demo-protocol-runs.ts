@@ -1,13 +1,17 @@
-import { UTF8_FIXTURE_CHUNKS, UTF8_FIXTURE_TEXT } from '../../workshop/mini-chat/04-utf8/fixture'
-import { decodeUtf8Chunks, decodeUtf8Steps } from '../../workshop/mini-chat/04-utf8/solution/index'
-import { SSE_FIXTURE_CHUNKS } from '../../workshop/mini-chat/05-sse/fixture'
-import { parseEventStream } from '../../workshop/mini-chat/05-sse/solution/sse'
-import type { ChatCompletionEvent } from '../../workshop/mini-chat/06-chat-completions/contract'
-import { CHAT_COMPLETIONS_FIXTURE_CHUNKS } from '../../workshop/mini-chat/06-chat-completions/fixture'
-import { adaptChatCompletions } from '../../workshop/mini-chat/06-chat-completions/solution/chat-completions'
-import { parseEventStream as parseChatStream } from '../../workshop/mini-chat/06-chat-completions/solution/sse'
 import type { FoundationDemoId, FoundationFrame, FoundationTrace } from './foundation-demo-model'
 import { expectedChatEventsFromFixture, expectedSseFromFixture } from './foundation-demo-oracle'
+import {
+  type ChatCompletionEvent,
+  adaptChatCompletions,
+  CHAT_COMPLETIONS_FIXTURE_CHUNKS,
+} from './foundation/chat-completions'
+import { parseEventStream, SSE_FIXTURE_CHUNKS } from './foundation/sse'
+import {
+  decodeUtf8Chunks,
+  decodeUtf8Steps,
+  UTF8_FIXTURE_CHUNKS,
+  UTF8_FIXTURE_TEXT,
+} from './foundation/utf8'
 
 type ProtocolDemoId = Extract<FoundationDemoId, 'chat-adapter' | 'sse' | 'utf8'>
 
@@ -83,7 +87,7 @@ function runSse(): FoundationTrace {
 }
 
 function runChatAdapter(): FoundationTrace {
-  const parsed = parseChatStream(CHAT_COMPLETIONS_FIXTURE_CHUNKS)
+  const parsed = parseEventStream(CHAT_COMPLETIONS_FIXTURE_CHUNKS)
   const actual = adaptChatCompletions(parsed.events)
   const expected = expectedChatEventsFromFixture(CHAT_COMPLETIONS_FIXTURE_CHUNKS)
   const frames: FoundationFrame[] = [emptyProtocolFrame(CHAT_COMPLETIONS_FIXTURE_CHUNKS)]

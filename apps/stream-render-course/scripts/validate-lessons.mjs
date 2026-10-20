@@ -10,10 +10,6 @@ const exerciseFolders = {
   '01': '01-static-chat',
   '02': '02-replay-clock',
   '03': '03-m0-baseline',
-  '04': '04-utf8',
-  '05': '05-sse',
-  '06': '06-chat-completions',
-  10: '10-m1-frame-batching',
 }
 const practiceFiles = [
   'decode.ts',
