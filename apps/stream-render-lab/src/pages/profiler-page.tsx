@@ -36,7 +36,7 @@ export default function ProfilerPage() {
           <h1>先声明测什么，再点击开始</h1>
           <p>一次实验只改变一个变量。页面不会自动运行，也不会把开发构建的数据伪装成正式结论。</p>
         </div>
-        <a className="tool-lesson-link" href={`${courseOrigin}/learn/17-measurement`}>
+        <a className="tool-lesson-link" href={`${courseOrigin}/learn/c6-measurement`}>
           <small>配套课程</small>
           <strong>C6 · 提交一份性能结论</strong>
           <span>打开教程 ↗</span>

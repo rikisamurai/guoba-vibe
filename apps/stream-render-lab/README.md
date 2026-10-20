@@ -32,10 +32,8 @@ pnpm --filter stream-render-lab dev
 pnpm --filter stream-render-lab test
 pnpm --filter stream-render-lab test:bench
 pnpm --filter stream-render-lab test:e2e
+pnpm --filter stream-render-lab practice test
 pnpm --filter stream-render-lab lesson 01 test
-pnpm --filter stream-render-lab lesson 04 test
-pnpm --filter stream-render-lab lesson 06 test
-pnpm --filter stream-render-lab lesson 10 test
 ```
 
 页面入口：`/lab`、`/profiler`、`/chat`、`/bench`、`/embed/:demoId`。内部还保留 `/repro/:case` 故障复现路由。`/embed/:demoId` 仅接受 manifest 注册的 demo/preset；`/bench` 控制 iframe 中独立的 `bench-frame.html` entry，以减少文档 Shell、字体和 Router 对浏览器报告的干扰。
@@ -47,16 +45,19 @@ pnpm --filter stream-render-lab lesson 10 test
 - `/playground?demo=network-inspector&source=mine`：把真实 read 的 bytes → decoded text → SSE data → 正文对应起来；原有四个单概念实验保留。
 - `/profiler`：同一输入比较 M0–M4；“我的实现”加载 `src/my-chat/render-policy.ts`，与 Mini Chat 共用策略。它选择已有引擎策略，不测学员的 HTTP/SSE 解析耗时。
 
-课程按 A 网络与协议 → B 可靠聊天 → C 渲染优化推进。浏览器、网络观察和 CLI 直接导入同一组学员函数。旧 `lesson` 独立习题保留作补充，不作为贯穿项目的验收。
+课程按 A 网络与协议 → B 可靠聊天 → C 渲染优化推进。浏览器、网络观察和 CLI 直接导入同一组学员函数。`lesson 01`–`03` 是 S1–S3 补充练习的独立习题（`workshop/mini-chat/`），不作为贯穿项目的验收。
 
 ```bash
 pnpm dev:stream-render
 pnpm --filter stream-render-lab practice test utf8
 pnpm --filter stream-render-lab practice test
 pnpm --filter stream-render-lab practice test --reference
+pnpm --filter stream-render-lab practice measure
 ```
 
 `practice test` 检查当前学员代码，可限定 `utf8`、`sse`、`provider`、`lifecycle`、`batch`。起点能跑普通回答，但故意留有边界缺口，初始失败属于练习；修改对应文件再验收。页面按钮与 CLI 使用同一个断言集。工程 `test` 检查参考契约及装配，不能替代自己的 practice 验收。
+
+`practice measure` 用固定到达节奏和虚拟帧，比较立即发布、学员 `src/my-chat/publish.ts` 与参考实现的输入次数、发布次数、等待时间和最终正文是否完整；正文丢失时命令失败。它只测发布逻辑，不经过渲染引擎或 React。
 
 教学端点 `/api/teaching?mode=stream` 不读取 Key、不调用模型、不根据输入生成答案。模式有 stream、split、buffered、truncated、error。服务端主动模拟缓冲或拆分；实际 reader.read 可能合并，不能据此推断 TCP 分段。验收另用固定切分与虚拟帧时钟复现边界，不是网络或绘制测速。
 

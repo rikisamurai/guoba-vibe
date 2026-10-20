@@ -1,0 +1,46 @@
+---
+title: C3 · 复用语义不变的块
+description: 用流式 Markdown 的跨块反例验证引用复用，而不只检查文本是否相同。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 尾段在增长，前面的段落真的没变吗？
+
+**集成配置：** `src/my-chat/render-policy.ts` 保持 M2。**算法入口：** `src/markdown/preview.ts` 的 reuseStableBlocks。下面路径相对 `apps/stream-render-lab/`。
+
+## 第一步：观察不必要的前缀更新
+
+在 <LabLink path="/lab">渲染实验台</LabLink> 用三段文字对比 M1、M2。尾段增长时检查前缀 blocks 的引用与渲染工作。
+
+本课不复习 memo 的语法，而是问它需要什么输入契约：哪些节点可以保持引用，哪些看似相同但语义已经变化？
+
+## 第二步：给引用复用一个反例
+
+先写引用链接，后追加定义；或者在末尾追加 Setext 标题下划线。后续字符可能重新解释前面的结构。
+
+打开 `reuseStableBlocks`，检查类型、原文、位置和语义条件。只比较 raw 字符串会漏掉后到定义带来的含义变化。
+
+## 第三步：检查 React 的另一半契约
+
+打开 `src/rendering/render-document.tsx` 的 BlockView。它除了节点引用，还需要考虑终态与重型渲染结果。
+
+如果最终高亮或图表没有出现，不能只因为 raw 没变就跳过渲染。引用稳定是减少工作的手段，语义正确才是约束。
+
+## 第四步：让反例进入测试
+
+在 `src/markdown/markdown.test.ts` 找到 keeps unchanged block identity 与相关语义回退用例，添加一个你关心的后到结构。分别断言：无变化前缀保持引用；受影响的块得到正确新语义。
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/markdown/markdown.test.ts src/rendering/render-document.test.tsx
+```
+
+预期不能用“所有块引用不变”作为成功标准，应该只复用真正不变的部分。
+
+## 第五步：分开报告两种工作
+
+在 <LabLink path="/profiler">性能实验</LabLink> 使用“大量独立段落”语料，对比 M1 与当前“我的实现”。检查 React commit / 渲染耗时与累计解析字符量。
+
+M2 仍可能全文解析，所以“复用了块”不等于“解析变成线性”。下一课才进一步减少重复处理的输入。
+
+[下一课：C4 · 只重算变化的尾部 →](/learn/c4-suffix-reparse)

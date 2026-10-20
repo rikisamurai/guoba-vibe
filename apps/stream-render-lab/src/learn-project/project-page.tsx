@@ -126,7 +126,7 @@ export default function ProjectPage() {
       <AcceptancePanel key={source} source={source} />
       <p>
         <a href={`/playground?demo=network-inspector&source=${source}`}>逐次观察网络数据 →</a> ·{' '}
-        <a href={`${course}/learn/18-capstone`}>项目验收步骤 →</a>
+        <a href={`${course}/learn/b5-capstone`}>项目验收步骤 →</a>
       </p>
       <p>
         <a href="/chat">进阶：连接真实模型</a>（需要服务端配置 Key；教学页不发送你的问题）

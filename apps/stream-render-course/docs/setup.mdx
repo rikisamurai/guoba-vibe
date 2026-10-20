@@ -20,7 +20,7 @@ node --version
 corepack pnpm --version
 ```
 
-确认包含 `apps/stream-render-course`、`apps/stream-render-lab`、`apps/stream-render-contract` 和 `src/my-chat/` 练习。课程、服务端和 Lab 必须来自同一版本；尚未提交发布的本地改动不会出现在远端 clone 中。
+确认包含 `apps/stream-render-course`、`apps/stream-render-lab`、`packages/stream-render-contract` 和 `src/my-chat/` 练习。课程、服务端和 Lab 必须来自同一版本；尚未提交发布的本地改动不会出现在远端 clone 中。
 
 若 corepack 不可用，可用现有 Node 版本管理环境安装 `pnpm@11.3.0`。不要为了依赖报错删除锁文件或盲目加 sudo。
 
@@ -69,4 +69,4 @@ pnpm --filter stream-render-lab practice test utf8
 | mine 部分失败        | 对应 `src/my-chat/` 模块，这是课程任务              |
 | Live Chat 未开启     | 可选真实模型入口，主线使用 `/project`               |
 
-[进入 A1 · 从真实 HTTP 开始 →](/learn/07-http)
+[进入 A1 · 从真实 HTTP 开始 →](/learn/a1-http)

@@ -38,11 +38,11 @@ pnpm --filter stream-render-lab practice test --reference
 | `src/my-chat/decode.ts`        | 字节切开中文和 emoji 时不乱码      |
 | `src/my-chat/parse-events.ts`  | 半行、CRLF、注释和空行正确组成事件 |
 | `src/my-chat/read-event.ts`    | 从服务商事件提取正文与结束信息     |
-| `src/my-chat/read-answer.ts`   | 读取响应、处理取消与 EOF           |
+| `src/my-chat/read-answer.ts`   | 判断 EOF 是完成还是截断            |
 | `src/my-chat/publish.ts`       | 合并更新，结束前交出尾部           |
 | `src/my-chat/render-policy.ts` | 选择渲染策略，验证正确性与成本     |
 
-这些模块由浏览器和练习验收共同使用，改动会留到后续课程。渲染策略复用项目现有引擎；调整策略不等于你重新实现了 Markdown 解析器。
+这些模块由浏览器和练习验收共同使用，改动会留到后续课程。读取循环、取消与 HTTP 状态检查在共享的 `src/practice/consume-response.ts`，B1 会带你读它。渲染策略复用项目现有引擎；调整策略不等于你重新实现了 Markdown 解析器。
 
 ## 第四步：建立一个最小直觉
 
@@ -54,8 +54,8 @@ pnpm --filter stream-render-lab practice test --reference
 
 ## 接下来怎么走
 
-先跟 A1 从真实 HTTP 开始，再解决 A2–A4 的解码与协议边界。B 段完成可靠聊天，C 段再测量并优化。S1–S3 是按需补充材料，不必从旧章节编号逐一读起。
+先跟 A1 从真实 HTTP 开始，再解决 A2–A4 的解码与协议边界。B 段完成可靠聊天，C 段再测量并优化。S1–S3 是按需补充材料，不必先读。
 
 **完成检查：** 你能找到自己的源文件，知道当前验收失败属于学习任务，也能区分固定切分验收与真实网络观察。
 
-[进入 A1 · HTTP：第一段数据从哪来 →](/learn/07-http)
+[进入 A1 · HTTP：第一段数据从哪来 →](/learn/a1-http)

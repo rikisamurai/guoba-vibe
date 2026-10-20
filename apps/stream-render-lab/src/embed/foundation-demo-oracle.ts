@@ -1,5 +1,5 @@
-import type { SseEvent } from '../../workshop/mini-chat/05-sse/contract'
-import type { ChatCompletionEvent } from '../../workshop/mini-chat/06-chat-completions/contract'
+import type { ChatCompletionEvent } from './foundation/chat-completions'
+import type { SseEvent } from './foundation/sse'
 
 export function expectedSseFromFixture(chunks: readonly Uint8Array[]) {
   const lines = completeFixtureLines(decodeFixture(chunks).replace(/^\uFEFF/, ''))

@@ -1,5 +1,6 @@
 import { batchChecks } from './batch-checks'
 import { lifecycleChecks } from './lifecycle-checks'
+import { sseChecks } from './sse-checks'
 import type { Implementation } from './types'
 
 export interface PracticeCheck {
@@ -20,7 +21,7 @@ export interface CheckResult {
   actual: string
 }
 const encode = (text: string) => new TextEncoder().encode(text)
-const protocolChecks: PracticeCheck[] = [
+const utf8Checks: PracticeCheck[] = [
   {
     id: 'utf8-split',
     group: 'utf8',
@@ -46,49 +47,8 @@ const protocolChecks: PracticeCheck[] = [
       return [decoder.push(Uint8Array.of(0xe4)), decoder.finish()]
     },
   },
-  {
-    id: 'sse-split',
-    group: 'sse',
-    title: '半条事件暂存，两条事件拆开',
-    file: 'parse-events.ts',
-    expected: [[], ['一', '二']],
-    run(impl) {
-      const parser = impl.createEventParser()
-      return [parser.push('data: 一\n'), parser.push('\ndata: 二\n\n')]
-    },
-  },
-  {
-    id: 'sse-crlf',
-    group: 'sse',
-    title: 'CRLF 跨读取边界仍派发',
-    file: 'parse-events.ts',
-    expected: ['一'],
-    run(impl) {
-      const parser = impl.createEventParser()
-      return [...parser.push('data: 一\r'), ...parser.push('\n\r'), ...parser.push('\n')]
-    },
-  },
-  {
-    id: 'sse-fields',
-    group: 'sse',
-    title: '忽略注释，合并多行 data',
-    file: 'parse-events.ts',
-    expected: ['一\n二'],
-    run(impl) {
-      return impl.createEventParser().push(': ping\nevent: message\ndata: 一\ndata: 二\n\n')
-    },
-  },
-  {
-    id: 'sse-eof',
-    group: 'sse',
-    title: 'EOF 丢弃未由空行结束的事件',
-    file: 'parse-events.ts',
-    expected: [],
-    run(impl) {
-      const parser = impl.createEventParser()
-      return [...parser.push('data: unfinished\n'), ...parser.finish()]
-    },
-  },
+]
+const providerChecks: PracticeCheck[] = [
   {
     id: 'provider-content',
     group: 'provider',
@@ -132,8 +92,41 @@ const protocolChecks: PracticeCheck[] = [
       return read('[DONE]').outcome?.kind
     },
   },
+  {
+    id: 'provider-filter',
+    group: 'provider',
+    title: '内容过滤也不是完整回答',
+    file: 'read-event.ts',
+    expected: 'incomplete',
+    run(impl) {
+      const read = impl.createEventReader()
+      read('{"choices":[{"index":0,"delta":{},"finish_reason":"content_filter"}]}')
+      return read('[DONE]').outcome?.kind
+    },
+  },
+  {
+    id: 'provider-error',
+    group: 'provider',
+    title: '服务商错误包不当作空正文',
+    file: 'read-event.ts',
+    expected: 'thrown',
+    run(impl) {
+      try {
+        impl.createEventReader()('{"error":{"message":"rate limited"}}')
+        return 'accepted'
+      } catch {
+        return 'thrown'
+      }
+    },
+  },
 ]
-export const practiceChecks = [...protocolChecks, ...lifecycleChecks, ...batchChecks]
+export const practiceChecks = [
+  ...utf8Checks,
+  ...sseChecks,
+  ...providerChecks,
+  ...lifecycleChecks,
+  ...batchChecks,
+]
 export async function runAcceptance(
   implementation: Implementation,
   group?: string,
