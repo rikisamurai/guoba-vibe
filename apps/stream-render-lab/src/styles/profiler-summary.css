@@ -1,0 +1,113 @@
+.profile-results > header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.profile-results h2 {
+  margin: 5px 0;
+  font-size: 25px;
+}
+
+.profile-results > header p:last-child {
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.profile-results > header > div:last-child {
+  display: flex;
+  gap: 7px;
+}
+
+.profile-results > header button {
+  padding: 9px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.profile-results > header button.primary {
+  border-color: #12221f;
+  color: #fff;
+  background: #12221f;
+}
+
+.profile-conclusion {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 14px 0;
+  padding: 12px 14px;
+  border: 1px solid #9fd6ca;
+  border-radius: 7px;
+  background: #eaf8f5;
+}
+
+.profile-conclusion strong {
+  color: #008f7d;
+  font: 600 10px var(--font-mono);
+}
+
+.profile-conclusion p {
+  color: #45665f;
+}
+
+.profile-conclusion b {
+  color: #006f61;
+}
+
+.profile-result-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.profile-result-cards article {
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.profile-result-cards small {
+  color: var(--ink-faint);
+  font: 600 8px var(--font-mono);
+}
+
+.profile-result-cards article > div {
+  display: flex;
+  gap: 10px;
+  margin: 11px 0 6px;
+}
+
+.profile-result-cards span {
+  flex: 1;
+  color: var(--ink-faint);
+  font-size: 9px;
+}
+
+.profile-result-cards b {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink);
+  font: 600 15px var(--font-mono);
+}
+
+.profile-result-cards article > strong {
+  color: #008f7d;
+  font: 600 17px var(--font-mono);
+}
+
+.profile-result-cards article > strong.is-regression,
+.profile-result-cards article > strong.is-unavailable {
+  color: #c35b38;
+}
+
+.profile-result-cards p {
+  margin-top: 7px;
+  color: var(--ink-soft);
+  font-size: 9px;
+}

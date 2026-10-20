@@ -1,0 +1,61 @@
+---
+title: A2 · 字节：中文被切开了
+description: 修改项目真实使用的解码器，修复任意字节切分下的中文与 emoji。
+---
+
+import { LabLink } from '../../components/lab-link'
+import { LessonDemo } from '../../components/lesson-demo'
+
+# 一次 read，没有义务交给你一个完整字符
+
+**修改文件：** `apps/stream-render-lab/src/my-chat/decode.ts`。输入是字节片段，输出是解码文本。沿用上节的同一个 Mini Chat。
+
+## 第一步：先让它失败
+
+```bash
+pnpm --filter stream-render-lab practice test utf8
+```
+
+初始实现没有保留跨 chunk 的 UTF-8 解码状态。在 <LabLink path="/project?source=mine">我的 Mini Chat</LabLink> 运行当前实现验收，查看 UTF-8 失败项的期望与实际值。固定输入逐字节交付中文与 emoji，预期稳定复现替换字符；普通请求“碰巧正常”不算修好。
+
+## 第二步：看清字节与字符
+
+下面的小实验单独演示相同字节的两种解码方式，**运行课程参考模型，不读取你的 exercise**。要验收自己的代码，仍用上面的观察器和 practice 命令。
+
+<LessonDemo demoId="byte-lab" presetId="byte-lab" />
+
+拖动切点，观察第一段可能还不能产出文字。等待后续字节是正确行为，不能为了“每次都显示”强行解码半个字符。
+
+## 第三步：把解码状态留在同一次响应内
+
+打开 `decode.ts`，把 TextDecoder 的创建放到一次解码会话中，而不是每个 chunk 中。核心顺序是：
+
+```ts
+const decoder = new TextDecoder()
+const first = decoder.decode(chunkA, { stream: true })
+const second = decoder.decode(chunkB, { stream: true })
+const tail = decoder.decode()
+```
+
+按文件已有接口保存同一个 decoder。收到片段时保留未完成字符；到 EOF 时执行最后一次 flush。每次新请求重新创建会话，不能把上一条回答的残余字节带进下一轮。
+
+## 第四步：验证任意切点
+
+```bash
+pnpm --filter stream-render-lab practice test utf8
+pnpm --filter stream-render-lab practice test utf8 --reference
+```
+
+预期自己的 UTF-8 验收通过，输出与参考一致。其余 SSE、终态和合帧测试此时可以仍未通过；按模块定位，不要通过删除断言掩盖问题。
+
+再次运行页面中的验收。然后在 <LabLink path="/playground?demo=network-inspector&source=mine">我的网络观察器</LabLink> 发起拆分场景，查看真实 read。源文件保存后由 Lab 热更新，确认仍选择“我的实现”；真实读取边界可能变化。
+
+## 第五步：说明收益和边界
+
+解码器只保证字节正确还原为文本，不保证文本刚好是完整 SSE 行或 JSON。下一层必须继续累积。无效 UTF-8 的替换或抛错策略是另外的协议决定，不应混淆“合法字符被拆开”与“输入本来就损坏”。
+
+**验收：** 中文和 emoji 在任意合法切点都还原为同一原文；一个 read 也允许输出空字符串。
+
+参考：[TextDecoder.decode](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/decode)。
+
+[下一课：A3 · SSE：半行不是一个事件 →](/learn/a3-sse)

@@ -1,0 +1,51 @@
+---
+title: B4 · 安全显示与协议终态
+description: 验证不可信输出、EOF 与完成证据，保持真实模型密钥在服务端。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 两条边界：能显示，不等于可信；读完，不等于成功
+
+**自己的文件：** `src/my-chat/read-event.ts`、`read-answer.ts`。安全显示由共享 `src/rendering/` 负责；路径均相对 `apps/stream-render-lab/`。
+
+## 第一步：用协议反例验收自己的终态
+
+```bash
+pnpm --filter stream-render-lab practice test provider
+pnpm --filter stream-render-lab practice test lifecycle
+```
+
+对每一个结束用例写出原因：有明确完成证据、服务商说不完整、还是在证据到达前 EOF？预期这些状态不能全变成 completed。
+
+在 <LabLink path="/project?source=mine">我的 Mini Chat</LabLink> 用中途断开验证可见结果。保留已经收到的正文，明确展示未完整结束；不要用空字符串代替错误诊断。
+
+## 第二步：输入不可信 Markdown
+
+打开 <LabLink path="/lab">渲染实验台</LabLink>，输入原始 HTML 与 `javascript:` 协议链接。预期标签不执行脚本，危险链接不会成为可执行入口。
+
+找到 `src/rendering/safe-url.ts` 和 `render-node.tsx`：检查 URL 允许列表与原始 HTML 的惰性显示。正文来自模型也仍是不可信输入，不能直接 dangerouslySetInnerHTML。
+
+## 第三步：加一条具体安全用例
+
+在渲染器测试中加入大小写混合或含空白的危险链接，验证允许列表经过解析仍生效，再运行：
+
+```bash
+pnpm --filter stream-render-lab exec vitest run src/rendering/render-document.test.tsx
+```
+
+这条测试验证共享显示边界，不覆盖服务端权限。不要把前端安全显示测试扩大为整套产品安全认证。
+
+## 第四步：保持终态之前的最后一次发布
+
+读完 `src/my-chat/publish.ts` 的结束与取消接口。完成时需要交出已接受但未显示的尾部；停止也要由上层决定先保留尾部，再取消后续工作。C1 将用虚拟时钟验证这个时序。
+
+如果错误状态出现后又回到接收中，检查剩余帧回调，不能只修状态文案。
+
+## 第五步：划清真实服务边界
+
+固定教学端点无需 Key。可选真实模型从服务端 `.env.local` 读取密钥，前端不保存。公开部署前另需鉴权、并发与资源限制；功能开关不是访问控制。
+
+**验收：** 能解释协议结束与 EOF 的差异，能证明不可信 HTML / URL 不执行，也知道测试覆盖的是哪一层。
+
+[下一课：B5 · 验收我的 Mini Chat →](/learn/b5-capstone)

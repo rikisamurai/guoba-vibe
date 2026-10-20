@@ -1,0 +1,61 @@
+---
+title: 00 · 从同一个 Mini Chat 开始
+description: 五分钟建立学习终点，确认我的源码、浏览器实验和验收测试指向同一个实现。
+---
+
+import { LabLink } from '../../components/lab-link'
+import { LessonDemo } from '../../components/lesson-demo'
+
+<p className="sr-kicker">START HERE · 面向已有前端经验的开发者</p>
+
+# 你会一路改好同一个 Mini Chat
+
+目标不是再学一次 React，而是把一次 HTTP 响应可靠地变成持续增长的界面。先看终点，再逐层拆开：**字节 → 字符 → 事件 → 正文 → 状态 → 渲染**。
+
+## 第一步：运行参考项目
+
+按 [环境安装](/setup) 启动服务，打开 <LabLink path="/project?source=reference">参考 Mini Chat</LabLink>，发送一条消息，再依次尝试缓冲、中途断开、停止和重试。
+
+预期：回答逐步出现；停止保留已有内容；连接提前结束会标记截断。这里使用真实本地 HTTP 与固定回答，输入不会发给模型。
+
+## 第二步：切到我的实现
+
+打开 <LabLink path="/project?source=mine">我的 Mini Chat</LabLink>。普通场景可以运行，但有意保留了一些缺陷。点击页面中的“运行当前实现验收”，记录第一处失败。再打开 <LabLink path="/playground?demo=network-inspector&source=mine">网络观察器</LabLink>，发起真实请求，看看字节怎样变成正文。
+
+```bash
+pnpm --filter stream-render-lab practice test
+pnpm --filter stream-render-lab practice test --reference
+```
+
+第一条运行 `src/my-chat/` 中你的实现，初始失败是待完成的任务。第二条验证参考实现，应全部通过。两条检查不同代码；参考通过不能说明你的代码已经修好。
+
+## 第三步：认识自己的工作区
+
+下面路径均相对 `apps/stream-render-lab/`：
+
+| 文件                           | 本轮学习解决什么                   |
+| ------------------------------ | ---------------------------------- |
+| `src/my-chat/decode.ts`        | 字节切开中文和 emoji 时不乱码      |
+| `src/my-chat/parse-events.ts`  | 半行、CRLF、注释和空行正确组成事件 |
+| `src/my-chat/read-event.ts`    | 从服务商事件提取正文与结束信息     |
+| `src/my-chat/read-answer.ts`   | 判断 EOF 是完成还是截断            |
+| `src/my-chat/publish.ts`       | 合并更新，结束前交出尾部           |
+| `src/my-chat/render-policy.ts` | 选择渲染策略，验证正确性与成本     |
+
+这些模块由浏览器和练习验收共同使用，改动会留到后续课程。读取循环、取消与 HTTP 状态检查在共享的 `src/practice/consume-response.ts`，B1 会带你读它。渲染策略复用项目现有引擎；调整策略不等于你重新实现了 Markdown 解析器。
+
+## 第四步：建立一个最小直觉
+
+下面对比使用固定文字与模拟时间。点击单步或运行，观察首次可见和全部完成的差别。
+
+<LessonDemo demoId="first-look" presetId="first-look" />
+
+预期：两边最终相同，流式更早显示已有内容；这不能证明模型更快生成了整份回答。熟悉这个区别可以直接继续主线。
+
+## 接下来怎么走
+
+先跟 A1 从真实 HTTP 开始，再解决 A2–A4 的解码与协议边界。B 段完成可靠聊天，C 段再测量并优化。S1–S3 是按需补充材料，不必先读。
+
+**完成检查：** 你能找到自己的源文件，知道当前验收失败属于学习任务，也能区分固定切分验收与真实网络观察。
+
+[进入 A1 · HTTP：第一段数据从哪来 →](/learn/a1-http)

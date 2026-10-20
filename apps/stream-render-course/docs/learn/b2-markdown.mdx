@@ -1,0 +1,49 @@
+---
+title: B2 · 从正文到 Markdown
+description: 在自己的项目中分清原文、解析文档与 React 显示，先建立安全的正确性基线。
+---
+
+import { LabLink } from '../../components/lab-link'
+
+# 正文收对了，显示结构还可能出错
+
+**项目入口：** `apps/stream-render-lab/src/my-chat/render-policy.ts`。共享渲染器在 `src/markdown/` 与 `src/rendering/`。本课先理解并验证基线，预览和增量优化放在 C 段。
+
+## 第一步：对照原文与显示
+
+在 <LabLink path="/project?source=mine">我的 Mini Chat</LabLink> 完成一次回答，展开原文。检查 Markdown 标记仍在原文中，显示区域则有粗体和列表。
+
+预期：原文保存事实，显示层解释它；渲染器不能为了让页面好看而改写已经接受的正文。
+
+## 第二步：定位数据边界
+
+先在 `src/learn-project/use-mini-chat.ts` 找到传给引擎的 profile，再到 `src/engine/run-model.ts` 跟踪 Markdown 解析。最后看 `src/learn-project/answer-view.tsx` 与 `src/rendering/render-document.tsx`：它们把引擎输出的文档节点显示为 React 元素。
+
+记录两个检查点：哪里选择解析策略；哪里创建 block 对应的组件。最终解析基线在 `src/markdown/canonical.ts`。`render-policy.ts` 选择项目已有策略，这属于集成实践，不是从零编写 Markdown 解析器。
+
+## 第三步：制造半截语法
+
+在 `api/teaching.ts` 中把一个粗体内容临时拆成“**流式”和“回答**”两段。重新发送，暂停观察前半段，然后恢复示例。
+
+这里改变的是服务端事件文本；不要顺手修改 UTF-8 或 SSE 解析器。最终正文正确而中间预览跳变，故障层已经在渲染端。
+
+基线允许中间结构随后续文本变化。C2 再比较保守显示与预览修补的体验取舍。
+
+## 第四步：测试正确性基线
+
+```bash
+pnpm --filter stream-render-lab practice test provider
+pnpm --filter stream-render-lab exec vitest run src/markdown/markdown.test.ts src/rendering/render-document.test.tsx
+```
+
+第一条检查自己的正文提取；第二条检查共享解析与渲染器，不能据此宣称自己写了一个解析器。预期最终内容、结构、安全链接与原始 HTML 处理通过现有断言。
+
+## 第五步：保留一个有意义的反例
+
+在共享渲染测试中补充你业务中常见的 Markdown 片段，如带代码的列表，断言最终渲染语义。添加的是行为用例，不是整页快照。
+
+再在浏览器展示相同片段，确认源码、测试和页面讨论的是同一个结构。半截预览可以临时修补，但任何修补都不能写回 text。
+
+**验收：** 能判断乱码属于解码层、半个 JSON 属于事件层、半截粗体跳变属于显示层，不再把三个问题都用“加防抖”处理。
+
+[下一课：B3 · 接收时也能正常阅读 →](/learn/b3-chat-behavior)

@@ -1,0 +1,63 @@
+.chat-composer {
+  position: sticky;
+  z-index: 3;
+  bottom: 18px;
+  width: min(820px, calc(100% - 40px));
+  margin: -128px auto 18px;
+  padding: 12px;
+  border: 1px solid var(--rule-dark);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 16px 40px rgb(38 35 28 / 16%);
+  backdrop-filter: blur(12px);
+}
+.chat-composer__controls,
+.chat-composer__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.chat-composer__controls label {
+  color: var(--ink-faint);
+  font: 9px/1 var(--font-mono);
+  text-transform: uppercase;
+}
+.chat-composer__controls select {
+  min-height: 36px;
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  background: #fff;
+  font: 10px/1 var(--font-mono);
+}
+.chat-composer__controls span,
+.chat-composer__footer small {
+  color: var(--ink-faint);
+  font: 8px/1.4 var(--font-mono);
+}
+.chat-composer textarea {
+  width: 100%;
+  min-height: 48px;
+  resize: vertical;
+  margin: 4px 0;
+  padding: 7px 2px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+.chat-composer .button {
+  min-width: 104px;
+  min-height: 38px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--rust);
+  color: #fff;
+  font: 600 10px/1 var(--font-mono);
+}
+.chat-composer .button--stop {
+  background: var(--scope);
+  color: var(--signal);
+}
+.chat-composer .button:disabled {
+  opacity: 0.42;
+}

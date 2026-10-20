@@ -1,0 +1,162 @@
+@media (max-width: 760px) {
+  .site-header {
+    min-height: 66px;
+  }
+
+  .brand {
+    padding: 12px 18px;
+  }
+
+  .brand__stamp {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand small,
+  .header-bench {
+    display: none;
+  }
+
+  .site-nav {
+    overflow-x: auto;
+  }
+
+  .site-nav__link {
+    min-width: 88px;
+    padding-inline: 12px;
+  }
+
+  .page {
+    padding-inline: 18px;
+  }
+
+  .page-hero,
+  .page-hero--compact {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 38px;
+    padding-block: 52px;
+  }
+
+  .page-hero__copy h1,
+  .page-hero--compact h1 {
+    font-size: clamp(38px, 12vw, 56px);
+  }
+
+  .scope__screen {
+    min-height: 170px;
+  }
+
+  .scope svg {
+    height: 180px;
+  }
+
+  .scope__ticks {
+    display: none;
+  }
+
+  .manifesto-strip,
+  .manual-grid,
+  .section-heading,
+  .field-note,
+  .lesson-layout,
+  .repro-columns,
+  .reading-guide,
+  .reading-guide > div,
+  .bench-traces,
+  .bench-caveat {
+    grid-template-columns: 1fr;
+  }
+
+  .manifesto-strip p {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-heading {
+    gap: 18px;
+  }
+
+  .field-note {
+    align-items: start;
+  }
+
+  .field-note .primary-link {
+    justify-self: start;
+  }
+
+  .margin-note {
+    position: static;
+  }
+
+  .evidence-stack {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .stage-selector__grid,
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .repro-sheet > header {
+    grid-template-columns: 1fr;
+  }
+
+  .repro-sheet > header div,
+  .repro-sheet > header div:first-child,
+  .repro-sheet > header div:last-child {
+    padding: 10px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .case-nav {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .case-nav > span {
+    margin-right: 0;
+  }
+
+  .chat-inspector {
+    display: block;
+  }
+
+  .chat-inspector > dl {
+    border-block: 1px solid var(--scope-rule);
+    border-inline: 0;
+  }
+
+  .chat-demo__messages {
+    min-height: 420px;
+    padding: 28px 20px;
+  }
+
+  .chat-message {
+    max-width: 92%;
+  }
+
+  .chat-composer {
+    grid-template-columns: 1fr auto;
+  }
+
+  .chat-composer select {
+    grid-column: 1 / -1;
+  }
+
+  .bench-board__header,
+  .bench-board__header dl,
+  .site-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .bench-table th,
+  .bench-table td {
+    padding: 14px 16px;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,72 @@
+---
+title: 环境安装与运行
+description: 启动同一版本的课程和 Lab，确认真实请求以及自己的练习验收。
+---
+
+import { LabLink } from '../components/lab-link'
+
+# 把课程、项目和验收一起跑起来
+
+所有命令在仓库根目录执行。需要 Node.js ≥ 24、pnpm 11.3.0；版本以根目录 package.json 为准。
+
+## 第一步：准备同一版本的代码
+
+已有工作区就直接使用。新环境从 [项目仓库](https://github.com/rikisamurai/guoba-vibe) 获取课程指定版本：
+
+```bash
+git clone https://github.com/rikisamurai/guoba-vibe.git
+cd guoba-vibe
+node --version
+corepack pnpm --version
+```
+
+确认包含 `apps/stream-render-course`、`apps/stream-render-lab`、`packages/stream-render-contract` 和 `src/my-chat/` 练习。课程、服务端和 Lab 必须来自同一版本；尚未提交发布的本地改动不会出现在远端 clone 中。
+
+若 corepack 不可用，可用现有 Node 版本管理环境安装 `pnpm@11.3.0`。不要为了依赖报错删除锁文件或盲目加 sudo。
+
+## 第二步：安装并启动
+
+```bash
+pnpm install
+pnpm dev:stream-render
+```
+
+脚本同时启动课程 5173 与 Lab 5174。保持终端运行，停止时按 Ctrl+C。已有依赖时再次启动不必重新安装。
+
+[课程入口](/learn/00-quick-start) · <LabLink path="/project?source=mine">我的 Mini Chat</LabLink> · <LabLink path="/playground?demo=network-inspector&source=mine">网络观察器</LabLink>
+
+## 第三步：确认正常请求可用
+
+在“我的实现”选择分段发送。预期正文陆续增长，普通完整回答可运行。Network 中 `/api/teaching?mode=stream` 应返回 `text/event-stream`。
+
+这里是真实本地 HTTP 与固定回答，无需 Key。普通场景通过只证明基础链路可用，还不覆盖随机字节边界、结束原因或合帧。
+
+## 第四步：确认验收加载自己的代码
+
+```bash
+pnpm --filter stream-render-lab practice test
+pnpm --filter stream-render-lab practice test --reference
+```
+
+自己的初始实现故意漏掉部分边界，第一条应暴露待修复项；参考实现应全部通过。每项结果会指出文件和输入输出。同一套验收也可以在 Mini Chat 中点击“运行当前实现验收”。
+
+主线按模块推进：
+
+```bash
+pnpm --filter stream-render-lab practice test utf8
+```
+
+完成 A2 再要求 utf8 通过；后续依次是 sse、provider、lifecycle、batch。不用为开始课程就把所有答案一次填完。
+
+## 第五步：知道去哪里排错
+
+| 现象                 | 先检查                                              |
+| -------------------- | --------------------------------------------------- |
+| 端口被占用           | 启动脚本报告的端口与自己的旧进程                    |
+| 课内实验一直加载     | 两个服务均在运行，且没有混用 localhost 与 127.0.0.1 |
+| teaching 返回 404    | 当前版本的 Lab dev server；改服务端插件后需要重启   |
+| reference 验收也失败 | 代码版本、依赖、测试输出，先排环境与基线            |
+| mine 部分失败        | 对应 `src/my-chat/` 模块，这是课程任务              |
+| Live Chat 未开启     | 可选真实模型入口，主线使用 `/project`               |
+
+[进入 A1 · 从真实 HTTP 开始 →](/learn/a1-http)

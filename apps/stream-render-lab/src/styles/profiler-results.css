@@ -1,0 +1,111 @@
+.profile-result-detail {
+  display: grid;
+  grid-template-columns: 1.35fr 0.65fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.profile-lanes,
+.profile-run-table {
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+}
+.profile-lanes header strong,
+.profile-lanes header span {
+  display: block;
+}
+.profile-lanes header span,
+.profile-run-table header span {
+  color: var(--ink-faint);
+  font: 8px var(--font-mono);
+}
+.profile-lane {
+  position: relative;
+  height: 27px;
+  margin-left: 76px;
+  border-bottom: 1px dashed #dce2dd;
+}
+.profile-lane > b {
+  position: absolute;
+  top: 7px;
+  left: -76px;
+  color: #6f7b77;
+  font: 7px var(--font-mono);
+}
+.profile-lane > em {
+  position: absolute;
+  top: 7px;
+  left: 4px;
+  color: var(--ink-faint);
+  font: 7px var(--font-mono);
+  font-style: normal;
+}
+.profile-segment {
+  position: absolute;
+  top: 8px;
+  min-width: 3px;
+  height: 8px;
+  border-radius: 2px;
+  background: #00a991;
+}
+.profile-segment--network {
+  background: #e9683b;
+}
+.profile-segment--decode {
+  background: #82b7ab;
+}
+.profile-segment--sse {
+  background: #56a89a;
+}
+.profile-segment--provider {
+  background: #279784;
+}
+.profile-segment--react {
+  background: #12221f;
+}
+.profile-segment--heavy {
+  background: #8e6fb1;
+}
+.profile-segment--long-task {
+  background: #bd3030;
+}
+.profile-lanes footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 7px 0 0 76px;
+  color: var(--ink-faint);
+  font: 7px var(--font-mono);
+}
+.profile-run-table header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 11px;
+}
+.profile-run-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.profile-run-table th,
+.profile-run-table td {
+  padding: 8px 5px;
+  border-bottom: 1px solid #e7ebe7;
+  text-align: right;
+  font: 8px var(--font-mono);
+}
+.profile-run-table th:first-child,
+.profile-run-table td:first-child {
+  text-align: left;
+}
+.profile-run-table th {
+  color: var(--ink-faint);
+}
+.profile-run-table td:last-child.is-improvement {
+  color: #008f7d;
+  font-weight: 600;
+}
+.profile-run-table td:last-child.is-regression,
+.profile-run-table td:last-child.is-unavailable {
+  color: #c35b38;
+  font-weight: 600;
+}

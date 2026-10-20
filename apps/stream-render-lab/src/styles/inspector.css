@@ -1,0 +1,54 @@
+.chat-inspector {
+  overflow: hidden;
+}
+
+.chat-inspector > summary {
+  padding: 18px 22px;
+  color: #a7b7b0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.chat-inspector > header,
+.chat-inspector > dl,
+.inspector-note {
+  padding: 22px;
+}
+
+.chat-inspector h2 {
+  margin-top: 5px;
+  font-size: 22px;
+}
+
+.chat-inspector dl {
+  display: grid;
+  gap: 8px;
+  border-block: 1px solid var(--scope-rule);
+}
+
+.chat-inspector dl div {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.chat-inspector dt {
+  color: #72867d;
+}
+
+.chat-inspector dd {
+  color: #cbd9d2;
+}
+
+.chat-inspector .metric-grid {
+  border: 0;
+  border-radius: 0;
+}
+
+.inspector-note {
+  color: #82968e;
+  font-size: 12px;
+}

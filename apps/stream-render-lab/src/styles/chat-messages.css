@@ -1,0 +1,129 @@
+.chat-empty {
+  margin: 90px auto 0;
+  max-width: 480px;
+  color: var(--ink-faint);
+  text-align: center;
+}
+.chat-user {
+  width: min(620px, 82%);
+  align-self: flex-end;
+  padding: 15px 18px;
+  border-radius: 14px 14px 3px;
+  background: #ecece8;
+}
+.chat-user small,
+.chat-run__header small {
+  color: var(--ink-faint);
+  font: 8px/1.4 var(--font-mono);
+  letter-spacing: 0.09em;
+}
+.chat-user p {
+  margin-top: 7px;
+  white-space: pre-wrap;
+}
+.chat-run {
+  width: min(820px, 96%);
+  align-self: flex-start;
+}
+.chat-run__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.chat-run__header > span:nth-child(2) {
+  display: grid;
+}
+.chat-run__avatar {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--scope);
+  color: #fff;
+  font: 10px/1 var(--font-mono);
+}
+.chat-run__status {
+  margin-left: auto;
+  padding: 5px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font: 8px/1 var(--font-mono);
+  text-transform: uppercase;
+}
+.chat-run__status--failed,
+.chat-run__status--truncated {
+  border-color: #c9644a;
+  color: #9c3e28;
+}
+.chat-reasoning {
+  margin-bottom: 12px;
+  border: 1px solid #aad9cf;
+  border-radius: 9px;
+  background: #effaf7;
+}
+.chat-reasoning summary {
+  display: flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  color: #146c60;
+  cursor: pointer;
+}
+.chat-reasoning summary small {
+  color: #568980;
+  font: 9px/1 var(--font-mono);
+}
+.chat-reasoning .render-document {
+  max-height: 260px;
+  overflow: auto;
+  padding: 0 16px 16px;
+}
+.chat-answer {
+  min-height: 96px;
+  padding: 20px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: #fff;
+  line-height: 1.75;
+}
+.chat-answer__pending {
+  color: var(--ink-faint);
+}
+.chat-run__notice {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border: 1px solid #d7a179;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #75452e;
+}
+.chat-run__notice--failed {
+  border-color: #df9b8c;
+  background: #fff1ee;
+  color: #863d31;
+}
+.chat-run__notice p {
+  margin-top: 3px;
+}
+.chat-run__notice details {
+  margin-top: 8px;
+  font: 10px/1.5 var(--font-mono);
+}
+.chat-run__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.chat-run__actions button {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: #fff;
+  font: 10px/1 var(--font-mono);
+}

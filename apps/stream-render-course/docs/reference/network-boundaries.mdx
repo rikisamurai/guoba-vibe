@@ -1,0 +1,121 @@
+---
+title: 参考 · 网络读取、事件与界面更新
+description: 主线任意阶段可查：一次流式回答经过哪些边界，每层由哪一课、哪个源文件负责。
+---
+
+import { LessonDemo } from '../../components/lesson-demo'
+
+<p className="sr-kicker">REFERENCE · 按需查阅</p>
+
+# 一次流式回答经过哪些边界
+
+这是参考页，不是一节课，也不是主线前置。做 A 段时遇到“读到了数据却没有字”“事件数和字数对不上”，回来对照这里的分层与术语。
+
+> 浏览器读到一次数据，不等于模型新增一次文本，也不等于界面产生一次显示文本状态更新。
+
+## 一个例子：两次读取，一条正文
+
+假设浏览器先后读到下面两个 chunks：
+
+```text
+第 1 次读取：data: {"choices":[{"delta":{"content":"Hel
+第 2 次读取：lo"}}]}\n\n
+```
+
+第二次读取结束后，SSE 解析器才拿到空行，因而可以派发一条完整事件；协议读取再从 JSON 的 `choices[].delta.content` 中取出文本 `Hello`。发布层还可以把它与紧随其后的文本增量合并，在下一帧一起交给界面。
+
+```text
+2 个 chunks
+→ 1 个 SSE event
+→ 1 个 choices[].delta.content："Hello"
+→ 可以先不更新，稍后与其他文本增量合并为 1 次显示文本状态更新
+```
+
+箭头两侧不是一一对应关系。读取边界可能切在 JSON 中间；一次读取也可能包含多条完整 SSE events；多个文本增量又可能合并为一次显示文本状态更新。
+
+## 每一层在哪一课、哪个文件
+
+路径相对 `apps/stream-render-lab/`。
+
+| 边界                         | 课程      | 你的文件或共享入口                                 |
+| ---------------------------- | --------- | -------------------------------------------------- |
+| `reader.read()` 的字节片段   | A1        | `src/practice/consume-response.ts`（共享读取循环） |
+| 字节 → 文本                  | A2        | `src/my-chat/decode.ts`                            |
+| 文本 → SSE event             | A3        | `src/my-chat/parse-events.ts`                      |
+| event → 正文增量与结束原因   | A4        | `src/my-chat/read-event.ts`                        |
+| EOF、截断与取消后的终态      | B1        | `src/my-chat/read-answer.ts`                       |
+| 正文 → 显示文本状态更新      | C1        | `src/my-chat/publish.ts`                           |
+| 显示文本 → Markdown 与 React | B2、C2–C6 | `src/my-chat/render-policy.ts`（选择共享引擎策略） |
+
+## 这些词分别来自哪里
+
+| 词语                          | 来源                                                                                                                             | 在本课程中的准确含义                                                                                                                                   |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **chunk**                     | [WHATWG Streams 标准](https://streams.spec.whatwg.org/#model)                                                                    | 从 `ReadableStream` 一次读到的一段数据。HTTP 响应体中通常是 `Uint8Array`；边界是任意的，不对应一个 TCP segment（TCP 报文段），也不保证是一条完整消息。 |
+| **SSE event**                 | [WHATWG HTML 的 Server-Sent Events 规范](https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream) | `text/event-stream` 按行解析后派发的一条事件。多个 `data:` 行可以组成同一事件，空行表示事件结束。                                                      |
+| **`choices[].delta.content`** | [DeepSeek Chat Completions API](https://api-docs.deepseek.com/api/create-chat-completion)                                        | Chat Completions 风格流式事件中的文本增量字段。它是服务商接口字段，不是 Web 协议的统一名称。                                                           |
+| **raw**                       | 本项目概念                                                                                                                       | 渲染引擎已经接受并按顺序拼接的模型正文。它记录内容事实，不因为显示较慢而丢字。                                                                         |
+| **visible**                   | 本项目概念                                                                                                                       | 当前准备交给界面显示的正文版本。它可以暂时落后于 `raw`，但响应结束时必须追平。                                                                         |
+| **显示文本状态更新**          | 本项目概念                                                                                                                       | 引擎把一个新的 `visible` 版本交给界面状态。它不等于 React 已提交 DOM 更新，也不等于浏览器已把像素绘制出来。                                            |
+
+## 三步观察实验
+
+下面的实验使用同一份可重复输入，同时运行 M0 与 M4。M0 每个文本增量都发布一次；M4 是本项目最完整的策略，包含从 M1 起引入的按帧合并（C1），也包含后续的预览、尾部解析和重型渲染。这个实验只观察合帧带来的更新次数差异，两者最后必须显示同一份回答。
+
+<LessonDemo demoId="quick-start" presetId="quick-start-burst" />
+
+### 观察一：读到 chunk，不代表正文立刻增加
+
+1. 点击“读取下一个 chunk”。
+2. 看 chunk 计数和读取时间线是否已经出现记录。
+3. 再看已接收文本（`raw`）：在完整 SSE event 形成前，它可能仍然没有增长。
+
+一条 SSE event 可以被拆到多个 chunks 中；在事件结束标记到达前，解析器不能把半截 JSON 当作模型内容。此时网络没有“卡住”，只是应用还没有得到一条可以安全解释的完整事件。
+
+### 观察二：已接收文本可以领先当前显示文本
+
+继续读取，直到完整 SSE event 带来一个文本增量。此时 `raw` 先增长；如果界面状态还没有更新，`visible` 会暂时落后。点击“显示已接收文本”，再看 `visible` 是否追上。
+
+如果 `raw` 是 104 个字符、`visible` 是 82 个字符，待显示的是 22 个字符，而不是又缺少了一条网络消息。
+
+### 观察三：先核对内容，再比较状态更新次数
+
+点击“继续到完整回复”，然后按顺序检查：
+
+1. M0 和 M4 的最终已接收文本是否完全相同；
+2. 两种策略的最终显示文本是否都追平已接收文本；
+3. 在前两项成立后，M4 的显示文本状态更新次数是否更少。
+
+前两项证明内容正确，第三项才是性能线索。如果只看“更新更少”，一个丢掉半句话的实现也可能看起来更快。这个结果也不等于 React commit 更少或 browser paint 更快；C6 的性能实验会分别测量这些阶段。
+
+## 完整边界
+
+```text
+ReadableStream 中的 chunk
+→ UTF-8 文本
+→ SSE event
+→ choices[].delta.content 与结束原因
+→ 已接收文本（raw）
+→ 当前显示文本（visible）
+→ 显示文本状态更新
+→ React 提交 DOM 与浏览器绘制画面
+```
+
+定位问题时先说出它落在哪一段：乱码在解码层，半个 JSON 在事件层，误报完成在终态层，高频更新在发布层，半截粗体跳变在渲染层。
+
+## 自测：下面哪句话正确
+
+- [ ] 一次 `reader.read()` 一定对应一个 TCP segment（TCP 报文段）。
+- [ ] 一条 SSE event 一定只包含一个字符。
+- [x] 多个 `choices[].delta.content` 可以合并为一次显示文本状态更新。
+- [ ] `raw` 暂时大于 `visible` 就表示丢字。
+
+答案是第三项。chunk 的边界不表达协议语义；文本增量的大小由服务商决定；显示文本何时更新又属于发布与渲染调度。
+
+## 本页没有证明什么
+
+- 没有观察真实 TCP segment；实验记录的是应用从 `ReadableStream` 读到的 chunk。真实本地 HTTP 读取请用网络观察器。
+- 没有证明一次显示文本状态更新等于一次 React commit 或一次 browser paint。
+- 没有证明 M4 在所有输入上都更快；M4 还做了 M1 没有的工作，比较方法见 C6。
+
+[回到 A1 · HTTP：第一段数据从哪来 →](/learn/a1-http) · [00 · 从同一个 Mini Chat 开始](/learn/00-quick-start)

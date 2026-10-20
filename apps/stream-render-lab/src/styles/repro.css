@@ -1,0 +1,157 @@
+.case-severity {
+  display: block;
+  min-width: 112px;
+  padding: 19px;
+  border: 2px solid var(--rust);
+  color: var(--rust-dark);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  text-align: center;
+  rotate: -4deg;
+}
+
+.case-severity strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 38px;
+}
+
+.repro-sheet {
+  margin-top: 38px;
+  padding: clamp(24px, 4vw, 50px);
+  border: 1px solid var(--rule-dark);
+  background: rgb(250 246 236 / 62%);
+  box-shadow: var(--shadow-paper);
+}
+
+.repro-sheet > header {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule-dark);
+}
+
+.repro-sheet > header div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 22px;
+  border-right: 1px solid var(--rule);
+  font-family: var(--font-mono);
+}
+
+.repro-sheet > header div:first-child {
+  padding-left: 0;
+}
+
+.repro-sheet > header div:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.repro-sheet > header span {
+  color: var(--ink-faint);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.repro-sheet > header strong {
+  color: var(--rust-dark);
+  font-size: 15px;
+}
+
+.repro-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(36px, 6vw, 86px);
+  padding-block: 46px;
+}
+
+.repro-columns h2 {
+  margin-top: 10px;
+  font-size: 27px;
+  letter-spacing: -0.035em;
+}
+
+.repro-code {
+  min-height: 145px;
+  margin: 27px 0 0;
+  padding: 24px;
+  border-radius: 5px;
+  background: var(--scope);
+  color: var(--signal);
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+
+.repro-steps {
+  display: grid;
+  gap: 0;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.repro-steps li {
+  display: flex;
+  gap: 15px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.repro-steps span {
+  color: var(--rust);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.diagnosis-table {
+  margin-top: 27px;
+  border-top: 1px solid var(--rule-dark);
+}
+
+.diagnosis-table div {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 15px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.diagnosis-table span {
+  color: var(--rust-dark);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.diagnosis-table p {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.repro-sheet > .scope {
+  box-shadow: none;
+}
+
+.repro-runner {
+  padding-top: 38px;
+  border-top: 1px solid var(--rule-dark);
+  scroll-margin-top: 24px;
+}
+
+.case-nav {
+  justify-content: flex-start;
+  gap: 34px;
+  margin-top: 34px;
+}
+
+.case-nav > span {
+  margin: 0 auto 0 0;
+}
+
+.case-nav a {
+  font-size: 9px;
+}
