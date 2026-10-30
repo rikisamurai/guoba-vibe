@@ -22,6 +22,7 @@ export function useArmedAction(timeoutMs = 3000): ArmedAction {
   useEffect(() => {
     if (!armedId) return
     const start = Date.now()
+    // oxlint-disable-next-line react/set-state-in-effect -- restarts the countdown alongside the timers this effect owns for the newly armed target
     setProgress(1)
 
     function onDocClick(event: MouseEvent) {

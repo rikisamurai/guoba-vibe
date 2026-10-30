@@ -13,7 +13,7 @@ describe('fxTweetUrl', () => {
 
 describe('mapFxTweet', () => {
   it('maps a video tweet: filters m3u8, sorts by bitrate desc, labels by height', () => {
-    const mapped = mapFxTweet(fxVideoTweet as RawFxResponse)
+    const mapped = mapFxTweet(fxVideoTweet)
     if (!mapped.ok) throw new Error('expected ok')
     expect(mapped.tweet.id).toBe('2070505379432456331')
     expect(mapped.tweet.authorHandle).toBe('chenbao11522')

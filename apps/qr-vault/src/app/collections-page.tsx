@@ -41,8 +41,10 @@ export function CollectionsPage() {
   )
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- resets the editable form draft when the selected collection or its stored values change
     setTitle(selectedCollection?.title ?? '')
     setDescription(selectedCollection?.description ?? '')
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- id is listed so switching collections resets the draft even when title/description match
   }, [selectedCollection?.id, selectedCollection?.title, selectedCollection?.description])
 
   function saveCollection() {
