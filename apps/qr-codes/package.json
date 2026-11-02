@@ -44,7 +44,7 @@
     "dotenv-cli": "^11.1.0",
     "drizzle-kit": "^0.31.11",
     "tailwindcss": "^4.3.3",
-    "typescript": "^5",
+    "typescript": "^6",
     "vitest": "^5.0.5"
   }
 }
