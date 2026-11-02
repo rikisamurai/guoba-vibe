@@ -106,7 +106,7 @@
 
 ## 🧑‍💻 Local development
 
-需要 Node `>=24` 与 pnpm `11.3.0`（仓库根 `.nvmrc` / `packageManager` 已锁，建议用 corepack 启用）。
+需要 Node `>=24` 与 pnpm `12.16.1`（仓库根 `.nvmrc` / `packageManager` 已锁，建议用 corepack 启用）。
 
 ```bash
 corepack enable
