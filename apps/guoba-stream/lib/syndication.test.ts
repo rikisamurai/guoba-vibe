@@ -26,7 +26,7 @@ describe('syndicationUrl', () => {
 
 describe('mapTweetResult', () => {
   it('maps a video tweet: filters m3u8, sorts by bitrate desc, labels by height', () => {
-    const mapped = mapTweetResult(videoTweet as RawTweetResult)
+    const mapped = mapTweetResult(videoTweet)
     if (!mapped.ok) throw new Error('expected ok')
     expect(mapped.tweet.authorHandle).toBe('elonmusk')
     expect(mapped.tweet.media).toHaveLength(1)
@@ -39,7 +39,7 @@ describe('mapTweetResult', () => {
   })
 
   it('maps an animated gif and skips photos', () => {
-    const mapped = mapTweetResult(gifTweet as RawTweetResult)
+    const mapped = mapTweetResult(gifTweet)
     if (!mapped.ok) throw new Error('expected ok')
     expect(mapped.tweet.media).toHaveLength(1)
     const media = mapped.tweet.media[0]

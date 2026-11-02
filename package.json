@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "lint-staged": "^17.6.0",
-    "oxfmt": "^0.52.0",
+    "oxfmt": "^0.75.0",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "simple-git-hooks": "^2.14.0"

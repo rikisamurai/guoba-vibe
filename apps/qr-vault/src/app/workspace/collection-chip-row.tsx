@@ -63,6 +63,7 @@ export function CollectionChipRow({
     const observer = new ResizeObserver(measure)
     observer.observe(el)
     return () => observer.disconnect()
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- chip set changes must re-measure rows even when the container size stays the same
   }, [collectionKey, uncategorizedCount])
 
   return (
