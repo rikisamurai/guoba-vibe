@@ -1,0 +1,136 @@
+.type-grid,
+.error,
+.report-export > div {
+  display: flex;
+}
+
+.inspector {
+  position: relative;
+  width: 320px;
+  border: 1px solid #111817;
+  border-radius: 4px;
+  padding: 16px;
+  background: #111817;
+  color: #fffdf6;
+}
+
+.inspector.empty {
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  color: #c8cfcc;
+  text-align: center;
+}
+
+.kind,
+.impact {
+  display: inline-block;
+  border-radius: 999px;
+  margin: 0 5px 11px 0;
+  padding: 4px 7px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.kind {
+  background: #e4e8e6;
+  color: #17201e;
+}
+
+.impact.breaking {
+  background: #ca4f3b;
+}
+
+.impact.review {
+  background: #d38a25;
+  color: #111817;
+}
+
+.inspector h3 {
+  margin: 0 0 13px;
+  overflow-wrap: anywhere;
+  font-size: 21px;
+}
+
+.type-grid {
+  gap: 7px;
+  margin-bottom: 13px;
+}
+
+.type-cell {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #3e4946;
+  border-radius: 3px;
+  padding: 10px;
+  background: #1b2523;
+}
+
+.type-cell span {
+  display: block;
+  margin-bottom: 4px;
+  color: #aeb9b5;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.type-cell strong {
+  overflow-wrap: anywhere;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 12px;
+}
+
+.inspector p {
+  margin: 0;
+  color: #d5dcda;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.error {
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e2aaa1;
+  margin: 15px 0 0;
+  padding: 12px;
+  background: #fff0ed;
+  color: #a33120;
+  font-weight: 800;
+}
+
+.report-export {
+  margin-top: 14px;
+  border: 1px solid #bfc2bc;
+  padding: 12px;
+  background: #fffdf6;
+}
+
+.report-export > div {
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.report-export h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.report-export textarea {
+  width: 100%;
+  min-height: 130px;
+}
+
+@media (max-width: 1050px) {
+  .inspector {
+    width: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .type-grid {
+    flex-direction: column;
+  }
+}

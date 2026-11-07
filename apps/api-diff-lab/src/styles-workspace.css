@@ -1,0 +1,161 @@
+.diff-panel {
+  padding: 18px;
+  background: #f0efe8;
+}
+
+.panel-title,
+.diff-workspace {
+  display: flex;
+}
+
+.panel-title {
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.panel-title p,
+.panel-title h2,
+.panel-title span {
+  margin: 0;
+}
+
+.panel-title p {
+  margin-bottom: 3px;
+  color: #2d63df;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.panel-title h2 {
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.1;
+}
+
+.panel-title span {
+  color: #69716e;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 11px;
+}
+
+.diff-workspace {
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.row-list {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.diff-group {
+  min-width: 0;
+  border: 1px solid #bfc2bc;
+  border-top-width: 4px;
+  border-radius: 4px;
+  padding: 10px;
+  background: #fffdf6;
+}
+
+.diff-group.changed {
+  border-top-color: #d38a25;
+}
+
+.diff-group.removed {
+  border-top-color: #ca4f3b;
+}
+
+.diff-group.added {
+  border-top-color: #2d63df;
+}
+
+.diff-group.unobserved {
+  border-top-color: #7655c4;
+}
+
+.diff-group h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 9px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.diff-group h3 span {
+  border-radius: 999px;
+  padding: 1px 6px;
+  background: #e9eae5;
+}
+
+.diff-group > p {
+  margin: 20px 0;
+  color: #858c89;
+  font-size: 12px;
+  text-align: center;
+}
+
+.diff-group button {
+  display: block;
+  width: 100%;
+  border: 1px solid #d1d3ce;
+  border-radius: 3px;
+  margin-top: 7px;
+  padding: 9px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
+}
+
+.diff-group button:hover {
+  border-color: #79827e;
+}
+
+.diff-group button.selected {
+  border-color: #2d63df;
+  box-shadow: inset 3px 0 #2d63df;
+}
+
+code,
+.diff-group small {
+  display: block;
+  overflow-wrap: anywhere;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+code {
+  color: #17201e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.diff-group small {
+  margin-top: 5px;
+  color: #68716e;
+  font-size: 10px;
+}
+
+@media (max-width: 1050px) {
+  .diff-workspace {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 760px) {
+  .diff-panel {
+    padding: 14px;
+  }
+
+  .panel-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .row-list {
+    grid-template-columns: 1fr;
+  }
+}
