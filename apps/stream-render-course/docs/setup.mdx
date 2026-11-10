@@ -7,7 +7,7 @@ import { LabLink } from '../components/lab-link'
 
 # 把课程、项目和验收一起跑起来
 
-所有命令在仓库根目录执行。需要 Node.js ≥ 24、pnpm 11.3.0；版本以根目录 package.json 为准。
+所有命令在仓库根目录执行。需要 Node.js ≥ 24，并使用根目录 `package.json` 中 `packageManager` 指定的 pnpm 版本。
 
 ## 第一步：准备同一版本的代码
 
@@ -22,7 +22,7 @@ corepack pnpm --version
 
 确认包含 `apps/stream-render-course`、`apps/stream-render-lab`、`packages/stream-render-contract` 和 `src/my-chat/` 练习。课程、服务端和 Lab 必须来自同一版本；尚未提交发布的本地改动不会出现在远端 clone 中。
 
-若 corepack 不可用，可用现有 Node 版本管理环境安装 `pnpm@11.3.0`。不要为了依赖报错删除锁文件或盲目加 sudo。
+若 Corepack 不可用，用现有 Node 版本管理环境安装 `packageManager` 指定的 pnpm 版本。不要为了依赖报错删除锁文件或盲目加 sudo。
 
 ## 第二步：安装并启动
 

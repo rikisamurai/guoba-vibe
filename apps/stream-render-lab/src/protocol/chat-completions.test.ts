@@ -26,6 +26,12 @@ function abortedStream(): AsyncIterable<SseEvent> {
   }
 }
 
+async function collectAborted() {
+  for await (const event of adaptChatCompletions(abortedStream())) {
+    throw new Error(`Unexpected event before abort: ${event.event.type}`)
+  }
+}
+
 describe('adaptChatCompletions', () => {
   it('fans one provider delta into ordered reasoning and answer events', async () => {
     const envelopes = await collect([
@@ -243,12 +249,6 @@ describe('adaptChatCompletions', () => {
   })
 
   it('lets cancellation aborts reach the engine instead of relabeling them', async () => {
-    const collectAborted = async () => {
-      for await (const event of adaptChatCompletions(abortedStream())) {
-        throw new Error(`Unexpected event before abort: ${event.event.type}`)
-      }
-    }
-
     await expect(collectAborted()).rejects.toMatchObject({ name: 'AbortError' })
   })
 

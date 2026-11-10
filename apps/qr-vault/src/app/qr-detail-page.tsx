@@ -13,7 +13,6 @@ import {
   getQrDetailReturnFilter,
   getQrDetailRouteState,
   navigateToSavedQr,
-  type QrDetailSearch,
 } from '@/app/qr-detail/qr-detail-navigation'
 import { buildQrDetailSource } from '@/app/qr-detail/qr-detail-source'
 import { FOCUS_QR_TITLE_KEY, LAST_SAVED_QR_ID_KEY } from '@/app/qr-session'
@@ -27,7 +26,7 @@ export function QrDetailPage() {
   const { view, qr, collection } = useVault()
   const navigate = useNavigate()
   const location = useRouterState({ select: (state) => state.location })
-  const search = location.search as QrDetailSearch
+  const search = location.search
   const returnFilter = getQrDetailReturnFilter(search)
   const titleRef = useRef<HTMLInputElement>(null)
   const hydratedRevisionRef = useRef('')

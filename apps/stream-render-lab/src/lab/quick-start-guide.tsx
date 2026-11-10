@@ -12,15 +12,18 @@ interface Props {
 
 export function QuickStartGuide({ onRestart, onSettled }: Props) {
   const [generation, setGeneration] = useState(0)
-  const [run, setRun] = useState<QuickStartGuideRun>()
+  const [activeRun, setActiveRun] = useState<{ generation: number; run: QuickStartGuideRun }>()
 
   useEffect(() => {
     const next = createQuickStartGuideRun()
-    setRun(next)
+    // oxlint-disable-next-line react/set-state-in-effect -- publish the external replay run created during effect setup
+    setActiveRun({ generation, run: next })
     return () => next.dispose()
   }, [generation])
 
-  if (!run) return <p className="quick-guide__loading">正在准备可重复实验…</p>
+  if (activeRun?.generation !== generation) {
+    return <p className="quick-guide__loading">正在准备可重复实验…</p>
+  }
   return (
     <QuickStartGuideSession
       onReset={() => {
@@ -28,7 +31,7 @@ export function QuickStartGuide({ onRestart, onSettled }: Props) {
         setGeneration((current) => current + 1)
       }}
       onSettled={onSettled}
-      run={run}
+      run={activeRun.run}
     />
   )
 }

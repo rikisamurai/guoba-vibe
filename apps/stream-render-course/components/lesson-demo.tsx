@@ -1,10 +1,10 @@
 /* oxlint-disable react/iframe-missing-sandbox -- the configured Lab is cross-origin and messages are verified by origin and window */
 import { LESSON_DEMOS, isDemoPresetPair } from '@stream-render/contract'
 import type { DemoReport, LessonDemoId, LessonPresetId } from '@stream-render/contract'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 import './lesson-demo.css'
-import { acceptDemoReport, createDemoUrls } from './lesson-demo-model'
+import { acceptDemoReport, createDemoUrls, type DemoUrls } from './lesson-demo-model'
 
 interface LessonDemoProps {
   demoId: LessonDemoId
@@ -21,27 +21,7 @@ export function LessonDemo({ demoId, presetId }: LessonDemoProps) {
     throw new TypeError(`Preset ${String(presetId)} is not registered for demo ${demoId}`)
   }
 
-  const iframeRef = useRef<HTMLIFrameElement>(null)
-  const [state, setState] = useState<DemoState>({ kind: 'waiting' })
-  const [listeningFor, setListeningFor] = useState<string>()
   const urls = createDemoUrls(demoId, presetId)
-  const listenerKey = `${demoId}@${urls.origin}`
-
-  useEffect(() => {
-    setState({ kind: 'waiting' })
-    const receive = (event: MessageEvent<unknown>) => {
-      const report = acceptDemoReport(event, {
-        demoId,
-        origin: urls.origin,
-        source: iframeRef.current?.contentWindow,
-      })
-      if (report?.kind === 'ready') setState({ kind: 'ready' })
-      if (report?.kind === 'run-settled') setState({ kind: 'settled', report })
-    }
-    window.addEventListener('message', receive)
-    setListeningFor(listenerKey)
-    return () => window.removeEventListener('message', receive)
-  }, [demoId, listenerKey, urls.origin])
 
   if (import.meta.env.SSG_MD) {
     return (
@@ -51,9 +31,37 @@ export function LessonDemo({ demoId, presetId }: LessonDemoProps) {
     )
   }
 
+  return <LessonDemoFrame key={urls.embed} demoId={demoId} urls={urls} />
+}
+
+function LessonDemoFrame({ demoId, urls }: { demoId: LessonDemoId; urls: DemoUrls }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const [state, setState] = useState<DemoState>({ kind: 'waiting' })
+  const [listening, setListening] = useState(false)
+  const attachListener = useCallback(
+    (element: HTMLElement | null) => {
+      if (!element) return undefined
+      const receive = (event: MessageEvent<unknown>) => {
+        const report = acceptDemoReport(event, {
+          demoId,
+          origin: urls.origin,
+          source: iframeRef.current?.contentWindow,
+        })
+        if (report?.kind === 'ready') setState({ kind: 'ready' })
+        if (report?.kind === 'run-settled') setState({ kind: 'settled', report })
+      }
+      window.addEventListener('message', receive)
+      // Register the listener before the iframe can post its ready report.
+      setListening(true)
+      return () => window.removeEventListener('message', receive)
+    },
+    [demoId, urls.origin],
+  )
+
   const settled = state.kind === 'settled' ? state.report : undefined
   return (
     <section
+      ref={attachListener}
       className="lesson-demo"
       data-beginner={['first-look', 'byte-lab', 'sse-lab', 'batch-lab'].includes(demoId)}
       data-compact={demoId !== 'quick-start' && demoId !== 'm1'}
@@ -66,7 +74,7 @@ export function LessonDemo({ demoId, presetId }: LessonDemoProps) {
         </div>
         <output data-state={state.kind}>{statusText(state)}</output>
       </header>
-      {listeningFor === listenerKey ? (
+      {listening ? (
         <iframe
           ref={iframeRef}
           className="lesson-demo__frame"

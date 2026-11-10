@@ -4,7 +4,7 @@ import {
   isLessonDemoId,
   type DemoReport,
 } from '@stream-render/contract'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 
 import { BeginnerDemo, isBeginnerDemo } from '../beginner/beginner-demo'
@@ -17,7 +17,7 @@ import { isFoundationDemo } from './foundation-demo-model'
 export default function EmbedPage() {
   const { demoId: rawDemoId } = useParams()
   const [search] = useSearchParams()
-  const targetOrigin = useMemo(parentOrigin, [])
+  const [targetOrigin] = useState(parentOrigin)
   const demoId = isLessonDemoId(rawDemoId) ? rawDemoId : null
   const requestedPreset = search.get('preset')
   const presetId =
@@ -94,6 +94,7 @@ export default function EmbedPage() {
         />
       ) : isFoundationDemo(demoId) ? (
         <FoundationDemo
+          key={demoId}
           demoId={demoId}
           onReset={postReady}
           onSettled={(checkpoints) =>

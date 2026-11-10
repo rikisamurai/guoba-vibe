@@ -19,7 +19,6 @@ export function FoundationDemo({ demoId, onReset, onSettled }: FoundationDemoPro
 
   useEffect(() => {
     let active = true
-    setTrace(undefined)
     void runFoundationDemo(demoId).then((nextTrace) => {
       if (active) setTrace(nextTrace)
     })
@@ -56,19 +55,19 @@ function FoundationTracePlayer({
   const reported = useRef(false)
   const frame = frames[index]
   const settled = index === frames.length - 1
+  const isPlaying = playing && !settled
   const labels = panelLabels(trace.demoId)
 
   useEffect(() => {
-    if (!playing || settled) return undefined
-    const timer = window.setTimeout(() => setIndex((current) => current + 1), 520)
+    if (!isPlaying) return undefined
+    const timer = window.setTimeout(() => setIndex(index + 1), 520)
     return () => window.clearTimeout(timer)
-  }, [index, playing, settled])
+  }, [index, isPlaying])
 
   useEffect(() => {
     if (settled && !reported.current) {
       reported.current = true
       onSettled(foundationCheckpoints(trace, frame))
-      setPlaying(false)
     }
   }, [frame, onSettled, settled, trace])
 
@@ -90,7 +89,7 @@ function FoundationTracePlayer({
             setPlaying(true)
           }}
         >
-          {playing ? '播放中…' : settled ? '重新观察' : '播放 trace'}
+          {isPlaying ? '播放中…' : settled ? '重新观察' : '播放 trace'}
         </button>
         <button
           type="button"

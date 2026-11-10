@@ -4,6 +4,12 @@ import { parseSseText, isSseRetryControl } from '../protocol/sse'
 import type { BeginnerCallbacks } from './types'
 
 const WIRE = 'data: {"text":"Hi"}\n\n'
+
+async function* input(wire: string, count: number, split: number) {
+  if (count >= 1) yield wire.slice(0, split)
+  if (count >= 2) yield wire.slice(split)
+}
+
 export function SseDemo({ onReset, onSettled }: BeginnerCallbacks) {
   const [split, setSplit] = useState(10)
   const [count, setCount] = useState(0)
@@ -12,13 +18,10 @@ export function SseDemo({ onReset, onSettled }: BeginnerCallbacks) {
   const wire = omitEnd ? WIRE.trimEnd() : WIRE
   useEffect(() => {
     let active = true
+    const chunks = input(wire, count, split)
     async function run() {
-      async function* input() {
-        if (count >= 1) yield wire.slice(0, split)
-        if (count >= 2) yield wire.slice(split)
-      }
       const result: string[] = []
-      for await (const event of parseSseText(input()))
+      for await (const event of parseSseText(chunks))
         if (!isSseRetryControl(event)) result.push(event.data)
       if (active) setEvents(result)
     }

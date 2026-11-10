@@ -7,14 +7,14 @@ export function IntroDemo({ onReset, onSettled }: BeginnerCallbacks) {
   const [count, setCount] = useState(0)
   const [playing, setPlaying] = useState(false)
   const state = compareDelivery(count)
+  const isPlaying = playing && !state.done
   useEffect(() => {
-    if (!playing || state.done) return undefined
-    const timer = setTimeout(() => setCount((value) => value + 1), 400)
+    if (!isPlaying) return undefined
+    const timer = setTimeout(() => setCount(count + 1), 400)
     return () => clearTimeout(timer)
-  }, [count, playing, state.done])
+  }, [count, isPlaying])
   useEffect(() => {
     if (state.done) {
-      setPlaying(false)
       onSettled?.([
         {
           id: 'same-answer',
@@ -53,10 +53,10 @@ export function IntroDemo({ onReset, onSettled }: BeginnerCallbacks) {
           type="button"
           onClick={() => {
             if (state.done) reset()
-            setPlaying(!playing)
+            setPlaying(!isPlaying)
           }}
         >
-          {playing ? '暂停' : '运行对比'}
+          {isPlaying ? '暂停' : '运行对比'}
         </button>
         <button
           type="button"

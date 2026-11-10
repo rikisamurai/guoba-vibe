@@ -14,12 +14,12 @@ export function createTextSource() {
     wake?.()
     wake = undefined
   }
+  const abort = () => {
+    closed = true
+    wake?.()
+  }
   const source: StreamSource = {
     async *open(signal) {
-      const abort = () => {
-        closed = true
-        wake?.()
-      }
       signal.addEventListener('abort', abort, { once: true })
       let ordinal = 0
       try {

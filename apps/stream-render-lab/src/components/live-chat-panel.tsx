@@ -27,6 +27,7 @@ export function LiveChatPanel({ capability, onRunChange }: LiveChatPanelProps) {
   useLayoutEffect(() => {
     const transcript = transcriptRef.current
     if (transcript && followTailRef.current) transcript.scrollTop = transcript.scrollHeight
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- transcript content changes when entries or the run revision change
   }, [chat.entries.length, chat.selectedRun?.snapshot.revision])
 
   const lastAssistantId = chat.entries.findLast((entry) => entry.role === 'assistant')?.id

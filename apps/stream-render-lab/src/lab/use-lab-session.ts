@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { createStreamingRenderEngine } from '../engine/create-engine'
 import type { RenderRun } from '../engine/types'
@@ -24,7 +24,9 @@ export function useLabSession(config: LabConfig, onSettled?: (report: LabSettled
   const settledRef = useRef(onSettled)
   const traceRef = useRef<MutableTrace>(mutableTrace())
   const tracePublishPending = useRef(false)
-  settledRef.current = onSettled
+  useLayoutEffect(() => {
+    settledRef.current = onSettled
+  }, [onSettled])
 
   const stopCurrent = useCallback((reason: string) => {
     generationRef.current += 1

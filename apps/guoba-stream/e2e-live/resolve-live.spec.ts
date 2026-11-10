@@ -12,9 +12,10 @@ const SAMPLES = [
   },
   {
     name: 'sensitive video post',
-    url: 'https://x.com/chenbao11522/status/2070505379432456331',
-    tweetId: '2070505379432456331',
-    authorHandle: 'chenbao11522',
+    // Also used by yt-dlp's Twitter tests; syndication returns a tombstone, so FxTwitter is required.
+    url: 'https://x.com/s2FAKER/status/1621117700482416640',
+    tweetId: '1621117700482416640',
+    authorHandle: 's2FAKER',
   },
 ] as const
 
@@ -46,7 +47,7 @@ for (const sample of SAMPLES) {
     await page.getByRole('button', { name: 'Fetch' }).click()
 
     const response = await resolveResponse
-    expect(response.status()).toBe(200)
+    expect(response.status(), `${sample.url}: ${await response.text()}`).toBe(200)
     const body = await response.json()
     if (!hasTweet(body)) throw new Error('expected tweet in live resolve response')
     expect(body.tweet.id).toBe(sample.tweetId)

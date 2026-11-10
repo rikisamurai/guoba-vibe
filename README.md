@@ -18,7 +18,7 @@
 ## 环境要求
 
 - Node.js `>= 24`（仓库根目录 `.nvmrc` 锁定到 24）
-- pnpm `11.3.0`（仓库 `packageManager` 已声明）
+- pnpm `12.16.1`（仓库 `packageManager` 已声明）
 
 ```bash
 pnpm install

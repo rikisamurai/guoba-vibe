@@ -1,5 +1,5 @@
-import { Link2, LoaderCircle, ShieldCheck } from 'lucide-react'
-import { useState } from 'react'
+import { Link2, LoaderCircle, ShieldCheck, X } from 'lucide-react'
+import { useRef, useState } from 'react'
 
 export function UrlForm({
   loading,
@@ -9,6 +9,7 @@ export function UrlForm({
   onSubmit: (url: string) => void
 }) {
   const [value, setValue] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <form
@@ -18,17 +19,34 @@ export function UrlForm({
       }}
     >
       <div className="flex gap-2">
-        <label className="border-seam bg-pan focus-within:border-ember/70 focus-within:outline-ember flex flex-1 items-center gap-2 rounded-lg border px-3 transition-colors focus-within:outline-2 focus-within:outline-offset-2">
-          <Link2 className="text-bran size-4 shrink-0" aria-hidden />
-          <input
-            type="url"
-            inputMode="url"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="https://x.com/…/status/…"
-            className="placeholder:text-bran h-11 w-full bg-transparent text-base outline-none"
-          />
-        </label>
+        <div className="relative min-w-0 flex-1">
+          <label className="border-seam bg-pan focus-within:border-ember/70 focus-within:outline-ember flex w-full items-center gap-2 rounded-lg border px-3 transition-colors focus-within:outline-2 focus-within:outline-offset-2">
+            <Link2 className="text-bran size-4 shrink-0" aria-hidden />
+            <input
+              ref={inputRef}
+              type="url"
+              inputMode="url"
+              aria-label="Tweet URL"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="https://x.com/…/status/…"
+              className="placeholder:text-bran h-11 min-w-0 flex-1 bg-transparent pr-10 text-base outline-none"
+            />
+          </label>
+          {value ? (
+            <button
+              type="button"
+              aria-label="Clear URL"
+              onClick={() => {
+                setValue('')
+                inputRef.current?.focus()
+              }}
+              className="text-bran hover:text-rice absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg transition duration-200 active:scale-90"
+            >
+              <X className="size-4" aria-hidden />
+            </button>
+          ) : null}
+        </div>
         <button
           type="submit"
           disabled={loading}
