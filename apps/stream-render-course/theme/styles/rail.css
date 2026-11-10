@@ -82,20 +82,15 @@
   text-decoration: none;
 }
 
-.sr-rail__lesson:not(.is-locked):hover {
-  color: var(--sr-ink);
-  background: rgb(255 255 255 / 72%);
-}
-
 .sr-rail__lesson.is-active {
   color: #103b36;
   background: var(--sr-cyan-soft);
   font-weight: 650;
 }
 
-.sr-rail__lesson.is-locked {
-  color: #89918c;
-  cursor: not-allowed;
+.sr-rail__lesson:hover {
+  color: var(--sr-ink);
+  background: rgb(255 255 255 / 72%);
 }
 
 .sr-rail__number {

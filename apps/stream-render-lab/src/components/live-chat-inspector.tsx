@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import {
   LIVE_STAGES,
+  LIVE_TRACE_LIMIT,
   outcomeLabel,
   rawPart,
   type AssistantChatEntry,
@@ -18,12 +19,6 @@ const STAGE_LABELS: Record<LiveStage, string> = {
   content: 'Content streaming',
   draining: 'Draining',
   settled: 'Canonical settled',
-}
-
-function eventLabel(entry: AssistantChatEntry, index: number): string {
-  const envelope = entry.inspection.trace[index]
-  if (!envelope) return ''
-  return `${envelope.internalSeq} · ${envelope.event.type}`
 }
 
 export function LiveChatInspector({ run }: { run: AssistantChatEntry | null }) {
@@ -98,15 +93,14 @@ function LifecycleView({ run }: { run: AssistantChatEntry }) {
 }
 
 function EventsView({ run }: { run: AssistantChatEntry }) {
-  const start = Math.max(0, run.inspection.trace.length - 80)
-  const events = run.inspection.trace.slice(start)
+  const events = run.inspection.trace.slice(-LIVE_TRACE_LIMIT)
   return events.length === 0 ? (
     <p className="chat-inspector__empty">还没有 normalized event。</p>
   ) : (
     <ol className="chat-events">
-      {events.map((envelope, index) => (
+      {events.map((envelope) => (
         <li key={envelope.internalSeq}>
-          <span>{eventLabel(run, start + index)}</span>
+          <span>{`${envelope.internalSeq} · ${envelope.event.type}`}</span>
           <small>{envelope.origin.protocol}</small>
         </li>
       ))}

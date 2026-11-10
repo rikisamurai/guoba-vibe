@@ -131,7 +131,10 @@ function processLine(line: string, state: EventState): SseEvent | undefined {
 }
 
 function dispatch(state: EventState): SseEvent | undefined {
-  if (state.data.length === 0) return undefined
+  if (state.data.length === 0) {
+    state.eventType = ''
+    return undefined
+  }
 
   const event: SseMessageEvent = { data: state.data.join('\n') }
   if (state.eventType) event.event = state.eventType

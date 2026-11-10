@@ -30,3 +30,14 @@ export function percentile(sorted: readonly number[], ratio: number): number {
   const index = Math.max(0, Math.ceil(sorted.length * ratio) - 1)
   return sorted[index] ?? 0
 }
+
+export function insertLatencySample(sorted: number[], sample: number): void {
+  let start = 0
+  let end = sorted.length
+  while (start < end) {
+    const middle = start + Math.floor((end - start) / 2)
+    if (sorted[middle] <= sample) start = middle + 1
+    else end = middle
+  }
+  sorted.splice(start, 0, sample)
+}

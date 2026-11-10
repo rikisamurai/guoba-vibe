@@ -1,5 +1,25 @@
 import { expect, test } from '@playwright/test'
 
+test('产品导航把带尾斜杠的 Lab 地址转换成可直达的链接', async ({ page }) => {
+  await page.goto('/learn/00-quick-start')
+  const nav = page.getByRole('navigation', { name: '产品导航' })
+  const links = [
+    ['Playground', '/playground'],
+    ['Mini Chat', '/project'],
+    ['进阶实验台', '/lab'],
+  ]
+  await Promise.all(
+    links.map(([name, path]) =>
+      expect(nav.getByRole('link', { name, exact: true })).toHaveAttribute(
+        'href',
+        `http://127.0.0.1:5274${path}`,
+      ),
+    ),
+  )
+  await nav.getByRole('link', { name: 'Mini Chat', exact: true }).click()
+  await expect(page.getByRole('region', { name: '教学聊天项目' })).toBeVisible()
+})
+
 test('课程主线先真实 HTTP，项目切换来源后重新验收', async ({ page }) => {
   await page.goto('/learn/00-quick-start')
   const rail = page.getByRole('navigation', { name: '课程章节' })

@@ -9,7 +9,45 @@ async function collect(source: DeepSeekSource) {
   return events
 }
 
+const answer = 'data: {"id":"c","choices":[{"index":0,"delta":{"content":"hi"}}]}\n\n'
+
+function openWire(wire: string, cancel: UnderlyingSource<Uint8Array>['cancel']) {
+  const body = new ReadableStream<Uint8Array>({
+    start: (controller) => controller.enqueue(new TextEncoder().encode(wire)),
+    cancel,
+  })
+  const source = new DeepSeekSource({
+    fetch: async () => new Response(body),
+    protocol: 'chat-completions',
+    model: 'deepseek-v4-flash',
+    messages: [],
+  })
+  return { body, source }
+}
+
 describe('DeepSeekSource', () => {
+  it.each([
+    [answer + 'data: [DONE]\n\n', 'completed'],
+    [answer + 'data: {bad json}\n\n', 'failed'],
+  ])('cancels the still-open response after protocol termination (%#)', async (wire, kind) => {
+    const cancel = vi.fn()
+    const { body, source } = openWire(wire, cancel)
+    const events = await collect(source)
+    expect(events.at(-1)).toMatchObject({ type: 'response.end', outcome: { kind } })
+    expect(cancel).toHaveBeenCalledOnce()
+    expect(body.locked).toBe(false)
+  })
+
+  it('cancels an early consumer exit and releases the lock even if cancel rejects', async () => {
+    const cancel = vi.fn().mockRejectedValue(new Error('transport cleanup failed'))
+    const { body, source } = openWire(answer, cancel)
+    const events = source.open(new AbortController().signal)
+    expect(await events.next()).toMatchObject({ value: { event: { type: 'response.start' } } })
+    await expect(events.return(undefined)).resolves.toMatchObject({ done: true })
+    expect(cancel).toHaveBeenCalledOnce()
+    expect(body.locked).toBe(false)
+  })
+
   it('composes a byte response with the selected wire adapter', async () => {
     const observations: string[] = []
     const wire = [

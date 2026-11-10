@@ -8,6 +8,7 @@ import type { WireProtocol } from '../protocol'
 import {
   appendLifecycle,
   historyFrom,
+  LIVE_TRACE_LIMIT,
   type AssistantChatEntry,
   type ChatEntry,
   type LiveStage,
@@ -96,23 +97,25 @@ export function useLiveChat(): UseLiveChatResult {
         startedAt,
         lifecycle: [{ stage: 'connecting', atMs: 0, detail: 'POST /api/chat' }],
         snapshot,
-        inspection: run.inspect(),
+        inspection: run.inspect({ traceLimit: LIVE_TRACE_LIMIT }),
       }
       setEntries([...base, entry])
       setRunning(true)
       const sync = () => {
         const next = run.state.getSnapshot()
-        patchRun(id, (current) => ({ ...current, snapshot: next, inspection: run.inspect() }))
+        const inspection = run.inspect({ traceLimit: LIVE_TRACE_LIMIT })
+        patchRun(id, (current) => ({ ...current, snapshot: next, inspection }))
         if (next.phase === 'draining') mark('draining', 'visible cursor is catching raw')
       }
       const unsubscribe = run.state.subscribe(sync)
       activeRef.current = { id, run, unsubscribe }
       void run.settled.then((result) => {
+        const inspection = run.inspect()
         patchRun(id, (current) => ({
           ...current,
           result,
           snapshot: result.snapshot,
-          inspection: run.inspect(),
+          inspection,
           lifecycle: appendLifecycle(current.lifecycle, {
             stage: 'settled',
             detail: result.outcome.kind,

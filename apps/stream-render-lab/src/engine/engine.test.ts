@@ -64,6 +64,62 @@ const failingHeavyCoordinatorFactory: HeavyCoordinatorFactory = () => ({
 })
 
 describe('StreamingRenderEngine', () => {
+  it('keeps the last 80 numbered events in a limited streaming inspection and retains the full trace', async () => {
+    const clock = new VirtualClock()
+    const events = [
+      ...completedEvents.slice(0, 2),
+      ...Array.from({ length: 100 }, () => completedEvents[2]),
+      ...completedEvents.slice(-2),
+    ]
+    const run = createStreamingRenderEngine({ clock }).start({
+      source: source(events),
+      profile: 'M1',
+      reveal: 'direct',
+      trace: 'full',
+    })
+    await waitFor(() => run.state.getSnapshot().phase === 'draining')
+    expect(run.inspect({ traceLimit: 80 }).trace.map((event) => event.internalSeq)).toEqual(
+      Array.from({ length: 80 }, (_, index) => events.length - 80 + index),
+    )
+    expect(run.inspect({ traceLimit: 0 }).trace).toEqual([])
+
+    clock.advanceFrame()
+    await run.settled
+    expect(run.inspect().trace.map((event) => event.internalSeq)).toEqual(
+      events.map((_, index) => index),
+    )
+  })
+
+  it('excludes grapheme cursor work from the Markdown parse timer', async () => {
+    const clock = new VirtualClock()
+    const baseTime = clock.now.bind(clock)
+    let cursorWork = 0
+    const segmenter = new Intl.Segmenter()
+    const segment = segmenter.segment.bind(segmenter)
+    const spy = vi.spyOn(Intl.Segmenter.prototype, 'segment').mockImplementation((text) => {
+      cursorWork += 11
+      return segment(text)
+    })
+    vi.spyOn(clock, 'now').mockImplementation(() => baseTime() + cursorWork)
+    try {
+      const run = createStreamingRenderEngine({ clock }).start({
+        source: source(completedEvents),
+        profile: 'M1',
+        reveal: 'smooth',
+        trace: 'off',
+      })
+      await waitFor(() => run.state.getSnapshot().phase === 'draining')
+      clock.advanceFrame()
+      const { snapshot } = await run.settled
+      expect(cursorWork).toBeGreaterThan(0)
+      expect(snapshot.metrics.previewParsePasses).toBe(1)
+      expect(snapshot.metrics.previewParseDurationMs).toBe(0)
+      expect(snapshot.metrics.canonicalParseDurationMs).toBe(0)
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
   it('drains frame-batched content before resolving settled', async () => {
     const clock = new VirtualClock()
     const engine = createStreamingRenderEngine({ clock })
@@ -410,13 +466,11 @@ describe('StreamingRenderEngine', () => {
         const events: StreamEvent[] = [
           { type: 'response.start', responseId: `${profile}-${chunkSize}` },
           { type: 'part.start', partId: 'answer', kind: 'answer' },
-          ...chunks.map(
-            (text): StreamEvent => ({
-              type: 'part.delta',
-              partId: 'answer',
-              delta: { kind: 'text', text },
-            }),
-          ),
+          ...chunks.map((text): StreamEvent => ({
+            type: 'part.delta',
+            partId: 'answer',
+            delta: { kind: 'text', text },
+          })),
           { type: 'part.end', partId: 'answer' },
           { type: 'response.end', outcome: { kind: 'completed', reason: 'fixture_end' } },
         ]

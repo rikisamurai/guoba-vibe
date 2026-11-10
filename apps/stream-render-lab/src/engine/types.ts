@@ -73,7 +73,7 @@ export interface RenderRun {
   state: ReadonlyStore<RenderSnapshot>
   settled: Promise<RunResult>
   cancel(reason?: string): void
-  inspect(): InspectionSnapshot
+  inspect(options?: { traceLimit?: number }): InspectionSnapshot
 }
 
 export interface StartRenderInput {

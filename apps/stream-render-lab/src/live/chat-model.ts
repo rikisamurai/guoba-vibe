@@ -3,6 +3,8 @@ import type { RunOutcome } from '../protocol'
 import type { WireProtocol } from '../protocol'
 import type { DeepSeekMessage } from './deepseek-source'
 
+export const LIVE_TRACE_LIMIT = 80
+
 export const LIVE_STAGES = [
   'connecting',
   'headers',
@@ -66,7 +68,9 @@ export function historyFrom(entries: readonly ChatEntry[]): DeepSeekMessage[] {
       if (answer !== '') history.push({ role: 'assistant', content: answer })
     }
   }
-  return history.slice(-20)
+  const recent = history.slice(-20)
+  const firstUser = recent.findIndex((message) => message.role === 'user')
+  return firstUser < 0 ? [] : recent.slice(firstUser)
 }
 
 export function outcomeLabel(outcome: RunOutcome | undefined): string {

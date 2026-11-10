@@ -20,7 +20,7 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
-      command: `STREAM_RENDER_COURSE_PORT=5273 PUBLIC_LAB_ORIGIN=${labOrigin} pnpm dev`,
+      command: `STREAM_RENDER_COURSE_PORT=5273 PUBLIC_LAB_ORIGIN=${labOrigin}/ pnpm dev`,
       url: courseOrigin,
       reuseExistingServer: !isCI,
     },

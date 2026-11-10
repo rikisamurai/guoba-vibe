@@ -71,6 +71,19 @@ describe('parseSse', () => {
     ])
   })
 
+  it('resets the event type after a data-less dispatch and preserves the id', async () => {
+    await expect(
+      collectText(['id: 7\r\nevent: ping\r', '\n\r\ndata: hello\r\n\r\n']),
+    ).resolves.toEqual([{ data: 'hello', id: '7' }])
+  })
+
+  it('dispatches an explicit empty data line as an event', async () => {
+    await expect(collectText(['event: ping\ndata:\n\ndata: hello\n\n'])).resolves.toEqual([
+      { event: 'ping', data: '' },
+      { data: 'hello' },
+    ])
+  })
+
   it('emits a retry-only control update instead of silently dropping it', async () => {
     await expect(collect([encoder.encode('retry: 2500\n\n')])).resolves.toEqual([
       { control: 'retry', retry: 2500 },

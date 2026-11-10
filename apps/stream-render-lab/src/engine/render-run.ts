@@ -15,7 +15,7 @@ export function createRenderRun(
   input: StartRenderInput,
   createHeavyCoordinator: HeavyCoordinatorFactory,
 ): RenderRun {
-  const model = new RunModel(runId, input.profile)
+  const model = new RunModel(runId, input.profile, clock)
   const store = createStore(model.snapshot('connecting'))
   const completion = deferred<RunResult>()
   const trace: InternalEnvelope[] = []
@@ -43,12 +43,6 @@ export function createRenderRun(
     model.setHeavyMetrics(heavy.inspect())
   }
 
-  function commitPreview(): void {
-    const startedAt = clock.now()
-    model.commitPreview(input.reveal, startedAt)
-    model.recordParseDuration('preview', clock.now() - startedAt)
-  }
-
   function publish(): void {
     store.publish(model.snapshot(phase, outcome))
   }
@@ -57,7 +51,7 @@ export function createRenderRun(
     if (cancelFrame !== null || settled || settling) return
     cancelFrame = clock.frame(() => {
       cancelFrame = null
-      commitPreview()
+      model.commitPreview(input.reveal, clock.now())
       reconcileHeavy()
       publish()
       if (outcome && !model.hasBacklog()) void settle()
@@ -71,9 +65,7 @@ export function createRenderRun(
     cancelFrame?.()
     cancelFrame = null
     phase = 'settling'
-    const canonicalStartedAt = clock.now()
-    model.commitCanonical(canonicalStartedAt)
-    model.recordParseDuration('canonical', clock.now() - canonicalStartedAt)
+    model.commitCanonical(clock.now())
     publish()
     if (outcome.kind === 'cancelled') {
       heavy.cancel()
@@ -170,8 +162,9 @@ export function createRenderRun(
     state: store,
     settled: completion.promise,
     cancel,
-    inspect(): InspectionSnapshot {
-      return { snapshot: model.snapshot(phase, outcome), trace: [...trace] }
+    inspect({ traceLimit } = {}): InspectionSnapshot {
+      const start = traceLimit === undefined ? 0 : Math.max(0, trace.length - traceLimit)
+      return { snapshot: model.snapshot(phase, outcome), trace: trace.slice(start) }
     },
   }
 }

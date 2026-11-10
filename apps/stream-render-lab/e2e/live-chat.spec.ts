@@ -73,9 +73,10 @@ test('Chat supports Copy raw and Retry after a settled run', async ({ page }) =>
   expect(await retried.locator('.chat-run__header small').textContent()).not.toBe(firstHeader)
   expect(
     await page.evaluate(
-      () => (window as Window & { streamRenderChatRequests?: number }).streamRenderChatRequests,
+      () =>
+        (window as Window & { streamRenderChatHistories?: unknown[] }).streamRenderChatHistories,
     ),
-  ).toBe(2)
+  ).toEqual([[{ role: 'user', content: 'hello' }], [{ role: 'user', content: 'hello' }]])
 })
 
 test('Stop settles as cancelled and preserves accepted raw', async ({ page }) => {
@@ -91,6 +92,74 @@ test('Stop settles as cancelled and preserves accepted raw', async ({ page }) =>
   await expect(run.locator('.chat-run__status')).toContainText('cancelled · user')
   await expect(run.locator('.chat-answer')).toContainText('hello')
 })
+
+test('Mermaid keeps visible SVG labels after sanitization', async ({ page }) => {
+  const content = [
+    '```mermaid\ngraph TD; A[Start here]-->B[Finish]\n```',
+    '```mermaid\nclassDiagram\nAnimal <|-- Dog\n```',
+    '```mermaid\nstateDiagram-v2\n[*] --> Idle\nIdle --> [*]\n```',
+  ].join('\n\n')
+  await installMarkdownReplies(page, [content])
+  await openMarkdownChat(page)
+  await sendMarkdownPrompt(page, 'Render the diagrams')
+
+  const answer = page.locator('.chat-answer').last()
+  await Promise.all(
+    ['Start here', 'Animal', 'Idle'].map((label) =>
+      expect(answer.locator('svg text').filter({ hasText: label })).toBeVisible(),
+    ),
+  )
+})
+
+test('Mermaid parse failures stay in the answer and a valid diagram still renders', async ({
+  page,
+}) => {
+  const invalid = '```mermaid\ngraph TD; A[Start\n```'
+  const valid = '```mermaid\ngraph TD; A[Recovered]-->B[Finish]\n```'
+  await installMarkdownReplies(page, [invalid, invalid, invalid, valid])
+  await openMarkdownChat(page)
+  const verifyInvalid = async (attempt: number) => {
+    await sendMarkdownPrompt(page, `Invalid diagram ${attempt}`)
+    const run = page.locator('.chat-run').last()
+    await expect(run.locator('.heavy-block--failed')).toContainText('Parse error')
+    await expect(run.locator('.chat-run__status')).toContainText('completed')
+  }
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    // oxlint-disable-next-line no-await-in-loop -- each fixture needs a separate settled chat turn
+    await verifyInvalid(attempt)
+  }
+
+  await expect(page.locator('body > [id^="dmermaid-"]')).toHaveCount(0)
+  await sendMarkdownPrompt(page, 'Valid diagram')
+  await expect(
+    page.locator('.chat-answer').last().locator('svg text').filter({ hasText: 'Recovered' }),
+  ).toBeVisible()
+})
+
+async function installMarkdownReplies(page: Page, replies: readonly string[]): Promise<void> {
+  await page.route('**/api/capabilities', (route) =>
+    route.fulfill({ json: { capability: { kind: 'enabled' } } }),
+  )
+  let index = 0
+  await page.route('**/api/chat', (route) => {
+    const content = replies[index++]
+    const data = JSON.stringify({ id: 'diagram', choices: [{ index: 0, delta: { content } }] })
+    return route.fulfill({
+      contentType: 'text/event-stream',
+      body: `data: ${data}\n\ndata: [DONE]\n\n`,
+    })
+  })
+}
+
+async function openMarkdownChat(page: Page): Promise<void> {
+  await page.goto('/chat')
+  await page.getByLabel('Protocol').selectOption('chat-completions')
+}
+
+async function sendMarkdownPrompt(page: Page, prompt: string): Promise<void> {
+  await page.getByLabel('输入实验问题').fill(prompt)
+  await page.getByRole('button', { name: '发送', exact: true }).click()
+}
 
 async function installMockDeepSeek(page: Page, slow = false): Promise<void> {
   await page.addInitScript(
@@ -112,10 +181,10 @@ async function installMockDeepSeek(page: Page, slow = false): Promise<void> {
         }
         if (!url.endsWith('/api/chat')) return nativeFetch(input, init)
 
-        const state = window as Window & { streamRenderChatRequests?: number }
-        state.streamRenderChatRequests = (state.streamRenderChatRequests ?? 0) + 1
         const body: unknown = typeof init?.body === 'string' ? JSON.parse(init.body) : null
         if (typeof body !== 'object' || body === null) throw new TypeError('missing protocol')
+        const state = window as Window & { streamRenderChatHistories?: unknown[] }
+        ;(state.streamRenderChatHistories ??= []).push('messages' in body ? body.messages : null)
         const protocol = 'protocol' in body ? body.protocol : undefined
         if (
           protocol !== 'chat-completions' &&

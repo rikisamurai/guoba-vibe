@@ -28,7 +28,10 @@ export async function renderCode(
     session = { language, highlighter: createShikiStream(language) }
     sessions.set(job.key, session)
   }
-  const highlighter = await session.highlighter
+  const highlighter = await session.highlighter.catch((error: unknown) => {
+    if (sessions.get(job.key) === session) sessions.delete(job.key)
+    throw error
+  })
   const result = await highlighter.update(job.source)
   if (signal.aborted) throw new DOMException('Aborted', 'AbortError')
   return { kind: 'code', tokens: tokensOf(result) }
@@ -63,7 +66,13 @@ export async function renderMermaid(job: HeavyJobSpec, signal: AbortSignal): Pro
     import('dompurify'),
   ])
   if (signal.aborted) throw new DOMException('Aborted', 'AbortError')
-  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'neutral' })
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'strict',
+    theme: 'neutral',
+    htmlLabels: false,
+    suppressErrorRendering: true,
+  })
   const id = `mermaid-${job.runId}-${job.blockId}-${job.revision}`.replace(/[^\w-]/g, '-')
   const { svg } = await mermaid.render(id, job.source)
   if (signal.aborted) throw new DOMException('Aborted', 'AbortError')

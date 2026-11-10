@@ -40,6 +40,7 @@ async function* responseBytes(
       yield value
     }
   } finally {
+    await reader.cancel().catch(() => undefined)
     reader.releaseLock()
   }
 }

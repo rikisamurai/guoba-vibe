@@ -40,10 +40,14 @@ async function loadLanguage(highlighter: HighlighterCore, language: string): Pro
   if (language === 'text' || loaded.has(language)) return
   let pending = loading.get(language)
   if (!pending) {
-    pending = LANGUAGE_LOADERS[language]().then(async (registrations) => {
-      await highlighter.loadLanguage(...registrations)
-      loaded.add(language)
-    })
+    pending = LANGUAGE_LOADERS[language]()
+      .then(async (registrations) => {
+        await highlighter.loadLanguage(...registrations)
+        loaded.add(language)
+      })
+      .finally(() => {
+        loading.delete(language)
+      })
     loading.set(language, pending)
   }
   await pending

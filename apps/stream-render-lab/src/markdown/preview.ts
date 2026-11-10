@@ -121,7 +121,10 @@ function parseM3(raw: string, previous: RenderDocument): RenderDocument {
   if (previous.blocks.length < 2) {
     return fullFallback(raw, repair.text, repair, 'no_quiescent_checkpoint', 0)
   }
-  const rootStart = previous.blocks.at(-1)?.range.start ?? 0
+  const last = previous.blocks.length - 1
+  // A trailing paragraph can become an item of the preceding list when its marker arrives.
+  const dirtyIndex = previous.blocks[last - 1]?.type === 'list' ? last - 1 : last
+  const rootStart = previous.blocks[dirtyIndex]?.range.start ?? 0
   const dirtyStart = physicalLineStart(raw, rootStart)
   const lineBase = lineBreakCount(raw, dirtyStart)
   const tail = repair.text.slice(dirtyStart)
@@ -143,7 +146,7 @@ function parseM3(raw: string, previous: RenderDocument): RenderDocument {
   return {
     raw,
     visible: repair.text,
-    blocks: [...previous.blocks.slice(0, -1), ...parsedTail],
+    blocks: [...previous.blocks.slice(0, dirtyIndex), ...parsedTail],
     diagnostics: [],
     repair,
     work: { parsedCodeUnits: tail.length, strategy: 'suffix' },

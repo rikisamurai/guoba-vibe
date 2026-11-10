@@ -1,6 +1,6 @@
 import { Link, useLocation } from '@rspress/core/runtime'
 
-const labOrigin = import.meta.env.PUBLIC_LAB_ORIGIN ?? 'http://localhost:5174'
+import { LabLink } from '../components/lab-link'
 
 export function CourseBrand() {
   return (
@@ -24,9 +24,9 @@ export function ProductNav() {
       <Link className={pathname === '/' ? 'is-active' : ''} to="/">
         课程
       </Link>
-      <a href={`${labOrigin}/playground`}>Playground</a>
-      <a href={`${labOrigin}/project`}>Mini Chat</a>
-      <a href={`${labOrigin}/lab`}>进阶实验台</a>
+      <LabLink path="/playground">Playground</LabLink>
+      <LabLink path="/project">Mini Chat</LabLink>
+      <LabLink path="/lab">进阶实验台</LabLink>
     </nav>
   )
 }

@@ -2,7 +2,8 @@ import type { HeavyArtifact, HeavyMetrics } from '../heavy/types'
 import { parseCanonical, parsePreview } from '../markdown'
 import type { RenderDocument } from '../markdown/types'
 import type { PartDelta, PartKind, RunOutcome } from '../protocol/types'
-import { EMPTY_HEAVY_METRICS, EMPTY_RUN_METRICS, percentile } from './metrics'
+import type { EngineClock } from './clock'
+import { EMPTY_HEAVY_METRICS, EMPTY_RUN_METRICS, insertLatencySample, percentile } from './metrics'
 import { createMutablePart, type MutablePart, toRenderPart } from './run-part'
 import type { RenderDiagnostic, RenderProfile, RenderSnapshot, RevealMode, RunPhase } from './types'
 import { advanceVisible } from './visible-cursor'
@@ -20,6 +21,7 @@ export class RunModel {
   constructor(
     readonly runId: string,
     private readonly profile: RenderProfile,
+    private readonly clock: Pick<EngineClock, 'now'> = performance,
   ) {}
 
   noteEvent(internalSeq: number): void {
@@ -78,16 +80,16 @@ export class RunModel {
       part.visibleEnd = nextVisibleEnd
       const visible = part.raw.slice(0, part.visibleEnd)
       const previous = part.document
-      if (this.profile === 'M0' || this.profile === 'M1') {
-        part.document = parseCanonical(visible)
-      } else {
-        part.document = parsePreview(visible, {
-          mode: this.profile === 'M2' ? 'M2' : 'M3',
-          previous,
-        })
-      }
+      const canonical = this.profile === 'M0' || this.profile === 'M1'
+      const mode = this.profile === 'M2' ? 'M2' : 'M3'
+      const startedAt = this.clock.now()
+      const document = canonical
+        ? parseCanonical(visible)
+        : parsePreview(visible, { mode, previous })
+      this.recordParseDuration('preview', startedAt)
+      part.document = document
       this.recordVisible(part, visibleAt)
-      this.recordPreview(part.document)
+      this.recordPreview(document)
     }
     this.revision += 1
     this.metrics.commits += 1
@@ -97,7 +99,10 @@ export class RunModel {
   commitCanonical(visibleAt: number): void {
     for (const part of this.parts) {
       part.visibleEnd = part.raw.length
-      part.document = parseCanonical(part.raw)
+      const startedAt = this.clock.now()
+      const document = parseCanonical(part.raw)
+      this.recordParseDuration('canonical', startedAt)
+      part.document = document
       this.recordVisible(part, visibleAt)
       this.metrics.canonicalParsePasses += 1
     }
@@ -106,7 +111,8 @@ export class RunModel {
     this.updateBacklog()
   }
 
-  recordParseDuration(kind: 'preview' | 'canonical', durationMs: number): void {
+  private recordParseDuration(kind: 'preview' | 'canonical', startedAt: number): void {
+    const durationMs = this.clock.now() - startedAt
     const key = kind === 'preview' ? 'previewParseDurationMs' : 'canonicalParseDurationMs'
     this.metrics[key] += Math.max(0, durationMs)
   }
@@ -170,10 +176,15 @@ export class RunModel {
   }
 
   private recordVisible(part: MutablePart, visibleAt: number): void {
-    const accepted = part.arrivals.filter((arrival) => arrival.end <= part.visibleEnd)
-    part.arrivals = part.arrivals.slice(accepted.length)
-    this.rawToVisible.push(...accepted.map((arrival) => Math.max(0, visibleAt - arrival.at)))
-    const sorted = this.rawToVisible.toSorted((left, right) => left - right)
+    const sorted = this.rawToVisible
+    let accepted = 0
+    for (const arrival of part.arrivals) {
+      if (arrival.end > part.visibleEnd) break
+      insertLatencySample(sorted, Math.max(0, visibleAt - arrival.at))
+      accepted += 1
+    }
+    if (accepted === 0) return
+    part.arrivals = part.arrivals.slice(accepted)
     this.metrics.rawToVisibleSamples = sorted.length
     this.metrics.rawToVisibleP50Ms = percentile(sorted, 0.5)
     this.metrics.rawToVisibleP95Ms = percentile(sorted, 0.95)

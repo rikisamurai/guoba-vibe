@@ -26,6 +26,7 @@ const adversarialDocument = constantFrom(
   '# lead\n\n[x]\n\ntail\n\n> [x]: /inside',
   'heading\n---\n\n| a | b |\n| - | - |\n| 1 | 2 |',
   'intro\n\n- one\n- two\n\n- three',
+  'intro\n\n1. one\n\n2. two\n\n3. three\n\n> tail',
   'intro\n\n> - nested\n>   continuation\n> lazy continuation',
   `intro\n\n\`\`\`ts\nconst value = 1\n\`\`\``,
 )

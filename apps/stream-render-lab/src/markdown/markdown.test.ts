@@ -375,6 +375,21 @@ describe('M3 bounded suffix preview', () => {
     }
   })
 
+  it.each([
+    ['character by character', 'intro\n\n1. a\n\n2. b\n\n3. c\n\n> tail'.split('')],
+    ['in fixed chunks', ['intro\n\n1) a\n\n2', ') b\n\n3', ') c\n\n# tail', '\n\nnext']],
+  ] as const)('preserves loose ordered lists while appending %s', (_name, chunks) => {
+    let raw = ''
+    let previous: ReturnType<typeof parsePreview> | undefined
+    for (const chunk of chunks) {
+      raw += chunk
+      previous = parsePreview(raw, { mode: 'M3', previous })
+      expect(normalizeRenderIr(previous), raw).toEqual(
+        normalizeRenderIr(parsePreview(raw, { mode: 'M2' })),
+      )
+    }
+  })
+
   it('separates quadratic full-preview work from bounded-tail work as input doubles', () => {
     const m2Ratio = previewWork('M2', 128) / previewWork('M2', 64)
     const m3Ratio = previewWork('M3', 128) / previewWork('M3', 64)

@@ -3,28 +3,14 @@ import { Link, useLocation } from '@rspress/core/runtime'
 import { courseParts, findLesson, orientationLesson, type CourseLesson } from './course-data'
 
 function LessonLink({ lesson, active }: { lesson: CourseLesson; active: boolean }) {
-  const content = (
-    <>
-      <span className="sr-rail__number">{lesson.marker}</span>
-      <span>{lesson.title}</span>
-    </>
-  )
-
-  if (!lesson.href) {
-    return (
-      <span className="sr-rail__lesson is-locked" aria-disabled="true">
-        {content}
-      </span>
-    )
-  }
-
   return (
     <Link
       className={`sr-rail__lesson${active ? ' is-active' : ''}`}
       to={lesson.href}
       aria-current={active ? 'page' : undefined}
     >
-      {content}
+      <span className="sr-rail__number">{lesson.marker}</span>
+      <span>{lesson.title}</span>
     </Link>
   )
 }

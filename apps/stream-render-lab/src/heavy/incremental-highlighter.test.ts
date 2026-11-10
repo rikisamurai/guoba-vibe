@@ -76,4 +76,35 @@ describe('IncrementalHighlighter', () => {
     expect(highlighter.enqueuedCodeUnits).toBe('const value = 42\n'.length)
     expect(result.stable.map((token) => token.content).join('')).toBe('const value = 42\n')
   })
+
+  it.each(['ab', 'abc'])(
+    'recovers queued source %j after the tokenizer partially fails',
+    async (source) => {
+      const failure = new Error('tokenizer failed after accepting bytes')
+      let consumed = ''
+      const enqueue = vi.fn(async (chunk: string) => {
+        consumed += chunk
+        if (chunk === 'b') throw failure
+        return { stable: [], unstable: [consumed] }
+      })
+      const highlighter = new IncrementalHighlighter({
+        enqueue,
+        clear: () => {
+          consumed = ''
+        },
+        close: () => [consumed],
+      })
+      await highlighter.update('a')
+
+      const failed = highlighter.update('ab')
+      const queued = highlighter.update(source)
+      const observed = Promise.allSettled([failed, queued])
+      expect(await observed).toEqual([
+        { status: 'rejected', reason: failure },
+        { status: 'fulfilled', value: { stable: [], unstable: [source] } },
+      ])
+      expect(await highlighter.finish()).toEqual({ stable: [source], unstable: [] })
+      expect(enqueue.mock.calls.flat()).toEqual(['a', 'b', source])
+    },
+  )
 })
