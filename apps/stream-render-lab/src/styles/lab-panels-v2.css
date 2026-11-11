@@ -1,0 +1,173 @@
+.lab2-inspector {
+  min-width: 0;
+  border-left: 1px solid var(--rule);
+}
+
+.lab2-tabs {
+  display: flex;
+  min-height: 43px;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+}
+
+.lab2-tabs button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  padding: 0 14px;
+  color: var(--ink-faint);
+  font: 600 9px var(--font-mono);
+}
+
+.lab2-tabs button[aria-selected='true'] {
+  border-bottom-color: var(--rust);
+  color: var(--ink);
+}
+
+.lab2-tabs > span {
+  align-self: center;
+  margin-left: auto;
+  padding-right: 14px;
+  color: var(--signal);
+  font: 600 9px var(--font-mono);
+}
+
+.lab2-inspector__body {
+  min-height: 545px;
+  background: #fff;
+}
+
+.lab2-rendered {
+  display: grid;
+  min-height: 545px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lab2-rendered > article,
+.lab2-rendered > .lab2-trace {
+  min-width: 0;
+  border-left: 1px solid var(--rule);
+}
+
+.lab2-rendered > :first-child {
+  border-left: 0;
+}
+
+.lab2-rendered article > div {
+  padding: 22px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.lab2-rendered .render-document {
+  line-height: 1.7;
+}
+
+.lab2-rendered .render-document pre {
+  overflow: auto;
+  padding: 12px;
+  background: #f1f3ef;
+  font-size: 11px;
+}
+
+.lab2-empty {
+  color: var(--ink-faint);
+}
+
+.lab2-wire-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lab2-wire-grid > :first-child {
+  border-right: 1px solid var(--rule);
+}
+
+.lab2-wire-stack {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+}
+
+.lab2-wire-stack > * {
+  background: #fff;
+}
+
+.lab2-trace {
+  min-width: 0;
+}
+
+.lab2-trace h3 {
+  position: sticky;
+  top: 0;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--rule);
+  background: #fafbf8;
+  font: 600 9px var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.lab2-trace ol {
+  max-height: 510px;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+
+.lab2-trace li {
+  display: grid;
+  gap: 4px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 11px;
+}
+
+.lab2-trace code {
+  color: var(--rust-dark);
+  font-size: 9px;
+}
+
+.lab2-trace span,
+.lab2-trace small {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.lab2-trace small {
+  color: var(--ink-faint);
+  font: 8px/1.5 var(--font-mono);
+}
+
+.lab2-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+}
+
+.lab2-metrics article {
+  padding: 22px;
+  background: #fff;
+}
+
+.lab2-metrics h3 {
+  margin-bottom: 15px;
+  color: var(--rust-dark);
+  font: 600 12px var(--font-mono);
+}
+
+.lab2-metrics p {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.lab2-metrics span {
+  color: var(--ink-soft);
+}
+
+.lab2-metrics b {
+  font-family: var(--font-mono);
+}

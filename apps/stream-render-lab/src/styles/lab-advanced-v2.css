@@ -1,0 +1,36 @@
+.lab2-advanced {
+  border-bottom: 1px solid var(--rule);
+  background: #f6f8f4;
+}
+
+.lab2-advanced summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font: 600 10px var(--font-mono);
+}
+
+.lab2-advanced summary b {
+  color: var(--signal);
+}
+
+.lab2-advanced summary span {
+  margin-left: auto;
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+
+.lab2-advanced__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px 15px 14px;
+}
+
+.lab2-advanced > p {
+  padding: 0 15px 14px;
+  color: var(--ink-soft);
+  font-size: 11px;
+}

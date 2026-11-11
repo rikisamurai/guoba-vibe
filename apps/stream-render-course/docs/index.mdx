@@ -1,0 +1,50 @@
+---
+title: 给前端开发者的 Streaming 实战
+description: 用同一个 Mini Chat，从真实 HTTP、字节和事件，到可靠交互与可验证的渲染优化。
+---
+
+import { LabLink } from '../components/lab-link'
+
+<p className="sr-kicker">STREAMING · ONE PROJECT</p>
+
+# 从真实网络，到你自己的流式聊天
+
+你已经会写 React 和异步请求。这门课解决的是接入 Streaming 后的新问题：中文被切开、事件只有半截、停止后还更新，以及回答越长页面越慢。
+
+**始终修改同一个 Mini Chat。** 浏览器和验收命令读取同一组源码；完成一课，就把新能力留在项目中。
+
+[开始学习 →](/learn/00-quick-start) · [环境安装](/setup) · <LabLink path="/project?source=mine">打开我的 Mini Chat</LabLink>
+
+## 三段路线，一个项目
+
+| 路线             | 按什么顺序做                                   | 带走什么                                 |
+| ---------------- | ---------------------------------------------- | ---------------------------------------- |
+| A · 读懂真实网络 | HTTP → UTF-8 → SSE → 正文与终态                | 能把任意读取片段还原成可靠的消息         |
+| B · 让聊天可靠   | 取消 → Markdown → 阅读交互 → 安全 → 项目验收   | 能停止、重试、区分失败并保留已收到的内容 |
+| C · 测量后再优化 | 合帧 → 预览 → 复用 → 尾部解析 → 重型任务 → A/B | 能说明优化了什么、代价是什么、证据在哪里 |
+
+先完成 A、B，再做 C。侧栏 S1–S3 是独立的最小模型，遇到时间回放或 raw / visible 概念时按需阅读，不是主线前置课。
+
+## 每一课怎么做
+
+1. 打开“我的实现”，复现本课指定的失败场景。
+2. 找到一个明确的源文件，观察输入、输出与中间状态。
+3. 修改自己的实现，重新运行同一个场景。
+4. 跑本课的验收，再切到“参考实现”比较行为。
+5. 解释失败发生在哪一层，然后进入下一课。
+
+自己的代码在 `apps/stream-render-lab/src/my-chat/`。初始版本能显示普通回答，但故意漏掉部分流式边界；验收中的失败就是学习任务，不能用切到参考实现代替修复。
+
+## 实验结果分别能证明什么
+
+- **网络观察器**：记录真实本地 HTTP 的 reader.read，并逐条查看字节、文本、事件与正文；不是 TCP 抓包。
+- **Mini Chat**：通过本地 HTTP 接收固定回答；其中“运行当前实现验收”另用固定切分与虚拟时钟，稳定复现边界。
+- **性能实验**：固定内容与到达节奏，测量策略的工作量和 React 渲染；不测模型生成速度。
+
+<LabLink path="/playground?demo=network-inspector&source=mine">网络观察器</LabLink> ·
+<LabLink path="/project?source=mine">我的 Mini Chat</LabLink> ·
+<LabLink path="/profiler">性能实验</LabLink>
+
+所有必做步骤无需 API Key。完成主线后，可按 Lab README 接入服务端模型；教学默认不包含登录、持久化或工具执行。
+
+[从 00 · 同一个 Mini Chat 开始 →](/learn/00-quick-start)

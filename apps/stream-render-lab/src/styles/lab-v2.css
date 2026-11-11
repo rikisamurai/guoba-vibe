@@ -1,0 +1,189 @@
+.lab2-page {
+  padding-top: 34px;
+}
+
+.lab2-hero {
+  padding: 28px 0 22px;
+}
+
+.lab2-hero p,
+.lab2-readout > div > span,
+.lab2-field > span,
+.lab2-pipelines > span,
+.lab2-editor > span {
+  color: var(--ink-faint);
+  font: 600 9px var(--font-mono);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.lab2-hero h1 {
+  margin-top: 7px;
+  font-size: clamp(34px, 4vw, 58px);
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.lab2-hero > span {
+  display: block;
+  margin-top: 12px;
+  color: var(--ink-soft);
+}
+
+.lab2-hero > small {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-faint);
+  font-size: 11px;
+}
+
+.lab2-workbench {
+  overflow: hidden;
+  border: 1px solid var(--rule-dark);
+  border-radius: 11px;
+  background: var(--paper-light);
+  box-shadow: var(--shadow-paper);
+}
+
+.lab2-readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.lab2-readout strong,
+.lab2-readout small {
+  display: block;
+}
+
+.lab2-readout strong {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.lab2-readout small {
+  margin-top: 2px;
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.lab2-readout dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(78px, 1fr));
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+}
+
+.lab2-readout dl div {
+  padding: 8px 11px;
+  border-left: 1px solid var(--rule);
+}
+
+.lab2-readout dl div:first-child {
+  border-left: 0;
+}
+
+.lab2-readout dt {
+  color: var(--ink-faint);
+  font: 8px var(--font-mono);
+}
+
+.lab2-readout dd {
+  font: 600 12px var(--font-mono);
+  text-transform: uppercase;
+}
+
+.lab2-controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) auto auto minmax(150px, 1fr);
+  align-items: end;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--rule);
+  background: #fafbf8;
+}
+
+.lab2-field {
+  display: grid;
+  gap: 4px;
+}
+
+.lab2-field select,
+.lab2-field input,
+.lab2-pipelines select {
+  min-height: 34px;
+  border: 1px solid var(--rule-dark);
+  border-radius: 5px;
+  background: #fff;
+  padding: 5px 9px;
+  font: 11px var(--font-mono);
+}
+
+.lab2-pipelines {
+  display: grid;
+  grid-template-columns: 76px auto 76px;
+  align-items: end;
+  gap: 5px;
+}
+
+.lab2-pipelines > span {
+  grid-column: 1 / -1;
+}
+
+.lab2-pipelines i {
+  align-self: center;
+  color: var(--ink-faint);
+  font: 8px var(--font-mono);
+  text-align: center;
+}
+
+.lab2-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.lab2-actions button {
+  min-height: 34px;
+  border: 1px solid var(--rule-dark);
+  border-radius: 5px;
+  background: #fff;
+  padding: 0 12px;
+  font-size: 11px;
+}
+
+.lab2-actions button.is-primary {
+  border-color: var(--scope);
+  background: var(--scope);
+  color: #fff;
+}
+
+.lab2-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.lab2-progress {
+  position: relative;
+  height: 34px;
+  border-bottom: 3px solid var(--rule);
+}
+
+.lab2-progress > span {
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rust), var(--signal));
+  transition: width 120ms linear;
+}
+
+.lab2-progress small {
+  position: absolute;
+  right: 0;
+  bottom: 5px;
+  color: var(--ink-faint);
+  font: 9px var(--font-mono);
+}

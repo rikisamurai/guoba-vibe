@@ -1,0 +1,196 @@
+.scope {
+  overflow: hidden;
+  border: 1px solid #385148;
+  border-radius: var(--radius-md);
+  background: var(--scope);
+  box-shadow: var(--shadow-scope);
+  color: #d9e6df;
+}
+
+.scope__bar,
+.scope figcaption {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  color: #82988f;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.scope__bar {
+  border-bottom: 1px solid var(--scope-rule);
+}
+
+.scope__channel {
+  margin-left: auto;
+}
+
+.scope__lamp {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #51645e;
+}
+
+.scope__lamp.is-active {
+  background: var(--signal);
+  box-shadow: 0 0 12px var(--signal);
+}
+
+.scope__screen {
+  position: relative;
+  overflow: hidden;
+  min-height: 210px;
+  background:
+    linear-gradient(rgb(109 180 154 / 9%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(109 180 154 / 9%) 1px, transparent 1px),
+    radial-gradient(circle at 50% 45%, #172a24, var(--scope) 72%);
+  background-size:
+    32px 32px,
+    32px 32px,
+    auto;
+}
+
+.scope__screen::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 0 49%, rgb(186 243 109 / 5%) 50%, transparent 51%);
+  background-size: 100% 7px;
+  content: '';
+  pointer-events: none;
+}
+
+.scope svg {
+  display: block;
+  width: 100%;
+  height: 220px;
+  overflow: visible;
+}
+
+.scope__wave {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.scope__wave--arrival {
+  stroke: var(--signal-soft);
+}
+
+.scope__wave--commit {
+  stroke: var(--signal);
+  filter: drop-shadow(0 0 4px rgb(186 243 109 / 48%));
+  stroke-dasharray: 980;
+  stroke-dashoffset: 980;
+  animation: trace 2.2s ease-out 180ms forwards;
+}
+
+.scope__legend {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  display: flex;
+  gap: 14px;
+  color: #80958c;
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+
+.scope__legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.scope__legend i {
+  width: 12px;
+  height: 2px;
+  background: var(--signal);
+}
+
+.scope__legend i.arrival {
+  background: var(--signal-soft);
+}
+
+.scope figcaption {
+  justify-content: space-between;
+  border-top: 1px solid var(--scope-rule);
+}
+
+.scope__ticks {
+  display: flex;
+  gap: 14px;
+}
+
+.scope__ticks i {
+  font-style: normal;
+}
+
+.manual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--rule-dark);
+  border-left: 1px solid var(--rule-dark);
+}
+
+.manual-card {
+  position: relative;
+  display: grid;
+  min-height: 250px;
+  grid-template-columns: 48px 1fr;
+  gap: 18px;
+  padding: 27px 25px;
+  border-right: 1px solid var(--rule-dark);
+  border-bottom: 1px solid var(--rule-dark);
+  background: rgb(250 246 236 / 52%);
+}
+
+.manual-card--link {
+  transition:
+    background 170ms ease,
+    translate 170ms ease;
+}
+
+.manual-card--link:hover {
+  z-index: 1;
+  background: var(--paper-light);
+  translate: 0 -4px;
+}
+
+.manual-card__index {
+  color: var(--rust);
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.manual-card__meta {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.manual-card h2 {
+  margin-top: 21px;
+  font-size: 22px;
+  letter-spacing: -0.035em;
+}
+
+.manual-card__body > p:last-of-type {
+  margin-top: 13px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.manual-card__arrow {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  color: var(--rust-dark);
+  font-family: var(--font-mono);
+}

@@ -1,0 +1,143 @@
+.beginner-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+.beginner-page h1 {
+  font-size: clamp(26px, 4vw, 40px);
+  margin: 12px 0;
+}
+.beginner-page > p {
+  max-width: 720px;
+}
+.beginner-demo {
+  color: #18201c;
+  background: #fffefb;
+  padding: 20px;
+  border: 1px solid #dce0d8;
+  border-radius: 8px;
+}
+.beginner-demo h2 {
+  font-size: 17px;
+  margin: 0 0 12px;
+}
+.beginner-demo p {
+  line-height: 1.8;
+}
+.beginner-meta {
+  color: #626c65;
+  font-size: 13px;
+}
+.beginner-tabs,
+.beginner-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.beginner-tabs {
+  margin: 24px 0;
+}
+.beginner-demo button,
+.beginner-tabs button,
+.beginner-demo select,
+.beginner-demo input:not([type='range'], [type='checkbox']) {
+  font: inherit;
+  min-height: 44px;
+  border: 1px solid #bfc8c0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #18201c;
+  background: #fffefb;
+}
+.beginner-demo button:not(:disabled),
+.beginner-tabs button {
+  cursor: pointer;
+}
+.beginner-demo button:disabled {
+  opacity: 0.5;
+}
+.beginner-tabs button[aria-pressed='true'] {
+  color: #a83b25;
+  background: #fff0ea;
+  border-color: #a83b25;
+}
+.beginner-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 20px 0;
+  border-block: 1px solid #dce0d8;
+}
+.beginner-panels article {
+  padding: 20px 14px;
+  min-width: 0;
+}
+.beginner-panels article + article {
+  border-left: 1px solid #dce0d8;
+}
+.beginner-answer {
+  min-height: 72px;
+  overflow-wrap: anywhere;
+}
+.beginner-demo pre {
+  padding: 12px;
+  background: #f3f4ef;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.beginner-demo small {
+  font-size: 13px;
+  color: #626c65;
+}
+.beginner-note {
+  background: #f3f4ef;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 0;
+}
+.beginner-range {
+  display: grid;
+  gap: 8px;
+  max-width: 440px;
+  margin: 16px 0;
+}
+.beginner-range input {
+  width: 100%;
+  accent-color: #b84328;
+}
+.beginner-demo details {
+  margin-top: 16px;
+}
+.beginner-demo summary {
+  cursor: pointer;
+}
+.beginner-demo a,
+.beginner-page a {
+  color: #a83b25;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.beginner-demo :focus-visible,
+.beginner-tabs :focus-visible {
+  outline: 2px solid #168d87;
+  outline-offset: 3px;
+}
+@media (max-width: 620px) {
+  .beginner-page {
+    padding: 24px 16px;
+  }
+  .beginner-demo {
+    padding: 14px;
+  }
+  .beginner-panels {
+    grid-template-columns: 1fr;
+  }
+  .beginner-panels article + article {
+    border-left: 0;
+    border-top: 1px solid #dce0d8;
+  }
+  .beginner-demo select,
+  .beginner-demo input {
+    font-size: 16px;
+  }
+}

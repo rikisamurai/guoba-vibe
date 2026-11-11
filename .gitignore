@@ -55,6 +55,7 @@ logs/
 # Build / temp
 dist/
 build/
+apps/*/doc_build/
 output/
 tmp/
 temp/

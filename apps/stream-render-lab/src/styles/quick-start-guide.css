@@ -1,0 +1,143 @@
+.quick-guide {
+  overflow: hidden;
+  border: 1px solid var(--rule-dark);
+  border-radius: 10px;
+  background: #f8faf7;
+}
+
+.quick-guide__loading {
+  display: grid;
+  min-height: 320px;
+  place-items: center;
+  color: var(--ink-faint);
+  font: 11px var(--font-mono);
+}
+
+.quick-guide__intro {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--rule);
+  background: #fff;
+}
+
+.quick-guide__intro > span,
+.quick-guide__observation header span {
+  color: var(--rust-dark);
+  font: 600 10px var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+.quick-guide__intro h2 {
+  margin: 2px 0;
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.quick-guide__intro p,
+.quick-guide__observation > p {
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.quick-guide__steps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quick-guide__steps {
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+
+.quick-guide__steps li {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  padding: 8px 12px;
+  border-right: 1px solid var(--rule);
+  color: var(--ink-faint);
+}
+
+.quick-guide__steps li:last-child {
+  border-right: 0;
+}
+
+.quick-guide__steps li[data-state='active'] {
+  box-shadow: inset 0 -2px var(--signal);
+  color: var(--ink);
+  background: #eff8f5;
+}
+
+.quick-guide__steps li[data-state='done'] {
+  color: #35746b;
+}
+
+.quick-guide__steps strong,
+.quick-guide__steps span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quick-guide__steps strong {
+  font: 600 11px var(--font-mono);
+}
+
+.quick-guide__steps span {
+  font: 10px var(--font-mono);
+}
+
+.quick-guide__timeline {
+  display: grid;
+  gap: 7px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.quick-guide__timeline header,
+.quick-guide__lane {
+  display: grid;
+  align-items: center;
+}
+
+.quick-guide__timeline header {
+  grid-template-columns: 1fr auto;
+  font: 10px var(--font-mono);
+}
+
+.quick-guide__timeline header span {
+  color: var(--ink-faint);
+}
+
+.quick-guide__lane {
+  grid-template-columns: 150px 1fr 22px;
+  gap: 9px;
+  color: var(--ink-soft);
+  font: 10px var(--font-mono);
+}
+
+.quick-guide__lane b {
+  color: var(--ink);
+  text-align: right;
+}
+
+.quick-guide__track {
+  position: relative;
+  min-height: 12px;
+  background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 8.33%);
+}
+
+.quick-guide__track i {
+  position: absolute;
+  top: 3px;
+  width: 3px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--rust);
+  transform: translateX(-1px);
+}
+
+.quick-guide__track[data-variant='optimized'] i {
+  background: var(--signal);
+}

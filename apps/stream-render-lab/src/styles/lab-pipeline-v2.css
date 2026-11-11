@@ -1,0 +1,33 @@
+.lab2-rendered article > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule);
+  font: 9px var(--font-mono);
+}
+
+.lab2-rendered article > header span,
+.lab2-rendered article > header b {
+  display: block;
+}
+
+.lab2-rendered article > header b {
+  color: var(--rust);
+}
+
+.lab2-rendered article > header dl {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 2px 8px;
+  text-align: right;
+}
+
+.lab2-rendered article > header dt {
+  color: var(--ink-faint);
+}
+
+.lab2-rendered article > header dd {
+  margin: 0;
+  color: var(--ink);
+}

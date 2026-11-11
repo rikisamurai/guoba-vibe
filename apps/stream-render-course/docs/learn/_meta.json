@@ -1,0 +1,21 @@
+[
+  "00-quick-start",
+  "a1-http",
+  "a2-utf8",
+  "a3-sse",
+  "a4-chat-completions",
+  "b1-lifecycle",
+  "b2-markdown",
+  "b3-chat-behavior",
+  "b4-safety",
+  "b5-capstone",
+  "c1-frame-batching",
+  "c2-preview-repair",
+  "c3-block-identity",
+  "c4-suffix-reparse",
+  "c5-heavy-nodes",
+  "c6-measurement",
+  "s1-non-streaming-chat",
+  "s2-string-replay-clock",
+  "s3-m0-raw-visible"
+]
