@@ -55,7 +55,7 @@ pnpm --filter stream-render-lab practice test --reference
 pnpm --filter stream-render-lab practice measure
 ```
 
-`practice test` 检查当前学员代码，可限定 `utf8`、`sse`、`provider`、`lifecycle`、`batch`。起点能跑普通回答，但故意留有边界缺口，初始失败属于练习；修改对应文件再验收。页面按钮与 CLI 使用同一个断言集。工程 `test` 检查参考契约及装配，不能替代自己的 practice 验收。
+`practice test` 检查当前学员代码，可限定 `utf8`、`sse`、`provider`、`lifecycle`、`batch`，以及 C2–C5 的 `repair`、`reuse`、`suffix`、`gate`（只由验收运行，不接入渲染引擎）。起点能跑普通回答，但故意留有边界缺口，初始失败属于练习；修改对应文件再验收。页面按钮与 CLI 使用同一个断言集。工程 `test` 检查参考契约及装配，不能替代自己的 practice 验收。
 
 `practice measure` 用固定到达节奏和虚拟帧，比较立即发布、学员 `src/my-chat/publish.ts` 与参考实现的输入次数、发布次数、等待时间和最终正文是否完整；正文丢失时命令失败。它只测发布逻辑，不经过渲染引擎或 React。
 

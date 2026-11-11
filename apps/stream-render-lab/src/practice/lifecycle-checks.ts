@@ -19,6 +19,7 @@ export const lifecycleChecks: PracticeCheck[] = [
     group: 'lifecycle',
     title: '正常终态且保留完整正文',
     file: 'read-answer.ts',
+    input: '一次读取：正文事件“你好” + [DONE]，然后 EOF',
     expected: ['你好', 'completed'],
     async run(impl) {
       let text = ''
@@ -39,6 +40,7 @@ export const lifecycleChecks: PracticeCheck[] = [
     group: 'lifecycle',
     title: '无结束标记的 EOF 保留正文并报告截断',
     file: 'read-answer.ts',
+    input: '一次读取：正文事件“你好”，没有 [DONE] 就 EOF',
     expected: ['你好', 'truncated'],
     async run(impl) {
       let text = ''
@@ -56,6 +58,7 @@ export const lifecycleChecks: PracticeCheck[] = [
     group: 'lifecycle',
     title: '等待下一段时停止并释放 reader',
     file: 'read-answer.ts',
+    input: '收到“你好”后立即 abort，响应体保持未关闭',
     expected: ['你好', true, false],
     async run(impl) {
       const controller = new AbortController()
@@ -91,6 +94,7 @@ export const lifecycleChecks: PracticeCheck[] = [
     group: 'lifecycle',
     title: 'HTTP 503 不作为正文显示',
     file: 'read-answer.ts',
+    input: 'HTTP 503，响应体为“unavailable”',
     expected: true,
     async run(impl) {
       let received = ''

@@ -8,6 +8,8 @@ import { LessonDemo } from '../../components/lesson-demo'
 
 # 字符已经正确，JSON 为什么还是解析失败？
 
+HTTP 响应体本身没有消息边界，SSE 靠文本约定把它切成消息：一行一个字段，空行表示“这条事件说完了”。读取在哪里断开，和事件在哪里结束毫无关系。因此解析器是一个逐行推进的状态机：攒半行，攒当前事件的 data，遇到空行才派发。JSON.parse 是派发之后的事。
+
 **修改文件：** `apps/stream-render-lab/src/my-chat/parse-events.ts`。先通过 A2 的 UTF-8 验收，再处理字符层的事件边界。
 
 ## 第一步：复现拆行和 CRLF
@@ -62,5 +64,13 @@ pnpm --filter stream-render-lab practice test sse --reference
 SSE 的 event / id / retry 是协议字段；模型 JSON 里的 choices 是下一层。一个完整 SSE event 也可能只携带角色、用量或结束信息，不一定有字可显示。
 
 参考：[WHATWG SSE 解析规则](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation)。
+
+## 自测
+
+不看代码，用自己的话回答：
+
+- 一次 read 的文本以 `\r` 结尾，为什么不能立刻把它当成行尾？
+- 流在 `data: {...}` 这一行之后直接 EOF、没有空行，这条事件该不该派发？为什么？
+- `data:一` 与 `data:  二` 分别解析出什么？
 
 [下一课：A4 · 正文：事件不是 token →](/learn/a4-chat-completions)

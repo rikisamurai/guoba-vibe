@@ -18,6 +18,10 @@ const practiceFiles = [
   'read-answer.ts',
   'publish.ts',
   'render-policy.ts',
+  'preview-repair.ts',
+  'reuse-blocks.ts',
+  'dirty-start.ts',
+  'task-gate.ts',
 ]
 async function walk(folder) {
   const entries = await readdir(folder, { withFileTypes: true })

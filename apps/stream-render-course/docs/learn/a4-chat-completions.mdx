@@ -7,6 +7,8 @@ import { LabLink } from '../../components/lab-link'
 
 # 解析出事件以后，哪些内容可以显示？
 
+到这一层，SSE 只是信封，信封里装的是服务商自己定义的 JSON。一封信可能带正文增量，也可能只带角色、用量、结束原因或错误。读取事件的工作是分拣：哪些进正文，哪些改变终态，哪些必须当作失败抛出。`[DONE]` 只表示流结束了，不表示回答完整。
+
 **修改文件：** `apps/stream-render-lab/src/my-chat/read-event.ts`。本课只处理完整 SSE 事件，字节与行状态继续由 A2、A3 的代码负责。
 
 ## 第一步：找出没有正文的事件
@@ -28,6 +30,8 @@ pnpm --filter stream-render-lab practice test provider
 ```
 
 在 `read-event.ts` 中分别处理正文与结束信息。只把 `delta.content` 中有效的文本交给正文；不要把 role、reasoning 或整个 JSON 字符串追加进回答。
+
+`choices` 是数组，数组下标不等于候选的 `index`：一个事件里可以先出现 index 1 的候选，再出现 index 0 的。按 `index === 0` 找正文，不要直接取 `choices[0]`。
 
 `[DONE]` 是该协议使用的标记，不是 JSON。先识别标记，再解析 JSON，并沿用项目已经定义的事件结果类型。
 
@@ -62,5 +66,13 @@ pnpm --filter stream-render-lab practice test provider --reference
 一次事件可以带多个 token 的文本，或完全不带正文。网络“流式”描述交付方式，不保证它一 token 一 token 到达。
 
 **验收：** 能沿着 bytes → text → event → delta 指出自己的四个模块；换切分方式后正文与终态不变。
+
+## 自测
+
+不看代码，用自己的话回答：
+
+- 收到 `finish_reason: "length"` 之后又收到 `[DONE]`，终态应该是什么？
+- 为什么要按 `index` 找候选，而不是取数组第一个？
+- 一个事件里既没有 content 也没有 finish_reason，它是错误吗？
 
 [下一课：B1 · 停止、截断与重试 →](/learn/b1-lifecycle)

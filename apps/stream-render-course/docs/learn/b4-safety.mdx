@@ -7,6 +7,8 @@ import { LabLink } from '../../components/lab-link'
 
 # 两条边界：能显示，不等于可信；读完，不等于成功
 
+模型输出是不可信输入，和用户提交的表单没有区别。它经过你的渲染器变成 DOM，所以渲染器是一道安全边界：默认什么都不执行，只放行明确允许的结构和链接协议。另一条边界在协议终态：页面上“看起来说完了”不构成完成的证据。
+
 **自己的文件：** `src/my-chat/read-event.ts`、`read-answer.ts`。安全显示由共享 `src/rendering/` 负责；路径均相对 `apps/stream-render-lab/`。
 
 ## 第一步：用协议反例验收自己的终态
@@ -47,5 +49,13 @@ pnpm --filter stream-render-lab exec vitest run src/rendering/render-document.te
 固定教学端点无需 Key。可选真实模型从服务端 `.env.local` 读取密钥，前端不保存。公开部署前另需鉴权、并发与资源限制；功能开关不是访问控制。
 
 **验收：** 能解释协议结束与 EOF 的差异，能证明不可信 HTML / URL 不执行，也知道测试覆盖的是哪一层。
+
+## 自测
+
+不看代码，用自己的话回答：
+
+- 为什么只放行 http、https 的允许列表，比拦掉 `javascript:` 的拦截列表更可靠？
+- 前端安全显示测试覆盖了什么，没有覆盖什么？
+- 真实模型的 Key 为什么只能放在服务端？
 
 [下一课：B5 · 验收我的 Mini Chat →](/learn/b5-capstone)

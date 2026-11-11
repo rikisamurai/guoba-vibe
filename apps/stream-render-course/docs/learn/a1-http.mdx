@@ -8,6 +8,8 @@ import { Pipeline } from '../../components/pipeline'
 
 # 服务端在发，为什么页面还没有字？
 
+把一次流式回答想成接力：服务端写入 → 网络与代理转运 → 浏览器 `reader.read()` 交付 → 你的代码解码、拼事件、取正文 → 发布给界面。每一棒都可以把上一棒交来的东西合并或切开，所以任何一层的“一次”都不等于下一层的“一次”。排查“没有字”，就是找出接力棒停在了哪一棒。
+
 **本课源码入口：** `apps/stream-render-lab/src/my-chat/read-answer.ts`，它调用共享 `src/practice/consume-response.ts` 读取响应。先观察边界，后续课程再完善自己的解码和协议；不要同时改 React。
 
 ## 第一步：发出真实请求
@@ -70,5 +72,13 @@ pnpm --filter stream-render-lab practice test utf8 --reference
 **本课验收：** 能找到发送端 enqueue、自己的 reader.read 和 signal；能说明“响应到了但没显示”还可能卡在解码、事件或发布层。
 
 标准参考：[Fetch 响应体](https://fetch.spec.whatwg.org/)、[SSE 格式](https://html.spec.whatwg.org/multipage/server-sent-events.html)。
+
+## 自测
+
+不看代码，用自己的话回答：
+
+- curl 能逐段看到内容、页面却一次性出现，最先怀疑哪一层？为什么不是服务端？
+- 为什么不能把一次 `reader.read()` 当成一个 SSE 事件或一个 token？
+- `await response.text()` 与循环 `reader.read()` 拿到 Response 的时刻相同，差别在哪？
 
 [下一课：A2 · 字节：中文被切开了 →](/learn/a2-utf8)

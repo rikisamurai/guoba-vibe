@@ -40,8 +40,29 @@ export interface Publisher {
   finish(): void
   cancel(): void
 }
+export interface PreviewRepair {
+  text: string
+  synthetic: string
+}
+export interface PreviewBlock {
+  raw: string
+  start: number
+  node: unknown
+}
+export interface ParsedBlockInfo {
+  type: string
+  hasDefinition?: boolean
+}
+export interface TaskGate {
+  push(source: string): void
+  dispose(): void
+}
 export interface Implementation extends Pipeline {
   readAnswer(response: Response, options: ReadAnswerOptions): Promise<RunOutcome>
   createPublisher(show: (text: string) => void, clock: FrameClock): Publisher
+  repairPreview(raw: string): PreviewRepair
+  reuseBlocks(previous: PreviewBlock[], next: PreviewBlock[]): PreviewBlock[]
+  dirtyBlockIndex(previous: ParsedBlockInfo[]): number | null
+  createTaskGate<T>(render: (source: string) => Promise<T>, commit: (output: T) => void): TaskGate
 }
 export type ImplementationSource = 'mine' | 'reference'

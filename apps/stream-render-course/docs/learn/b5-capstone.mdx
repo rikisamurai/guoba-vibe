@@ -8,6 +8,8 @@ import { Pipeline } from '../../components/pipeline'
 
 # 项目已经在你手里，现在证明它可靠
 
+验收不是再看一遍绿灯，而是为每一层准备一份独立的证据：固定切分的用例证明边界正确，真实 HTTP 观察证明链路接通，浏览器操作证明状态与交互正确。三种证据互不替代；任何一项失败，都应该能指出是哪一层。
+
 前面的改动都保留在 `apps/stream-render-lab/src/my-chat/`。本课不创建第三份项目，也不要求你复制参考目录：**你一直运行的“我的实现”就是本次交付。**
 
 ## Step 1：确认验收对象
@@ -34,7 +36,7 @@ pnpm --filter stream-render-lab practice test provider
 pnpm --filter stream-render-lab practice test lifecycle
 ```
 
-预期 A、B 主线这四组通过。若失败，从对应源文件与反例修复，再回到页面复测。C1 的 batch 优化尚未完成时，全量 practice 仍可能失败；这不是让你忽略失败，而是明确下一阶段还欠哪项能力。
+预期 A、B 主线这四组通过。若失败，从对应源文件与反例修复，再回到页面复测。C 段的 batch、repair、reuse、suffix、gate 尚未完成时，全量 practice 仍会失败；这不是让你忽略失败，而是明确下一阶段还欠哪项能力。
 
 ```bash
 pnpm --filter stream-render-lab practice test --reference
@@ -83,5 +85,13 @@ pnpm --filter stream-render-course test:e2e
 若要验证真实服务，按 Lab README 的 Live 部分配置服务端密钥，再用 <LabLink path="/chat">真实模型聊天</LabLink>。那是现有完整引擎的可选演示；它运行成功不替代你的 practice 验收。将自己的链路接入业务时，要按实际服务商协议、错误和权限重新验收。
 
 **交付标准：** A、B 验收通过；能从点击发送一路定位到屏幕，说明任一故障该在哪层修复。此时已有可靠基线，下一步再追求更少工作。
+
+## 自测
+
+不看代码，用自己的话回答：
+
+- 参考实现全部通过，能说明你的实现什么？
+- 固定字节切分的验收和网络观察器各自证明什么？为什么两者都需要？
+- 随便指一个故障现象（比如停止后还在追加），你能说出先看哪个文件吗？
 
 [继续 C1 · 合并更新与尾帧 →](/learn/c1-frame-batching)

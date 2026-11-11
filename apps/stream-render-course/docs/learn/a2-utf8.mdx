@@ -8,6 +8,8 @@ import { LessonDemo } from '../../components/lesson-demo'
 
 # 一次 read，没有义务交给你一个完整字符
 
+UTF-8 里一个汉字占 3 个字节，多数 emoji 占 4 个；网络只认字节，不认字符。切点落在字符中间时，前一段的结尾就是“还没说完的半个字”。所以解码器必须有记忆：记住没凑齐的字节，等下一段到了再一起交出文字。每段各建一个解码器，等于每次都失忆。
+
 **修改文件：** `apps/stream-render-lab/src/my-chat/decode.ts`。输入是字节片段，输出是解码文本。沿用上节的同一个 Mini Chat。
 
 ## 第一步：先让它失败
@@ -28,7 +30,16 @@ pnpm --filter stream-render-lab practice test utf8
 
 ## 第三步：把解码状态留在同一次响应内
 
-打开 `decode.ts`，把 TextDecoder 的创建放到一次解码会话中，而不是每个 chunk 中。核心顺序是：
+打开 `decode.ts`。起点在每次 push 里新建一个 TextDecoder，上一段剩下的半个字符随旧解码器一起丢了。先自己回答三个问题，再动手：
+
+1. 解码器该在哪里创建，才能跨 push 记住没凑齐的字节？
+2. `decode()` 的哪个选项表示“后面还有数据，先别把半个字符判成错误”？
+3. EOF 时怎样把解码器里剩下的字节交出来？
+
+线索在 TextDecoder.decode 的 `stream` 选项。
+
+<details>
+<summary>卡住超过十分钟再展开</summary>
 
 ```ts
 const decoder = new TextDecoder()
@@ -36,6 +47,8 @@ const first = decoder.decode(chunkA, { stream: true })
 const second = decoder.decode(chunkB, { stream: true })
 const tail = decoder.decode()
 ```
+
+</details>
 
 按文件已有接口保存同一个 decoder。收到片段时保留未完成字符；到 EOF 时执行最后一次 flush。每次新请求重新创建会话，不能把上一条回答的残余字节带进下一轮。
 
@@ -57,5 +70,13 @@ pnpm --filter stream-render-lab practice test utf8 --reference
 **验收：** 中文和 emoji 在任意合法切点都还原为同一原文；一个 read 也允许输出空字符串。
 
 参考：[TextDecoder.decode](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/decode)。
+
+## 自测
+
+不看代码，用自己的话回答：
+
+- “你”的字节是 E4 BD A0。只收到 E4 时，正确的输出是什么？为什么不是替换字符？
+- 为什么普通请求“看起来正常”不能说明解码器没有问题？
+- EOF 时解码器里还剩一个 E4，应该输出什么？这属于“字符被拆开”还是“输入本身损坏”？
 
 [下一课：A3 · SSE：半行不是一个事件 →](/learn/a3-sse)

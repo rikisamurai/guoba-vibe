@@ -29,6 +29,7 @@ export const batchChecks: PracticeCheck[] = [
     group: 'batch',
     title: '同一帧的多次输入只发布最新值',
     file: 'publish.ts',
+    input: 'push(“你”)、push(“你好”)、push(“你好！”)，然后进入下一帧',
     expected: ['你好！'],
     run(impl) {
       const output: string[] = []
@@ -46,6 +47,7 @@ export const batchChecks: PracticeCheck[] = [
     group: 'batch',
     title: '终态立即补齐最后一段，下一帧不重复',
     file: 'publish.ts',
+    input: 'push(“最后一段”)、finish()，然后进入下一帧',
     expected: ['最后一段'],
     run(impl) {
       const output: string[] = []
@@ -62,6 +64,7 @@ export const batchChecks: PracticeCheck[] = [
     group: 'batch',
     title: '取消后旧帧不再发布',
     file: 'publish.ts',
+    input: 'push(“过期内容”)、cancel()，然后进入下一帧',
     expected: [],
     run(impl) {
       const output: string[] = []
@@ -78,6 +81,7 @@ export const batchChecks: PracticeCheck[] = [
     group: 'batch',
     title: '一帧发布后，后续输入申请新的帧',
     file: 'publish.ts',
+    input: 'push(“你”)、下一帧、push(“你好”)、下一帧',
     expected: ['你', '你好'],
     run(impl) {
       const output: string[] = []

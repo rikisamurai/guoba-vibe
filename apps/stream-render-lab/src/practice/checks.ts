@@ -1,5 +1,7 @@
 import { batchChecks } from './batch-checks'
+import { gateChecks } from './gate-checks'
 import { lifecycleChecks } from './lifecycle-checks'
+import { renderChecks } from './render-checks'
 import { sseChecks } from './sse-checks'
 import type { Implementation } from './types'
 
@@ -8,6 +10,7 @@ export interface PracticeCheck {
   group: string
   title: string
   file: string
+  input: string
   expected: unknown
   run(implementation: Implementation): unknown
 }
@@ -16,6 +19,7 @@ export interface CheckResult {
   group: string
   title: string
   file: string
+  input: string
   passed: boolean
   expected: string
   actual: string
@@ -27,6 +31,7 @@ const utf8Checks: PracticeCheck[] = [
     group: 'utf8',
     title: '中文跨字节读取仍完整',
     file: 'decode.ts',
+    input: '“你🙂”的 7 个字节，每次 push 1 个，最后 finish()',
     expected: '你🙂',
     run(impl) {
       const decoder = impl.createDecoder()
@@ -41,6 +46,7 @@ const utf8Checks: PracticeCheck[] = [
     group: 'utf8',
     title: 'EOF 才释放未完成字符',
     file: 'decode.ts',
+    input: 'push([0xE4])（“你”的第 1 个字节），随后 finish()',
     expected: ['', '�'],
     run(impl) {
       const decoder = impl.createDecoder()
@@ -54,6 +60,7 @@ const providerChecks: PracticeCheck[] = [
     group: 'provider',
     title: '只提取 choice 0 的正文',
     file: 'read-event.ts',
+    input: '一个事件含两个 choice：先 index 1（“其他候选”），后 index 0（“正文”）',
     expected: '正文',
     run(impl) {
       return impl.createEventReader()(
@@ -71,6 +78,7 @@ const providerChecks: PracticeCheck[] = [
     group: 'provider',
     title: 'role 和 usage 不进入正文',
     file: 'read-event.ts',
+    input: '两个事件：delta 只有 role；choices 为空且带 usage',
     expected: '',
     run(impl) {
       const read = impl.createEventReader()
@@ -85,6 +93,7 @@ const providerChecks: PracticeCheck[] = [
     group: 'provider',
     title: '长度限制不是完整回答',
     file: 'read-event.ts',
+    input: 'finish_reason 为 length 的事件，随后 [DONE]',
     expected: 'incomplete',
     run(impl) {
       const read = impl.createEventReader()
@@ -97,6 +106,7 @@ const providerChecks: PracticeCheck[] = [
     group: 'provider',
     title: '内容过滤也不是完整回答',
     file: 'read-event.ts',
+    input: 'finish_reason 为 content_filter 的事件，随后 [DONE]',
     expected: 'incomplete',
     run(impl) {
       const read = impl.createEventReader()
@@ -109,6 +119,7 @@ const providerChecks: PracticeCheck[] = [
     group: 'provider',
     title: '服务商错误包不当作空正文',
     file: 'read-event.ts',
+    input: '{"error":{"message":"rate limited"}}',
     expected: 'thrown',
     run(impl) {
       try {
@@ -126,6 +137,8 @@ export const practiceChecks = [
   ...providerChecks,
   ...lifecycleChecks,
   ...batchChecks,
+  ...renderChecks,
+  ...gateChecks,
 ]
 export async function runAcceptance(
   implementation: Implementation,

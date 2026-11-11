@@ -6,6 +6,7 @@ export const sseChecks: PracticeCheck[] = [
     group: 'sse',
     title: '半条事件暂存，两条事件拆开',
     file: 'parse-events.ts',
+    input: '两次 push：“data: 一\\n” | “\\ndata: 二\\n\\n”',
     expected: [[], ['一', '二']],
     run(impl) {
       const parser = impl.createEventParser()
@@ -18,6 +19,7 @@ export const sseChecks: PracticeCheck[] = [
     group: 'sse',
     title: 'CRLF 跨读取边界不提前结束行',
     file: 'parse-events.ts',
+    input: '三次 push：“data: 一\\r” | “\\ndata: 二\\r\\n” | “\\r\\n”',
     expected: ['一\n二'],
     run(impl) {
       const parser = impl.createEventParser()
@@ -33,6 +35,7 @@ export const sseChecks: PracticeCheck[] = [
     group: 'sse',
     title: '单独的 CR 也是行结束',
     file: 'parse-events.ts',
+    input: '一次 push：“data: 一\\rdata: 二\\r\\r: ping\\r”',
     expected: ['一\n二'],
     run(impl) {
       return impl.createEventParser().push('data: 一\rdata: 二\r\r: ping\r')
@@ -43,6 +46,7 @@ export const sseChecks: PracticeCheck[] = [
     group: 'sse',
     title: '忽略注释，合并多行 data',
     file: 'parse-events.ts',
+    input: '一次 push：“: ping\\nevent: message\\ndata: 一\\ndata: 二\\n\\n”',
     expected: ['一\n二'],
     run(impl) {
       return impl.createEventParser().push(': ping\nevent: message\ndata: 一\ndata: 二\n\n')
@@ -53,6 +57,7 @@ export const sseChecks: PracticeCheck[] = [
     group: 'sse',
     title: '冒号后只去掉一个可选空格',
     file: 'parse-events.ts',
+    input: '一次 push：“data:一\\ndata:  二\\n\\n”',
     expected: ['一\n 二'],
     run(impl) {
       return impl.createEventParser().push('data:一\ndata:  二\n\n')
@@ -63,6 +68,7 @@ export const sseChecks: PracticeCheck[] = [
     group: 'sse',
     title: 'EOF 丢弃未由空行结束的事件',
     file: 'parse-events.ts',
+    input: 'push(“data: unfinished\\n”)，随后 finish()',
     expected: [],
     run(impl) {
       const parser = impl.createEventParser()

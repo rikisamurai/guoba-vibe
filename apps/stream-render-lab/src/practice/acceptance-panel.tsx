@@ -10,6 +10,10 @@ const groups = {
   provider: 'A4 · 正文',
   lifecycle: 'B1 · 生命周期',
   batch: 'C1 · 帧合并',
+  repair: 'C2 · 预览修补',
+  reuse: 'C3 · 块复用',
+  suffix: 'C4 · 尾部解析',
+  gate: 'C5 · 任务门禁',
 }
 export function AcceptancePanel({ source }: { source: ImplementationSource }) {
   const [results, setResults] = useState<CheckResult[] | null>(null)
@@ -86,7 +90,8 @@ export function AcceptancePanel({ source }: { source: ImplementationSource }) {
           {source === 'reference' ? ' --reference' : ''}
         </pre>
         <p>
-          可在 test 后加 utf8、sse、provider、lifecycle 或 batch 单独验收。修改源文件后重新运行。
+          可在 test 后加 utf8、sse、provider、lifecycle、batch、repair、reuse、suffix 或 gate
+          单独验收。修改源文件后重新运行。
         </p>
       </details>
     </section>

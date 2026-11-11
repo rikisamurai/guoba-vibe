@@ -1,10 +1,19 @@
 import { spawnSync } from 'node:child_process'
 
 const [command, ...args] = process.argv.slice(2)
-const groups = ['utf8', 'sse', 'provider', 'lifecycle', 'batch']
+const groups = [
+  'utf8',
+  'sse',
+  'provider',
+  'lifecycle',
+  'batch',
+  'repair',
+  'reuse',
+  'suffix',
+  'gate',
+]
 const group = args.find((arg) => arg !== '--reference')
-const usage =
-  'Usage: pnpm practice test [utf8|sse|provider|lifecycle|batch] [--reference]\n       pnpm practice measure'
+const usage = `Usage: pnpm practice test [${groups.join('|')}] [--reference]\n       pnpm practice measure`
 if (
   !(command === 'test' || (command === 'measure' && args.length === 0)) ||
   args.filter((arg) => arg !== '--reference').length > 1 ||
@@ -21,10 +30,9 @@ console.info(
       : '验收 src/my-chat/ 当前代码。起点有刻意保留的边界缺口；失败会给出文件与断言。',
 )
 const result = spawnSync(
-  'pnpm',
+  process.execPath,
   [
-    'exec',
-    'vitest',
+    'node_modules/vitest/vitest.mjs',
     'run',
     '--config',
     'practice.vitest.config.ts',

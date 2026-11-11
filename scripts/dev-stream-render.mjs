@@ -20,9 +20,23 @@ if (occupied.length > 0) {
   process.exit(1)
 }
 
+// Reuse the pnpm that launched this script so `corepack pnpm dev:stream-render` also works.
+const launcher = process.env.npm_execpath
+const runsOnNode = launcher !== undefined && /\.[cm]?js$/.test(launcher)
 const child = spawn(
-  process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-  ['--parallel', '--filter', 'stream-render-course', '--filter', 'stream-render-lab', 'run', 'dev'],
+  runsOnNode
+    ? process.execPath
+    : (launcher ?? (process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm')),
+  [
+    ...(runsOnNode ? [launcher] : []),
+    '--parallel',
+    '--filter',
+    'stream-render-course',
+    '--filter',
+    'stream-render-lab',
+    'run',
+    'dev',
+  ],
   {
     env: {
       ...process.env,

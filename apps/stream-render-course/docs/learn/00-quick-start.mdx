@@ -33,16 +33,20 @@ pnpm --filter stream-render-lab practice test --reference
 
 下面路径均相对 `apps/stream-render-lab/`：
 
-| 文件                           | 本轮学习解决什么                   |
-| ------------------------------ | ---------------------------------- |
-| `src/my-chat/decode.ts`        | 字节切开中文和 emoji 时不乱码      |
-| `src/my-chat/parse-events.ts`  | 半行、CRLF、注释和空行正确组成事件 |
-| `src/my-chat/read-event.ts`    | 从服务商事件提取正文与结束信息     |
-| `src/my-chat/read-answer.ts`   | 判断 EOF 是完成还是截断            |
-| `src/my-chat/publish.ts`       | 合并更新，结束前交出尾部           |
-| `src/my-chat/render-policy.ts` | 选择渲染策略，验证正确性与成本     |
+| 文件                            | 本轮学习解决什么                   |
+| ------------------------------- | ---------------------------------- |
+| `src/my-chat/decode.ts`         | 字节切开中文和 emoji 时不乱码      |
+| `src/my-chat/parse-events.ts`   | 半行、CRLF、注释和空行正确组成事件 |
+| `src/my-chat/read-event.ts`     | 从服务商事件提取正文与结束信息     |
+| `src/my-chat/read-answer.ts`    | 判断 EOF 是完成还是截断            |
+| `src/my-chat/publish.ts`        | 合并更新，结束前交出尾部           |
+| `src/my-chat/render-policy.ts`  | 选择渲染策略，验证正确性与成本     |
+| `src/my-chat/preview-repair.ts` | C2：给未闭合的代码围栏补预览       |
+| `src/my-chat/reuse-blocks.ts`   | C3：判断哪些块可以沿用上一帧       |
+| `src/my-chat/dirty-start.ts`    | C4：决定从哪一块开始重新解析       |
+| `src/my-chat/task-gate.ts`      | C5：拒绝迟到的异步结果             |
 
-这些模块由浏览器和练习验收共同使用，改动会留到后续课程。读取循环、取消与 HTTP 状态检查在共享的 `src/practice/consume-response.ts`，B1 会带你读它。渲染策略复用项目现有引擎；调整策略不等于你重新实现了 Markdown 解析器。
+前六个模块由浏览器和练习验收共同使用，改动会留到后续课程。后四个是 C 段的小练习，只由验收运行；Mini Chat 的显示始终由 `render-policy.ts` 选中的共享引擎完成。读取循环、取消与 HTTP 状态检查在共享的 `src/practice/consume-response.ts`，B1 会带你读它。渲染策略复用项目现有引擎；调整策略不等于你重新实现了 Markdown 解析器。
 
 ## 第四步：建立一个最小直觉
 
