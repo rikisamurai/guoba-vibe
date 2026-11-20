@@ -1,20 +1,10 @@
 import { useState } from 'react'
 
 import { runAcceptance, type CheckResult } from './checks'
+import { practiceGroups } from './groups'
 import { implementations } from './implementations'
 import type { ImplementationSource } from './types'
 
-const groups = {
-  utf8: 'A2 · UTF-8',
-  sse: 'A3 · SSE',
-  provider: 'A4 · 正文',
-  lifecycle: 'B1 · 生命周期',
-  batch: 'C1 · 帧合并',
-  repair: 'C2 · 预览修补',
-  reuse: 'C3 · 块复用',
-  suffix: 'C4 · 尾部解析',
-  gate: 'C5 · 任务门禁',
-}
 export function AcceptancePanel({ source }: { source: ImplementationSource }) {
   const [results, setResults] = useState<CheckResult[] | null>(null)
   const [running, setRunning] = useState(false)
@@ -52,7 +42,7 @@ export function AcceptancePanel({ source }: { source: ImplementationSource }) {
         </p>
       )}
       {results &&
-        Object.entries(groups).map(([group, title]) => {
+        Object.entries(practiceGroups).map(([group, title]) => {
           const checks = results.filter((item) => item.group === group)
           return (
             <details key={group} open={checks.some((item) => !item.passed)}>
@@ -72,7 +62,8 @@ export function AcceptancePanel({ source }: { source: ImplementationSource }) {
                       </small>
                       {!check.passed && (
                         <pre>
-                          期望：{check.expected}
+                          输入：{check.input}
+                          {'\n'}期望：{check.expected}
                           {'\n'}实际：{check.actual}
                         </pre>
                       )}

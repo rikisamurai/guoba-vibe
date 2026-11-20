@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { ReadDetail } from './read-detail'
+import { readTag } from './read-tag'
 import { useNetworkRun, type NetworkSource } from './use-network-run'
 
 import '../beginner/beginner.css'
@@ -15,7 +16,9 @@ export default function NetworkInspector() {
   const [mode, setMode] = useState('stream')
   const [selected, setSelected] = useState<number | null>(null)
   const run = useNetworkRun()
-  const selectedIndex = selected ?? run.records.length - 1
+  const tags = run.records.map(readTag)
+  const tagged = run.busy ? -1 : tags.findIndex(Boolean)
+  const selectedIndex = selected ?? (tagged < 0 ? run.records.length - 1 : tagged)
   const record = run.records[selectedIndex]
   const reads = run.records.filter((entry) => !entry.eof)
   return (
@@ -95,6 +98,7 @@ export default function NetworkInspector() {
                 <small>
                   {entry.bytes.length} B · +{entry.receivedAt} ms
                 </small>
+                {tags[index] && <em>{tags[index]}</em>}
               </button>
             ))}
           </div>

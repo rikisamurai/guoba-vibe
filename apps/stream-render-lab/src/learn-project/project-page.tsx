@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import { myRenderPolicy } from '../my-chat/render-policy'
 import { AcceptancePanel } from '../practice/acceptance-panel'
+import { PracticeProgress } from '../practice/practice-progress'
 import { AnswerView } from './answer-view'
 import { useMiniChat } from './use-mini-chat'
 
@@ -21,6 +22,7 @@ export default function ProjectPage() {
       <span className="beginner-meta">贯穿课程 / MINI CHAT</span>
       <h1>同一个项目，一步步做到可靠</h1>
       <p>从真实 HTTP 到渲染优化。修改自己的代码，发送消息，再用相同代码运行验收。</p>
+      <PracticeProgress />
       <section className="beginner-demo project-source" aria-label="实现来源">
         <label>
           运行代码{' '}

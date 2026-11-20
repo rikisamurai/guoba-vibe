@@ -29,6 +29,15 @@
   border-color: #168d87;
   background: #ecf4ef;
 }
+.network-reads em {
+  justify-self: start;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #f6e3dc;
+  color: #a83b25;
+  font-size: 12px;
+  font-style: normal;
+}
 .network-stages {
   min-width: 0;
 }
