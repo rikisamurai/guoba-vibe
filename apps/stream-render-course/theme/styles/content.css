@@ -152,7 +152,3 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.sr-rail-location {
-  color: var(--sr-muted);
-  font-size: 13px;
-}

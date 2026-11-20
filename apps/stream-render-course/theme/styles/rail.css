@@ -108,11 +108,11 @@
   position: relative;
 }
 
-/* Lesson rows span the rail's content box and indent their text by 10px; the header aligns to that:
-   the toggle's right edge meets the rows, and it is centred on the first 22px line of the location. */
+/* The toggle shares the first row with the setup link: its right edge meets the lesson rows,
+   and it is centred on the link's 40px box (8px padding around a 23.8px line). */
 .sr-rail-toggle {
   position: absolute;
-  top: 22px;
+  top: 31px;
   right: 18px;
   display: flex;
   align-items: center;
@@ -126,12 +126,12 @@
   cursor: pointer;
 }
 
-.sr-rail-toggle:hover {
-  color: var(--sr-ink);
+.sr-rail-resource {
+  margin-right: 38px;
 }
 
-.sr-rail-location {
-  padding: 0 38px 0 10px;
+.sr-rail-toggle:hover {
+  color: var(--sr-ink);
 }
 
 @media (width > 768px) {
@@ -153,7 +153,6 @@
     margin: 0 auto 14px;
   }
 
-  .sr-rail-collapsed .sr-rail-location,
   .sr-rail-collapsed .sr-rail-resource,
   .sr-rail-collapsed .sr-rail__part h2,
   .sr-rail-collapsed .sr-rail__title {

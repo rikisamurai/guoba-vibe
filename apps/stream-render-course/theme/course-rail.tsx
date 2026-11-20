@@ -34,11 +34,6 @@ export function CourseRail() {
       >
         <RailIcon collapsed={collapsed.value} />
       </button>
-      <p className="sr-rail-location">
-        {activeLesson
-          ? `正在阅读 ${activeLesson.marker} · ${activeLesson.shortTitle}`
-          : '同一个项目，逐步解决真实问题'}
-      </p>
       <Link className="sr-rail-resource" to="/setup">
         环境安装与运行
       </Link>

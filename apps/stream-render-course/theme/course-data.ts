@@ -1,7 +1,6 @@
 export interface CourseLesson {
   number: number
   title: string
-  shortTitle: string
   href: string
   marker: string
 }
@@ -56,7 +55,7 @@ export const courseParts: readonly CoursePart[] = [
   },
 ]
 function lesson(number: number, title: string, path: string, marker: string): CourseLesson {
-  return { number, title, shortTitle: title, href: `/learn/${path}`, marker }
+  return { number, title, href: `/learn/${path}`, marker }
 }
 export function findLesson(pathname: string): CourseLesson | undefined {
   const path = pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/'
