@@ -69,7 +69,6 @@ export function measurePublish(
     if (text.length === ANSWER.length) break
   }
   publisher.finish()
-  runFramesUntil(Infinity)
   publisher.cancel()
   const waits = pushes.map((push) => {
     const shown = shows.find((show) => show.at >= push.at && show.length >= push.length)

@@ -14,7 +14,8 @@ describe('RunModel projection work', () => {
       for (const delay of delays) {
         model.appendPart('answer', { kind: 'text', text: 'x' }, 100 - delay)
       }
-      model.commitPreview('direct', 100)
+      model.commitPreview('direct')
+      model.recordPublishedVisibility(100)
       observed.push(...delays)
       const sorted = observed.toSorted((a, b) => a - b)
       expect(model.snapshot('streaming').metrics).toMatchObject({
@@ -23,22 +24,33 @@ describe('RunModel projection work', () => {
         rawToVisibleP95Ms: sorted[Math.ceil(observed.length * 0.95) - 1],
       })
     }
-    model.commitCanonical(110)
+    model.commitCanonical()
+    model.recordPublishedVisibility(110)
     expect(model.snapshot('settled').metrics.rawToVisibleSamples).toBe(20)
+  })
+
+  it('includes parse and reconciliation work up to publication, even for M0', () => {
+    const model = new RunModel('run-1', 'M0')
+    model.startPart('answer', 'answer')
+    model.appendPart('answer', { kind: 'text', text: 'hello' }, 10)
+    model.commitPreview('direct')
+    expect(model.snapshot('streaming').metrics.rawToVisibleSamples).toBe(0)
+    model.recordPublishedVisibility(35)
+    expect(model.snapshot('streaming').metrics.rawToVisibleP95Ms).toBe(25)
   })
 
   it('does not reparse an ended part while a later part advances', () => {
     const model = new RunModel('run-1', 'M2')
     model.startPart('reasoning', 'reasoning')
     model.appendPart('reasoning', { kind: 'text', text: 'stable reasoning' }, 0)
-    model.commitPreview('direct', 16)
+    model.commitPreview('direct')
     model.endPart('reasoning')
     model.startPart('answer', 'answer')
     const before = model.snapshot('streaming')
     const reasoningDocument = before.parts[0]?.document
 
     model.appendPart('answer', { kind: 'text', text: 'new answer' }, 20)
-    model.commitPreview('direct', 32)
+    model.commitPreview('direct')
     const after = model.snapshot('streaming')
 
     expect(after.parts[0]?.document).toBe(reasoningDocument)

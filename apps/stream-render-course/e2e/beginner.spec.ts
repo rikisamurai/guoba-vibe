@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test'
 
 test('产品导航把带尾斜杠的 Lab 地址转换成可直达的链接', async ({ page }) => {
+  await page.setViewportSize({ width: 820, height: 660 })
   await page.goto('/learn/00-quick-start')
   const nav = page.getByRole('navigation', { name: '产品导航' })
+  await expect(nav).toBeVisible()
   const links = [
     ['Playground', '/playground'],
     ['Mini Chat', '/project'],
@@ -99,5 +101,22 @@ test('停止后不再追加，移动端无横向溢出', async ({ page }) => {
   await expect(page.locator('.render-document')).toHaveText(before)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
+  )
+})
+
+test('禁用站点存储时仍可收起和展开目录', async ({ page }) => {
+  await page.addInitScript(() => {
+    Storage.prototype.setItem = () => {
+      throw new DOMException('Storage disabled', 'SecurityError')
+    }
+  })
+  await page.goto('/learn/a1-http')
+  await page.getByRole('button', { name: '收起目录' }).click()
+  const expand = page.getByRole('button', { name: '展开目录' })
+  await expect(expand).toHaveAttribute('aria-expanded', 'false')
+  await expand.click()
+  await expect(page.getByRole('button', { name: '收起目录' })).toHaveAttribute(
+    'aria-expanded',
+    'true',
   )
 })

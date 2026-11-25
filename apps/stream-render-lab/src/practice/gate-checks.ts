@@ -56,13 +56,15 @@ export const gateChecks: PracticeCheck[] = [
     group: 'gate',
     title: '停止后返回的结果不再写回',
     file: 'task-gate.ts',
-    input: 'push(“A”)、dispose()，随后 A 才完成',
+    input: 'push(“A”)、dispose()、push(“B”)，随后 A、B 完成',
     expected: [],
     async run(impl) {
       const test = harness(impl)
       test.gate.push('A')
       test.gate.dispose()
+      test.gate.push('B')
       await test.settle('A')
+      await test.settle('B')
       return test.committed
     },
   },

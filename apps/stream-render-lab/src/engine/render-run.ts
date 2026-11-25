@@ -44,6 +44,7 @@ export function createRenderRun(
   }
 
   function publish(): void {
+    model.recordPublishedVisibility(clock.now())
     store.publish(model.snapshot(phase, outcome))
   }
 
@@ -51,7 +52,7 @@ export function createRenderRun(
     if (cancelFrame !== null || settled || settling) return
     cancelFrame = clock.frame(() => {
       cancelFrame = null
-      model.commitPreview(input.reveal, clock.now())
+      model.commitPreview(input.reveal)
       reconcileHeavy()
       publish()
       if (outcome && !model.hasBacklog()) void settle()
@@ -65,7 +66,7 @@ export function createRenderRun(
     cancelFrame?.()
     cancelFrame = null
     phase = 'settling'
-    model.commitCanonical(clock.now())
+    model.commitCanonical()
     publish()
     if (outcome.kind === 'cancelled') {
       heavy.cancel()

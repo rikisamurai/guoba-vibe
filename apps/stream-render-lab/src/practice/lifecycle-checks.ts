@@ -58,20 +58,27 @@ export const lifecycleChecks: PracticeCheck[] = [
     group: 'lifecycle',
     title: '等待下一段时停止并释放 reader',
     file: 'read-answer.ts',
-    input: '收到“你好”后立即 abort，响应体保持未关闭',
+    input: '收到“你好”后应立即 abort；继续读取则返回 EOF',
     expected: ['你好', true, false],
     async run(impl) {
       const controller = new AbortController()
       let cancelled = false
       let text = ''
-      const body = new ReadableStream<Uint8Array>({
-        start(stream) {
-          stream.enqueue(encode(teachingPacket))
+      const body = new ReadableStream<Uint8Array>(
+        {
+          start(stream) {
+            stream.enqueue(encode(teachingPacket))
+          },
+          // Only a second read reaches EOF. A correct reader cancels the still-open stream first.
+          pull(stream) {
+            stream.close()
+          },
+          cancel() {
+            cancelled = true
+          },
         },
-        cancel() {
-          cancelled = true
-        },
-      })
+        { highWaterMark: 0 },
+      )
       try {
         await impl.readAnswer(
           new Response(body, { headers: { 'Content-Type': 'text/event-stream' } }),

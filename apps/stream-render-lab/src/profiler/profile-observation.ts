@@ -1,7 +1,7 @@
 import type { ProfileTimelineSample } from './ab-types'
 
-interface RenderObservation {
-  commits: Array<{ at: number; duration: number }>
+export interface RenderObservation {
+  commits: Array<{ startTime: number; commitTime: number; duration: number }>
   startedAt: number
 }
 
@@ -10,14 +10,22 @@ export function appendRenderTimeline(
   active: RenderObservation,
   longTasks: PerformanceEntry[],
 ): void {
-  timeline.push(
-    ...active.commits.map((item) => ({
-      layer: 'react' as const,
-      label: 'React actualDuration',
-      startMs: item.at,
-      durationMs: item.duration,
-    })),
-  )
+  for (const commit of active.commits) {
+    timeline.push(
+      {
+        layer: 'react',
+        label: 'React actualDuration',
+        startMs: Math.max(0, commit.startTime - active.startedAt),
+        durationMs: commit.duration,
+      },
+      {
+        layer: 'react',
+        label: 'React commit',
+        startMs: Math.max(0, commit.commitTime - active.startedAt),
+        durationMs: 0,
+      },
+    )
+  }
   timeline.push(
     ...longTasks.map((entry) => ({
       layer: 'long-task' as const,

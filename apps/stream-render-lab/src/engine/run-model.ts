@@ -72,7 +72,7 @@ export class RunModel {
     return this.parts.some((part) => part.visibleEnd < part.raw.length)
   }
 
-  commitPreview(reveal: RevealMode, visibleAt: number): void {
+  commitPreview(reveal: RevealMode): void {
     for (const part of this.parts) {
       const nextVisibleEnd =
         reveal === 'direct' ? part.raw.length : advanceVisible(part.raw, part.visibleEnd)
@@ -88,7 +88,6 @@ export class RunModel {
         : parsePreview(visible, { mode, previous })
       this.recordParseDuration('preview', startedAt)
       part.document = document
-      this.recordVisible(part, visibleAt)
       this.recordPreview(document)
     }
     this.revision += 1
@@ -96,14 +95,13 @@ export class RunModel {
     this.updateBacklog()
   }
 
-  commitCanonical(visibleAt: number): void {
+  commitCanonical(): void {
     for (const part of this.parts) {
       part.visibleEnd = part.raw.length
       const startedAt = this.clock.now()
       const document = parseCanonical(part.raw)
       this.recordParseDuration('canonical', startedAt)
       part.document = document
-      this.recordVisible(part, visibleAt)
       this.metrics.canonicalParsePasses += 1
     }
     this.revision += 1
@@ -173,6 +171,10 @@ export class RunModel {
       (total, part) => total + part.raw.length - part.visibleEnd,
       0,
     )
+  }
+
+  recordPublishedVisibility(visibleAt: number): void {
+    for (const part of this.parts) this.recordVisible(part, visibleAt)
   }
 
   private recordVisible(part: MutablePart, visibleAt: number): void {

@@ -48,15 +48,16 @@ export const batchChecks: PracticeCheck[] = [
     title: '终态立即补齐最后一段，下一帧不重复',
     file: 'publish.ts',
     input: 'push(“最后一段”)、finish()，然后进入下一帧',
-    expected: ['最后一段'],
+    expected: { atFinish: ['最后一段'], nextFrame: ['最后一段'] },
     run(impl) {
       const output: string[] = []
       const time = frameClock()
       const publisher = impl.createPublisher((text) => output.push(text), time.clock)
       publisher.push('最后一段')
       publisher.finish()
+      const atFinish = [...output]
       time.tick()
-      return output
+      return { atFinish, nextFrame: output }
     },
   },
   {

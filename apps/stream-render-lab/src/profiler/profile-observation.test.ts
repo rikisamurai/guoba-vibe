@@ -1,9 +1,29 @@
 import { describe, expect, it } from 'vitest'
 
 import type { ProfileTimelineSample } from './ab-types'
-import { appendEngineTiming, createEngineTimingCursor } from './profile-observation'
+import {
+  appendEngineTiming,
+  appendRenderTimeline,
+  createEngineTimingCursor,
+} from './profile-observation'
 
 describe('profile engine timing', () => {
+  it('anchors render work at render start and records commit separately', () => {
+    const timeline: ProfileTimelineSample[] = []
+    appendRenderTimeline(
+      timeline,
+      {
+        startedAt: 100,
+        commits: [{ startTime: 103, commitTime: 115, duration: 5 }],
+      },
+      [],
+    )
+    expect(timeline).toEqual([
+      { layer: 'react', label: 'React actualDuration', startMs: 3, durationMs: 5 },
+      { layer: 'react', label: 'React commit', startMs: 15, durationMs: 0 },
+    ])
+  })
+
   it('places only newly observed duration at the snapshot observation point', () => {
     const timeline: ProfileTimelineSample[] = []
     const cursor = createEngineTimingCursor()

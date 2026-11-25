@@ -20,16 +20,15 @@ import {
   appendRenderTimeline,
   createEngineTimingCursor,
   observeLongTasks,
+  type RenderObservation,
 } from './profile-observation'
 import { resolveProfile } from './profile-options'
 import { createProfileRunPlan } from './profile-run-plan'
 import { createProfileSource } from './profile-wire-source'
 
-interface ActiveMeasurement {
-  commits: Array<{ at: number; duration: number }>
+interface ActiveMeasurement extends RenderObservation {
   measured: boolean
   profile: AbProfile
-  startedAt: number
 }
 
 export interface AbProfileState {
@@ -69,11 +68,12 @@ export function useAbProfile(): AbProfileState {
   }, [])
 
   const onRender = useCallback<ProfilerOnRenderCallback>(
-    (_id, _phase, actualDuration, _baseDuration, _startTime, commitTime) => {
+    (_id, _phase, actualDuration, _baseDuration, startTime, commitTime) => {
       const active = activeRef.current
       if (!active?.measured) return
       active.commits.push({
-        at: Math.max(0, commitTime - active.startedAt),
+        startTime,
+        commitTime,
         duration: Math.max(0, actualDuration),
       })
     },

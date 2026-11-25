@@ -54,7 +54,7 @@ export function createEventAcceptor(context: EventAcceptorContext) {
         return failLifecycle(`part.delta references inactive ${event.partId}`)
       }
       if (input.profile === 'M0') {
-        model.commitPreview('direct', clock.now())
+        model.commitPreview('direct')
         context.reconcileHeavy()
         context.publish()
       } else context.scheduleFrame()

@@ -11,6 +11,7 @@ import {
 const [burst, slow] = publishScenarios
 const reference: CreatePublisher = (show, clock) =>
   implementations.reference.createPublisher(show, clock)
+const delayed: CreatePublisher = (show, clock) => ({ ...reference(show, clock), finish() {} })
 const dropsTail: CreatePublisher = (show, clock) => {
   let latest = ''
   let frame: number | undefined
@@ -46,6 +47,10 @@ describe('publish.ts measurement on virtual frames', () => {
     expect(result.publishes).toBe(result.pushes)
     expect(result.averageWaitMs).toBeGreaterThan(0)
   })
+  it('reports a tail that arrives only after finish returns', () => {
+    expect(measurePublish(delayed, burst).finalMatches).toBe(false)
+  })
+
   it('reports a publisher that drops the tail on finish', () => {
     expect(measurePublish(dropsTail, burst).finalMatches).toBe(false)
   })

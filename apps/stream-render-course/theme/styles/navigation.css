@@ -82,7 +82,7 @@
   }
 }
 
-@media (width <= 900px) {
+@media (width <= 768px) {
   .sr-product-nav {
     display: none;
   }

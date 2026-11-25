@@ -69,9 +69,11 @@ export function CourseRail() {
 }
 
 const storageKey = 'sr-rail-collapsed'
+let sessionCollapsed: boolean | undefined
 const listeners = new Set<() => void>()
 
 function readCollapsed() {
+  if (sessionCollapsed !== undefined) return sessionCollapsed
   try {
     return localStorage.getItem(storageKey) === '1'
   } catch {
@@ -93,8 +95,9 @@ function useRailCollapsed() {
   const toggle = () => {
     try {
       localStorage.setItem(storageKey, value ? '0' : '1')
+      sessionCollapsed = undefined
     } catch {
-      return
+      sessionCollapsed = !value
     }
     listeners.forEach((listener) => listener())
   }

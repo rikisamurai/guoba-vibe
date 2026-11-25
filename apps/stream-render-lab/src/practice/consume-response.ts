@@ -27,20 +27,21 @@ export async function consumeResponse(
       // oxlint-disable-next-line no-await-in-loop -- consume in observed stream order
       const { done, value } = await reader.read()
       options.signal.throwIfAborted()
-      const decoded = done ? decoder.finish() : decoder.push(value)
-      const events = [...parser.push(decoded), ...(done ? parser.finish() : [])]
       const record: ReadRecord = {
         index: index++,
         bytes: Array.from(value ?? []),
-        decoded,
-        events,
+        decoded: '',
+        events: [],
         text: [],
         eof: done,
       }
       if (!done) options.onBytes?.(value.byteLength)
       let outcome: RunOutcome | undefined
       try {
-        for (const event of events) {
+        record.decoded = done ? decoder.finish() : decoder.push(value)
+        record.events.push(...parser.push(record.decoded))
+        if (done) record.events.push(...parser.finish())
+        for (const event of record.events) {
           options.signal.throwIfAborted()
           const result = readEvent(event)
           if (result.text) {
