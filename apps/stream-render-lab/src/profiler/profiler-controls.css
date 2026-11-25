@@ -1,0 +1,26 @@
+.profile-strategies {
+  grid-template-columns: 1fr 1fr;
+  margin: 20px 0 12px;
+}
+.profile-policy-note {
+  margin: 0 0 14px;
+  color: var(--ink-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.profile-correctness {
+  margin: 16px 0;
+  padding: 12px 0;
+  border-block: 1px solid var(--rule);
+}
+.profile-correctness p {
+  margin: 6px 0;
+}
+.profile-correctness details {
+  margin-top: 8px;
+}
+@media (max-width: 600px) {
+  .profile-strategies {
+    grid-template-columns: 1fr;
+  }
+}

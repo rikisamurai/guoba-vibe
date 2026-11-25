@@ -1,0 +1,207 @@
+.sr-course-rail {
+  padding: 26px 18px 56px;
+}
+
+.sr-course-rail ~ .rp-sidebar-item,
+.sr-course-rail ~ .rp-sidebar-group,
+.sr-course-rail ~ .rp-sidebar-divider,
+.sr-course-rail ~ .rp-sidebar-section-header {
+  display: none;
+}
+
+.sr-progress {
+  padding: 16px;
+  border: 1px solid var(--sr-line);
+  border-radius: 9px;
+  background: var(--sr-paper);
+  box-shadow: 0 8px 20px rgb(24 32 28 / 4%);
+}
+
+.sr-progress > span {
+  display: block;
+  color: var(--sr-muted);
+  font-size: 12px;
+}
+
+.sr-progress strong {
+  display: block;
+  margin: 7px 0 12px;
+  font-family: var(--sr-mono);
+  font-size: 19px;
+  letter-spacing: -0.04em;
+}
+
+.sr-progress div {
+  overflow: hidden;
+  height: 3px;
+  background: var(--sr-line);
+}
+
+.sr-progress i {
+  display: block;
+  height: 100%;
+  background: var(--sr-orange);
+}
+
+.sr-rail__part {
+  margin-top: 28px;
+}
+
+.sr-rail__part h2 {
+  display: flex;
+  gap: 9px;
+  margin: 0 10px 9px;
+  color: var(--sr-muted);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+}
+
+.sr-rail__part h2 span {
+  color: var(--sr-ink);
+  font-family: var(--sr-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.sr-rail__part > div {
+  display: grid;
+  gap: 2px;
+}
+
+.sr-rail__lesson {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: start;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #505a54;
+  font-size: 12.5px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.sr-rail__lesson.is-active {
+  color: #103b36;
+  background: var(--sr-cyan-soft);
+  font-weight: 650;
+}
+
+.sr-rail__lesson:hover {
+  color: var(--sr-ink);
+  background: rgb(255 255 255 / 72%);
+}
+
+.sr-rail__number {
+  color: #8a938e;
+  font-family: var(--sr-mono);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.sr-rail__lesson.is-active .sr-rail__number {
+  color: var(--sr-cyan);
+}
+
+.sr-course-rail {
+  position: relative;
+}
+
+/* The toggle shares the first row with the setup link: its right edge meets the lesson rows,
+   and it is centred on the link's 40px box (8px padding around a 23.8px line). */
+.sr-rail-toggle {
+  position: absolute;
+  top: 31px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--sr-line);
+  border-radius: 7px;
+  color: var(--sr-muted);
+  background: var(--sr-paper);
+  cursor: pointer;
+}
+
+.sr-rail-resource {
+  margin-right: 38px;
+}
+
+.sr-rail-toggle:hover {
+  color: var(--sr-ink);
+}
+
+@media (width > 768px) {
+  /* Narrow only the sidebar element: --rp-sidebar-width also positions the
+     wide-screen sidebar and nav, which would jump if it changed. */
+  html.sr-rail-collapsed .rp-doc-layout__sidebar {
+    width: 60px;
+    min-width: 60px;
+    max-width: 60px;
+  }
+
+  /* Rspress pads the sidebar by 20px on each side, which leaves a 60px rail almost no room. */
+  html.sr-rail-collapsed .rp-doc-layout__sidebar {
+    padding: 0;
+  }
+
+  .sr-rail-collapsed .sr-course-rail {
+    padding: 18px 8px 56px;
+  }
+
+  .sr-rail-collapsed .sr-rail-toggle {
+    position: static;
+    margin: 0 auto 14px;
+  }
+
+  .sr-rail-collapsed .sr-rail-resource,
+  .sr-rail-collapsed .sr-rail__part h2,
+  .sr-rail-collapsed .sr-rail__title {
+    display: none;
+  }
+
+  .sr-rail-collapsed .sr-rail__part {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--sr-line);
+  }
+
+  .sr-rail-collapsed .sr-rail__part--start {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .sr-rail-collapsed .sr-rail__lesson {
+    display: flex;
+    justify-content: center;
+    padding: 6px 0;
+  }
+
+  .sr-rail-collapsed .sr-rail__number {
+    font-size: 11px;
+  }
+}
+
+/* Between the drawer and wide layouts the sidebar stays visible, so its menu button is redundant;
+   the full-width sidebar used to cover it, the collapsed one no longer does. */
+@media (width >= 1280px) {
+  html.sr-rail-collapsed .rp-doc-layout__doc {
+    margin-inline: auto;
+  }
+}
+
+@media (768px < width < 1280px) {
+  .rp-sidebar-menu__left {
+    visibility: hidden;
+  }
+}
+
+@media (width <= 768px) {
+  .sr-rail-toggle {
+    display: none;
+  }
+}

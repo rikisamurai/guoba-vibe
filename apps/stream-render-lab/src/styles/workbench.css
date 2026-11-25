@@ -1,0 +1,100 @@
+.workbench-grid {
+  padding-top: 38px;
+}
+
+.comparison-lab {
+  display: grid;
+  gap: 18px;
+}
+.comparison-control {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: end;
+  gap: 22px;
+  padding: 22px;
+  border: 1px solid var(--scope-rule);
+  border-radius: var(--radius-md);
+  background: var(--scope);
+  color: #e4ebe7;
+}
+.comparison-control h2 {
+  margin-top: 5px;
+  font-size: 24px;
+}
+.comparison-description {
+  max-width: 52ch;
+  margin-top: 7px;
+  color: #82968e;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.comparison-control fieldset {
+  display: flex;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.comparison-control legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.comparison-control fieldset span {
+  padding: 8px 10px;
+  border: 1px solid var(--scope-rule);
+  border-radius: 999px;
+  color: #a7b7b0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+.comparison-control fieldset button {
+  padding: 8px 10px;
+  border: 1px solid var(--scope-rule);
+  border-radius: 999px;
+  background: transparent;
+  color: #82968e;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+.comparison-control fieldset button[aria-pressed='true'] {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+.comparison-control .signal-button {
+  width: auto;
+  min-width: 180px;
+  margin: 0;
+}
+.comparison-outputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.pipeline-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--scope-rule);
+}
+.pipeline-metrics span {
+  padding: 9px 14px;
+  background: #101713;
+  color: #74887f;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+.pipeline-metrics b {
+  float: right;
+  color: var(--signal);
+  font-weight: 500;
+}
+.pipeline-diagnostics {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--scope-rule);
+  color: #82968e;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
